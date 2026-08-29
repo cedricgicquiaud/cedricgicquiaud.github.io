@@ -1,6 +1,8 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import site from "../../content/site.json";
 import { Intro } from "../../components/intro";
 
@@ -21,5 +23,13 @@ describe("Intro", () => {
     expect(site.links.github).toBe("https://github.com/cedricgicquiaud");
     expect(site.links.linkedin).toBe("https://www.linkedin.com/in/cedric-gicquiaud/");
     expect(site.email).toBe("cedric.gicquiaud@gmail.com");
+  });
+});
+
+describe("site.json", () => {
+  it("refuse toute suite de chiffres ressemblant à un numéro de téléphone", () => {
+    const raw = readFileSync(path.resolve(__dirname, "../../content/site.json"), "utf8");
+    const phoneLike = /(?:\+?\d[\d .-]{7,}\d)/;
+    expect(raw).not.toMatch(phoneLike);
   });
 });
