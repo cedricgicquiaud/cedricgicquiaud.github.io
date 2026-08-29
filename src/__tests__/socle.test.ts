@@ -35,7 +35,7 @@ const css = () => readFileSync(path.join(root, "app", "globals.css"), "utf8");
 type Tokens = Record<string, string>;
 
 function tokensOf(selector: string): Tokens {
-  const start = css().indexOf(selector);
+  const start = css().lastIndexOf(selector);
   if (start === -1) throw new Error(`bloc introuvable : ${selector}`);
   const body = css().slice(start).split("{")[1].split("}")[0];
   const tokens: Tokens = {};
