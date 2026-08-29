@@ -216,3 +216,12 @@ describe("scripts/check-output — branché sur le build", () => {
     expect(() => execFileSync("node", [script, good], { cwd: root, stdio: "pipe" })).not.toThrow();
   });
 });
+
+describe("ancres du menu", () => {
+  it("About porte id=a-propos et Experience id=experience (liens du menu de la livraison 2)", () => {
+    const about = render(<About />).container.querySelector("section");
+    const experience = render(<Experience />).container.querySelector("section");
+    expect(about?.id).toBe("a-propos");
+    expect(experience?.id).toBe("experience");
+  });
+});
