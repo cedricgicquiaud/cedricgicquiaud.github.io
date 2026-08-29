@@ -24,6 +24,14 @@ describe("Intro", () => {
     expect(site.links.linkedin).toBe("https://www.linkedin.com/in/cedric-gicquiaud/");
     expect(site.email).toBe("cedric.gicquiaud@gmail.com");
   });
+
+  it("applique bg-grid et occupe la hauteur de l'écran, nom et titre en tête", () => {
+    const { container } = render(<Intro />);
+    const section = container.querySelector("section#intro");
+    expect(section).toHaveClass("bg-grid", "min-h-screen");
+    const heading = screen.getByRole("heading", { level: 1 });
+    expect(section?.firstElementChild?.contains(heading)).toBe(true);
+  });
 });
 
 describe("site.json", () => {
