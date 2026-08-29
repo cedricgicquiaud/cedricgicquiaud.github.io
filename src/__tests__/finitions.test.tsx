@@ -76,29 +76,13 @@ describe("image Open Graph (PFO-13) — lit out/ produit par npm run build", () 
     return sources.some((f) => existsSync(f) && statSync(f).mtimeMs > built);
   }
 
-  /** `next build` refuse de tourner deux fois en même temps (verrou) : on attend alors la fin de l'autre. */
-  async function waitForFreshOut(since: number, ms: number): Promise<void> {
-    const deadline = Date.now() + ms;
-    while (!existsSync(indexHtml) || statSync(indexHtml).mtimeMs < since) {
-      if (Date.now() > deadline) throw new Error("out/index.html non produit par le build concurrent");
-      await new Promise((r) => setTimeout(r, 500));
-    }
-  }
-
-  beforeAll(async () => {
-    if (outIsStale()) {
-      const since = Date.now();
-      try {
-        execSync("npm run build", { cwd: root, stdio: "pipe", timeout: 120_000 });
-      } catch (error) {
-        const { stdout, stderr } = error as { stdout?: Buffer; stderr?: Buffer };
-        const output = `${stdout ?? ""}${stderr ?? ""}${String(error)}`;
-        if (!/Another next build process is already running/.test(output)) throw error;
-        await waitForFreshOut(since, 120_000);
-      }
-    }
+  // Sans `out/`, ce fichier reconstruit ; si socle.test.ts vient de construire (fichiers de
+  // tests en série, cf. vitest.config.ts), `out/index.html` est plus récent que les sources
+  // et on réutilise `out/` tel quel.
+  beforeAll(() => {
+    if (outIsStale()) execSync("npm run build", { cwd: root, stdio: "pipe", timeout: 120_000 });
     expect(existsSync(indexHtml), "out/index.html absent après npm run build").toBe(true);
-  }, 250_000);
+  }, 150_000);
 
   it("out/opengraph-image.png existe", () => {
     expect(existsSync(ogPng)).toBe(true);
