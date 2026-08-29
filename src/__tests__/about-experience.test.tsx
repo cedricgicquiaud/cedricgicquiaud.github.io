@@ -206,6 +206,29 @@ describe("scripts/check-output — contrôle du HTML généré", () => {
     expect(problems[0]).toMatch(/index\.html.*domaine tiers.*cdn\.example\.com/i);
   });
 
+  it("applique la règle « domaine tiers » aux fichiers .js et .txt, avec les « \\/ » décodés dans les .txt", () => {
+    const dir = tempContentDir({
+      "index.html": page("<p>ok</p>"),
+      "chunk.js": 'fetch("https://api.example.org/v1")',
+      "page.txt": '1:["https:\\/\\/tracker.example.net\\/pixel"]',
+      "notes.md": "https://ignored.example.com/",
+    });
+    const problems = checkOutput(dir, forbidden);
+    expect(problems).toHaveLength(2);
+    expect(problems).toContainEqual(expect.stringMatching(/chunk\.js.*domaine tiers.*api\.example\.org/));
+    expect(problems).toContainEqual(expect.stringMatching(/page\.txt.*domaine tiers.*tracker\.example\.net/));
+  });
+
+  it("n'applique que la règle « domaine tiers » aux .js et .txt", () => {
+    const dir = tempContentDir({ "chunk.js": "// zorglub \u{1F680} 06 12 34 56 78" });
+    expect(checkOutput(dir, forbidden)).toEqual([]);
+  });
+
+  it("ne signale qu'une fois un même problème dans un même fichier", () => {
+    const twice = outDir('<a href="https://cdn.example.com/a">a</a><a href="https://cdn.example.com/b">b</a>');
+    expect(checkOutput(twice, forbidden)).toHaveLength(1);
+  });
+
   it("refuse un numéro de téléphone (0X XX XX XX XX ou +33)", () => {
     for (const phone of ["06 12 34 56 78", "0612345678", "+33 6 12 34 56 78"]) {
       const problems = checkOutput(outDir(`<p>Appelez le ${phone}</p>`), forbidden);
