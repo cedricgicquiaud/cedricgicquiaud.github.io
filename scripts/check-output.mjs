@@ -7,11 +7,14 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-function htmlFiles(dir) {
+// Les .html passent toutes les règles ; les .js et .txt (chunks et données RSC) seulement « domaine tiers ».
+const CHECKED = [".html", ".js", ".txt"];
+
+function outputFiles(dir) {
   return readdirSync(dir).flatMap((name) => {
     const full = path.join(dir, name);
-    if (statSync(full).isDirectory()) return htmlFiles(full);
-    return name.endsWith(".html") ? [full] : [];
+    if (statSync(full).isDirectory()) return outputFiles(full);
+    return CHECKED.includes(path.extname(name)) ? [full] : [];
   });
 }
 
@@ -48,7 +51,7 @@ const isAllowedHost = (host) =>
 // 0X XX XX XX XX (espaces facultatifs) ou indicatif +33, non collé à d'autres chiffres ou lettres.
 const PHONE = /(?<![\w])(?:0[1-9](?:\s?\d{2}){4}|\+33)(?![\w])/;
 
-/** Règles : chacune renvoie la liste des occurrences fautives dans le HTML. */
+/** Règles : chacune renvoie les occurrences fautives du texte ; `all` = s'applique aussi aux .js et .txt. */
 function rules(fingerprints) {
   return [
     { label: "mot interdit", find: (html) => forbiddenWordsIn(html, fingerprints) },
@@ -56,9 +59,16 @@ function rules(fingerprints) {
     { label: "numéro de téléphone", find: (html) => html.match(PHONE) ?? [] },
     {
       label: "domaine tiers",
+      all: true,
       find: (html) => [...html.matchAll(URL_HOST)].map(([, host]) => host).filter((h) => !isAllowedHost(h)),
     },
   ];
+}
+
+/** Texte à contrôler : dans les .txt (données RSC en JSON), les « \\/ » sont des « / ». */
+function readText(file) {
+  const text = readFileSync(file, "utf8");
+  return file.endsWith(".txt") ? text.replaceAll("\\/", "/") : text;
 }
 
 /**
@@ -69,15 +79,17 @@ function rules(fingerprints) {
  */
 export function checkOutput(dir, forbiddenFingerprints) {
   const fingerprints = new Set(forbiddenFingerprints);
-  const problems = [];
-  for (const file of htmlFiles(dir)) {
-    const html = readFileSync(file, "utf8");
+  const problems = new Set();
+  for (const file of outputFiles(dir)) {
+    const text = readText(file);
     const rel = path.relative(dir, file);
-    for (const { label, find } of rules(fingerprints)) {
-      for (const hit of find(html)) problems.push(`${rel} : ${label} « ${hit} »`);
+    const isHtml = file.endsWith(".html");
+    for (const { label, find, all } of rules(fingerprints)) {
+      if (!isHtml && !all) continue;
+      for (const hit of find(text)) problems.add(`${rel} : ${label} « ${hit} »`);
     }
   }
-  return problems;
+  return [...problems];
 }
 
 // Entrée en ligne de commande : `node scripts/check-output.mjs [dossier] [liste]`
