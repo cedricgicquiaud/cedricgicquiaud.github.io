@@ -4,6 +4,7 @@
 
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 function htmlFiles(dir) {
   return readdirSync(dir).flatMap((name) => {
@@ -66,4 +67,20 @@ export function checkOutput(dir, forbiddenWords) {
     }
   }
   return problems;
+}
+
+// Entrée en ligne de commande : `node scripts/check-output.mjs [dossier]` (défaut : out/).
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const dir = path.resolve(process.argv[2] ?? "out");
+  const words = readFileSync(path.resolve("content", "forbidden.txt"), "utf8")
+    .split("\n")
+    .map((w) => w.trim())
+    .filter(Boolean);
+  const problems = checkOutput(dir, words);
+  if (problems.length > 0) {
+    console.error(`check-output : ${problems.length} problème(s) dans ${dir}`);
+    for (const p of problems) console.error(`  - ${p}`);
+    process.exit(1);
+  }
+  console.log(`check-output : ${dir} propre`);
 }
