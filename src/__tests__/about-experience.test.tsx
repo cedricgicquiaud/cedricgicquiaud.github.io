@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { About } from "../../components/about";
+import { Experience } from "../../components/experience";
 import { loadAbout, loadExperience } from "../../lib/content";
 
 afterEach(cleanup);
@@ -117,5 +118,26 @@ describe("<About />", () => {
     expect(section).not.toBeNull();
     expect(section?.querySelector("h2")).toHaveTextContent("À propos");
     expect(section?.querySelectorAll("p").length).toBeGreaterThanOrEqual(3);
+  });
+});
+
+describe("<Experience />", () => {
+  it("rend au moins quatre blocs, du plus récent au plus ancien, chacun complet avec des badges", () => {
+    const { blocs } = loadExperience(contentDir);
+    const { container } = render(<Experience />);
+    const section = container.querySelector("section#experience");
+    expect(section?.querySelector("h2")).toHaveTextContent("Expérience");
+    const items = Array.from(section?.querySelectorAll("article") ?? []);
+    expect(items.length).toBeGreaterThanOrEqual(4);
+    expect(items.length).toBe(blocs.length);
+    items.forEach((item, i) => {
+      const bloc = blocs[i];
+      expect(item).toHaveTextContent(bloc.periode);
+      expect(item).toHaveTextContent(bloc.role);
+      expect(item).toHaveTextContent(bloc.secteur);
+      expect(item).toHaveTextContent(bloc.description);
+      const badges = Array.from(item.querySelectorAll('[data-slot="badge"]')).map((b) => b.textContent);
+      expect(badges).toEqual(bloc.tags);
+    });
   });
 });
