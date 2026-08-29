@@ -4,6 +4,8 @@ import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import { loadAbout, loadExperience } from "../../lib/content";
 
+const contentDir = path.resolve(__dirname, "../../content");
+
 function tempContentDir(files: Record<string, string> = {}): string {
   const dir = mkdtempSync(path.join(tmpdir(), "content-"));
   for (const [name, body] of Object.entries(files)) {
@@ -82,5 +84,23 @@ describe("lib/content — experience", () => {
       "experience.md": experienceFile(bloc("2000–2013") + bloc("2026") + bloc("2013–2023")),
     });
     expect(loadExperience(dir).blocs.map((b) => b.periode)).toEqual(["2026", "2013–2023", "2000–2013"]);
+  });
+});
+
+describe("content/ — textes réels", () => {
+  it("about.md contient au moins trois paragraphes", () => {
+    const { html } = loadAbout(contentDir);
+    expect(html.match(/<p>/g)?.length ?? 0).toBeGreaterThanOrEqual(3);
+  });
+
+  it("experience.md contient au moins quatre blocs complets, avec au moins un tag", () => {
+    const { blocs } = loadExperience(contentDir);
+    expect(blocs.length).toBeGreaterThanOrEqual(4);
+    for (const bloc of blocs) {
+      for (const field of ["periode", "role", "secteur", "description"] as const) {
+        expect(bloc[field].trim(), `${field} vide (${bloc.periode})`).not.toBe("");
+      }
+      expect(bloc.tags.length, `tags vides (${bloc.periode})`).toBeGreaterThanOrEqual(1);
+    }
   });
 });
