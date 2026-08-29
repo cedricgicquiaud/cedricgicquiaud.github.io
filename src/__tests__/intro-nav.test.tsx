@@ -7,6 +7,7 @@ import path from "node:path";
 import site from "../../content/site.json";
 import { Intro } from "../../components/intro";
 import { Nav } from "../../components/nav";
+import { ThemeToggle } from "../../components/theme-toggle";
 
 afterEach(() => {
   cleanup();
@@ -135,5 +136,21 @@ describe("Nav", () => {
     const wide = render(<Nav />);
     expect(wide.getByRole("navigation")).toHaveAttribute("data-layout", "side");
     expect(wide.getByRole("navigation")).toHaveClass("lg:fixed", "lg:left-0");
+  });
+
+  it("laisse Tab parcourir les quatre liens puis le bouton de thème, focus visible", () => {
+    const { container } = render(
+      <>
+        <Nav />
+        <ThemeToggle />
+      </>,
+    );
+    const focusable = Array.from(
+      container.querySelectorAll<HTMLElement>("a[href], button:not([disabled])"),
+    ).filter((el) => el.tabIndex >= 0);
+    expect(focusable.map((el) => el.tagName)).toEqual(["A", "A", "A", "A", "BUTTON"]);
+    for (const el of focusable) {
+      expect(el.className).toMatch(/focus-visible:/);
+    }
   });
 });
