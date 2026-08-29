@@ -35,7 +35,17 @@ export function loadAbout(dir: string): About {
 export function loadExperience(dir: string): Experience {
   const { data } = readFront(dir, "experience.md");
   const raw = Array.isArray(data.blocs) ? (data.blocs as Record<string, unknown>[]) : [];
-  const blocs = raw.map((b) => ({
+  const blocs = raw
+    .filter((b) => {
+      const ok = typeof b.periode === "string" || typeof b.periode === "number";
+      if (!ok) {
+        console.warn(
+          `content/experience.md : bloc sans « période » ignoré (rôle : ${String(b.role ?? "?")})`,
+        );
+      }
+      return ok;
+    })
+    .map((b) => ({
     periode: String(b.periode),
     role: String(b.role),
     secteur: String(b.secteur),
