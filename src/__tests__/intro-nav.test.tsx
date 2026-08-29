@@ -8,6 +8,7 @@ import site from "../../content/site.json";
 import { Intro } from "../../components/intro";
 import { Nav } from "../../components/nav";
 import { ThemeToggle } from "../../components/theme-toggle";
+import { Footer } from "../../components/footer";
 
 afterEach(() => {
   cleanup();
@@ -207,5 +208,17 @@ describe("ThemeToggle", () => {
     expect(document.documentElement.getAttribute("data-theme")).toBeNull();
     fireEvent.click(screen.getByRole("button"));
     expect(["light", "dark"]).toContain(document.documentElement.getAttribute("data-theme"));
+  });
+});
+
+describe("Footer", () => {
+  it("porte l'ancre contact, la mention des fiches et le lien du dépôt", () => {
+    render(<Footer />);
+    const footer = screen.getByRole("contentinfo");
+    expect(footer).toHaveAttribute("id", "contact");
+    expect(footer).toHaveTextContent("Site généré depuis mes fiches de preuve");
+    const repo = screen.getByRole("link", { name: /cedricgicquiaud\.github\.io/ });
+    expect(repo).toHaveAttribute("href", "https://github.com/cedricgicquiaud/cedricgicquiaud.github.io");
+    expect(screen.getByRole("link", { name: "Mail" })).toHaveAttribute("href", `mailto:${site.email}`);
   });
 });
