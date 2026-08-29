@@ -2,7 +2,7 @@ import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { loadAbout } from "../../lib/content";
+import { loadAbout, loadExperience } from "../../lib/content";
 
 function tempContentDir(files: Record<string, string> = {}): string {
   const dir = mkdtempSync(path.join(tmpdir(), "content-"));
@@ -31,5 +31,13 @@ describe("lib/content — about", () => {
     expect(about.titre).toBe("À propos");
     expect(about.html).toContain("<p>Premier <strong>paragraphe</strong>.</p>");
     expect(about.html.match(/<p>/g)).toHaveLength(2);
+  });
+});
+
+describe("lib/content — experience", () => {
+  it("lève une erreur explicite si experience.md manque ou n'a pas de titre", () => {
+    expect(() => loadExperience(tempContentDir())).toThrow(/experience\.md.*(manquant|introuvable)/i);
+    const dir = tempContentDir({ "experience.md": "---\nblocs: []\n---\n" });
+    expect(() => loadExperience(dir)).toThrow(/experience\.md.*titre/i);
   });
 });
