@@ -17,4 +17,9 @@ describe("lib/content — about", () => {
     const dir = tempContentDir();
     expect(() => loadAbout(dir)).toThrow(/about\.md.*(manquant|introuvable)/i);
   });
+
+  it("lève une erreur explicite si le frontmatter n'a pas de titre", () => {
+    const dir = tempContentDir({ "about.md": "---\nauteur: x\n---\n\nUn paragraphe.\n" });
+    expect(() => loadAbout(dir)).toThrow(/about\.md.*titre/i);
+  });
 });
