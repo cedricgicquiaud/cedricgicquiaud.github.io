@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render } from "@testing-library/react";
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -11,6 +12,12 @@ import { loadAbout, loadExperience } from "../../lib/content";
 import { checkOutput } from "../../scripts/check-output.mjs";
 
 afterEach(cleanup);
+
+// Empreinte SHA-256 du mot normalisé (minuscules, sans accents) : le format de content/forbidden.txt.
+const fingerprint = (word: string) =>
+  createHash("sha256")
+    .update(word.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase())
+    .digest("hex");
 
 const contentDir = path.resolve(__dirname, "../../content");
 
@@ -147,16 +154,20 @@ describe("<Experience />", () => {
 describe("scripts/check-output — contrôle du HTML généré", () => {
   const page = (body: string) => `<!doctype html><html><head></head><body>${body}</body></html>`;
   const outDir = (html: string) => tempContentDir({ "index.html": page(html) });
-  const forbidden = ["finalisé", "Nexus"];
+  const forbidden = [fingerprint("zorglub"), fingerprint("pipotron")];
 
   it("accepte un HTML propre", () => {
     expect(checkOutput(outDir("<p>Projet livré en 2026.</p>"), forbidden)).toEqual([]);
   });
 
-  it("refuse un mot interdit, sans tenir compte de la casse", () => {
-    const problems = checkOutput(outDir("<p>Projet FINALISÉ.</p>"), forbidden);
+  it("refuse un mot interdit, sans tenir compte de la casse ni des accents", () => {
+    const problems = checkOutput(outDir("<p>Projet ZORGLÛB.</p>"), forbidden);
     expect(problems).toHaveLength(1);
-    expect(problems[0]).toMatch(/index\.html.*mot interdit.*finalisé/i);
+    expect(problems[0]).toMatch(/index\.html.*mot interdit.*zorglûb/i);
+  });
+
+  it("ne signale pas un mot qui contient seulement un mot interdit", () => {
+    expect(checkOutput(outDir("<p>Le zorglubien pipotronique.</p>"), forbidden)).toEqual([]);
   });
 
   it("refuse un emoji", () => {
@@ -192,14 +203,13 @@ describe("scripts/check-output — branché sur le build", () => {
   const script = path.join(root, "scripts", "check-output.mjs");
   const page = (body: string) => `<!doctype html><html><body>${body}</body></html>`;
 
-  it("content/forbidden.txt contient au moins les mots exigés", () => {
-    const words = readFileSync(path.join(root, "content", "forbidden.txt"), "utf8")
+  it("content/forbidden.txt ne contient que des empreintes SHA-256 (64 caractères hexadécimaux)", () => {
+    const lines = readFileSync(path.join(root, "content", "forbidden.txt"), "utf8")
       .split("\n")
       .map((w) => w.trim())
       .filter(Boolean);
-    for (const w of ["finalisé", "Nexus", "VOLT", "Aunéa", "Aunea", "Exedigit", "Framaco", "weme", "Greg", "AlanZien"]) {
-      expect(words).toContain(w);
-    }
+    expect(lines.length).toBeGreaterThanOrEqual(1);
+    for (const line of lines) expect(line).toMatch(/^[0-9a-f]{64}$/);
   });
 
   it("npm run build enchaîne next build puis le contrôle de out/", () => {
@@ -208,10 +218,12 @@ describe("scripts/check-output — branché sur le build", () => {
   });
 
   it("en ligne de commande, sort en erreur sur un mot interdit et en succès sur un HTML propre", () => {
-    const bad = tempContentDir({ "index.html": page("<p>Projet finalisé.</p>") });
-    expect(() => execFileSync("node", [script, bad], { cwd: root, stdio: "pipe" })).toThrow(
-      /mot interdit « finalisé »/,
-    );
+    // Liste factice passée en second argument : le fichier réel ne sert pas au test.
+    const list = tempContentDir({ "forbidden.txt": fingerprint("zorglub") + "\n" });
+    const bad = tempContentDir({ "index.html": page("<p>Projet zorglub.</p>") });
+    expect(() =>
+      execFileSync("node", [script, bad, path.join(list, "forbidden.txt")], { cwd: root, stdio: "pipe" }),
+    ).toThrow(/mot interdit « zorglub »/);
     const good = tempContentDir({ "index.html": page("<p>Projet livré.</p>") });
     expect(() => execFileSync("node", [script, good], { cwd: root, stdio: "pipe" })).not.toThrow();
   });
