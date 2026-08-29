@@ -40,4 +40,24 @@ describe("lib/content — experience", () => {
     const dir = tempContentDir({ "experience.md": "---\nblocs: []\n---\n" });
     expect(() => loadExperience(dir)).toThrow(/experience\.md.*titre/i);
   });
+
+  const experienceFile = (blocs: string) =>
+    `---\ntitre: Expérience\nblocs:\n${blocs}---\n`;
+
+  it("retourne les blocs avec période, rôle, secteur, description et tags", () => {
+    const dir = tempContentDir({
+      "experience.md": experienceFile(
+        "  - periode: 2026\n    role: Constructeur\n    secteur: Logiciel\n    description: Des agents.\n    tags: [TypeScript, MCP]\n",
+      ),
+    });
+    expect(loadExperience(dir).blocs).toEqual([
+      {
+        periode: "2026",
+        role: "Constructeur",
+        secteur: "Logiciel",
+        description: "Des agents.",
+        tags: ["TypeScript", "MCP"],
+      },
+    ]);
+  });
 });
