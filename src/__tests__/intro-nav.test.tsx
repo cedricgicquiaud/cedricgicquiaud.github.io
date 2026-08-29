@@ -184,4 +184,11 @@ describe("ThemeToggle", () => {
     expect(second).not.toBe(first);
     expect(store.get("theme")).toBe(second);
   });
+
+  it("relit le choix mémorisé au montage", () => {
+    stubStorage({ theme: "dark" });
+    render(<ThemeToggle />);
+    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+    expect(screen.getByRole("button")).toHaveAttribute("aria-pressed", "true");
+  });
 });
