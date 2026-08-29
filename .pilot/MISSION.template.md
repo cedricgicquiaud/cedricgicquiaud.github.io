@@ -2,7 +2,7 @@
 
 _Gabarit d'ordre de mission pour un agent `tdd-writer` lancé dans un git worktree._
 _Copier en `MISSION.md` à la racine du worktree (fichier exclu de git via `.git/info/exclude`)._
-_Recette complète : `BOUCLE-AGENTS.md` (dépôt AlanZien/pilot) ; lancement :_
+_Recette complète : `BOUCLE-AGENTS.md` (dépôt cedricgicquiaud/pilot) ; lancement :_
 _`git worktree add ../<nom> -b feature/<CODE>-<n>-<slug>` puis session Claude dans ce dossier._
 
 ## Ta mission
@@ -16,7 +16,7 @@ _`git worktree add ../<nom> -b feature/<CODE>-<n>-<slug>` puis session Claude da
 Tu touches uniquement :
 - `<fichier ou dossier 1>`
 - `<fichier ou dossier 2>`
-- `tests/<fichier>.test.js`
+- `src/<dossier>/__tests__/<fichier>.test.tsx` (un fichier de tests par livraison)
 - `UAT.md` (section de la livraison seulement)
 
 Tu ne touches **jamais** : les autres modules, `CLAUDE.md`, `.claude/`, `.pilot/`,
@@ -25,16 +25,17 @@ sera un conflit au merge.
 
 ## Règles du projet (rappel, détail dans `CLAUDE.md`)
 
-- Texte utilisateur → helper d'échappement avant tout `innerHTML`.
-- Toute mutation : `Permissions.assert(actor, ws, '<action>')` en premier ; action déclarée dans `permissions.js`.
-- Table scopée → `Data.SCOPED` + seed dans `tests/isolation.test.js`.
+- Export statique Next.js (`output: 'export'`) : aucune API route, aucun composant serveur qui lit une base.
+- Tout contenu vient de `content/` (Markdown + frontmatter) ; jamais de texte de fiche en dur dans un composant.
+- Aucun nom de client, de collègue ni d'employeur ; jamais « finalisé » ; pas d'emoji ; français seul.
+- Thème clair et sombre : chaque couleur passe par un token Tailwind/shadcn, jamais une valeur en dur.
 - Une décision produit ou d'architecture non couverte par la fiche : **tu ne tranches pas**.
   Tu la notes dans la section « Décisions à prendre » de ton rapport et tu prends l'option
   la plus réversible.
 
 ## Examen obligatoire avant de te déclarer fini
 
-1. `node --test tests/*.test.js` : tout vert, sortie collée dans le rapport.
+1. `npm test` (Vitest) puis `npm run build` (export statique) : tout vert, sortie collée dans le rapport.
 2. Relire ton diff (`git diff main...HEAD`) contre les idiomes ci-dessus, ligne par ligne.
 3. Chaque « Terminé quand » de chaque tâche : constaté (comment ?) ou **refusé** (pourquoi ?).
    Un constat de refus vaut mieux qu'une case cochée par optimisme.
