@@ -34,14 +34,21 @@ export function loadAbout(dir: string): About {
 
 type RawBloc = Record<string, unknown>;
 
-function hasPeriode(b: RawBloc): boolean {
-  const ok = typeof b.periode === "string" || typeof b.periode === "number";
-  if (!ok) {
+const isText = (v: unknown): boolean => typeof v === "string" && v.trim() !== "";
+
+/** Un bloc est complet s'il a une période et des textes non vides pour role, secteur, description. */
+function isComplete(b: RawBloc): boolean {
+  const missing: string[] = [];
+  if (!(isText(b.periode) || typeof b.periode === "number")) missing.push("période");
+  for (const field of ["role", "secteur", "description"] as const) {
+    if (!isText(b[field])) missing.push(field);
+  }
+  if (missing.length > 0) {
     console.warn(
-      `content/experience.md : bloc sans « période » ignoré (rôle : ${String(b.role ?? "?")})`,
+      `content/experience.md : bloc incomplet ignoré (période : ${String(b.periode ?? "?")}, rôle : ${String(b.role ?? "?")}) — champ(s) manquant(s) : ${missing.join(", ")}`,
     );
   }
-  return ok;
+  return missing.length === 0;
 }
 
 function toBloc(b: RawBloc): Bloc {
@@ -62,7 +69,7 @@ function startYear(bloc: Bloc): number {
 export function loadExperience(dir: string): Experience {
   const { data } = readFront(dir, "experience.md");
   const raw = Array.isArray(data.blocs) ? (data.blocs as RawBloc[]) : [];
-  const blocs = raw.filter(hasPeriode).map(toBloc).sort((a, b) => startYear(b) - startYear(a));
+  const blocs = raw.filter(isComplete).map(toBloc).sort((a, b) => startYear(b) - startYear(a));
   return { titre: data.titre as string, blocs };
 }
 
