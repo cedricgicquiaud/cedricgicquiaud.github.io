@@ -73,3 +73,31 @@ Ne rien cocher avant d'avoir constaté.
   constaté le 2026-08-29 : titre d'onglet « Cédric Gicquiaud » ; source (`curl`) : `<title>Cédric Gicquiaud</title>` et `<meta name="description" content="Je branche des agents IA sur les systèmes réels d&#x27;une entreprise et je les livre en production."/>`.
 - [x] Refus : vider `"title"` dans `content/site.json` (`"title": ""`), lancer `npm test` : le test « refuse une description vide » échoue. Annuler la modification.
   constaté le 2026-08-29 : « refuse une description vide » échoue (et « rend le nom et le titre de site.json » aussi, `2 failed | 24 passed`) ; modification annulée.
+
+## Livraison 3 — À propos et Expérience
+
+### PFO-8 — Chargement du contenu Markdown avec frontmatter validé
+
+- [x] `npm run dev` (port 3003 : `npx next dev -p 3003`), ouvrir la page : sous l'Intro, la section « À propos » affiche le texte de `content/about.md` et la section « Expérience » les blocs de `content/experience.md`. — constaté le 2026-08-29 : page à http://localhost:3003/, sections « À propos » (4 paragraphes) et « Expérience » (4 blocs) affichées sous l'Intro, console sans erreur (capture a-propos-clair.jpg, experience-clair.jpg).
+- [x] Refus : renommer `content/about.md` en `about.md.bak`, lancer `npm run build` : le build échoue avec `Error: content/about.md manquant (attendu : …/content/about.md)`. Restaurer le fichier. — constaté le 2026-08-29 : build en échec avec `Error: content/about.md manquant (attendu : /Users/cedricgicquiaud/Desktop/WATIDO/site-3/content/about.md)` ; fichier restauré.
+- [x] Refus : dans `content/about.md`, remplacer la ligne `titre: À propos` par `auteur: x`, lancer `npm run build` : le build échoue avec `content/about.md : frontmatter incomplet, champ « titre » requis`. Annuler la modification. — constaté le 2026-08-29 : build en échec avec `Error: content/about.md : frontmatter incomplet, champ « titre » requis` ; modification annulée.
+
+### PFO-9 — Textes À propos et Expérience
+
+- [x] Lire « À propos » dans le navigateur : au moins trois paragraphes, dans l'ordre ESN, immobilier, agents IA ; aucun nom d'employeur ni de client, aucun superlatif. Corriger le texte à la PR si besoin. — constaté le 2026-08-29 : 4 paragraphes dans l'ordre ESN → immobilier → agents IA (+ un 4e de conclusion) ; aucun nom d'employeur ni de client, aucun superlatif relevé (voir « hors cahier » pour une incohérence de dates).
+- [x] Lire « Expérience » : quatre blocs (2026, 2023–2025, 2013–2023, 2000–2013), chacun avec période, rôle, secteur, description et au moins un tag. Les dates sont des hypothèses : confirmer ou corriger dans `content/experience.md`. — constaté le 2026-08-29 : 4 blocs 2026, 2023–2025, 2013–2023, 2000–2013, chacun avec période, rôle, secteur, description et 3 à 5 tags ; dates non confirmées par le testeur (hypothèses à valider par l'auteur).
+- [x] Refus : dans `content/about.md`, remplacer « Treize ans en ESN » par « Treize ans chez Nexus », lancer `npm run build` : `next build` réussit puis `check-output` échoue avec `index.html : mot interdit « Nexus »`. Annuler la modification. — constaté le 2026-08-29 : `next build` réussit puis `check-output : 1 problème(s)` / `index.html : mot interdit « Nexus »` ; modification annulée.
+
+### PFO-10 — Sections À propos et Expérience rendues
+
+- [x] Dans le navigateur, section « Expérience » : les blocs se lisent de haut en bas du plus récent (2026) au plus ancien (2000–2013). — constaté le 2026-08-29 : ordre à l'écran 2026 → 2023–2025 → 2013–2023 → 2000–2013 (capture experience-clair.jpg, experience-sombre.jpg).
+- [x] Chaque bloc montre, à gauche, la période ; à droite, le rôle en titre, le secteur en dessous, la description, puis les tags en pastilles (badges). À 375 px de large, la période passe au-dessus du rôle. — constaté le 2026-08-29 : période à gauche, rôle en titre, secteur, description, tags en pastilles ; dans un cadre de 375 px (viewport 371 px) la période s'affiche au-dessus du rôle, même bord gauche (capture experience-375px.jpg). Mode sombre simulé en forçant la règle `prefers-color-scheme: dark` (pas de bascule de thème dans ce worktree).
+- [x] Refus : dans `content/experience.md`, supprimer la ligne `periode: "2026"` du premier bloc, lancer `npm run build` : le build réussit, la sortie contient `content/experience.md : bloc sans « période » ignoré (rôle : Constructeur d'agents IA)`, et la page ne montre plus que trois blocs. Annuler la modification. — constaté le 2026-08-29 : build réussi, sortie `content/experience.md : bloc sans « période » ignoré (rôle : Constructeur d'agents IA)`, page dev rechargée : 3 blocs (2023–2025, 2013–2023, 2000–2013) ; modification annulée.
+
+### PFO-11 — Contrôle du HTML généré
+
+- [x] `npm run build` : la dernière ligne affiche `check-output : …/out propre`. — constaté le 2026-08-29 : dernière ligne `check-output : /Users/cedricgicquiaud/Desktop/WATIDO/site-3/out propre`.
+- [x] Refus : ajouter « Nexus » dans `content/about.md`, lancer `npm run build` : échec avec `mot interdit « Nexus »`. Annuler. — constaté le 2026-08-29 : échec `index.html : mot interdit « Nexus »` ; annulé.
+- [x] Refus : ajouter un emoji (par exemple une fusée) dans `content/about.md`, lancer `npm run build` : échec avec `emoji « … »`. Annuler. — constaté le 2026-08-29 : échec `index.html : emoji « 🚀 »` ; annulé.
+- [x] Refus : dans `content/about.md`, ajouter `<script src="https://cdn.example.com/x.js"></script>`, lancer `npm run build` : échec avec `domaine tiers « cdn.example.com »`. Annuler. — constaté le 2026-08-29 : échec `index.html : domaine tiers « cdn.example.com »` (signalé 2 fois) ; annulé.
+- [x] Refus : ajouter « 06 12 34 56 78 » dans `content/about.md`, lancer `npm run build` : échec avec `numéro de téléphone « 06 12 34 56 78 »`. Annuler. — constaté le 2026-08-29 : échec `index.html : numéro de téléphone « 06 12 34 56 78 »` ; annulé.
