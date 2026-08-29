@@ -175,4 +175,13 @@ describe("scripts/check-output — contrôle du HTML généré", () => {
     expect(problems).toHaveLength(1);
     expect(problems[0]).toMatch(/index\.html.*domaine tiers.*cdn\.example\.com/i);
   });
+
+  it("refuse un numéro de téléphone (0X XX XX XX XX ou +33)", () => {
+    for (const phone of ["06 12 34 56 78", "0612345678", "+33 6 12 34 56 78"]) {
+      const problems = checkOutput(outDir(`<p>Appelez le ${phone}</p>`), forbidden);
+      expect(problems, phone).toHaveLength(1);
+      expect(problems[0]).toMatch(/index\.html.*téléphone/i);
+    }
+    expect(checkOutput(outDir("<p>Tests : 1 234 passés en 2026, hash c0612345678d.</p>"), forbidden)).toEqual([]);
+  });
 });
