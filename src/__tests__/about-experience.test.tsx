@@ -92,6 +92,24 @@ describe("lib/content — experience", () => {
     warn.mockRestore();
   });
 
+  it("ignore un bloc dont role, secteur ou description manque ou est vide, et le signale", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const complete = "  - periode: 2026\n    role: Constructeur\n    secteur: Logiciel\n    description: x\n    tags: [a]\n";
+    const dir = tempContentDir({
+      "experience.md": experienceFile(
+        "  - periode: 2020\n    secteur: Logiciel\n    description: x\n" +
+          "  - periode: 2019\n    role: Sans secteur\n    description: x\n" +
+          "  - periode: 2018\n    role: Sans description\n    secteur: Logiciel\n" +
+          '  - periode: 2017\n    role: "  "\n    secteur: Logiciel\n    description: x\n' +
+          complete,
+      ),
+    });
+    expect(loadExperience(dir).blocs.map((b) => b.periode)).toEqual(["2026"]);
+    expect(warn).toHaveBeenCalledTimes(4);
+    expect(warn).toHaveBeenCalledWith(expect.stringMatching(/experience\.md.*2019.*secteur/i));
+    warn.mockRestore();
+  });
+
   it("ordonne les blocs du plus récent au plus ancien", () => {
     const bloc = (periode: string) =>
       `  - periode: "${periode}"\n    role: r\n    secteur: s\n    description: d\n    tags: [t]\n`;
