@@ -222,3 +222,27 @@ describe("Footer", () => {
     expect(screen.getByRole("link", { name: "Mail" })).toHaveAttribute("href", `mailto:${site.email}`);
   });
 });
+
+describe("Métadonnées et anti-flash (app/layout.tsx)", () => {
+  const layout = readFileSync(path.resolve(__dirname, "../../app/layout.tsx"), "utf8");
+
+  it("prend title et description dans site.json (nom et titre)", () => {
+    expect(layout).toMatch(/import site from "[./@]+\/content\/site\.json"/);
+    expect(layout).toMatch(/title:\s*site\.name/);
+    expect(layout).toMatch(/description:\s*site\.title/);
+  });
+
+  it("refuse une description vide", () => {
+    expect(site.title.trim().length).toBeGreaterThan(0);
+  });
+
+  it("relit localStorage.theme dans un script inline avant peinture", () => {
+    const head = layout.slice(layout.indexOf("<head>"), layout.indexOf("</head>"));
+    expect(head).toContain("<script");
+    expect(head).toContain("dangerouslySetInnerHTML");
+    expect(head).toMatch(/localStorage\.getItem\(['"]theme['"]\)/);
+    expect(head).toContain("data-theme");
+    expect(head).toContain("try");
+    expect(head).toContain("catch");
+  });
+});
