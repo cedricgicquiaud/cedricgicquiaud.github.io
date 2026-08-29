@@ -240,6 +240,14 @@ describe("ThemeToggle", () => {
     expect(store.get("theme")).toBe(second);
   });
 
+  it("ne se positionne pas lui-même : aucune classe fixed, top-, right- ou z- (le parent s'en charge)", () => {
+    stubStorage();
+    render(<ThemeToggle />);
+    const classes = screen.getByRole("button").className.split(/\s+/);
+    const positioning = classes.filter((c) => /(^|:)(fixed|top-|right-|z-)/.test(c));
+    expect(positioning).toEqual([]);
+  });
+
   it("relit le choix mémorisé au montage", () => {
     stubStorage({ theme: "dark" });
     render(<ThemeToggle />);
