@@ -54,8 +54,14 @@ function toBloc(b: RawBloc): Bloc {
   };
 }
 
+/** Première année citée dans la période ; 0 si aucune. */
+function startYear(bloc: Bloc): number {
+  return Number(bloc.periode.match(/\d{4}/)?.[0] ?? 0);
+}
+
 export function loadExperience(dir: string): Experience {
   const { data } = readFront(dir, "experience.md");
   const raw = Array.isArray(data.blocs) ? (data.blocs as RawBloc[]) : [];
-  return { titre: data.titre as string, blocs: raw.filter(hasPeriode).map(toBloc) };
+  const blocs = raw.filter(hasPeriode).map(toBloc).sort((a, b) => startYear(b) - startYear(a));
+  return { titre: data.titre as string, blocs };
 }
