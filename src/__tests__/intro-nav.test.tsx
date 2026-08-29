@@ -33,6 +33,18 @@ function stubIntersectionObserver() {
   return state;
 }
 
+function stubViewport(width: number) {
+  vi.stubGlobal("matchMedia", (query: string) => {
+    const min = Number(/min-width:\s*(\d+)px/.exec(query)?.[1] ?? 0);
+    return {
+      matches: width >= min,
+      media: query,
+      addEventListener() {},
+      removeEventListener() {},
+    };
+  });
+}
+
 function renderNavWithSections() {
   return render(
     <>
@@ -107,5 +119,21 @@ describe("Nav", () => {
     expect(active).toHaveClass("active");
     expect(active).toHaveAttribute("aria-current", "location");
     expect(screen.getByRole("link", { name: "À propos" })).not.toHaveClass("active");
+  });
+
+  it("passe en haut et en pleine largeur à 375 px, reste fixe à gauche à 1280 px", () => {
+    stubViewport(375);
+    const narrow = render(<Nav />);
+    const navNarrow = narrow.getByRole("navigation");
+    expect(navNarrow).toHaveAttribute("data-layout", "top");
+    expect(navNarrow).toHaveClass("w-full");
+    const fixedClasses = navNarrow.className.split(/\s+/).filter((c) => /(^|:)fixed$/.test(c));
+    expect(fixedClasses.every((c) => c.startsWith("lg:"))).toBe(true);
+    cleanup();
+
+    stubViewport(1280);
+    const wide = render(<Nav />);
+    expect(wide.getByRole("navigation")).toHaveAttribute("data-layout", "side");
+    expect(wide.getByRole("navigation")).toHaveClass("lg:fixed", "lg:left-0");
   });
 });
