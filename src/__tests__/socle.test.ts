@@ -1,6 +1,7 @@
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
+import { parse as parseYaml } from "yaml";
 
 const root = path.resolve(__dirname, "../..");
 
@@ -93,5 +94,52 @@ describe("dépôt public", () => {
       existsSync(path.join(root, name)),
     );
     expect(leaked).toEqual([]);
+  });
+});
+
+describe("déploiement GitHub Pages", () => {
+  type Step = { name?: string; uses?: string; run?: string };
+  const workflowPath = path.join(root, ".github", "workflows", "deploy.yml");
+
+  function steps(): Step[] {
+    const workflow = parseYaml(readFileSync(workflowPath, "utf8"));
+    return Object.values<{ steps: Step[] }>(workflow.jobs).flatMap((job) => job.steps);
+  }
+
+  it("existe et se déclenche sur push vers main", () => {
+    expect(existsSync(workflowPath)).toBe(true);
+    const workflow = parseYaml(readFileSync(workflowPath, "utf8"));
+    expect(workflow.on.push.branches).toContain("main");
+  });
+
+  it("a les permissions pages: write et id-token: write", () => {
+    const workflow = parseYaml(readFileSync(workflowPath, "utf8"));
+    expect(workflow.permissions).toMatchObject({ pages: "write", "id-token": "write" });
+  });
+
+  it("enchaîne Guard, install, test, build, upload de out/ puis deploy Pages", () => {
+    const all = steps();
+    const indexOf = (pred: (s: Step) => boolean) => all.findIndex(pred);
+    const order = [
+      indexOf((s) => s.name === "Guard"),
+      indexOf((s) => /npm ci/.test(s.run ?? "")),
+      indexOf((s) => /npm test/.test(s.run ?? "")),
+      indexOf((s) => /npm run build/.test(s.run ?? "")),
+      indexOf((s) => /^actions\/upload-pages-artifact@/.test(s.uses ?? "")),
+      indexOf((s) => /^actions\/deploy-pages@/.test(s.uses ?? "")),
+    ];
+    expect(order.every((i) => i >= 0), `étape manquante : ${order}`).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
+    expect(all.some((s) => /^actions\/configure-pages@/.test(s.uses ?? ""))).toBe(true);
+    const upload = all.find((s) => /^actions\/upload-pages-artifact@/.test(s.uses ?? ""));
+    expect((upload as { with?: { path?: string } }).with?.path).toBe("out");
+  });
+
+  it("Guard échoue si PLAN.md, REPOS.md ou AUDIT.md est présent", () => {
+    const guard = steps().find((s) => s.name === "Guard");
+    for (const name of ["PLAN.md", "REPOS.md", "AUDIT.md"]) {
+      expect(guard?.run).toContain(name);
+    }
+    expect(guard?.run).toMatch(/exit 1/);
   });
 });
