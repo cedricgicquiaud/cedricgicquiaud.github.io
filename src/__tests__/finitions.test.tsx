@@ -1,7 +1,7 @@
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import { Portrait } from "../../components/portrait";
 
 const root = path.resolve(__dirname, "../..");
@@ -45,5 +45,36 @@ describe("portrait : repli tant que la photo n'est pas fournie (PFO-12)", () => 
     render(<Portrait />);
     const src = screen.getByRole("img").getAttribute("src");
     expect(src).toBe(onDisk ? "/portrait.jpg" : "/portrait-placeholder.svg");
+  });
+});
+
+describe("image Open Graph (PFO-13) — lit out/ produit par npm run build", () => {
+  const out = path.join(root, "out");
+  const ogPng = path.join(out, "opengraph-image.png");
+
+  /** Le test du socle lance `next build` dans un autre worker : on attend la fin de l'export. */
+  async function waitFor(file: string, ms: number): Promise<boolean> {
+    const deadline = Date.now() + ms;
+    while (!existsSync(file)) {
+      if (Date.now() > deadline) return false;
+      await new Promise((r) => setTimeout(r, 500));
+    }
+    return true;
+  }
+
+  beforeAll(async () => {
+    expect(await waitFor(path.join(out, "index.html"), 150_000), "out/index.html absent").toBe(true);
+    await waitFor(ogPng, 5_000);
+  }, 160_000);
+
+  it("out/opengraph-image.png existe", () => {
+    expect(existsSync(ogPng)).toBe(true);
+  });
+
+  it("out/index.html référence l'image dans og:image", () => {
+    const html = readFileSync(path.join(out, "index.html"), "utf8");
+    const content = html.match(/<meta property="og:image" content="([^"]+)"/)?.[1];
+    expect(content, "balise og:image absente").toBeDefined();
+    expect(content).toMatch(/\/opengraph-image\.png(\?|$)/);
   });
 });
