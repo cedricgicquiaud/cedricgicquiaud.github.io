@@ -208,6 +208,7 @@ describe("ids des sections (attendus par le menu)", () => {
     experience: "experience",
     intro: "intro",
     footer: "contact",
+    projects: "projets",
   };
 
   for (const [file, id] of Object.entries(EXPECTED)) {
@@ -216,4 +217,14 @@ describe("ids des sections (attendus par le menu)", () => {
       expect(source).toContain(`id="${id}"`);
     });
   }
+});
+
+describe("ordre des sections dans app/page.tsx", () => {
+  it("rend <Projects /> entre <Experience /> et <Footer />", () => {
+    const source = readFileSync(path.join(root, "app", "page.tsx"), "utf8");
+    const at = (tag: string) => source.indexOf(tag);
+    expect(at("<Projects />")).toBeGreaterThan(-1);
+    expect(at("<Experience />")).toBeLessThan(at("<Projects />"));
+    expect(at("<Projects />")).toBeLessThan(at("<Footer />"));
+  });
 });
