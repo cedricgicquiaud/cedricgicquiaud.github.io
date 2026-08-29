@@ -7,6 +7,7 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { About } from "../../components/about";
 import { Experience } from "../../components/experience";
 import { loadAbout, loadExperience } from "../../lib/content";
+import { checkOutput } from "../../scripts/check-output.mjs";
 
 afterEach(cleanup);
 
@@ -139,5 +140,21 @@ describe("<Experience />", () => {
       const badges = Array.from(item.querySelectorAll('[data-slot="badge"]')).map((b) => b.textContent);
       expect(badges).toEqual(bloc.tags);
     });
+  });
+});
+
+describe("scripts/check-output — contrôle du HTML généré", () => {
+  const page = (body: string) => `<!doctype html><html><head></head><body>${body}</body></html>`;
+  const outDir = (html: string) => tempContentDir({ "index.html": page(html) });
+  const forbidden = ["finalisé", "Nexus"];
+
+  it("accepte un HTML propre", () => {
+    expect(checkOutput(outDir("<p>Projet livré en 2026.</p>"), forbidden)).toEqual([]);
+  });
+
+  it("refuse un mot interdit, sans tenir compte de la casse", () => {
+    const problems = checkOutput(outDir("<p>Projet FINALISÉ.</p>"), forbidden);
+    expect(problems).toHaveLength(1);
+    expect(problems[0]).toMatch(/index\.html.*mot interdit.*finalisé/i);
   });
 });
