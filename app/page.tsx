@@ -11,7 +11,9 @@ export default function Home() {
   return (
     <>
       <Nav />
-      <ThemeToggle />
+      <div className="fixed right-4 top-16 z-50 lg:top-4">
+        <ThemeToggle />
+      </div>
       <main className="flex flex-1 flex-col">
         <Intro />
         <Portrait />
