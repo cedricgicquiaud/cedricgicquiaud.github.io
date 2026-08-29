@@ -10,5 +10,9 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     include: ["src/__tests__/**/*.test.{ts,tsx}"],
+    // Les fichiers de tests s'exécutent l'un après l'autre : `next build` pose un verrou
+    // et refuse de tourner deux fois en même temps (socle.test.ts et finitions.test.tsx
+    // le lancent tous deux quand `out/` est absent, cas de la CI).
+    fileParallelism: false,
   },
 });
