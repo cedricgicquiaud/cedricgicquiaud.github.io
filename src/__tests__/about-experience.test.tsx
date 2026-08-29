@@ -22,4 +22,14 @@ describe("lib/content — about", () => {
     const dir = tempContentDir({ "about.md": "---\nauteur: x\n---\n\nUn paragraphe.\n" });
     expect(() => loadAbout(dir)).toThrow(/about\.md.*titre/i);
   });
+
+  it("retourne le titre et le corps Markdown rendu en HTML", () => {
+    const dir = tempContentDir({
+      "about.md": "---\ntitre: À propos\n---\n\nPremier **paragraphe**.\n\nDeuxième.\n",
+    });
+    const about = loadAbout(dir);
+    expect(about.titre).toBe("À propos");
+    expect(about.html).toContain("<p>Premier <strong>paragraphe</strong>.</p>");
+    expect(about.html.match(/<p>/g)).toHaveLength(2);
+  });
 });
