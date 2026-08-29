@@ -201,3 +201,19 @@ describe("déploiement GitHub Pages", () => {
     expect(guard?.run).toMatch(/exit 1/);
   });
 });
+
+describe("ids des sections (attendus par le menu)", () => {
+  const EXPECTED: Record<string, string> = {
+    about: "a-propos",
+    experience: "experience",
+    intro: "intro",
+    footer: "contact",
+  };
+
+  for (const [file, id] of Object.entries(EXPECTED)) {
+    it(`components/${file}.tsx porte id="${id}"`, () => {
+      const source = readFileSync(path.join(root, "components", `${file}.tsx`), "utf8");
+      expect(source).toContain(`id="${id}"`);
+    });
+  }
+});
