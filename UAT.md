@@ -101,3 +101,21 @@ Ne rien cocher avant d'avoir constaté.
 - [x] Refus : ajouter un emoji (par exemple une fusée) dans `content/about.md`, lancer `npm run build` : échec avec `emoji « … »`. Annuler. — constaté le 2026-08-29 : échec `index.html : emoji « 🚀 »` ; annulé.
 - [x] Refus : dans `content/about.md`, ajouter `<script src="https://cdn.example.com/x.js"></script>`, lancer `npm run build` : échec avec `domaine tiers « cdn.example.com »`. Annuler. — constaté le 2026-08-29 : échec `index.html : domaine tiers « cdn.example.com »` (signalé 2 fois) ; annulé.
 - [x] Refus : ajouter « 06 12 34 56 78 » dans `content/about.md`, lancer `npm run build` : échec avec `numéro de téléphone « 06 12 34 56 78 »`. Annuler. — constaté le 2026-08-29 : échec `index.html : numéro de téléphone « 06 12 34 56 78 »` ; annulé.
+
+## Livraison 4 — Photo bi-ton et finitions
+
+### PFO-12 — Portrait en bi-ton bleu par CSS
+
+- [x] `npm run dev`, ouvrir la page : sous l'Intro, le cadre du portrait apparaît en bleu (initiales « CG » tant que `public/portrait.jpg` n'est pas fourni). Passer en sombre (`document.documentElement.dataset.theme = "dark"` dans la console) : le cadre reste en bi-ton bleu, sans couleur d'origine, dans les deux thèmes.
+- [ ] Déposer une photo couleur dans `public/portrait.jpg`, relancer `npm run dev` : la photo s'affiche à la place du cadre, en bi-ton bleu (jamais en couleur), en clair comme en sombre. Retirer le fichier ensuite.
+  non testable : l'écriture d'un fichier dans `public/` a été refusée par la permission de l'environnement de test (2026-08-29) ; à jouer à la main.
+- [x] Refus : dans `components/portrait.tsx`, retirer `grayscale` de la `className` de l'image, lancer `npm test` : le test « applique grayscale + contraste à l'image et la fusionne sur un fond bleu token » échoue. Annuler la modification.
+- [x] Refus : renommer `public/portrait-placeholder.svg`, lancer `npm test` : le test « sans public/portrait.jpg, affiche le cadre provisoire SVG » échoue. Remettre le nom.
+
+### PFO-13 — Image Open Graph et recette d'accessibilité
+
+- [x] `npm run build` : `out/opengraph-image.png` existe (1200×630, nom et titre sur fond bleu) et `out/index.html` contient `<meta property="og:image" content="https://cedricgicquiaud.github.io/opengraph-image.png"/>`.
+- [x] Refus : renommer `public/opengraph-image.png`, lancer `npm run build` puis `npm test` : le test « out/opengraph-image.png existe » échoue. Remettre le nom.
+- [x] Mobile : `npm run dev`, largeur de fenêtre 375 px (DevTools, mode appareil) : aucun défilement horizontal (`document.documentElement.scrollWidth <= 375` dans la console), le menu reste en haut.
+- [x] Clavier : depuis le haut de la page, Tab parcourt le menu, le bouton de thème, les liens de l'Intro et du pied de page ; chaque élément reçoit un contour de focus visible, aucun n'est sauté.
+- [x] Contraste sombre : en thème sombre, tout texte visible (titre, sous-titre, liens, texte secondaire) atteint ≥ 4,5:1 sur son fond (DevTools → panneau Accessibilité, ou `npm test` pour les paires de tokens).

@@ -7,8 +7,16 @@ import site from "../content/site.json";
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://cedricgicquiaud.github.io"),
   title: site.name,
   description: site.title,
+  openGraph: {
+    title: site.name,
+    description: site.title,
+    // PNG généré par `node scripts/og-image.mjs` (pas de route next/og : l'export
+    // statique la sort sans extension, donc sans type MIME image sur GitHub Pages).
+    images: [{ url: "/opengraph-image.png", width: 1200, height: 630, alt: site.name }],
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
