@@ -1,53 +1,63 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 
 type Theme = "light" | "dark";
+
+const ATTRIBUTE = "data-theme";
+const STORAGE_KEY = "theme";
+
+function asTheme(value: string | null): Theme | null {
+  return value === "light" || value === "dark" ? value : null;
+}
 
 function systemTheme(): Theme {
   if (typeof matchMedia === "undefined") return "light";
   return matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
 }
 
-function currentTheme(): Theme {
-  const chosen = document.documentElement.getAttribute("data-theme");
-  return chosen === "light" || chosen === "dark" ? chosen : systemTheme();
+function chosenTheme(): Theme | null {
+  return asTheme(document.documentElement.getAttribute(ATTRIBUTE));
 }
 
 function storedTheme(): Theme | null {
   try {
-    const stored = localStorage.getItem("theme");
-    return stored === "light" || stored === "dark" ? stored : null;
+    return asTheme(localStorage.getItem(STORAGE_KEY));
   } catch {
     return null;
   }
 }
 
+const listeners = new Set<() => void>();
+
+function setDomTheme(theme: Theme) {
+  document.documentElement.setAttribute(ATTRIBUTE, theme);
+  listeners.forEach((notify) => notify());
+}
+
 function applyTheme(theme: Theme) {
-  document.documentElement.setAttribute("data-theme", theme);
+  setDomTheme(theme);
   try {
-    localStorage.setItem("theme", theme);
+    localStorage.setItem(STORAGE_KEY, theme);
   } catch {
     // stockage indisponible : le choix vaut pour la session seulement
   }
 }
 
+function subscribe(onChange: () => void) {
+  listeners.add(onChange);
+  return () => listeners.delete(onChange);
+}
+
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme | null>(null);
+  const theme = useSyncExternalStore(subscribe, chosenTheme, () => null);
 
   useEffect(() => {
     const stored = storedTheme();
-    if (stored) {
-      document.documentElement.setAttribute("data-theme", stored);
-      setTheme(stored);
-    }
+    if (stored) setDomTheme(stored);
   }, []);
 
-  const toggle = () => {
-    const next: Theme = currentTheme() === "dark" ? "light" : "dark";
-    applyTheme(next);
-    setTheme(next);
-  };
+  const toggle = () => applyTheme((chosenTheme() ?? systemTheme()) === "dark" ? "light" : "dark");
 
   return (
     <button
