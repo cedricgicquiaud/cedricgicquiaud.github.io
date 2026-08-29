@@ -157,4 +157,10 @@ describe("scripts/check-output — contrôle du HTML généré", () => {
     expect(problems).toHaveLength(1);
     expect(problems[0]).toMatch(/index\.html.*mot interdit.*finalisé/i);
   });
+
+  it("refuse un emoji", () => {
+    const problems = checkOutput(outDir("<p>Livr\u00e9 \u{1F680}</p>"), forbidden);
+    expect(problems).toHaveLength(1);
+    expect(problems[0]).toMatch(/index\.html.*emoji/i);
+  });
 });
