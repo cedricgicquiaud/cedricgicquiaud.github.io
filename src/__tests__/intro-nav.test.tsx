@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { act } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
@@ -12,7 +12,18 @@ import { ThemeToggle } from "../../components/theme-toggle";
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
+  document.documentElement.removeAttribute("data-theme");
 });
+
+function stubStorage(initial: Record<string, string> = {}) {
+  const store = new Map(Object.entries(initial));
+  vi.stubGlobal("localStorage", {
+    getItem: (key: string) => store.get(key) ?? null,
+    setItem: (key: string, value: string) => void store.set(key, value),
+    removeItem: (key: string) => void store.delete(key),
+  });
+  return store;
+}
 
 type ObserverCallback = (entries: Partial<IntersectionObserverEntry>[]) => void;
 
@@ -152,5 +163,25 @@ describe("Nav", () => {
     for (const el of focusable) {
       expect(el.className).toMatch(/focus-visible:/);
     }
+  });
+});
+
+describe("ThemeToggle", () => {
+  it("bascule data-theme sur <html> et mémorise le choix dans localStorage.theme", () => {
+    const store = stubStorage();
+    render(<ThemeToggle />);
+    const button = screen.getByRole("button");
+    expect(document.documentElement.getAttribute("data-theme")).toBeNull();
+
+    fireEvent.click(button);
+    const first = document.documentElement.getAttribute("data-theme");
+    expect(["light", "dark"]).toContain(first);
+    expect(store.get("theme")).toBe(first);
+
+    fireEvent.click(button);
+    const second = document.documentElement.getAttribute("data-theme");
+    expect(["light", "dark"]).toContain(second);
+    expect(second).not.toBe(first);
+    expect(store.get("theme")).toBe(second);
   });
 });
