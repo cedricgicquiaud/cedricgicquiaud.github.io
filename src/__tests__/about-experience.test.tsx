@@ -219,6 +219,13 @@ describe("scripts/check-output — contrôle du HTML généré", () => {
     expect(problems).toContainEqual(expect.stringMatching(/page\.txt.*domaine tiers.*tracker\.example\.net/));
   });
 
+  it("tolère dans les .js les hôtes sans point et les liens de documentation du framework", () => {
+    const dir = tempContentDir({
+      "chunk.js": 'new URL("http://a"); "https://a@b"; "https://react.dev/errors/1"; "https://nextjs.org/docs"; "http://www.w3.org/2000/svg"',
+    });
+    expect(checkOutput(dir, forbidden)).toEqual([]);
+  });
+
   it("n'applique que la règle « domaine tiers » aux .js et .txt", () => {
     const dir = tempContentDir({ "chunk.js": "// zorglub \u{1F680} 06 12 34 56 78" });
     expect(checkOutput(dir, forbidden)).toEqual([]);
