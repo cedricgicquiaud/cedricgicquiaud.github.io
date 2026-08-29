@@ -1,7 +1,7 @@
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { loadAbout, loadExperience } from "../../lib/content";
 
 function tempContentDir(files: Record<string, string> = {}): string {
@@ -59,5 +59,19 @@ describe("lib/content — experience", () => {
         tags: ["TypeScript", "MCP"],
       },
     ]);
+  });
+
+  it("ignore un bloc sans période et le signale par console.warn", () => {
+    const warn = vi.spyOn(console, "warn").mockImplementation(() => {});
+    const dir = tempContentDir({
+      "experience.md": experienceFile(
+        "  - role: Sans date\n    secteur: Logiciel\n    description: x\n    tags: [a]\n" +
+          "  - periode: 2026\n    role: Constructeur\n    secteur: Logiciel\n    description: x\n    tags: [a]\n",
+      ),
+    });
+    const { blocs } = loadExperience(dir);
+    expect(blocs.map((b) => b.role)).toEqual(["Constructeur"]);
+    expect(warn).toHaveBeenCalledWith(expect.stringMatching(/experience\.md.*période.*Sans date/i));
+    warn.mockRestore();
   });
 });
