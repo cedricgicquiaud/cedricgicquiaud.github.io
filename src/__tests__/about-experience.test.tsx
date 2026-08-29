@@ -163,4 +163,16 @@ describe("scripts/check-output — contrôle du HTML généré", () => {
     expect(problems).toHaveLength(1);
     expect(problems[0]).toMatch(/index\.html.*emoji/i);
   });
+
+  it("refuse un domaine tiers, mais accepte Google Fonts, GitHub, LinkedIn et le site", () => {
+    const allowed = outDir(
+      '<link href="https://fonts.googleapis.com/css2"><link href="https://fonts.gstatic.com/x">' +
+        '<a href="https://github.com/cedricgicquiaud">a</a><a href="https://www.linkedin.com/in/x">b</a>' +
+        '<a href="https://cedricgicquiaud.github.io/">c</a>',
+    );
+    expect(checkOutput(allowed, forbidden)).toEqual([]);
+    const problems = checkOutput(outDir('<script src="https://cdn.example.com/x.js"></script>'), forbidden);
+    expect(problems).toHaveLength(1);
+    expect(problems[0]).toMatch(/index\.html.*domaine tiers.*cdn\.example\.com/i);
+  });
 });
