@@ -42,11 +42,16 @@ const ALLOWED_HOSTS = [
   "github.com",
   "linkedin.com",
   "cedricgicquiaud.github.io",
+  // Liens de documentation et espaces de noms cités dans les chunks Next/React (aucune requête réseau).
+  "react.dev",
+  "nextjs.org",
+  "w3.org",
 ];
 const URL_HOST = /https?:\/\/([^/"'\s<>)]+)/g;
 
+// Un hôte sans point (`http://a`, `https://a@b`) est un fragment de code, pas un domaine.
 const isAllowedHost = (host) =>
-  ALLOWED_HOSTS.some((allowed) => host === allowed || host.endsWith(`.${allowed}`));
+  !host.includes(".") || ALLOWED_HOSTS.some((allowed) => host === allowed || host.endsWith(`.${allowed}`));
 
 // 0X XX XX XX XX (espaces facultatifs) ou indicatif +33, non collé à d'autres chiffres ou lettres.
 const PHONE = /(?<![\w])(?:0[1-9](?:\s?\d{2}){4}|\+33)(?![\w])/;
