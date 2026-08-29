@@ -1,13 +1,51 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { act } from "react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import site from "../../content/site.json";
 import { Intro } from "../../components/intro";
 import { Nav } from "../../components/nav";
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.unstubAllGlobals();
+});
+
+type ObserverCallback = (entries: Partial<IntersectionObserverEntry>[]) => void;
+
+function stubIntersectionObserver() {
+  const state: { callback?: ObserverCallback; observed: Element[] } = { observed: [] };
+  vi.stubGlobal(
+    "IntersectionObserver",
+    class {
+      constructor(callback: ObserverCallback) {
+        state.callback = callback;
+      }
+      observe(el: Element) {
+        state.observed.push(el);
+      }
+      disconnect() {}
+      unobserve() {}
+    },
+  );
+  return state;
+}
+
+function renderNavWithSections() {
+  return render(
+    <>
+      <Nav />
+      <main>
+        <section id="a-propos" />
+        <section id="experience" />
+        <section id="projets" />
+      </main>
+      <footer id="contact" />
+    </>,
+  );
+}
 
 describe("Intro", () => {
   it("rend le nom et le titre de site.json", () => {
@@ -54,5 +92,20 @@ describe("Nav", () => {
       ["Projets", "#projets"],
       ["Contact", "#contact"],
     ]);
+  });
+
+  it("souligne la section visible (classe active) au fil du défilement", () => {
+    const observer = stubIntersectionObserver();
+    renderNavWithSections();
+    const ids = observer.observed.map((el) => el.id);
+    expect(ids).toEqual(["a-propos", "experience", "projets", "contact"]);
+
+    const target = document.getElementById("experience")!;
+    act(() => observer.callback!([{ target, isIntersecting: true }]));
+
+    const active = screen.getByRole("link", { name: "Expérience" });
+    expect(active).toHaveClass("active");
+    expect(active).toHaveAttribute("aria-current", "location");
+    expect(screen.getByRole("link", { name: "À propos" })).not.toHaveClass("active");
   });
 });
