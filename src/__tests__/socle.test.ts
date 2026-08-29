@@ -86,3 +86,12 @@ describe("thème", () => {
     expect(offenders.map((f) => path.relative(root, f))).toEqual([]);
   });
 });
+
+describe("dépôt public", () => {
+  it("ne contient ni PLAN.md, ni REPOS.md, ni AUDIT.md à la racine", () => {
+    const leaked = ["PLAN.md", "REPOS.md", "AUDIT.md"].filter((name) =>
+      existsSync(path.join(root, name)),
+    );
+    expect(leaked).toEqual([]);
+  });
+});
