@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render } from "@testing-library/react";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
@@ -183,5 +184,35 @@ describe("scripts/check-output — contrôle du HTML généré", () => {
       expect(problems[0]).toMatch(/index\.html.*téléphone/i);
     }
     expect(checkOutput(outDir("<p>Tests : 1 234 passés en 2026, hash c0612345678d.</p>"), forbidden)).toEqual([]);
+  });
+});
+
+describe("scripts/check-output — branché sur le build", () => {
+  const root = path.resolve(__dirname, "../..");
+  const script = path.join(root, "scripts", "check-output.mjs");
+  const page = (body: string) => `<!doctype html><html><body>${body}</body></html>`;
+
+  it("content/forbidden.txt contient au moins les mots exigés", () => {
+    const words = readFileSync(path.join(root, "content", "forbidden.txt"), "utf8")
+      .split("\n")
+      .map((w) => w.trim())
+      .filter(Boolean);
+    for (const w of ["finalisé", "Nexus", "VOLT", "Aunéa", "Aunea", "Exedigit", "Framaco", "weme", "Greg", "AlanZien"]) {
+      expect(words).toContain(w);
+    }
+  });
+
+  it("npm run build enchaîne next build puis le contrôle de out/", () => {
+    const pkg = JSON.parse(readFileSync(path.join(root, "package.json"), "utf8"));
+    expect(pkg.scripts.build).toBe("next build && node scripts/check-output.mjs");
+  });
+
+  it("en ligne de commande, sort en erreur sur un mot interdit et en succès sur un HTML propre", () => {
+    const bad = tempContentDir({ "index.html": page("<p>Projet finalisé.</p>") });
+    expect(() => execFileSync("node", [script, bad], { cwd: root, stdio: "pipe" })).toThrow(
+      /mot interdit « finalisé »/,
+    );
+    const good = tempContentDir({ "index.html": page("<p>Projet livré.</p>") });
+    expect(() => execFileSync("node", [script, good], { cwd: root, stdio: "pipe" })).not.toThrow();
   });
 });
