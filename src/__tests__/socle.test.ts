@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
@@ -18,7 +19,8 @@ function sourceFiles(dir: string): string[] {
 }
 
 describe("build statique", () => {
-  it("produit out/index.html", () => {
+  it("produit out/index.html", { timeout: 120_000 }, () => {
+    execFileSync("npx", ["next", "build"], { cwd: root, stdio: "pipe" });
     expect(existsSync(path.join(root, "out", "index.html"))).toBe(true);
   });
 
