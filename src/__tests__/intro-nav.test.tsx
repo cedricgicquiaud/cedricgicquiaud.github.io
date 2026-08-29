@@ -5,6 +5,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import site from "../../content/site.json";
 import { Intro } from "../../components/intro";
+import { Nav } from "../../components/nav";
 
 afterEach(cleanup);
 
@@ -39,5 +40,19 @@ describe("site.json", () => {
     const raw = readFileSync(path.resolve(__dirname, "../../content/site.json"), "utf8");
     const phoneLike = /(?:\+?\d[\d .-]{7,}\d)/;
     expect(raw).not.toMatch(phoneLike);
+  });
+});
+
+describe("Nav", () => {
+  it("rend quatre liens vers À propos, Expérience, Projets et Contact", () => {
+    render(<Nav />);
+    const nav = screen.getByRole("navigation");
+    const links = Array.from(nav.querySelectorAll("a")).map((a) => [a.textContent, a.getAttribute("href")]);
+    expect(links).toEqual([
+      ["À propos", "#a-propos"],
+      ["Expérience", "#experience"],
+      ["Projets", "#projets"],
+      ["Contact", "#contact"],
+    ]);
   });
 });
