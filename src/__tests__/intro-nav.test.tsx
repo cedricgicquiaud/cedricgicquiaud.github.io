@@ -29,12 +29,15 @@ function stubStorage(initial: Record<string, string> = {}) {
 type ObserverCallback = (entries: Partial<IntersectionObserverEntry>[]) => void;
 
 function stubIntersectionObserver() {
-  const state: { callback?: ObserverCallback; observed: Element[] } = { observed: [] };
+  const state: { callback?: ObserverCallback; observed: Element[]; options?: IntersectionObserverInit } = {
+    observed: [],
+  };
   vi.stubGlobal(
     "IntersectionObserver",
     class {
-      constructor(callback: ObserverCallback) {
+      constructor(callback: ObserverCallback, options?: IntersectionObserverInit) {
         state.callback = callback;
+        state.options = options;
       }
       observe(el: Element) {
         state.observed.push(el);
@@ -132,6 +135,57 @@ describe("Nav", () => {
     expect(active).toHaveClass("active");
     expect(active).toHaveAttribute("aria-current", "location");
     expect(screen.getByRole("link", { name: "À propos" })).not.toHaveClass("active");
+  });
+
+  it("n'active aucun lien au chargement quand seule l'Intro est à l'écran", () => {
+    const observer = stubIntersectionObserver();
+    renderNavWithSections();
+    const rect = (top: number) => ({ top }) as DOMRectReadOnly;
+    act(() =>
+      observer.callback!(
+        observer.observed.map((target, i) => ({
+          target,
+          isIntersecting: false,
+          boundingClientRect: rect(2000 + i * 24),
+        })),
+      ),
+    );
+    for (const name of ["À propos", "Expérience", "Projets", "Contact"]) {
+      expect(screen.getByRole("link", { name })).not.toHaveAttribute("aria-current");
+    }
+  });
+
+  it("active la section dont le haut est le plus proche du haut de la fenêtre, pas la dernière observée", () => {
+    const observer = stubIntersectionObserver();
+    renderNavWithSections();
+    const rect = (top: number) => ({ top }) as DOMRectReadOnly;
+    const experience = document.getElementById("experience")!;
+    const contact = document.getElementById("contact")!;
+    act(() =>
+      observer.callback!([
+        { target: experience, isIntersecting: true, boundingClientRect: rect(120) },
+        { target: contact, isIntersecting: true, boundingClientRect: rect(600) },
+      ]),
+    );
+    expect(screen.getByRole("link", { name: "Expérience" })).toHaveAttribute("aria-current", "location");
+    expect(screen.getByRole("link", { name: "Contact" })).not.toHaveAttribute("aria-current");
+
+    act(() => observer.callback!([{ target: experience, isIntersecting: false, boundingClientRect: rect(-900) }]));
+    expect(screen.getByRole("link", { name: "Contact" })).toHaveAttribute("aria-current", "location");
+    expect(screen.getByRole("link", { name: "Expérience" })).not.toHaveAttribute("aria-current");
+  });
+
+  it("observe une bande centrale de la fenêtre (rootMargin)", () => {
+    const observer = stubIntersectionObserver();
+    renderNavWithSections();
+    expect(observer.options?.rootMargin).toMatch(/^-\d+% 0px -\d+% 0px$/);
+  });
+
+  it("réserve à droite la place du bouton Thème en disposition top", () => {
+    stubViewport(375);
+    render(<Nav />);
+    const list = screen.getByRole("navigation").querySelector("ul")!;
+    expect(list.className.split(/\s+/)).toContain("pr-24");
   });
 
   it("passe en haut et en pleine largeur à 375 px, reste fixe à gauche à 1280 px", () => {
