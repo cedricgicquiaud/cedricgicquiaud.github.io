@@ -74,4 +74,13 @@ describe("lib/content — experience", () => {
     expect(warn).toHaveBeenCalledWith(expect.stringMatching(/experience\.md.*période.*Sans date/i));
     warn.mockRestore();
   });
+
+  it("ordonne les blocs du plus récent au plus ancien", () => {
+    const bloc = (periode: string) =>
+      `  - periode: "${periode}"\n    role: r\n    secteur: s\n    description: d\n    tags: [t]\n`;
+    const dir = tempContentDir({
+      "experience.md": experienceFile(bloc("2000–2013") + bloc("2026") + bloc("2013–2023")),
+    });
+    expect(loadExperience(dir).blocs.map((b) => b.periode)).toEqual(["2026", "2013–2023", "2000–2013"]);
+  });
 });
