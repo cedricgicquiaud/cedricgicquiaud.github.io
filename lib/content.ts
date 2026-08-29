@@ -65,3 +65,6 @@ export function loadExperience(dir: string): Experience {
   const blocs = raw.filter(hasPeriode).map(toBloc).sort((a, b) => startYear(b) - startYear(a));
   return { titre: data.titre as string, blocs };
 }
+
+/** Dossier `content/` du projet (le build Next et Vitest tournent depuis la racine). */
+export const contentDir = path.join(process.cwd(), "content");
