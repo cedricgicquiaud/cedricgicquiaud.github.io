@@ -1,7 +1,9 @@
-import { existsSync, readFileSync } from "node:fs";
+import { execSync } from "node:child_process";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import os from "node:os";
 import path from "node:path";
 import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, beforeAll, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { Portrait } from "../../components/portrait";
 
 const root = path.resolve(__dirname, "../..");
@@ -40,32 +42,63 @@ describe("portrait : repli tant que la photo n'est pas fournie (PFO-12)", () => 
     expect(screen.getByRole("img").getAttribute("src")).toBe("/portrait.jpg");
   });
 
-  it("par défaut, décide d'après la présence réelle de public/portrait.jpg", () => {
-    const onDisk = existsSync(path.join(root, "public", "portrait.jpg"));
-    render(<Portrait />);
-    const src = screen.getByRole("img").getAttribute("src");
-    expect(src).toBe(onDisk ? "/portrait.jpg" : "/portrait-placeholder.svg");
+  it("par défaut, affiche la photo si public/portrait.jpg existe, sinon le cadre provisoire", () => {
+    // Le composant regarde `process.cwd()/public/portrait.jpg` : on le pointe vers un dossier temporaire.
+    const tmp = mkdtempSync(path.join(os.tmpdir(), "pfo12-"));
+    const cwd = vi.spyOn(process, "cwd").mockReturnValue(tmp);
+    try {
+      render(<Portrait />);
+      expect(screen.getByRole("img").getAttribute("src")).toBe("/portrait-placeholder.svg");
+      cleanup();
+
+      mkdirSync(path.join(tmp, "public"));
+      writeFileSync(path.join(tmp, "public", "portrait.jpg"), "");
+      render(<Portrait />);
+      expect(screen.getByRole("img").getAttribute("src")).toBe("/portrait.jpg");
+    } finally {
+      cwd.mockRestore();
+      rmSync(tmp, { recursive: true, force: true });
+    }
   });
 });
 
 describe("image Open Graph (PFO-13) — lit out/ produit par npm run build", () => {
   const out = path.join(root, "out");
   const ogPng = path.join(out, "opengraph-image.png");
+  const indexHtml = path.join(out, "index.html");
 
-  /** Le test du socle lance `next build` dans un autre worker : on attend la fin de l'export. */
-  async function waitFor(file: string, ms: number): Promise<boolean> {
+  /** Sources dont un changement rend `out/` périmé pour ce test. */
+  const sources = [path.join(root, "public", "opengraph-image.png"), path.join(root, "app", "layout.tsx")];
+
+  function outIsStale(): boolean {
+    if (!existsSync(indexHtml)) return true;
+    const built = statSync(indexHtml).mtimeMs;
+    return sources.some((f) => existsSync(f) && statSync(f).mtimeMs > built);
+  }
+
+  /** `next build` refuse de tourner deux fois en même temps (verrou) : on attend alors la fin de l'autre. */
+  async function waitForFreshOut(since: number, ms: number): Promise<void> {
     const deadline = Date.now() + ms;
-    while (!existsSync(file)) {
-      if (Date.now() > deadline) return false;
+    while (!existsSync(indexHtml) || statSync(indexHtml).mtimeMs < since) {
+      if (Date.now() > deadline) throw new Error("out/index.html non produit par le build concurrent");
       await new Promise((r) => setTimeout(r, 500));
     }
-    return true;
   }
 
   beforeAll(async () => {
-    expect(await waitFor(path.join(out, "index.html"), 150_000), "out/index.html absent").toBe(true);
-    await waitFor(ogPng, 5_000);
-  }, 160_000);
+    if (outIsStale()) {
+      const since = Date.now();
+      try {
+        execSync("npm run build", { cwd: root, stdio: "pipe", timeout: 120_000 });
+      } catch (error) {
+        const { stdout, stderr } = error as { stdout?: Buffer; stderr?: Buffer };
+        const output = `${stdout ?? ""}${stderr ?? ""}${String(error)}`;
+        if (!/Another next build process is already running/.test(output)) throw error;
+        await waitForFreshOut(since, 120_000);
+      }
+    }
+    expect(existsSync(indexHtml), "out/index.html absent après npm run build").toBe(true);
+  }, 250_000);
 
   it("out/opengraph-image.png existe", () => {
     expect(existsSync(ogPng)).toBe(true);
