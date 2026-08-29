@@ -1,8 +1,13 @@
+import "@testing-library/jest-dom/vitest";
+import { cleanup, render } from "@testing-library/react";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { About } from "../../components/about";
 import { loadAbout, loadExperience } from "../../lib/content";
+
+afterEach(cleanup);
 
 const contentDir = path.resolve(__dirname, "../../content");
 
@@ -102,5 +107,15 @@ describe("content/ — textes réels", () => {
       }
       expect(bloc.tags.length, `tags vides (${bloc.periode})`).toBeGreaterThanOrEqual(1);
     }
+  });
+});
+
+describe("<About />", () => {
+  it("rend la section #a-propos avec son titre et au moins trois paragraphes", () => {
+    const { container } = render(<About />);
+    const section = container.querySelector("section#a-propos");
+    expect(section).not.toBeNull();
+    expect(section?.querySelector("h2")).toHaveTextContent("À propos");
+    expect(section?.querySelectorAll("p").length).toBeGreaterThanOrEqual(3);
   });
 });
