@@ -4,6 +4,7 @@ import { Footer } from "@/components/footer";
 import { Intro } from "@/components/intro";
 import { Nav } from "@/components/nav";
 import { Portrait } from "@/components/portrait";
+import { Projects } from "@/components/projects";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function Home() {
@@ -16,6 +17,7 @@ export default function Home() {
         <Portrait />
         <About />
         <Experience />
+        <Projects />
       </main>
       <Footer />
     </>
