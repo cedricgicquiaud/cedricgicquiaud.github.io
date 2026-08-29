@@ -1,5 +1,5 @@
 // Contrôle du HTML généré dans out/ après `next build`.
-// Refuse : mots interdits (content/forbidden.txt), emoji.
+// Refuse : mots interdits (content/forbidden.txt), emoji, domaines tiers hors liste blanche.
 
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
@@ -21,6 +21,18 @@ const wordPattern = (word) =>
 // Émoticônes, symboles et pictogrammes, transports, symboles divers, dingbats, drapeaux.
 const EMOJI = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{1F1E6}-\u{1F1FF}]/u;
 
+const ALLOWED_HOSTS = [
+  "fonts.googleapis.com",
+  "fonts.gstatic.com",
+  "github.com",
+  "linkedin.com",
+  "cedricgicquiaud.github.io",
+];
+const URL_HOST = /https?:\/\/([^/"'\s<>)]+)/g;
+
+const isAllowedHost = (host) =>
+  ALLOWED_HOSTS.some((allowed) => host === allowed || host.endsWith(`.${allowed}`));
+
 /**
  * Parcourt `dir` et renvoie la liste des problèmes (vide si tout est propre).
  * @param {string} dir dossier de sortie du build
@@ -37,6 +49,9 @@ export function checkOutput(dir, forbiddenWords) {
     }
     const emoji = html.match(EMOJI);
     if (emoji) problems.push(`${rel} : emoji « ${emoji[0]} »`);
+    for (const [, host] of html.matchAll(URL_HOST)) {
+      if (!isAllowedHost(host)) problems.push(`${rel} : domaine tiers « ${host} »`);
+    }
   }
   return problems;
 }
