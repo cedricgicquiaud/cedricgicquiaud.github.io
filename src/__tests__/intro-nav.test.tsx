@@ -191,4 +191,21 @@ describe("ThemeToggle", () => {
     expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
     expect(screen.getByRole("button")).toHaveAttribute("aria-pressed", "true");
   });
+
+  it("rend quand même en thème système si localStorage lève une exception", () => {
+    const failing = new Proxy(
+      {},
+      {
+        get() {
+          throw new Error("SecurityError");
+        },
+      },
+    );
+    vi.stubGlobal("localStorage", failing);
+    render(<ThemeToggle />);
+    expect(screen.getByRole("button")).toBeInTheDocument();
+    expect(document.documentElement.getAttribute("data-theme")).toBeNull();
+    fireEvent.click(screen.getByRole("button"));
+    expect(["light", "dark"]).toContain(document.documentElement.getAttribute("data-theme"));
+  });
 });
