@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm test:*)", "Bash(npm run test:*)", "Bash(npm run build:*)", "Bash(npm run sync:*)",
+      "Bash(npm run lint:*)", "Bash(npx vitest:*)", "Bash(npx tsc:*)",
+      "Bash(git status:*)", "Bash(git diff:*)", "Bash(git log:*)", "Bash(git add:*)",
+      "Bash(git commit:*)", "Bash(git push:*)", "Bash(git branch:*)", "Bash(git worktree:*)",
+      "Bash(gh pr:*)", "Bash(ls:*)", "Bash(cat:*)", "Bash(grep:*)", "Bash(find:*)",
+      "Read", "Glob", "Grep",
+      "mcp__linear-gm5__get_issue", "mcp__linear-gm5__list_issues", "mcp__linear-gm5__get_project",
+      "mcp__linear-gm5__list_projects", "mcp__linear-gm5__get_team", "mcp__linear-gm5__list_issue_statuses",
+      "mcp__linear-gm5__list_milestones", "mcp__linear-gm5__get_milestone",
+      "mcp__linear-gm5__save_issue", "mcp__linear-gm5__save_project", "mcp__linear-gm5__save_comment"
+    ]
+  }
+}
