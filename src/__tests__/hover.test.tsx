@@ -29,6 +29,7 @@ function fiche(over: Partial<Fiche["frontmatter"]> = {}): Fiche {
     },
     enBref: { quoi: "Un outil.", chiffre: "120 tests.", lien: "" },
     sections: [],
+    visuel: "/projets/generated/alpha.png",
   };
 }
 
