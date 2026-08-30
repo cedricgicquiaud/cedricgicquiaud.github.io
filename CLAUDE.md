@@ -40,3 +40,17 @@ ni d'employeur. Français seul.
 - Un test qui lance `next build` ne tourne jamais en parallèle d'un autre : `fileParallelism: false` reste en place dans `vitest.config.ts`.
 - Un composant ne se positionne pas lui-même (`fixed`, `top-*`, `right-*`) ; son parent dans `page.tsx` ou `layout.tsx` le place.
 - La variante `dark:` couvre les deux états sombres (système et forcé) ; ne pas la simplifier.
+- Un champ de fiche (`depot`, `demo`, `visuel`) est une URL ou un chemin, ou rien ; la prose va dans le corps de la fiche.
+- Conflit entre livraisons : merge de `main` dans la branche, jamais de rebase ; `UAT.md` se réassemble section par section dans l'ordre des livraisons.
+- Un worktree a son propre `node_modules` (`npm ci`) ; jamais de lien symbolique (Turbopack le refuse).
+- Une section ne se marge ni ne se centre elle-même ; le conteneur de page (`app/page.tsx`) le fait.
+- Badges et puces : `whitespace-normal`, conteneur `min-w-0` ; vérification à 375 px avant d'ouvrir la PR.
+- `CLAUDE.md` n'est jamais commité depuis un worktree de livraison (`next dev` y réécrit un bloc) : `git checkout -- CLAUDE.md` avant de commiter.
+
+## Décisions produit (30/08)
+
+- Titre court sous le nom : « Développeur d'agents IA ».
+- Portrait dans la colonne gauche, sous le nom (pas en tête de la colonne droite).
+- Pied de page pleine largeur sous les deux colonnes.
+- Pages fiche : pas de bouton de thème en desktop.
+- Quadrillage `bg-grid` sur toute la page.
