@@ -1,3 +1,4 @@
+import { execFileSync } from "node:child_process";
 import { mkdtempSync, readdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -105,5 +106,32 @@ describe("sync-fiches — contrôle du frontmatter", () => {
   it("refuse un « ordre » qui n'est pas un entier", () => {
     const src = tempDir({ "alpha.md": fiche({ ordre: "premier" }) });
     expect(() => syncFiches(src, tempDir())).toThrow(/^alpha\.md : .*ordre/);
+  });
+});
+
+describe("sync-fiches — ligne de commande", () => {
+  const script = path.resolve(__dirname, "../../scripts/sync-fiches.mjs");
+  const run = (src: string, dest: string) =>
+    execFileSync("node", [script, dest], { env: { ...process.env, FICHES_DIR: src }, encoding: "utf8" });
+
+  it("lit FICHES_DIR et affiche « N fiches synchronisées »", () => {
+    const src = tempDir({ "alpha.md": fiche({ ordre: 1 }), "beta.md": fiche({ nom: "Beta", ordre: 2 }) });
+    const dest = tempDir();
+    expect(run(src, dest).trim()).toBe("2 fiches synchronisées");
+    expect(readdirSync(dest).sort()).toEqual(["alpha.md", "beta.md"]);
+  });
+
+  it("sort en code 1 avec « <fichier> : <raison> » sur une fiche non conforme", () => {
+    const src = tempDir({ "alpha.md": fiche({ ordre: 1, statut: undefined }) });
+    const dest = tempDir();
+    let error: { status?: number; stderr?: string } | undefined;
+    try {
+      run(src, dest);
+    } catch (e) {
+      error = e as { status?: number; stderr?: string };
+    }
+    expect(error?.status).toBe(1);
+    expect(error?.stderr).toMatch(/alpha\.md : .*statut/);
+    expect(readdirSync(dest)).toEqual([]);
   });
 });
