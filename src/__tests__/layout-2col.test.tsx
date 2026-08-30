@@ -158,7 +158,15 @@ describe("Layout sans menu du haut (PFO-29, PFO-30)", () => {
     expect(body).toContain("<Footer />");
     const wrapper = body.match(/<div className="([^"]*)">\s*<ThemeToggle \/>/);
     expect(wrapper, "conteneur du bouton Thème absent").not.toBeNull();
-    expect(wrapper![1].split(/\s+/)).toEqual(["fixed", "right-4", "top-4", "z-50", "lg:hidden"]);
+    expect(wrapper![1].split(/\s+/)).toEqual([
+      "fixed",
+      "right-4",
+      "top-4",
+      "z-50",
+      "rounded-md",
+      "bg-background",
+      "lg:hidden",
+    ]);
     expect(body.indexOf("{children}")).toBeLessThan(body.indexOf("<Footer />"));
   });
 });
