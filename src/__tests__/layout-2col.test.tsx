@@ -3,6 +3,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import Home from "../../app/page";
 import { Intro } from "../../components/intro";
+import { Nav } from "../../components/nav";
 
 afterEach(() => {
   cleanup();
@@ -41,5 +42,22 @@ describe("Intro en bloc classique sous 1024 px (PFO-28)", () => {
     const wrapper = nav.closest(".hidden");
     expect(wrapper, "le menu n'est pas dans un conteneur hidden lg:block").not.toBeNull();
     expect(classesOf(wrapper)).toEqual(expect.arrayContaining(["hidden", "lg:block"]));
+  });
+});
+
+describe("Menu latéral à traits (PFO-29)", () => {
+  it("rend trois entrées À propos, Expérience, Projets, sans Contact, chacune précédée d'un trait", () => {
+    render(<Nav />);
+    const links = Array.from(screen.getByRole("navigation").querySelectorAll("a"));
+    expect(links.map((a) => [a.textContent?.trim(), a.getAttribute("href")])).toEqual([
+      ["À propos", "/#a-propos"],
+      ["Expérience", "/#experience"],
+      ["Projets", "/#projets"],
+    ]);
+    for (const link of links) {
+      const dash = link.querySelector("span");
+      expect(dash, `trait absent sur ${link.textContent}`).not.toBeNull();
+      expect(classesOf(dash)).toEqual(expect.arrayContaining(["h-px", "w-8"]));
+    }
   });
 });
