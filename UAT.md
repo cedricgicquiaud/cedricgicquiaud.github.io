@@ -184,8 +184,8 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 
 ### PFO-32 — Surbrillance au survol et au focus
 
-- [ ] `npm run dev`, ouvrir `http://localhost:3000/#projets` à 1280 px de large : survoler une carte : fond léger, bordure visible, titre en couleur d'accent ; les six autres cartes s'estompent (opacité réduite). Même comportement sur `#experience` en survolant une expérience.
+- [ ] `npm run dev`, ouvrir `http://localhost:3000/#projets` à 1280 px de large : survoler une carte : fond léger, bordure visible, titre en couleur d'accent ; les autres cartes s'estompent (opacité réduite). Même comportement sur `#experience` en survolant une expérience.
 - [ ] Au repos (aucun survol), les cartes n'ont plus de bordure visible ; elle apparaît au survol seulement.
 - [ ] Clavier : Tab jusqu'au titre ou au lien « Code » d'une carte : la carte prend le même fond, la même bordure et le même titre accentué. Refus : les cartes voisines ne s'estompent pas au focus (lecture au clavier non gênée).
-- [ ] Refus : à 375 px (outils de développement, mode mobile, écran tactile) : survoler ou toucher une carte n'estompe aucune voisine ; aucun défilement horizontal ; les liens « Code » et « Démo » de la carte SLICE restent deux liens distincts et cliquables (la carte entière n'est pas un lien).
+- [ ] Refus : à 375 px (outils de développement, mode mobile, écran tactile) : survoler ou toucher une carte n'estompe aucune voisine ; aucun défilement horizontal ; le lien « Code » de la carte SLICE reste un lien à part entière et cliquable (la carte entière n'est pas un lien ; aucune fiche n'a de démo aujourd'hui).
 - [ ] Sombre (`document.documentElement.dataset.theme = "dark"`) : fond et bordure de survol lisibles, titre accentué visible.
