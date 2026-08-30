@@ -216,7 +216,7 @@ describe("ThemeToggle", () => {
     stubStorage({ theme: "dark" });
     render(<ThemeToggle />);
     expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
-    expect(screen.getByRole("button")).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button")).toHaveAttribute("aria-label", "Passer en thème clair");
   });
 
   it("rend quand même en thème système si localStorage lève une exception", () => {
