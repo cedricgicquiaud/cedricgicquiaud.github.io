@@ -54,3 +54,25 @@ describe("Tailles du modèle : titres de section (PFO-47)", () => {
     }
   });
 });
+
+describe("Tailles du modèle : corps des sections (PFO-47)", () => {
+  it("le corps d'À propos, les descriptions d'Expérience et le « quoi » des cartes sont en text-base leading-relaxed", () => {
+    const { container } = render(
+      <>
+        <About />
+        <Experience />
+        <Projects />
+      </>,
+    );
+    const aboutBody = container.querySelector("section#a-propos h2 + div")!;
+    expect(classesOf(aboutBody)).toEqual(expect.arrayContaining(["text-base", "leading-relaxed"]));
+
+    const experienceBodies = container.querySelectorAll("section#experience article h3 ~ p.leading-relaxed");
+    expect(experienceBodies.length).toBeGreaterThan(0);
+    for (const p of experienceBodies) expect(classesOf(p)).toContain("text-base");
+
+    const cardBodies = container.querySelectorAll("section#projets article h3 + p");
+    expect(cardBodies.length).toBeGreaterThan(0);
+    for (const p of cardBodies) expect(classesOf(p)).toEqual(expect.arrayContaining(["text-base", "leading-relaxed"]));
+  });
+});
