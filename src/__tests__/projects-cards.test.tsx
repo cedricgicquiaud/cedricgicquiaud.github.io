@@ -155,3 +155,27 @@ describe("Projects — ordre", () => {
     expect(titres).toEqual(["MID — titre", "ZED — titre", "AAA — titre"]);
   });
 });
+
+describe("Projects — largeur 375 px (classes seulement, jsdom ne mesure pas)", () => {
+  const LONG = "en cours (méthode rodée sur un bac à sable et branchée sur deux projets réels ; dépôt public pas encore ouvert)";
+
+  it("le badge statut peut passer à la ligne : whitespace-normal, jamais whitespace-nowrap ni h-5", () => {
+    render(<ProjectCard fiche={fiche({ statut: LONG })} />);
+    const badge = screen.getByText(LONG);
+    expect(badge).toHaveClass("whitespace-normal", "h-auto");
+    expect(badge).not.toHaveClass("whitespace-nowrap");
+    expect(badge).not.toHaveClass("h-5");
+  });
+
+  it("le titre coupe les mots longs (break-words)", () => {
+    render(<ProjectCard fiche={fiche()} />);
+    expect(screen.getByRole("heading", { level: 3 })).toHaveClass("break-words");
+  });
+
+  it("la grille borne sa colonne à minmax(0,1fr) et ses enfants ont min-w-0", () => {
+    const { container } = render(<Projects fiches={septFiches()} />);
+    const ol = container.querySelector("ol");
+    expect(ol).toHaveClass("grid-cols-[minmax(0,1fr)]");
+    for (const li of Array.from(ol!.children)) expect(li).toHaveClass("min-w-0");
+  });
+});
