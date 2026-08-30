@@ -223,3 +223,11 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 - [ ] Clavier : Tab jusqu'au titre ou au lien « Code » d'une carte : la carte prend le même fond, la même bordure et le même titre accentué. Refus : les cartes voisines ne s'estompent pas au focus (lecture au clavier non gênée).
 - [ ] Refus : à 375 px (outils de développement, mode mobile, écran tactile) : survoler ou toucher une carte n'estompe aucune voisine ; aucun défilement horizontal ; le lien « Code » de la carte SLICE reste un lien à part entière et cliquable (la carte entière n'est pas un lien ; aucune fiche n'a de démo aujourd'hui).
 - [ ] Sombre (`document.documentElement.dataset.theme = "dark"`) : fond et bordure de survol lisibles, titre accentué visible.
+
+## Livraison 11 — Police Inter
+
+### PFO-33 — Police Inter sur tout le site
+
+- [ ] `npm run dev`, ouvrir `http://localhost:3000/` : dans la console, `getComputedStyle(document.body).fontFamily` commence par `Inter` ; idem pour `getComputedStyle(document.querySelector('h1')).fontFamily` et pour un `h2`. Visuellement, le nom en haut à gauche et les titres de section sont en Inter, graisse forte, lettres légèrement resserrées ; le texte courant est en graisse normale.
+- [ ] Refus : onglet Réseau (Network) de Chrome, filtre « Font », recharger : toutes les polices sont servies depuis `localhost:3000/_next/static/media/*.woff2` ; aucune requête vers `fonts.googleapis.com` ni `fonts.gstatic.com`. Même vérification sur `/projets/slice/`.
+- [ ] Refus : `npm run build` puis `grep -c "fonts.googleapis.com\|fonts.gstatic.com" out/index.html` affiche `0`.
