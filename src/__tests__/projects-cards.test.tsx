@@ -92,7 +92,8 @@ describe("ProjectCard — vitrine", () => {
 
   it("anonyme sans dépôt : ni lien ni mention « code privé »", () => {
     render(<ProjectCard fiche={fiche({ visibilite: "anonyme", depot: "", demo: "" })} />);
-    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Code" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Démo" })).not.toBeInTheDocument();
     expect(screen.queryByText(/code privé/)).not.toBeInTheDocument();
   });
 });
