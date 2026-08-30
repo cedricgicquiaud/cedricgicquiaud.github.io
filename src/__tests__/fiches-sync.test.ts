@@ -175,4 +175,18 @@ describe("lib/fiches — loadFiches", () => {
       lien: "Code public, démo à venir.",
     });
   });
+
+  it("renvoie les cinq sections du gabarit dans l'ordre, en HTML", () => {
+    const [f] = loadFiches(tempDir({ "alpha.md": fiche({ ordre: 1 }) }));
+    expect(f.sections.map((s) => [s.id, s.titre])).toEqual([
+      ["probleme", "Problème"],
+      ["construit", "Ce que j'ai construit"],
+      ["preuves", "Preuves"],
+      ["appris", "Ce que j'en ai appris"],
+      ["artefacts", "Artefacts"],
+    ]);
+    expect(f.sections[0].html).toBe("<p>Le problème.</p>");
+    expect(f.sections[4].html).toContain('<a href="https://github.com/x/alpha">');
+    expect(f.sections[4].html).not.toContain("<h2");
+  });
 });
