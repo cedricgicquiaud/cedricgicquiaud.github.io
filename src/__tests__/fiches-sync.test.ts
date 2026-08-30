@@ -68,6 +68,13 @@ describe("sync-fiches — copie", () => {
     expect(readdirSync(dest).sort()).toEqual(["alpha.md", "beta.md"]);
   });
 
+  it("purge de la destination les .md qui n'existent plus à la source", () => {
+    const src = tempDir({ "alpha.md": fiche({ ordre: 1 }) });
+    const dest = tempDir({ "vieille.md": "# Vieille\n", "notes.txt": "x" });
+    expect(syncFiches(src, dest)).toBe(1);
+    expect(readdirSync(dest).sort()).toEqual(["alpha.md", "notes.txt"]);
+  });
+
   it("ne copie jamais PLAN.md, REPOS.md ni AUDIT.md", () => {
     const src = tempDir({
       "alpha.md": fiche({ ordre: 1 }),
@@ -156,10 +163,34 @@ describe("lib/fiches — loadFiches", () => {
       stack: ["TypeScript", "Vitest"],
       visibilite: "public",
       depot: "https://github.com/x/alpha",
+      depotNote: "https://github.com/x/alpha",
       demo: "https://alpha.example",
+      demoNote: "https://alpha.example",
       ordre: 1,
     });
     expect(fiches[2].frontmatter.ordre).toBeUndefined();
+  });
+
+  it("découpe stack sur les virgules hors parenthèses seulement", () => {
+    const dir = tempDir({
+      "alpha.md": fiche({ ordre: 1, stack: "Linear (tableau de bord, API GraphQL + MCP), GitHub (branches, PR), Vitest" }),
+    });
+    expect(loadFiches(dir)[0].frontmatter.stack).toEqual([
+      "Linear (tableau de bord, API GraphQL + MCP)",
+      "GitHub (branches, PR)",
+      "Vitest",
+    ]);
+  });
+
+  it("ne garde depot et demo que s'ils sont des URL http(s) ; la prose va dans depotNote / demoNote", () => {
+    const dir = tempDir({
+      "alpha.md": fiche({ ordre: 1, depot: "à venir (nouveau dépôt public)", demo: "https://alpha.example" }),
+    });
+    const { frontmatter } = loadFiches(dir)[0];
+    expect(frontmatter.depot).toBe("");
+    expect(frontmatter.depotNote).toBe("à venir (nouveau dépôt public)");
+    expect(frontmatter.demo).toBe("https://alpha.example");
+    expect(frontmatter.demoNote).toBe("https://alpha.example");
   });
 
   it("découpe le bloc En bref en trois phrases : quoi, chiffre, lien", () => {
