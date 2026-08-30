@@ -73,7 +73,7 @@ describe("Ancres et ids de section depuis site.json (PFO-40)", () => {
       read(path.join("components", name))
         .split("\n")
         .forEach((line, i) => {
-          if (line.includes("site.json")) return;
+          if (/^\s*import\b.*site\.json/.test(line)) return;
           if (literal.test(line)) offenders.push(`${name}:${i + 1}: ${line.trim()}`);
         });
     }
