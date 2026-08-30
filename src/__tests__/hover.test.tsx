@@ -70,3 +70,13 @@ describe("ProjectCard — survol", () => {
     expect(within(card).getByRole("heading", { level: 3 })).toHaveClass("group-hover/item:text-primary");
   });
 });
+
+describe("ProjectCard — focus clavier", () => {
+  it("produit le même état quand un lien de la carte a le focus, sans estomper les voisines", () => {
+    render(<ProjectCard fiche={fiche()} />);
+    const card = screen.getByRole("article");
+    expect(card).toHaveClass("focus-within:bg-accent/50", "focus-within:border-border");
+    expect(card.className).not.toMatch(/focus-within[^ ]*opacity/);
+    expect(within(card).getByRole("heading", { level: 3 })).toHaveClass("group-focus-within/item:text-primary");
+  });
+});
