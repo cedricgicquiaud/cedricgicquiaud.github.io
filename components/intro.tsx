@@ -1,6 +1,5 @@
 import site from "../content/site.json";
 import { Nav } from "./nav";
-import { Portrait } from "./portrait";
 import { SocialIcons } from "./social-icons";
 import { ThemeToggle } from "./theme-toggle";
 
@@ -12,9 +11,6 @@ export function Intro() {
     <section id="intro" className="flex flex-1 flex-col justify-between gap-12">
       <div>
         <h1 className="text-5xl font-bold tracking-tight">{site.name}</h1>
-        <div className="mt-6">
-          <Portrait size="sm" />
-        </div>
         <h2 className="mt-3 text-xl font-medium tracking-tight">{SHORT_TITLE}</h2>
         <p className="mt-4 max-w-xs text-base text-muted-foreground">{site.title}</p>
         <div className="mt-16 hidden lg:block">
