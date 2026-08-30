@@ -8,21 +8,24 @@ const haloStyle = {
   background: "radial-gradient(600px at var(--x) var(--y), var(--spotlight), transparent 80%)",
 } as CSSProperties;
 
+function matches(query: string): boolean {
+  return typeof matchMedia !== "undefined" && matchMedia(query).matches;
+}
+
 /** Vrai sur un appareil sans survol ou au pointeur grossier (tactile). */
 function isTouchOnly(): boolean {
-  if (typeof matchMedia === "undefined") return false;
-  return matchMedia("(hover: none)").matches || matchMedia("(pointer: coarse)").matches;
+  return matches("(hover: none)") || matches("(pointer: coarse)");
 }
 
 function prefersReducedMotion(): boolean {
-  if (typeof matchMedia === "undefined") return false;
-  return matchMedia("(prefers-reduced-motion: reduce)").matches;
+  return matches("(prefers-reduced-motion: reduce)");
 }
 
 export function Spotlight() {
   const [mounted, setMounted] = useState(false);
   const halo = useRef<HTMLDivElement>(null);
 
+  // Rien côté serveur ni au tactile : le calque n'apparaît qu'après montage.
   useEffect(() => {
     setMounted(!isTouchOnly());
   }, []);
