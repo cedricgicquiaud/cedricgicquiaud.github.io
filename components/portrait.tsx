@@ -14,8 +14,8 @@ type Props = { photoExists?: boolean };
 
 export function Portrait({ photoExists = hasPortraitPhoto() }: Props) {
   return (
-    <section id="portrait" className="px-6 py-16 lg:px-16">
-      <figure className="mx-auto w-full max-w-3xl">
+    <section id="portrait" className="py-16">
+      <figure className="w-full">
         <div className="w-40 overflow-hidden rounded-lg bg-primary sm:w-48">
           <img
             src={photoExists ? PHOTO : PLACEHOLDER}
