@@ -3,6 +3,7 @@ import { mkdtempSync, readdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
+import { loadFiches } from "../../lib/fiches";
 import { syncFiches } from "../../scripts/sync-fiches.mjs";
 
 /** Une fiche factice complète ; `front` surcharge le frontmatter, `body` le corps. */
@@ -133,5 +134,31 @@ describe("sync-fiches — ligne de commande", () => {
     expect(error?.status).toBe(1);
     expect(error?.stderr).toMatch(/alpha\.md : .*statut/);
     expect(readdirSync(dest)).toEqual([]);
+  });
+});
+
+describe("lib/fiches — loadFiches", () => {
+  it("trie par ordre puis nom, les fiches sans ordre en dernier, avec slug, titre et frontmatter typé", () => {
+    const dir = tempDir({
+      "zeta.md": fiche({ nom: "Zeta", ordre: 2 }),
+      "alpha.md": fiche({ nom: "Alpha", ordre: 1 }),
+      "mu.md": fiche({ nom: "Mu", ordre: undefined }),
+      "kappa.md": fiche({ nom: "Kappa", ordre: undefined }),
+    });
+    const fiches = loadFiches(dir);
+    expect(fiches.map((f) => f.slug)).toEqual(["alpha", "zeta", "kappa", "mu"]);
+    expect(fiches[0].titre).toBe("Alpha — un titre");
+    expect(fiches[0].frontmatter).toEqual({
+      nom: "Alpha",
+      statut: "en cours",
+      periode: "2026",
+      role: "développement",
+      stack: ["TypeScript", "Vitest"],
+      visibilite: "public",
+      depot: "https://github.com/x/alpha",
+      demo: "https://alpha.example",
+      ordre: 1,
+    });
+    expect(fiches[2].frontmatter.ordre).toBeUndefined();
   });
 });
