@@ -231,3 +231,14 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 - [ ] `npm run dev`, ouvrir `http://localhost:3000/` : dans la console, `getComputedStyle(document.body).fontFamily` commence par `Inter` ; idem pour `getComputedStyle(document.querySelector('h1')).fontFamily` et pour un `h2`. Visuellement, le nom en haut à gauche et les titres de section sont en Inter, graisse forte, lettres légèrement resserrées ; le texte courant est en graisse normale.
 - [ ] Refus : onglet Réseau (Network) de Chrome, filtre « Font », recharger : toutes les polices sont servies depuis `localhost:3000/_next/static/media/*.woff2` ; aucune requête vers `fonts.googleapis.com` ni `fonts.gstatic.com`. Même vérification sur `/projets/slice/`.
 - [ ] Refus : `npm run build` puis `grep -c "fonts.googleapis.com\|fonts.gstatic.com" out/index.html` affiche `0`.
+
+## Livraison 12 — Logos des réseaux
+
+### PFO-34 — Logos SVG pour GitHub, LinkedIn et Mail
+
+- [ ] `npm run dev`, ouvrir `http://localhost:3000/` à 1280 px de large : en bas de la colonne de gauche, à côté du bouton Thème, trois logos (GitHub, LinkedIn, enveloppe) et aucun mot « GitHub », « LinkedIn » ou « Mail » visible. Cliquer GitHub ouvre `https://github.com/cedricgicquiaud` dans un nouvel onglet ; LinkedIn ouvre `https://www.linkedin.com/in/cedric-gicquiaud/` dans un nouvel onglet ; survoler l'enveloppe montre une URL `mailto:cedric.gicquiaud@gmail.com` (ne pas cliquer si le client mail ne doit pas s'ouvrir).
+- [ ] Survoler un logo : il passe de gris atténué à la couleur du texte, et l'infobulle (attribut `title`) affiche « GitHub », « LinkedIn » ou « Mail ». Refus : un logo qui ne change pas de couleur au survol.
+- [ ] Clavier : Tab depuis le haut de page jusqu'aux logos : chaque logo montre un contour de focus visible. Refus : un logo atteint par Tab sans contour visible.
+- [ ] Lecteur d'écran (VoiceOver, Cmd+F5) : les trois liens sont annoncés « GitHub, lien », « LinkedIn, lien », « Mail, lien ». Refus : un lien annoncé « lien » sans nom, ou une image annoncée en plus du lien.
+- [ ] À 375 px (mode mobile) : les trois logos sont visibles sous la phrase d'intro, sans bouton Thème à côté (il reste fixe en haut à droite) ; aucun défilement horizontal.
+- [ ] Sombre (`document.documentElement.dataset.theme = "dark"`) : logos lisibles au repos et au survol.
