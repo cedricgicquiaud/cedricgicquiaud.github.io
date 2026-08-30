@@ -38,4 +38,12 @@ describe("halo souris (PFO-31) — suivi du pointeur", () => {
     expect(halo.style.getPropertyValue("--x")).toBe("120px");
     expect(halo.style.getPropertyValue("--y")).toBe("340px");
   });
+
+  it("un pointermove tactile laisse le halo en place", () => {
+    const { container } = render(<Spotlight />);
+    const halo = container.querySelector("div")!;
+    movePointer("touch", 120, 340);
+    expect(halo.style.getPropertyValue("--x")).toBe("50%");
+    expect(halo.style.getPropertyValue("--y")).toBe("50%");
+  });
 });
