@@ -3,8 +3,9 @@ import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, writeFil
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { inflateSync } from "node:zlib";
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
 import { token } from "../../scripts/theme-tokens.mjs";
+import { ensureBuild } from "./helpers/build";
 
 const root = path.resolve(__dirname, "../..");
 const source = (rel: string) => readFileSync(path.join(root, rel), "utf8");
@@ -137,5 +138,18 @@ describe("Thème sombre seul : images générées (PFO-55)", () => {
     execFileSync("node", [path.join(root, "scripts", "project-visuals.mjs"), fiches, pub], { cwd: root, stdio: "pipe" });
     expect(token("background")).toBe("#0b1220");
     expect(cornerPixel(path.join(pub, "projets", "generated", "alpha.png"))).toBe("#0b1220");
+  });
+});
+
+describe("Sortie du build : sombre seul, sans pied de page (PFO-54, PFO-55)", () => {
+  beforeAll(() => ensureBuild(["app/layout.tsx", "app/globals.css", "content/site.json"]), 250_000);
+
+  it("out/index.html ne porte ni data-theme, ni localStorage, ni bouton de thème, ni <footer>", () => {
+    const html = readFileSync(path.join(root, "out", "index.html"), "utf8");
+    expect(html).not.toContain("data-theme");
+    expect(html).not.toContain("localStorage");
+    expect(html).not.toContain("Passer en thème");
+    expect(html).not.toContain("<footer");
+    expect(html).not.toContain("suppressHydrationWarning");
   });
 });
