@@ -203,3 +203,13 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 - [ ] À 375 px : le bouton « Thème » est en haut à droite (fixe), les liens GitHub / LinkedIn / Mail sont sous la phrase de présentation, sans second bouton « Thème » à côté d'eux.
 - [ ] Cliquer « Thème » à 1280 px, recharger, puis réduire à 375 px : le thème choisi est conservé dans les deux largeurs (`localStorage.theme` vaut `dark` ou `light`, `document.documentElement.dataset.theme` pareil).
 - [ ] Refus : sur `/projets/slice/` à 1280 px, aucun bouton « Thème » n'est visible (voir « Décisions à prendre » de la PR) ; à 375 px, il est en haut à droite.
+
+## Livraison 10 — Surbrillance des expériences et projets
+
+### PFO-32 — Surbrillance au survol et au focus
+
+- [ ] `npm run dev`, ouvrir `http://localhost:3000/#projets` à 1280 px de large : survoler une carte : fond léger, bordure visible, titre en couleur d'accent ; les autres cartes s'estompent (opacité réduite). Même comportement sur `#experience` en survolant une expérience.
+- [ ] Au repos (aucun survol), les cartes n'ont plus de bordure visible ; elle apparaît au survol seulement.
+- [ ] Clavier : Tab jusqu'au titre ou au lien « Code » d'une carte : la carte prend le même fond, la même bordure et le même titre accentué. Refus : les cartes voisines ne s'estompent pas au focus (lecture au clavier non gênée).
+- [ ] Refus : à 375 px (outils de développement, mode mobile, écran tactile) : survoler ou toucher une carte n'estompe aucune voisine ; aucun défilement horizontal ; le lien « Code » de la carte SLICE reste un lien à part entière et cliquable (la carte entière n'est pas un lien ; aucune fiche n'a de démo aujourd'hui).
+- [ ] Sombre (`document.documentElement.dataset.theme = "dark"`) : fond et bordure de survol lisibles, titre accentué visible.
