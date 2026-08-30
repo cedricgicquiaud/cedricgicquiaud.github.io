@@ -84,6 +84,12 @@ describe("Ancres et ids de section depuis site.json (PFO-40)", () => {
 describe("Serveur de dev par PID (PFO-45)", () => {
   const script = path.join(root, "scripts", "dev-serve.sh");
 
+  it("npm test ne lance pas le e2e du script ; npm run test:e2e le lance seul avec DEV_SERVE_E2E=1", () => {
+    const scripts = JSON.parse(read("package.json")).scripts;
+    expect(scripts.test).toBe("vitest run");
+    expect(scripts["test:e2e"]).toBe("DEV_SERVE_E2E=1 vitest run src/__tests__/isolees-c.test.tsx");
+  });
+
   it("scripts/dev-serve.sh existe, est exécutable et passe bash -n", () => {
     expect(existsSync(script)).toBe(true);
     expect(statSync(script).mode & 0o111, "bit exécutable absent").not.toBe(0);
@@ -149,7 +155,7 @@ describe("Serveur de dev par PID (PFO-45)", () => {
         return null;
       }
     };
-    // Sans DEV_SERVE_E2E=1 (posé par `npm test`), le test est sauté : il lance un vrai `next dev`.
+    // Sans DEV_SERVE_E2E=1 (posé par `npm run test:e2e`, local seulement), le test est sauté : il lance un vrai `next dev`.
     const e2e = process.env.DEV_SERVE_E2E === "1" ? it : it.skip;
     afterAll(() => {
       try {
