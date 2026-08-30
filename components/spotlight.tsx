@@ -21,7 +21,7 @@ export function Spotlight() {
     // Écrit directement sur l'élément : aucun re-render React à chaque mouvement.
     const follow = (event: PointerEvent) => {
       const el = halo.current;
-      if (!el) return;
+      if (!el || event.pointerType !== "mouse") return;
       el.style.setProperty("--x", `${event.clientX}px`);
       el.style.setProperty("--y", `${event.clientY}px`);
     };
