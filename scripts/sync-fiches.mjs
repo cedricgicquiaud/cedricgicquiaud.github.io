@@ -11,15 +11,19 @@ const VISIBILITES = ["public", "vitrine", "anonyme"];
 
 const isText = (v) => typeof v === "string" && v.trim() !== "";
 
+// Le titre (`# …`) suivi, après des lignes vides, du bloc « **En bref.** ».
+const EN_BREF_AFTER_TITLE = /^# [^\n]+\n\s*\*\*En bref\.\*\*/m;
+
 /** Renvoie la raison du refus d'une fiche, ou `null` si elle est conforme. */
 function problemOf(text) {
-  const { data } = matter(text);
+  const { data, content } = matter(text);
   for (const champ of REQUIRED) {
     if (!isText(data[champ])) return `frontmatter incomplet, champ « ${champ} » requis`;
   }
   if (!VISIBILITES.includes(data.visibilite)) {
     return `visibilite « ${data.visibilite} » inconnue (attendu : ${VISIBILITES.join(" | ")})`;
   }
+  if (!EN_BREF_AFTER_TITLE.test(content)) return "bloc « **En bref.** » absent après le titre";
   return null;
 }
 
