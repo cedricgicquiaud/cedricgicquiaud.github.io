@@ -262,7 +262,8 @@ describe("scripts/check-output — branché sur le build", () => {
 
   it("npm run build enchaîne next build puis le contrôle de out/", () => {
     const pkg = JSON.parse(readFileSync(path.join(root, "package.json"), "utf8"));
-    expect(pkg.scripts.build).toBe("next build && node scripts/check-output.mjs");
+    // Depuis PFO-35, les visuels des projets sont générés avant `next build`.
+    expect(pkg.scripts.build).toBe("node scripts/project-visuals.mjs && next build && node scripts/check-output.mjs");
   });
 
   it("en ligne de commande, sort en erreur sur un mot interdit et en succès sur un HTML propre", () => {
