@@ -4,6 +4,8 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { Experience } from "../../components/experience";
+import { ProjectCard } from "../../components/project-card";
+import type { Fiche } from "../../lib/fiches";
 import { Badge } from "../../components/ui/badge";
 
 afterEach(cleanup);
@@ -22,6 +24,31 @@ function cssBlock(css: string, selector: string): string {
     if (css[i] === "}" && --depth === 0) return css.slice(open + 1, i);
   }
   throw new Error(`bloc « ${selector} » non fermé`);
+}
+
+/** Une fiche factice ; le chiffre clé est reconnaissable pour vérifier son absence de la carte. */
+function fiche(over: Partial<Fiche["frontmatter"]> = {}): Fiche {
+  return {
+    slug: "alpha",
+    titre: "Alpha — un titre",
+    frontmatter: {
+      nom: "Alpha",
+      statut: "en cours",
+      periode: "2026",
+      role: "conception",
+      stack: ["TypeScript", "React"],
+      visibilite: "public",
+      depot: "https://github.com/x/alpha",
+      depotNote: "",
+      demo: "",
+      demoNote: "",
+      ordre: 1,
+      ...over,
+    },
+    enBref: { quoi: "Un outil qui fait une chose.", chiffre: "4242 tests verts.", lien: "" },
+    sections: [],
+    visuel: "/projets/generated/alpha.png",
+  };
 }
 
 describe("Token --cyber dans globals.css (PFO-51)", () => {
@@ -64,5 +91,21 @@ describe("Experience : pastilles et titre en bleu cyber (PFO-51)", () => {
       expect(title).toHaveClass("group-hover/item:text-cyber", "group-focus-within/item:text-cyber");
       expect(title.className).not.toMatch(/text-primary/);
     }
+  });
+});
+
+describe("ProjectCard : pastilles et titre en bleu cyber (PFO-51)", () => {
+  it("la stack est en pastilles cyber, le statut reste neutre (secondary), le titre passe en text-cyber au survol et au focus", () => {
+    render(<ProjectCard fiche={fiche()} />);
+    const card = screen.getByRole("article");
+    for (const tag of ["TypeScript", "React"]) {
+      expect(within(card).getByText(tag)).toHaveClass("bg-cyber/10", "text-cyber");
+    }
+    const statut = within(card).getByText("en cours");
+    expect(statut).toHaveClass("bg-secondary", "text-secondary-foreground");
+    expect(statut).not.toHaveClass("text-cyber");
+    const title = within(card).getByRole("heading", { level: 3 });
+    expect(title).toHaveClass("group-hover/item:text-cyber", "group-focus-within/item:text-cyber");
+    expect(title.className).not.toMatch(/text-primary/);
   });
 });
