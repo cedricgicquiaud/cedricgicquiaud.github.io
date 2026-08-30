@@ -4,7 +4,8 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { act } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { loadFiches } from "../../lib/fiches";
+import { loadFiches, type Fiche as FicheData } from "../../lib/fiches";
+import { Fiche } from "../../components/fiche";
 import { Nav } from "../../components/nav";
 import * as fichePage from "../../app/projets/[slug]/page";
 
@@ -33,6 +34,39 @@ function stubIntersectionObserver() {
     },
   );
   return state;
+}
+
+/** Fiche factice : chaque champ porte une valeur reconnaissable dans le rendu. */
+function fakeFiche(overrides: Partial<FicheData["frontmatter"]> = {}): FicheData {
+  return {
+    slug: "factice",
+    titre: "Factice — un titre de fiche",
+    frontmatter: {
+      nom: "Factice",
+      statut: "en cours",
+      periode: "mai 2026 → aujourd'hui",
+      role: "conception et tests",
+      stack: ["TypeScript", "Vitest"],
+      visibilite: "public",
+      depot: "https://github.com/cedricgicquiaud/factice",
+      depotNote: "https://github.com/cedricgicquiaud/factice",
+      demo: "https://factice.example.test/",
+      demoNote: "https://factice.example.test/",
+      ...overrides,
+    },
+    enBref: { quoi: "Un service factice.", chiffre: "12 tests verts.", lien: "Code public." },
+    sections: [
+      { id: "probleme", titre: "Problème", html: "<p>Texte du problème.</p>" },
+      {
+        id: "construit",
+        titre: "Ce que j'ai construit",
+        html: "<ul>\n<li>Un <strong>point fort</strong></li>\n<li>Un <a href=\"https://github.com/cedricgicquiaud/factice\">lien</a></li>\n</ul>",
+      },
+      { id: "preuves", titre: "Preuves", html: "<p>Texte des preuves.</p>" },
+      { id: "appris", titre: "Ce que j'en ai appris", html: "<p>Texte des leçons.</p>" },
+      { id: "artefacts", titre: "Artefacts", html: "<p>Texte des artefacts.</p>" },
+    ],
+  };
 }
 
 afterEach(() => {
@@ -105,5 +139,24 @@ describe("Route statique /projets/[slug]/ (PFO-26)", () => {
     expect(metadata.title).toBe(`${slice.frontmatter.nom} — Cédric Gicquiaud`);
     expect(metadata.description).toBe(slice.enBref.quoi);
     expect(slice.enBref.quoi.trim().length).toBeGreaterThan(0);
+  });
+});
+
+describe("Rendu de la fiche : en-tête (PFO-27)", () => {
+  it("rend le lien « ← Projets » vers /#projets, le titre en h1 et l'en-tête en liste de définitions", () => {
+    render(<Fiche fiche={fakeFiche()} />);
+    expect(screen.getByRole("link", { name: "← Projets" })).toHaveAttribute("href", "/#projets");
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Factice — un titre de fiche");
+
+    const terms = Array.from(document.querySelectorAll("dl dt")).map((dt) => dt.textContent);
+    expect(terms).toEqual(["Statut", "Période", "Rôle", "Stack", "Visibilité"]);
+    const definition = (term: string) =>
+      Array.from(document.querySelectorAll("dl dt")).find((dt) => dt.textContent === term)!.nextElementSibling!;
+    expect(definition("Statut")).toHaveTextContent("en cours");
+    expect(definition("Période")).toHaveTextContent("mai 2026 → aujourd'hui");
+    expect(definition("Rôle")).toHaveTextContent("conception et tests");
+    expect(definition("Visibilité")).toHaveTextContent("public");
+    const badges = Array.from(definition("Stack").querySelectorAll("li")).map((li) => li.textContent);
+    expect(badges).toEqual(["TypeScript", "Vitest"]);
   });
 });
