@@ -1,9 +1,10 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen } from "@testing-library/react";
-import { readFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { act } from "react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import Home from "../../app/page";
 import { Intro } from "../../components/intro";
 import { Nav } from "../../components/nav";
@@ -158,5 +159,22 @@ describe("Bas de colonne : liens sociaux et bouton de thème (PFO-30)", () => {
       expect(classesOf(el), `liens masqués par ${el.tagName}`).not.toContain("hidden");
     }
     expect(section.lastElementChild!.contains(list)).toBe(true);
+  });
+});
+
+describe("Sortie du build : un seul menu sur l'accueil (PFO-29)", () => {
+  const index = path.resolve(__dirname, "../../out/index.html");
+
+  beforeAll(() => {
+    // `next build` n'est relancé que si l'accueil manque ou porte encore le menu du haut (deux menus).
+    const stale = !existsSync(index) || readFileSync(index, "utf8").split('aria-label="Sections"').length !== 2;
+    if (stale) execFileSync("npx", ["next", "build"], { cwd: root, stdio: "pipe" });
+  }, 120_000);
+
+  it("out/index.html contient le menu une seule fois, sans entrée Contact", () => {
+    const html = readFileSync(index, "utf8");
+    expect(html.split('aria-label="Sections"')).toHaveLength(2);
+    expect(html).not.toContain('href="/#contact"');
+    expect(html).toContain('href="/#projets"');
   });
 });
