@@ -64,10 +64,9 @@ const PAIRS: [string, string][] = [
   ["primary", "background"],
 ];
 
+// Thème sombre seul depuis PFO-55 : un seul bloc de tokens.
 const THEMES: Record<string, string> = {
-  clair: ":root {",
-  "système sombre": ':root:not([data-theme="light"])',
-  sombre: ':root[data-theme="dark"]',
+  sombre: ":root {",
 };
 
 describe("thème", () => {
@@ -90,50 +89,12 @@ describe("thème", () => {
     return compiler.build(candidates);
   }
 
-  /** Règles CSS de `selector` situées dans un bloc `@media (prefers-color-scheme: dark)`. */
-  function rulesUnderDarkMedia(compiled: string, selector: string): string[] {
-    const found: string[] = [];
-    const media = /@media \(prefers-color-scheme: dark\)\s*\{/g;
-    for (const match of compiled.matchAll(media)) {
-      let depth = 1;
-      let i = match.index + match[0].length;
-      const start = i;
-      while (depth > 0 && i < compiled.length) {
-        if (compiled[i] === "{") depth++;
-        else if (compiled[i] === "}") depth--;
-        i++;
-      }
-      const block = compiled.slice(start, i);
-      if (block.includes(selector)) found.push(block);
-    }
-    return found;
-  }
-
-  it("applique la variante dark: en préférence système sombre, sauf data-theme=light", async () => {
-    const compiled = await compiledCss(["dark:bg-background"]);
-    const blocks = rulesUnderDarkMedia(compiled, ".dark\\:bg-background");
-    expect(blocks.length, "aucune règle dark: sous @media (prefers-color-scheme: dark)").toBeGreaterThan(0);
-    expect(blocks.join("\n")).toContain(':not([data-theme="light"])');
-  });
-
-  it("applique la variante dark: sous data-theme=dark", async () => {
-    const compiled = await compiledCss(["dark:bg-background"]);
-    expect(compiled).toMatch(/\.dark\\:bg-background[^{]*\[data-theme="dark"\]/);
-  });
-
-  it("déclare color-scheme par état : light, dark (système), dark (forcé), light (forcé)", async () => {
+  it("déclare color-scheme: dark sur :root, jamais « light dark » (sombre seul, PFO-55)", async () => {
     const compiled = await compiledCss([]);
-    const declaration = (selector: string) => {
-      const start = compiled.indexOf(selector);
-      expect(start, `bloc introuvable : ${selector}`).toBeGreaterThan(-1);
-      const body = compiled.slice(start).split("{")[1].split("}")[0];
-      return body.match(/color-scheme:\s*([^;]+);/)?.[1].trim();
-    };
-    expect(declaration(":root {")).toBe("light");
-    expect(declaration(':root[data-theme="light"]')).toBe("light");
-    expect(declaration(':root[data-theme="dark"]')).toBe("dark");
-    const systemDark = rulesUnderDarkMedia(compiled, ':root:not([data-theme="light"])').join("\n");
-    expect(systemDark).toMatch(/color-scheme:\s*dark;/);
+    const start = compiled.indexOf(":root {");
+    expect(start, "bloc introuvable : :root {").toBeGreaterThan(-1);
+    const body = compiled.slice(start).split("{")[1].split("}")[0];
+    expect(body.match(/color-scheme:\s*([^;]+);/)?.[1].trim()).toBe("dark");
     expect(compiled).not.toMatch(/color-scheme:\s*light dark/);
   });
 

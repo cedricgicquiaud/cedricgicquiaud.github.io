@@ -54,10 +54,8 @@ function fiche(over: Partial<Fiche["frontmatter"]> = {}): Fiche {
 describe("Token --cyber dans globals.css (PFO-51)", () => {
   const css = source("app/globals.css");
 
-  it("clair : #0d6b63 ; sombre système et sombre forcé : #5eead4", () => {
-    expect(cssBlock(css, ":root {")).toMatch(/--cyber:\s*#0d6b63;/);
-    expect(cssBlock(css, ":root:not([data-theme=\"light\"]) {")).toMatch(/--cyber:\s*#5eead4;/);
-    expect(cssBlock(css, ":root[data-theme=\"dark\"] {")).toMatch(/--cyber:\s*#5eead4;/);
+  it("sombre seul (PFO-55) : #5eead4 dans :root", () => {
+    expect(cssBlock(css, ":root {")).toMatch(/--cyber:\s*#5eead4;/);
   });
 
   it("expose --color-cyber dans @theme inline pour les classes text-cyber et bg-cyber", () => {

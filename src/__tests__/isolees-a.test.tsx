@@ -55,12 +55,12 @@ describe("Quadrillage sur toute la page (PFO-38)", () => {
     expect(container.querySelector("section#intro")).not.toHaveClass("bg-grid");
   });
 
-  it("bg-grid dessine le quadrillage avec --grid-line, défini dans les trois blocs de thème", () => {
+  it("bg-grid dessine le quadrillage avec --grid-line, défini dans le seul bloc de tokens (sombre seul depuis PFO-55)", () => {
     const css = source("app/globals.css");
     const rule = css.slice(css.indexOf("@utility bg-grid"), css.indexOf("}", css.indexOf("@utility bg-grid")));
     expect(rule).toContain("var(--grid-line)");
     expect(rule).not.toMatch(/background-attachment/);
-    expect(css.match(/--grid-line:/g)).toHaveLength(3);
+    expect(css.match(/--grid-line:/g)).toHaveLength(1);
   });
 });
 
