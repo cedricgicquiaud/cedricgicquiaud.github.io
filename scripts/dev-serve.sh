@@ -32,12 +32,32 @@ port_listening() {
   lsof -nP -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1
 }
 
-running_pid() {
-  [ -f "$pidfile" ] || return 1
-  local pid
-  pid="$(cat "$pidfile")"
-  [ -n "$pid" ] && kill -0 "$pid" 2>/dev/null && echo "$pid"
+# Lit le fichier PID dans la variable `filepid` (vide si absent). Fichier corrompu (autre chose
+# que des chiffres) : message et sortie 1. Appelée hors substitution de commande pour que
+# l'`exit` arrête bien le script.
+read_pidfile() {
+  filepid=""
+  [ -f "$pidfile" ] || return 0
+  filepid="$(tr -d '[:space:]' <"$pidfile")"
+  case "$filepid" in
+    *[!0-9]*|'')
+      echo "fichier PID corrompu : $pidfile" >&2
+      exit 1
+      ;;
+  esac
 }
+
+# PID du serveur si ce PID est vivant et correspond bien à un processus `next`.
+running_pid() {
+  [ -n "$filepid" ] || return 1
+  kill -0 "$filepid" 2>/dev/null || return 1
+  case "$(ps -o command= -p "$filepid" 2>/dev/null)" in
+    *next*) echo "$filepid" ;;
+    *) return 1 ;;
+  esac
+}
+
+read_pidfile
 
 case "$command" in
   start)
@@ -83,7 +103,7 @@ case "$command" in
         kill -KILL "$pid" 2>/dev/null || true
       fi
     fi
-    rm -f "$pidfile"
+    rm -f "$pidfile" "${pidfile%.pid}.log"
     for _ in $(seq 1 10); do
       port_listening || break
       sleep 1
@@ -98,6 +118,7 @@ case "$command" in
     if pid="$(running_pid)"; then
       echo "PID $pid ($url)"
     else
+      rm -f "$pidfile"
       echo "arrêté"
     fi
     ;;
