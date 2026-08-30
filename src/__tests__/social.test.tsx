@@ -3,6 +3,7 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import site from "../../content/site.json";
 import { SocialIcons } from "../../components/social-icons";
+import { Intro } from "../../components/intro";
 
 afterEach(cleanup);
 
@@ -68,5 +69,28 @@ describe("SocialIcons : style et focus (PFO-34)", () => {
         ]),
       );
     }
+  });
+});
+
+describe("Intro : liens sociaux en logos (PFO-34)", () => {
+  it("rend le bloc SocialIcons une seule fois, sans lien texte, dans le bas de colonne à côté du bouton Thème", () => {
+    const { container } = render(<Intro />);
+    const section = container.querySelector("section#intro")!;
+    const lists = section.querySelectorAll("ul.flex.items-center.gap-5");
+    expect(lists).toHaveLength(1);
+    const list = lists[0];
+    expect(list.querySelectorAll("a svg[aria-hidden='true']")).toHaveLength(3);
+    for (const name of ["GitHub", "LinkedIn", "Mail"]) {
+      const link = screen.getByRole("link", { name });
+      expect(list.contains(link)).toBe(true);
+      expect(link.textContent?.trim()).toBe("");
+    }
+    // Un seul bloc pour les deux largeurs : aucun ancêtre masqué, placé dans le dernier enfant de la section.
+    for (let el: Element | null = list; el && el !== section; el = el.parentElement) {
+      expect(el.className.split(/\s+/)).not.toContain("hidden");
+    }
+    expect(section.lastElementChild!.contains(list)).toBe(true);
+    const button = screen.getByRole("button", { name: "Thème", hidden: true });
+    expect(list.parentElement).toBe(button.parentElement!.parentElement);
   });
 });
