@@ -2,7 +2,7 @@ import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterAll, afterEach, describe, expect, it, vi } from "vitest";
 import { execFileSync } from "node:child_process";
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fingerprint } from "../../scripts/check-output.mjs";
 import { About } from "../../components/about";
@@ -88,6 +88,26 @@ describe("Serveur de dev par PID (PFO-45)", () => {
     expect(existsSync(script)).toBe(true);
     expect(statSync(script).mode & 0o111, "bit exécutable absent").not.toBe(0);
     expect(() => execFileSync("bash", ["-n", script])).not.toThrow();
+  });
+
+  it("stop refuse un fichier PID corrompu (exit 1, « fichier PID corrompu ») sans tuer quoi que ce soit", () => {
+    const port = "3998";
+    const pidfile = path.join(process.env.TMPDIR ?? "/tmp", `watido-dev-${port}.pid`);
+    writeFileSync(pidfile, "abc\n");
+    try {
+      let code = 0;
+      let stderr = "";
+      try {
+        execFileSync(script, ["stop", port], { cwd: root, encoding: "utf8", stdio: "pipe" });
+      } catch (e) {
+        code = (e as { status: number }).status;
+        stderr = (e as { stderr: string }).stderr;
+      }
+      expect(code).toBe(1);
+      expect(stderr).toContain("fichier PID corrompu");
+    } finally {
+      rmSync(pidfile, { force: true });
+    }
   });
 
   // Lance un vrai `next dev` : un seul à la fois, sur un port réservé au test.
