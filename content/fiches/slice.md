@@ -1,6 +1,6 @@
 ---
 nom: SLICE
-statut: en cours (fonctionnel, pas encore mis en ligne)
+statut: en cours
 periode: mai 2026 → aujourd'hui
 role: conception, développement, tests, positionnement — seul, avec des agents de code
 stack: TypeScript, Node/Express, React/Vite, Vitest, MCP SDK, Docker, GitHub Actions
@@ -51,6 +51,9 @@ Décisions qui ont compté :
   test qui ne passait qu'en local.
 
 ## Preuves
+
+État au 30/08/2026 : Fonctionnel, pas encore mis en ligne.
+
 
 - 556 tests automatisés verts, typage strict, CI sur chaque PR (vérifié le 29/08/2026 sur
   un clone propre : installation et démarrage en moins d'une minute, sans aucune clé).

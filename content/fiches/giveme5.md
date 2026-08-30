@@ -1,6 +1,6 @@
 ---
 nom: GiveMe5
-statut: livré (produit vendu, en maintenance)
+statut: livré
 periode: août 2023 → juillet 2026
 role: idée, produit physique, développement, automatisations, déploiement, vente — seul ; 2023 avec ChatGPT, 2025 en n8n/Make, 2026 avec Claude Code
 stack: Python/Django 5.2, MySQL, Google Drive API, Google Places API, n8n, Make, Airtable, Pipedrive, Qonto, OpenAI (GPT-4o-mini), HTML/CSS/JS sans build, Stripe Payment Link, GitHub Actions, PythonAnywhere, Coolify/nginx
@@ -74,6 +74,9 @@ complète (vidéo, arguments, simulateur du nombre d'avis, témoignages, FAQ), u
 générés, vendu 49 € sans abonnement.
 
 ## Preuves
+
+État au 30/08/2026 : Produit vendu, en maintenance.
+
 
 - Produit vendu à de vraies boutiques, plaques en service (pas de chiffres de vente ici).
 - Backoffice : 3 applications Django, 2 tables métier (`ProductType`, `Product`),
