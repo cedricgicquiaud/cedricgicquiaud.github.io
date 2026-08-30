@@ -144,19 +144,19 @@ Ne rien cocher avant d'avoir constaté.
 
 ### PFO-25 — Menu et pied de page dans le layout
 
-- [ ] `npm run dev`, ouvrir `/` puis `/projets/slice/` : les deux pages montrent le même menu (À propos, Expérience, Projets, Contact), le même bouton « Thème » et le même pied de page (mention des fiches, lien du dépôt, Mail).
-- [ ] Depuis `/projets/slice/`, cliquer « À propos » : le navigateur revient à l'accueil, section « À propos » à l'écran (URL `/#a-propos`).
-- [ ] Refus : sur `/projets/slice/`, faire défiler jusqu'au pied de page : aucune entrée du menu n'est soulignée (aucun `aria-current` dans le menu, vérifiable via `document.querySelector('nav [aria-current]')` qui renvoie `null` dans la console).
+- [x] `npm run dev`, ouvrir `/` puis `/projets/slice/` : les deux pages montrent le même menu (À propos, Expérience, Projets, Contact), le même bouton « Thème » et le même pied de page (mention des fiches, lien du dépôt, Mail).
+- [x] Depuis `/projets/slice/`, cliquer « À propos » : le navigateur revient à l'accueil, section « À propos » à l'écran (URL `/#a-propos`).
+- [x] Refus : sur `/projets/slice/`, faire défiler jusqu'au pied de page : aucune entrée du menu n'est soulignée (aucun `aria-current` dans le menu, vérifiable via `document.querySelector('nav [aria-current]')` qui renvoie `null` dans la console).
 
 ### PFO-26 — Route statique /projets/[slug]/
 
-- [ ] `npm run build` : `out/projets/<slug>/index.html` existe pour `ben`, `dashboard`, `foreman`, `giveme5`, `parcours`, `pilot`, `slice` (`ls out/projets`), et la dernière ligne affiche `check-output : …/out propre`.
-- [ ] `out/projets/slice/index.html` contient `<title>SLICE — Cédric Gicquiaud</title>` et une `<meta name="description"` égale à la première phrase du bloc « En bref » de la fiche.
-- [ ] Refus : ouvrir `http://localhost:3000/projets/inconnu/` en dev : page 404 ; après build, `out/projets/inconnu/` n'existe pas et `ls out/projets` ne liste que les 7 slugs.
+- [x] `npm run build` : `out/projets/<slug>/index.html` existe pour `ben`, `dashboard`, `foreman`, `giveme5`, `parcours`, `pilot`, `slice` (`ls out/projets`), et la dernière ligne affiche `check-output : …/out propre`.
+- [x] `out/projets/slice/index.html` contient `<title>SLICE — Cédric Gicquiaud</title>` et une `<meta name="description"` égale à la première phrase du bloc « En bref » de la fiche.
+- [x] Refus : ouvrir `http://localhost:3000/projets/inconnu/` en dev : page 404 ; après build, `out/projets/inconnu/` n'existe pas et `ls out/projets` ne liste que les 7 slugs.
 
 ### PFO-27 — Rendu de la fiche : en-tête, En bref, cinq sections
 
-- [ ] Ouvrir `/projets/slice/` : lien « ← Projets » en haut (retour sur `/#projets`), titre de la fiche en h1, en-tête Statut / Période / Rôle / Stack (pastilles) / Visibilité, liens « Code » (dépôt) sans « Démo » (pas d'URL), bloc « En bref », puis les cinq titres dans l'ordre Problème, Ce que j'ai construit, Preuves, Ce que j'en ai appris, Artefacts.
-- [ ] Dans « Ce que j'ai construit » : les puces de liste sont visibles, les passages en gras ressortent, le lien du dépôt dans « Artefacts » est souligné et cliquable. Vérifier à 375 px (aucun défilement horizontal) et en sombre (`document.documentElement.dataset.theme = "dark"`) : texte lisible, badges lisibles.
-- [ ] Refus : ouvrir `/projets/ben/` (fiche `anonyme`) : ni lien « Code » ni lien « Démo » dans l'en-tête.
-- [ ] Refus : dans `content/fiches/slice.md`, ajouter le mot « Nexus » dans la section « Preuves », lancer `npm run build` : `next build` réussit puis `check-output` échoue avec `projets/slice/index.html : mot interdit « Nexus »`. Annuler la modification.
+- [x] Ouvrir `/projets/slice/` : lien « ← Projets » en haut (retour sur `/#projets`), titre de la fiche en h1, en-tête Statut / Période / Rôle / Stack (pastilles) / Visibilité, liens « Code » (dépôt) sans « Démo » (pas d'URL), bloc « En bref », puis les cinq titres dans l'ordre Problème, Ce que j'ai construit, Preuves, Ce que j'en ai appris, Artefacts.
+- [x] Dans « Ce que j'ai construit » : les puces de liste sont visibles, les passages en gras ressortent, le lien du dépôt dans « Artefacts » est souligné et cliquable. Vérifier à 375 px (aucun défilement horizontal) et en sombre (`document.documentElement.dataset.theme = "dark"`) : texte lisible, badges lisibles.
+- [x] Refus : ouvrir `/projets/ben/` (fiche `anonyme`) : ni lien « Code » ni lien « Démo » dans l'en-tête.
+- [x] Refus : dans `content/fiches/slice.md`, ajouter le mot « Nexus » dans la section « Preuves », lancer `npm run build` : `next build` réussit puis `check-output` échoue avec `projets/slice/index.html : mot interdit « Nexus »`. Annuler la modification.
