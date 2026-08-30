@@ -9,7 +9,7 @@ export function Intro() {
   return (
     <section id="intro" className="flex flex-1 flex-col justify-between gap-12">
       <div>
-        <h1 className="text-5xl font-bold tracking-tight">{site.name}</h1>
+        <h1 className="text-5xl font-bold leading-tight tracking-tight">{site.name}</h1>
         <h2 className="mt-3 text-xl font-medium tracking-tight">{SHORT_TITLE}</h2>
         <p className="mt-4 max-w-xs text-base text-muted-foreground">{site.title}</p>
         <div className="mt-16 hidden lg:block">
