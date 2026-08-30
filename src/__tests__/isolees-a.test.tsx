@@ -1,6 +1,8 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import Home from "../../app/page";
 import { Intro } from "../../components/intro";
 import { Portrait } from "../../components/portrait";
@@ -40,5 +42,26 @@ describe("Portrait dans la colonne gauche (PFO-37)", () => {
     expect(within(right).queryByRole("img", { name: /^Portrait de / })).toBeNull();
     expect(Array.from(right.querySelectorAll("section[id]")).map((s) => s.id)).toEqual(["a-propos", "experience", "projets"]);
     expect(within(sticky as HTMLElement).getByRole("img", { name: /^Portrait de / })).toBeInTheDocument();
+  });
+});
+
+describe("Quadrillage sur toute la page (PFO-38)", () => {
+  const root = path.resolve(__dirname, "../..");
+  const source = (rel: string) => readFileSync(path.join(root, rel), "utf8");
+
+  it("body porte bg-grid dans app/layout.tsx ; l'intro ne le porte plus", () => {
+    const layout = source("app/layout.tsx");
+    const bodyTag = layout.slice(layout.indexOf("<body"), layout.indexOf(">", layout.indexOf("<body")));
+    expect(bodyTag).toMatch(/className="[^"]*\bbg-grid\b/);
+    const { container } = render(<Intro />);
+    expect(container.querySelector("section#intro")).not.toHaveClass("bg-grid");
+  });
+
+  it("bg-grid dessine le quadrillage avec --grid-line, défini dans les trois blocs de thème", () => {
+    const css = source("app/globals.css");
+    const rule = css.slice(css.indexOf("@utility bg-grid"), css.indexOf("}", css.indexOf("@utility bg-grid")));
+    expect(rule).toContain("var(--grid-line)");
+    expect(rule).not.toMatch(/background-attachment/);
+    expect(css.match(/--grid-line:/g)).toHaveLength(3);
   });
 });
