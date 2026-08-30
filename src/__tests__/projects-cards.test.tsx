@@ -50,3 +50,23 @@ describe("ProjectCard — tags", () => {
     expect(tags.map((t) => t.textContent)).toEqual(["A", "B", "C", "D", "E"]);
   });
 });
+
+describe("ProjectCard — liens externes", () => {
+  it("lie « Code » vers depot et « Démo » vers demo quand ce sont des URL", () => {
+    render(<ProjectCard fiche={fiche({ depot: "https://github.com/x/alpha", demo: "https://alpha.example" })} />);
+    expect(screen.getByRole("link", { name: "Code" })).toHaveAttribute("href", "https://github.com/x/alpha");
+    expect(screen.getByRole("link", { name: "Démo" })).toHaveAttribute("href", "https://alpha.example");
+  });
+
+  it("refus : depot vide, aucun lien « Code »", () => {
+    render(<ProjectCard fiche={fiche({ depot: "", demo: "https://alpha.example" })} />);
+    expect(screen.queryByRole("link", { name: "Code" })).not.toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Démo" })).toBeInTheDocument();
+  });
+
+  it("refus : demo qui n'est pas une URL (« à venir »), aucun lien « Démo »", () => {
+    render(<ProjectCard fiche={fiche({ demo: "à venir (mise en ligne prévue)" })} />);
+    expect(screen.queryByRole("link", { name: "Démo" })).not.toBeInTheDocument();
+    expect(screen.queryByText(/à venir \(mise en ligne prévue\)/)).not.toBeInTheDocument();
+  });
+});
