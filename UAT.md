@@ -184,7 +184,7 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 
 ### PFO-31 — Halo de lumière qui suit la souris
 
-- [ ] `npm run dev`, ouvrir `http://localhost:3000/` avec une souris : un cercle de lumière bleue très diffuse (environ 600 px) suit le pointeur sur toute la page, y compris par-dessus les sections et sur `/projets/slice/`. Passer en sombre (bouton « Thème ») : le halo reste visible, plus clair sur le fond sombre. Le texte reste aussi lisible qu'avant (aucun changement de contraste perceptible).
+- [ ] `npm run dev`, ouvrir `http://localhost:3000/` avec une souris : un cercle de lumière bleue très diffuse (environ 600 px) suit le pointeur sur toute la page, y compris par-dessus les sections et sur `/projets/slice/`. Passer en sombre (bouton « Thème ») : le halo reste visible, plus clair sur le fond sombre. Le texte reste lisible sous le halo, en clair comme en sombre.
 - [ ] Refus : dans les outils de développement de Chrome, activer l'émulation tactile (barre d'outils appareil, iPhone) puis recharger : aucun halo, et `document.querySelector('body > div[aria-hidden]')` renvoie `null` dans la console.
 - [ ] Refus : avec la souris, cliquer sur le bouton « Thème », sur une entrée du menu et sur le lien « Code » d'une carte projet : chaque clic agit normalement (le halo ne capte rien ; son calque a `pointer-events: none`).
 - [ ] Refus : dans Chrome, Rendering → « Emulate CSS media feature prefers-reduced-motion: reduce », recharger : le halo est au centre de la fenêtre et ne bouge pas quand la souris bouge.
