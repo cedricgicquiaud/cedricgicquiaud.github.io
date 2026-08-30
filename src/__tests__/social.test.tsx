@@ -37,3 +37,17 @@ describe("SocialIcons : logos SVG (PFO-34)", () => {
     }
   });
 });
+
+describe("SocialIcons : ouverture des liens (PFO-34)", () => {
+  it("ouvre GitHub et LinkedIn dans un nouvel onglet avec rel=noreferrer, mais pas le lien mailto", () => {
+    render(<SocialIcons />);
+    for (const name of ["GitHub", "LinkedIn"]) {
+      const link = screen.getByRole("link", { name });
+      expect(link).toHaveAttribute("target", "_blank");
+      expect(link).toHaveAttribute("rel", "noreferrer");
+    }
+    const mail = screen.getByRole("link", { name: "Mail" });
+    expect(mail).not.toHaveAttribute("target");
+    expect(mail).not.toHaveAttribute("rel");
+  });
+});
