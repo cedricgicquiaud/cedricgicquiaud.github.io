@@ -7,3 +7,4 @@ MISSION.md
 next-env.d.ts
 *.tsbuildinfo
 coverage/
+public/projets/generated/
