@@ -68,4 +68,14 @@ describe("halo souris (PFO-31) — tactile et mouvement réduit", () => {
     const { container } = render(<Spotlight />);
     expect(container.querySelector("div")).toBeNull();
   });
+
+  it("en mouvement réduit, rend le halo au centre et n'écoute pas le pointeur", () => {
+    mockMatchMedia(["(prefers-reduced-motion: reduce)"]);
+    const { container } = render(<Spotlight />);
+    const halo = container.querySelector("div");
+    expect(halo, "halo absent en mouvement réduit").not.toBeNull();
+    movePointer("mouse", 120, 340);
+    expect(halo!.style.getPropertyValue("--x")).toBe("50%");
+    expect(halo!.style.getPropertyValue("--y")).toBe("50%");
+  });
 });
