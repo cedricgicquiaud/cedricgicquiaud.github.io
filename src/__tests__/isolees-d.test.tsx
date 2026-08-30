@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import Home from "../../app/page";
 import { About } from "../../components/about";
@@ -7,6 +7,7 @@ import { Experience } from "../../components/experience";
 import { Fiche } from "../../components/fiche";
 import { Intro } from "../../components/intro";
 import { Projects } from "../../components/projects";
+import { ThemeToggle } from "../../components/theme-toggle";
 import { loadFiches } from "../../lib/fiches";
 
 afterEach(() => {
@@ -137,5 +138,45 @@ describe("Portrait retiré (PFO-48)", () => {
     const fiche = render(<Fiche fiche={loadFiches()[0]} />);
     expect(fiche.container.querySelector("img[src*='portrait']")).toBeNull();
     expect(screen.queryByRole("img", { name: /^Portrait de / })).toBeNull();
+  });
+});
+
+describe("Bouton de thème en icône (PFO-49)", () => {
+  function stubStorage() {
+    vi.stubGlobal("localStorage", { getItem: () => null, setItem: () => {}, removeItem: () => {} });
+  }
+
+  it("carré de 40 px sans texte, SVG aria-hidden : lune en clair, soleil en sombre, aria-label selon l'état", () => {
+    stubStorage();
+    vi.stubGlobal("matchMedia", () => ({ matches: false }));
+    render(<ThemeToggle />);
+    const button = screen.getByRole("button");
+    expect(classesOf(button)).toEqual(
+      expect.arrayContaining(["inline-flex", "size-10", "items-center", "justify-center", "rounded-md", "border", "bg-background"]),
+    );
+    expect(button.textContent?.trim()).toBe("");
+    const svg = button.querySelector("svg")!;
+    expect(svg).not.toBeNull();
+    expect(svg).toHaveAttribute("aria-hidden", "true");
+    expect(svg).toHaveAttribute("data-icon", "moon");
+    expect(button).toHaveAttribute("aria-label", "Passer en thème sombre");
+
+    fireEvent.click(button);
+    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+    expect(button.querySelector("svg")).toHaveAttribute("data-icon", "sun");
+    expect(button).toHaveAttribute("aria-label", "Passer en thème clair");
+    expect(button.textContent?.trim()).toBe("");
+
+    fireEvent.click(button);
+    expect(button.querySelector("svg")).toHaveAttribute("data-icon", "moon");
+    expect(button).toHaveAttribute("aria-label", "Passer en thème sombre");
+  });
+
+  it("suit le système sans data-theme : système sombre affiche le soleil", () => {
+    stubStorage();
+    vi.stubGlobal("matchMedia", () => ({ matches: true }));
+    render(<ThemeToggle />);
+    expect(screen.getByRole("button").querySelector("svg")).toHaveAttribute("data-icon", "sun");
+    expect(screen.getByRole("button")).toHaveAttribute("aria-label", "Passer en thème clair");
   });
 });
