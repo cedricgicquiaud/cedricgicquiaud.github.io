@@ -104,13 +104,12 @@ describe("Nav depuis une sous-page (PFO-25)", () => {
   });
 });
 
-describe("Pied de page dans le layout (PFO-25, menu du haut retiré par PFO-29)", () => {
-  it("app/layout.tsx rend le conteneur fixe du bouton de thème et <Footer/> après children", () => {
+describe("Layout (PFO-25, menu du haut retiré par PFO-29, pied de page retiré par PFO-54)", () => {
+  it("app/layout.tsx rend le conteneur fixe du bouton de thème et rend children", () => {
     const layout = source("app/layout.tsx");
     const body = layout.slice(layout.indexOf("<body"), layout.indexOf("</body>"));
     expect(body).toContain("<ThemeToggle />");
-    expect(body).toContain("<Footer />");
-    expect(body.indexOf("{children}")).toBeLessThan(body.indexOf("<Footer />"));
+    expect(body).toContain("{children}");
   });
 
   it("app/page.tsx ne rend plus ni Nav, ni ThemeToggle, ni Footer", () => {
@@ -229,16 +228,19 @@ describe("Sortie du build : une page par fiche (PFO-26)", () => {
   const pageOf = (slug: string) => path.join(out, "projets", slug, "index.html");
 
   beforeAll(() => {
-    // `next build` n'est relancé que si une page de fiche manque dans la sortie
-    // ou n'a pas encore son og:title propre.
-    const upToDate = (f: FicheData) =>
-      existsSync(pageOf(f.slug)) && readFileSync(pageOf(f.slug), "utf8").includes(`content="${f.frontmatter.nom} — Cédric Gicquiaud"`);
+    // `next build` n'est relancé que si une page de fiche manque dans la sortie,
+    // n'a pas encore son og:title propre ou porte encore le pied de page (retiré par PFO-54).
+    const upToDate = (f: FicheData) => {
+      if (!existsSync(pageOf(f.slug))) return false;
+      const html = readFileSync(pageOf(f.slug), "utf8");
+      return html.includes(`content="${f.frontmatter.nom} — Cédric Gicquiaud"`) && !html.includes("<footer");
+    };
     if (!loadFiches().every(upToDate)) {
       execFileSync("npx", ["next", "build"], { cwd: root, stdio: "pipe" });
     }
   }, 120_000);
 
-  it("écrit out/projets/<slug>/index.html pour les 7 fiches, avec titre, lien retour et pied de page (sans menu depuis PFO-29)", () => {
+  it("écrit out/projets/<slug>/index.html pour les 7 fiches, avec titre et lien retour (sans menu depuis PFO-29, sans pied de page depuis PFO-54)", () => {
     const fiches = loadFiches();
     expect(fiches).toHaveLength(7);
     for (const fiche of fiches) {
@@ -253,7 +255,7 @@ describe("Sortie du build : une page par fiche (PFO-26)", () => {
       expect(html).toContain('<meta property="og:type" content="article"/>');
       expect(html).not.toContain('aria-label="Sections"');
       expect(html).toContain('href="/#projets"');
-      expect(html).toContain('id="contact"');
+      expect(html).not.toContain("<footer");
     }
   });
 

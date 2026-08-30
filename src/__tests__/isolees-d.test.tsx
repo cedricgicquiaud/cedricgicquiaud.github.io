@@ -7,7 +7,6 @@ import Home from "../../app/page";
 import { About } from "../../components/about";
 import { Experience } from "../../components/experience";
 import { Fiche } from "../../components/fiche";
-import { Footer } from "../../components/footer";
 import { Intro } from "../../components/intro";
 import { Projects } from "../../components/projects";
 import { ThemeToggle } from "../../components/theme-toggle";
@@ -42,14 +41,6 @@ describe("Tailles du modèle : intro (PFO-47)", () => {
     const phrase = h2.nextElementSibling as HTMLElement;
     expect(phrase.tagName).toBe("P");
     expect(classesOf(phrase)).toEqual(expect.arrayContaining(["text-base", "text-muted-foreground", "max-w-xs"]));
-  });
-});
-
-describe("Footer : lien du dépôt sans débordement à 375 px (PFO-47)", () => {
-  it("le lien du dépôt porte break-all pour se couper dans la largeur", () => {
-    render(<Footer />);
-    const link = screen.getByRole("link", { name: /github\.com/i });
-    expect(classesOf(link)).toContain("break-all");
   });
 });
 
