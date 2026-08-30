@@ -111,9 +111,17 @@ function parseSections(content: string): Section[] {
 /** Visuel généré par `scripts/project-visuals.mjs` pour une fiche sans visuel fourni. */
 const generatedVisual = (slug: string) => `/projets/generated/${slug}.png`;
 
-/** Le visuel fourni (`frontmatter.visuel`) s'il existe dans `publicDir`, sinon le généré. */
+/** Fichier de `publicDir` désigné par un chemin `/…` qui n'en sort pas ; `undefined` sinon. */
+function insidePublic(provided: string, publicDir: string): string | undefined {
+  if (!provided.startsWith("/")) return undefined;
+  const resolved = path.resolve(publicDir, "." + provided);
+  return resolved.startsWith(path.resolve(publicDir) + path.sep) ? resolved : undefined;
+}
+
+/** Le visuel fourni (`frontmatter.visuel`) s'il est valide et existe dans `publicDir`, sinon le généré. */
 function resolveVisual(slug: string, provided: string | undefined, publicDir: string): string {
-  if (provided && existsSync(path.join(publicDir, provided))) return provided;
+  const file = provided && insidePublic(provided, publicDir);
+  if (file && existsSync(file)) return provided as string;
   return generatedVisual(slug);
 }
 

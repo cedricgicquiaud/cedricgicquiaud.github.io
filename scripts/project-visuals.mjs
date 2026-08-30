@@ -68,6 +68,13 @@ function visual(nom, chiffre) {
   );
 }
 
+/** Fichier de `publicDir` désigné par un chemin `/…` qui n'en sort pas (même règle que lib/fiches.ts) ; `undefined` sinon. */
+function insidePublic(provided) {
+  if (!provided.startsWith("/")) return undefined;
+  const resolved = path.resolve(publicDir, "." + provided);
+  return resolved.startsWith(publicDir + path.sep) ? resolved : undefined;
+}
+
 const generatedDir = path.join(publicDir, "projets", "generated");
 mkdirSync(generatedDir, { recursive: true });
 
@@ -75,7 +82,8 @@ for (const name of readdirSync(fichesDir).filter((n) => n.endsWith(".md"))) {
   const slug = name.slice(0, -3);
   const { data, content } = matter(readFileSync(path.join(fichesDir, name), "utf8"));
   const provided = typeof data.visuel === "string" && data.visuel.trim();
-  if (provided && existsSync(path.join(publicDir, provided))) {
+  const file = provided && insidePublic(provided);
+  if (file && existsSync(file)) {
     console.log(`${slug} : visuel fourni ${provided}, rien à générer`);
     continue;
   }
