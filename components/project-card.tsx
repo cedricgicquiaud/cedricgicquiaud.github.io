@@ -42,12 +42,12 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
           ))}
         </ul>
         <p className="flex gap-4 text-sm">
-          {isUrl(frontmatter.depot) && (
+          {!anonyme && isUrl(frontmatter.depot) && (
             <a href={frontmatter.depot} className="underline underline-offset-4">
               Code
             </a>
           )}
-          {isUrl(frontmatter.demo) && (
+          {!anonyme && isUrl(frontmatter.demo) && (
             <a href={frontmatter.demo} className="underline underline-offset-4">
               Démo
             </a>
