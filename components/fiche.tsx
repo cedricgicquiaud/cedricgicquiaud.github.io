@@ -5,12 +5,15 @@ import { Badge } from "./ui/badge";
 const MARKDOWN =
   "space-y-4 leading-relaxed [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:text-foreground [&_a]:break-words [&_strong]:font-semibold [&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_code]:text-sm";
 
+const LINK =
+  "underline underline-offset-4 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
+
 export function Fiche({ fiche }: { fiche: FicheData }) {
   const { frontmatter } = fiche;
   return (
     <article className="px-6 py-16 lg:px-16">
       <div className="mx-auto w-full max-w-3xl">
-        <a href="/#projets" className="text-sm text-muted-foreground underline-offset-4 hover:text-foreground hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
+        <a href="/#projets" className={`text-sm text-muted-foreground ${LINK}`}>
           ← Projets
         </a>
         <h1 className="mt-6 text-3xl font-semibold tracking-tight">{fiche.titre || frontmatter.nom}</h1>
@@ -29,6 +32,21 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
           </Row>
           <Row term="Visibilité">{frontmatter.visibilite}</Row>
         </dl>
+        {/* Mêmes règles que les cartes : un lien par URL non vide ; `lib/fiches` vide déjà tout pour `anonyme`. */}
+        {(frontmatter.depot || frontmatter.demo) && (
+          <p className="mt-4 flex gap-4 text-sm">
+            {frontmatter.depot && (
+              <a href={frontmatter.depot} className={LINK}>
+                Code
+              </a>
+            )}
+            {frontmatter.demo && (
+              <a href={frontmatter.demo} className={LINK}>
+                Démo
+              </a>
+            )}
+          </p>
+        )}
         <p className="mt-8 border-l-2 border-primary pl-4 leading-relaxed">
           <strong>En bref.</strong> {[fiche.enBref.quoi, fiche.enBref.chiffre, fiche.enBref.lien].filter(Boolean).join(" ")}
         </p>
