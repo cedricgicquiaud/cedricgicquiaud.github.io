@@ -4,8 +4,8 @@ import { Badge } from "./ui/badge";
 export function Experience() {
   const experience = loadExperience(contentDir);
   return (
-    <section id="experience" className="px-6 py-16 lg:px-16">
-      <div className="mx-auto w-full max-w-3xl">
+    <section id="experience" className="py-16">
+      <div className="w-full">
         <h2 className="mb-6 text-2xl font-semibold tracking-tight">{experience.titre}</h2>
         <ol className="group/list space-y-10">
           {experience.blocs.map((bloc) => (
