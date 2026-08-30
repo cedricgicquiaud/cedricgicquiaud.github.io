@@ -64,7 +64,6 @@ export function ThemeToggle() {
     <button
       type="button"
       onClick={toggle}
-      aria-pressed={theme === "dark"}
       aria-label={isDark ? "Passer en thème clair" : "Passer en thème sombre"}
       className="rounded-md border px-3 py-1 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
     >
