@@ -13,3 +13,10 @@ describe("Pied de page retiré (PFO-54)", () => {
     expect(layout).not.toContain("<footer");
   });
 });
+
+describe("Ancres de menu sans contact (PFO-54)", () => {
+  it("content/site.json n'expose plus que about, experience et projects dans sections", () => {
+    const site = JSON.parse(source("content/site.json"));
+    expect(Object.keys(site.sections)).toEqual(["about", "experience", "projects"]);
+  });
+});
