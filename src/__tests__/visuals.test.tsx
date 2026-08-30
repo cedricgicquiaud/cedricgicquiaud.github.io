@@ -5,6 +5,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
+import { Fiche } from "../../components/fiche";
 import { ProjectCard } from "../../components/project-card";
 import { loadFiche, type Fiche as FicheData } from "../../lib/fiches";
 
@@ -135,5 +136,19 @@ describe("ProjectCard — visuel (PFO-36)", () => {
     expect(article.className).toMatch(/\bgrid\b/);
     expect(article.className).toMatch(/\bsm:grid-cols-\[200px_1fr\]/);
     expect(onlyImg(container).className).toMatch(/\baspect-\[16\/10\]/);
+  });
+});
+
+describe("page fiche — visuel (PFO-36)", () => {
+  it("montre le même visuel juste sous le titre, pleine largeur et arrondi", () => {
+    const { container } = render(<Fiche fiche={fakeFiche()} />);
+    const img = onlyImg(container);
+    expect(img.getAttribute("src")).toBe("/projets/generated/alpha.png");
+    expect(img.getAttribute("alt")).toBe("");
+    expect(img.className).toMatch(/\bw-full\b/);
+    expect(img.className).toMatch(/\brounded-lg\b/);
+    const h1 = screen.getByRole("heading", { level: 1 });
+    // L'image est l'élément qui suit immédiatement le h1.
+    expect(h1.nextElementSibling?.contains(img) || h1.nextElementSibling === img).toBe(true);
   });
 });
