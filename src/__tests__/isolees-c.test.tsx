@@ -1,7 +1,8 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { readdirSync, readFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { About } from "../../components/about";
 import { Experience } from "../../components/experience";
@@ -76,5 +77,15 @@ describe("Ancres et ids de section depuis site.json (PFO-40)", () => {
         });
     }
     expect(offenders).toEqual([]);
+  });
+});
+
+describe("Serveur de dev par PID (PFO-45)", () => {
+  const script = path.join(root, "scripts", "dev-serve.sh");
+
+  it("scripts/dev-serve.sh existe, est exécutable et passe bash -n", () => {
+    expect(existsSync(script)).toBe(true);
+    expect(statSync(script).mode & 0o111, "bit exécutable absent").not.toBe(0);
+    expect(() => execFileSync("bash", ["-n", script])).not.toThrow();
   });
 });
