@@ -75,7 +75,8 @@ describe("Tailles du modèle : titres de section (PFO-47)", () => {
 });
 
 describe("Tailles du modèle : corps des sections (PFO-47)", () => {
-  it("le corps d'À propos, les descriptions d'Expérience et le « quoi » des cartes sont en text-base leading-relaxed", () => {
+  // PFO-52 : les descriptions d'Expérience passent en text-sm (typographie des cartes du modèle) ; seul À propos reste en text-base.
+  it("le corps d'À propos est en text-base leading-relaxed, les descriptions d'Expérience en text-sm leading-relaxed, le « quoi » des cartes en text-base leading-relaxed", () => {
     const { container } = render(
       <>
         <About />
@@ -88,7 +89,7 @@ describe("Tailles du modèle : corps des sections (PFO-47)", () => {
 
     const experienceBodies = container.querySelectorAll("section#experience article h3 ~ p.leading-relaxed");
     expect(experienceBodies.length).toBeGreaterThan(0);
-    for (const p of experienceBodies) expect(classesOf(p)).toContain("text-base");
+    for (const p of experienceBodies) expect(classesOf(p)).toContain("text-sm");
 
     const cardBodies = container.querySelectorAll("section#projets article h3 + p");
     expect(cardBodies.length).toBeGreaterThan(0);
