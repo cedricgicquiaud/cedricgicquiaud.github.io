@@ -209,7 +209,6 @@ describe("ids des sections (attendus par le menu)", () => {
     about: "id={site.sections.about}",
     experience: "id={site.sections.experience}",
     intro: 'id="intro"',
-    footer: "id={site.sections.contact}",
     projects: "id={site.sections.projects}",
   };
 

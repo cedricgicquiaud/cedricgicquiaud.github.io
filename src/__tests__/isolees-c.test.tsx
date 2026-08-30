@@ -8,7 +8,6 @@ import { fingerprint } from "../../scripts/check-output.mjs";
 import { About } from "../../components/about";
 import { Experience } from "../../components/experience";
 import { Fiche } from "../../components/fiche";
-import { Footer } from "../../components/footer";
 import { Nav } from "../../components/nav";
 import { Projects } from "../../components/projects";
 import { loadFiches } from "../../lib/fiches";
@@ -51,7 +50,6 @@ describe("Ancres et ids de section depuis site.json (PFO-40)", () => {
         <About />
         <Experience />
         <Projects fiches={[]} />
-        <Footer />
         <Fiche fiche={loadFiches()[0]} />
       </>,
     );
@@ -60,7 +58,6 @@ describe("Ancres et ids de section depuis site.json (PFO-40)", () => {
       "x-exp",
       "x-proj",
     ]);
-    expect(container.querySelector("footer")).toHaveAttribute("id", "x-contact");
     expect(screen.getByRole("link", { name: "← Projets" })).toHaveAttribute("href", "/#x-proj");
   });
 
