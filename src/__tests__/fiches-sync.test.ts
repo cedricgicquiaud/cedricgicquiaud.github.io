@@ -89,4 +89,11 @@ describe("sync-fiches — contrôle du frontmatter", () => {
     const src = tempDir({ "alpha.md": fiche({ ordre: 1, visibilite: "secret" }) });
     expect(() => syncFiches(src, tempDir())).toThrow(/^alpha\.md : .*visibilite/);
   });
+
+  it("refuse une fiche sans bloc « En bref » après le titre", () => {
+    const src = tempDir({
+      "alpha.md": fiche({ ordre: 1 }, "# Alpha\n\nUn paragraphe sans bloc.\n\n## Problème\n\nX.\n"),
+    });
+    expect(() => syncFiches(src, tempDir())).toThrow(/^alpha\.md : .*En bref/);
+  });
 });
