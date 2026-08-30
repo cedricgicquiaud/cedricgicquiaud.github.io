@@ -285,6 +285,6 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 
 ### PFO-44 — Helper « build si out périmé »
 
-- [ ] Déplacer `out/` à la corbeille puis `npm test` : la suite passe ; un seul `next build` est lancé (les fichiers `finitions`, `spotlight`, `font`, `visuals` réutilisent `out/` construit par `socle`).
-- [ ] Refus : `touch app/layout.tsx && npx vitest run src/__tests__/font.test.tsx` : le build est relancé (durée > 30 s) et le test passe ; relancer aussitôt : pas de rebuild (durée < 5 s).
+- [ ] Déplacer `out/` à la corbeille puis `npm test` : la suite passe ; aucun rebuild inutile : relancer aussitôt `npm test` avec ce `out/` frais, la suite passe sans relancer le build (durée totale bien plus courte, aucune ligne `next build` dans la sortie).
+- [ ] Refus : `touch app/layout.tsx && npx vitest run src/__tests__/font.test.tsx` : le build est relancé et le test passe ; relancer aussitôt : pas de rebuild. Le premier passage est nettement plus long que le second (rebuild), le second dure moins de 5 s.
 - [ ] Refus : `npx vitest run src/__tests__/helpers` ne trouve aucun fichier de tests (`No test files found`).
