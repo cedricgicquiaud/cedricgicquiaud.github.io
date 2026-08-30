@@ -78,7 +78,7 @@ describe("SocialIcons : style et focus (PFO-34)", () => {
 });
 
 describe("Intro : liens sociaux en logos (PFO-34)", () => {
-  it("rend le bloc SocialIcons une seule fois, sans lien texte, dans le bas de colonne à côté du bouton Thème", () => {
+  it("rend le bloc SocialIcons une seule fois, sans lien texte, dans le bas de colonne (bouton de thème déplacé dans le layout par PFO-49)", () => {
     const { container } = render(<Intro />);
     const section = container.querySelector("section#intro")!;
     const lists = section.querySelectorAll("ul.flex.items-center.gap-5");
@@ -95,7 +95,6 @@ describe("Intro : liens sociaux en logos (PFO-34)", () => {
       expect(el.className.split(/\s+/)).not.toContain("hidden");
     }
     expect(section.lastElementChild!.contains(list)).toBe(true);
-    const button = screen.getByRole("button", { name: /thème/i, hidden: true });
-    expect(list.parentElement).toBe(button.parentElement!.parentElement);
+    expect(screen.queryByRole("button", { name: /thème/i, hidden: true })).toBeNull();
   });
 });
