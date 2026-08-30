@@ -6,8 +6,10 @@ import path from "node:path";
 import { act } from "react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import Home from "../../app/page";
+import { About } from "../../components/about";
 import { Intro } from "../../components/intro";
 import { Nav } from "../../components/nav";
+import { Portrait } from "../../components/portrait";
 
 afterEach(() => {
   cleanup();
@@ -36,6 +38,27 @@ describe("Deux colonnes à partir de 1024 px (PFO-28)", () => {
     expect(right, "aucune colonne droite après la colonne collante").not.toBeNull();
     const ids = Array.from(right.querySelectorAll("section[id]")).map((s) => s.id);
     expect(ids).toEqual(["portrait", "a-propos", "experience", "projets"]);
+  });
+});
+
+describe("Sections de la colonne droite sans marge ni centrage propres (PFO-28)", () => {
+  // Le conteneur deux colonnes porte déjà le padding horizontal.
+  it.each([
+    ["Portrait", "portrait", () => <Portrait photoExists={false} />],
+    ["About", "a-propos", () => <About />],
+  ])("%s : aucune classe px-*, max-w-3xl ni mx-auto sur la section ni son bloc interne", (_name, id, Cmp) => {
+    const { container } = render(<Cmp />);
+    const section = container.querySelector(`section#${id}`)!;
+    expect(section).not.toBeNull();
+    const inner = section.firstElementChild!;
+    for (const el of [section, inner]) {
+      const classes = classesOf(el);
+      expect(classes.some((c) => /^(lg:)?px-/.test(c)), `${el.tagName} porte un px-`).toBe(false);
+      expect(classes).not.toContain("max-w-3xl");
+      expect(classes).not.toContain("mx-auto");
+    }
+    expect(classesOf(section)).toContain("py-16");
+    expect(classesOf(inner)).toContain("w-full");
   });
 });
 
