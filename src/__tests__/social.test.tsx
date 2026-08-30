@@ -19,3 +19,21 @@ describe("SocialIcons (PFO-34)", () => {
     }
   });
 });
+
+describe("SocialIcons : logos SVG (PFO-34)", () => {
+  it("n'affiche aucun texte : chaque lien contient un seul SVG 24×24 monochrome, masqué des lecteurs d'écran", () => {
+    render(<SocialIcons />);
+    for (const link of screen.getAllByRole("link")) {
+      expect(link.textContent?.trim()).toBe("");
+      const svgs = link.querySelectorAll("svg");
+      expect(svgs).toHaveLength(1);
+      const svg = svgs[0];
+      expect(svg).toHaveAttribute("aria-hidden", "true");
+      expect(svg).toHaveAttribute("width", "24");
+      expect(svg).toHaveAttribute("height", "24");
+      expect(svg).toHaveAttribute("viewBox", "0 0 24 24");
+      expect(svg).toHaveAttribute("fill", "currentColor");
+      expect(svg.querySelector("path")).toHaveAttribute("d");
+    }
+  });
+});
