@@ -179,3 +179,27 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 - [x] Dans « Ce que j'ai construit » : les puces de liste sont visibles, les passages en gras ressortent, le lien du dépôt dans « Artefacts » est souligné et cliquable. Vérifier à 375 px (aucun défilement horizontal) et en sombre (`document.documentElement.dataset.theme = "dark"`) : texte lisible, badges lisibles.
 - [x] Refus : ouvrir `/projets/ben/` (fiche `anonyme`) : ni lien « Code » ni lien « Démo » dans l'en-tête.
 - [x] Refus : dans `content/fiches/slice.md`, ajouter le mot « Nexus » dans la section « Preuves », lancer `npm run build` : `next build` réussit puis `check-output` échoue avec `projets/slice/index.html : mot interdit « Nexus »`. Annuler la modification.
+
+## Livraison 8 — Deux colonnes et menu latéral
+
+### PFO-28 — Colonne gauche fixe et contenu qui défile
+
+- [ ] `npm run sync && npm run dev`, ouvrir `http://localhost:3000/` à 1280 px : le nom, le titre court, la phrase et le menu à traits sont à gauche ; faire défiler jusqu'à « Projets » : le nom reste visible pendant tout le défilement, seule la colonne droite bouge.
+- [ ] Toujours à 1280 px : la colonne droite enchaîne portrait, À propos, Expérience, Projets, puis le pied de page ; rien de la colonne gauche n'est coupé en bas d'écran (hauteur 720 px).
+- [ ] À 375 px : le nom, le titre court, la phrase et les liens GitHub / LinkedIn / Mail forment un bloc en haut, puis le portrait et les sections s'empilent dessous ; aucun défilement horizontal (`document.documentElement.scrollWidth === window.innerWidth` dans la console).
+- [ ] Refus : à 375 px, aucun menu « À propos / Expérience / Projets » n'est affiché (`document.querySelector('nav[aria-label="Sections"]').offsetParent` renvoie `null`).
+
+### PFO-29 — Menu latéral à traits et section active
+
+- [ ] À 1280 px, sur `/` : le menu compte trois entrées en capitales, À propos, Expérience, Projets, chacune précédée d'un trait court ; pas d'entrée Contact.
+- [ ] Faire défiler jusqu'à « Expérience » : son trait s'allonge et son libellé passe en couleur pleine ; continuer jusqu'à « Projets » : l'entrée active change (`document.querySelector('nav [aria-current]').textContent` suit la section à l'écran).
+- [ ] Survoler « À propos » sans défiler : le trait s'allonge et le texte fonce le temps du survol.
+- [ ] Refus : en haut de `/`, aucun bandeau de menu horizontal, aucune bordure sous un en-tête ; le premier élément visible est le nom.
+- [ ] Ouvrir `/projets/slice/` : aucun menu de sections, le lien « ← Projets » est présent en haut et ramène sur `/#projets`.
+
+### PFO-30 — Bouton de thème et liens sociaux en bas de colonne
+
+- [ ] À 1280 px, sur `/` : le bouton « Thème » est en bas de la colonne gauche, sur la même ligne que GitHub, LinkedIn et Mail ; aucun bouton « Thème » en haut à droite.
+- [ ] À 375 px : le bouton « Thème » est en haut à droite (fixe), les liens GitHub / LinkedIn / Mail sont sous la phrase de présentation, sans second bouton « Thème » à côté d'eux.
+- [ ] Cliquer « Thème » à 1280 px, recharger, puis réduire à 375 px : le thème choisi est conservé dans les deux largeurs (`localStorage.theme` vaut `dark` ou `light`, `document.documentElement.dataset.theme` pareil).
+- [ ] Refus : sur `/projets/slice/` à 1280 px, aucun bouton « Thème » n'est visible (voir « Décisions à prendre » de la PR) ; à 375 px, il est en haut à droite.
