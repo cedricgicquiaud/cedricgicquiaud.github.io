@@ -37,8 +37,6 @@ function forbiddenWordsIn(html, fingerprints) {
 const EMOJI = /[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{1F1E6}-\u{1F1FF}]/u;
 
 const ALLOWED_HOSTS = [
-  "fonts.googleapis.com",
-  "fonts.gstatic.com",
   "github.com",
   "linkedin.com",
   "cedricgicquiaud.github.io",
