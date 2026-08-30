@@ -104,3 +104,18 @@ describe("ProjectCard — liens et mobile", () => {
     expect(screen.getByRole("article")).toHaveClass("min-w-0");
   });
 });
+
+describe("Sections — mise en page déléguée au parent", () => {
+  it("Experience et Projects ne se marginent ni ne se centrent elles-mêmes (le conteneur de la page s'en charge)", () => {
+    for (const el of [<Experience key="e" />, <Projects key="p" fiches={[fiche()]} />]) {
+      const { container, unmount } = render(el);
+      const section = container.querySelector("section") as HTMLElement;
+      expect(section).toHaveClass("py-16");
+      expect(section.className).not.toMatch(/(^|\s)(lg:)?px-/);
+      const inner = section.firstElementChild as HTMLElement;
+      expect(inner).toHaveClass("w-full");
+      expect(inner).not.toHaveClass("max-w-3xl", "mx-auto");
+      unmount();
+    }
+  });
+});
