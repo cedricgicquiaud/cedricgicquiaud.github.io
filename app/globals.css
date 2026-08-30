@@ -18,7 +18,7 @@
   Trois états : clair (:root), préférence système sombre (media, sauf si
   data-theme="light"), sombre forcé (data-theme="dark").
   Tokens de base : --background, --foreground, --muted-foreground (texte
-  secondaire), --primary (accent bleu). Les autres tokens shadcn en dérivent.
+  secondaire), --primary (accent bleu), --spotlight (halo souris, alpha faible). Les autres tokens shadcn en dérivent.
 */
 
 :root {
@@ -41,6 +41,7 @@
   --input: #d9e0ec;
   --ring: #2f5bea;
   --grid-line: #e4e9f2;
+  --spotlight: rgba(47, 91, 234, 0.1);
   --radius: 0.625rem;
   color-scheme: light;
 }
@@ -70,6 +71,7 @@
     --input: #243250;
     --ring: #7c9bff;
     --grid-line: #16213a;
+    --spotlight: rgba(124, 155, 255, 0.12);
     color-scheme: dark;
   }
 }
@@ -94,6 +96,7 @@
   --input: #243250;
   --ring: #7c9bff;
   --grid-line: #16213a;
+  --spotlight: rgba(124, 155, 255, 0.12);
   color-scheme: dark;
 }
 
