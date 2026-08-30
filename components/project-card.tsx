@@ -25,14 +25,14 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
         />
       </div>
       <div className="min-w-0 space-y-3">
-        <h3 className="font-medium break-words group-hover/item:text-cyber group-focus-within/item:text-cyber">
+        <h3 className="text-base font-medium break-words group-hover/item:text-cyber group-focus-within/item:text-cyber">
           <a href={`/projets/${fiche.slug}/`} className="hover:underline underline-offset-4">
             {titre || frontmatter.nom}
           </a>
         </h3>
-        <p className="text-base leading-relaxed">{enBref.quoi}</p>
+        <p className="text-sm leading-relaxed text-muted-foreground">{enBref.quoi}</p>
         <p className="text-lg font-semibold tabular-nums">{enBref.chiffre}</p>
-        <Badge variant="secondary" className="h-auto whitespace-normal">
+        <Badge variant="secondary" className="h-auto whitespace-normal font-semibold uppercase tracking-wide">
           {frontmatter.statut}
         </Badge>
         <ul aria-label="Stack" className="flex flex-wrap gap-2">
