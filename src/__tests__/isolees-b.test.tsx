@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen } from "@testing-library/react";
-import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -95,5 +96,23 @@ describe("PFO-19 — script npm og", () => {
   it("package.json expose « og » : node scripts/og-image.mjs", () => {
     const { scripts } = JSON.parse(readFileSync(path.join(root, "package.json"), "utf8"));
     expect(scripts.og).toBe("node scripts/og-image.mjs");
+  });
+
+  it("og-image.mjs échoue avec un message clair quand content/site.json manque", () => {
+    // Copie du script dans un dossier temporaire sans content/ ; node_modules lié pour résoudre react et next.
+    const tmp = mkdtempSync(path.join(tmpdir(), "og-sans-site-"));
+    try {
+      for (const d of ["scripts", "app", "public"]) mkdirSync(path.join(tmp, d));
+      for (const f of ["scripts/og-image.mjs", "scripts/theme-tokens.mjs", "app/globals.css", "package.json"]) {
+        copyFileSync(path.join(root, f), path.join(tmp, f));
+      }
+      symlinkSync(path.join(root, "node_modules"), path.join(tmp, "node_modules"));
+      const run = spawnSync("node", ["scripts/og-image.mjs"], { cwd: tmp, encoding: "utf8" });
+      expect(run.status).not.toBe(0);
+      expect(run.stderr).toContain("content/site.json");
+      expect(run.stderr).not.toContain("ENOENT");
+    } finally {
+      rmSync(tmp, { recursive: true, force: true });
+    }
   });
 });
