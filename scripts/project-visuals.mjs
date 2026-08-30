@@ -7,25 +7,18 @@ import path from "node:path";
 import { createElement as h } from "react";
 import { ImageResponse } from "next/og.js";
 import matter from "gray-matter";
+import { token } from "./theme-tokens.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
 const fichesDir = path.resolve(process.argv[2] ?? path.join(root, "content", "fiches"));
 const publicDir = path.resolve(process.argv[3] ?? path.join(root, "public"));
-const css = readFileSync(path.join(root, "app", "globals.css"), "utf8");
 
 const WIDTH = 1200;
 const HEIGHT = 750;
 const STEP = 60;
 
-/** Couleur lue dans le bloc clair de app/globals.css : aucune couleur en dur ici. */
-function token(name) {
-  const block = css.slice(css.indexOf(":root {")).split("}")[0];
-  const value = block.match(new RegExp(`--${name}:\\s*([^;]+);`))?.[1].trim();
-  if (!value) throw new Error(`token --${name} introuvable dans app/globals.css`);
-  return value;
-}
-
-/** Deuxième phrase du bloc « **En bref.** » : le chiffre clé (même découpage que lib/fiches.ts). */
+/** Deuxième phrase du bloc « **En bref.** » : le chiffre clé.
+ * Duplique `parseEnBref` de lib/fiches.ts (le .ts n'est pas importable ici) ; garder les deux alignés. */
 function chiffreOf(content) {
   const bloc = content.match(/\*\*En bref\.\*\*([^]*?)(?:\n\s*\n|$)/)?.[1] ?? "";
   return bloc.replace(/\s+/g, " ").trim().split(/(?<=\.)\s+/).filter(Boolean)[1] ?? "";

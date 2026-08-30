@@ -4,18 +4,10 @@ import { readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { createElement as h } from "react";
 import { ImageResponse } from "next/og.js";
+import { token } from "./theme-tokens.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
 const site = JSON.parse(readFileSync(path.join(root, "content", "site.json"), "utf8"));
-const css = readFileSync(path.join(root, "app", "globals.css"), "utf8");
-
-/** Couleur lue dans le bloc clair de app/globals.css : aucune couleur en dur ici. */
-function token(name) {
-  const block = css.slice(css.indexOf(":root {")).split("}")[0];
-  const value = block.match(new RegExp(`--${name}:\\s*([^;]+);`))?.[1].trim();
-  if (!value) throw new Error(`token --${name} introuvable dans app/globals.css`);
-  return value;
-}
 
 const image = new ImageResponse(
   h(
