@@ -245,7 +245,7 @@ describe("bouton Thème dans app/layout.tsx", () => {
 describe("section Projets (PFO-14)", () => {
   it("porte le conteneur de mise en page commun aux sections de contenu", () => {
     const src = readFileSync(path.join(root, "components", "projects.tsx"), "utf8");
-    expect(src).toMatch(/<section id="projets" className="px-6 py-16 lg:px-16">/);
-    expect(src).toMatch(/className="mx-auto w-full max-w-3xl"/);
+    expect(src).toMatch(/<section id="projets" className="py-16">/);
+    expect(src).toMatch(/className="w-full"/);
   });
 });

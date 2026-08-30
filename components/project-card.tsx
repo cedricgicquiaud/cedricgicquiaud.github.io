@@ -7,8 +7,8 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
   const { titre, frontmatter, enBref } = fiche;
   const codePrive = frontmatter.visibilite === "vitrine" && !isUrl(frontmatter.depot);
   return (
-    <article className="min-w-0 space-y-3 rounded-lg border border-border p-5">
-      <h3 className="font-medium break-words">
+    <article className="group/item min-w-0 space-y-3 rounded-lg border border-transparent p-5 transition-colors hover:border-border hover:bg-accent/50 focus-within:border-border focus-within:bg-accent/50 lg:group-hover/list:opacity-50 lg:hover:!opacity-100">
+      <h3 className="font-medium break-words group-hover/item:text-primary group-focus-within/item:text-primary">
         <a href={`/projets/${fiche.slug}/`} className="hover:underline underline-offset-4">
           {titre || frontmatter.nom}
         </a>
