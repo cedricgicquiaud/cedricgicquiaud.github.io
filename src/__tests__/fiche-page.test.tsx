@@ -98,4 +98,12 @@ describe("Route statique /projets/[slug]/ (PFO-26)", () => {
     expect(params).toEqual(expected);
     expect(fichePage.dynamicParams).toBe(false);
   });
+
+  it("titre « <nom> — Cédric Gicquiaud » et description = première phrase d'En bref", async () => {
+    const slice = loadFiches().find((f) => f.slug === "slice")!;
+    const metadata = await fichePage.generateMetadata({ params: Promise.resolve({ slug: "slice" }) });
+    expect(metadata.title).toBe(`${slice.frontmatter.nom} — Cédric Gicquiaud`);
+    expect(metadata.description).toBe(slice.enBref.quoi);
+    expect(slice.enBref.quoi.trim().length).toBeGreaterThan(0);
+  });
 });
