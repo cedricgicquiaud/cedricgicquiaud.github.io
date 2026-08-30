@@ -10,7 +10,6 @@
   "sections": {
     "about": "a-propos",
     "experience": "experience",
-    "projects": "projets",
-    "contact": "contact"
+    "projects": "projets"
   }
 }

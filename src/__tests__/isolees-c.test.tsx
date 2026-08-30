@@ -20,7 +20,7 @@ vi.mock("../../content/site.json", () => ({
     title: "Titre test.",
     email: "test@example.com",
     links: { github: "https://github.com/x", linkedin: "https://www.linkedin.com/in/x/", repo: "https://github.com/x/y" },
-    sections: { about: "x-about", experience: "x-exp", projects: "x-proj", contact: "x-contact" },
+    sections: { about: "x-about", experience: "x-exp", projects: "x-proj" },
   },
 }));
 
@@ -30,13 +30,12 @@ const root = path.resolve(__dirname, "../..");
 const read = (rel: string) => readFileSync(path.join(root, rel), "utf8");
 
 describe("Ancres et ids de section depuis site.json (PFO-40)", () => {
-  it("content/site.json expose un objet sections avec les quatre ancres", () => {
+  it("content/site.json expose un objet sections avec les trois ancres du menu (contact retiré par PFO-54)", () => {
     const site = JSON.parse(read("content/site.json"));
     expect(site.sections).toEqual({
       about: "a-propos",
       experience: "experience",
       projects: "projets",
-      contact: "contact",
     });
   });
 
