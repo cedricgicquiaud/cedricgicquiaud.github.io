@@ -137,6 +137,14 @@ describe("ProjectCard — visuel (PFO-36)", () => {
     expect(article.className).toMatch(/\bsm:grid-cols-\[200px_1fr\]/);
     expect(onlyImg(container).className).toMatch(/\baspect-\[16\/10\]/);
   });
+
+  it("le conteneur bleu du visuel épouse l'image (self-start) au lieu de s'étirer sur la hauteur de la carte", () => {
+    const { container } = render(<ProjectCard fiche={fakeFiche()} />);
+    const wrapper = onlyImg(container).parentElement!;
+    expect(wrapper.className).toMatch(/\bbg-primary\b/);
+    expect(wrapper.className).toMatch(/\bself-start\b/);
+    expect(wrapper.className).toMatch(/\boverflow-hidden\b/);
+  });
 });
 
 describe("page fiche — visuel (PFO-36)", () => {
