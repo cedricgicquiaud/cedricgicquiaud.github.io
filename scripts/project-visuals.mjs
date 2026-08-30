@@ -7,7 +7,7 @@ import path from "node:path";
 import { createElement as h } from "react";
 import { ImageResponse } from "next/og.js";
 import matter from "gray-matter";
-import { token } from "./theme-tokens.mjs";
+import { interFonts, token } from "./theme-tokens.mjs";
 
 const root = path.resolve(import.meta.dirname, "..");
 const fichesDir = path.resolve(process.argv[2] ?? path.join(root, "content", "fiches"));
@@ -50,14 +50,14 @@ function visual(nom, chiffre) {
           position: "relative",
           padding: "80px",
           background: token("background"),
-          fontFamily: "sans-serif",
+          fontFamily: "Inter",
         },
       },
       ...gridLines(token("grid-line")),
       h("div", { style: { fontSize: 96, fontWeight: 600, letterSpacing: "-0.02em", color: token("primary") } }, nom),
       h("div", { style: { marginTop: 32, fontSize: 40, lineHeight: 1.3, color: token("foreground") } }, chiffre),
     ),
-    { width: WIDTH, height: HEIGHT },
+    { width: WIDTH, height: HEIGHT, fonts: interFonts() },
   );
 }
 
