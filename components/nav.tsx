@@ -41,6 +41,9 @@ export function Nav() {
 
   useEffect(() => {
     if (!onHome) return;
+    // Mesure unique du DOM après montage (getBoundingClientRect) : un seul rendu
+    // supplémentaire, voulu, pour que l'entrée active soit posée avant l'observer.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setActive(nearestSection());
     if (typeof IntersectionObserver === "undefined") return;
     // Seules les sections du menu sont observées ; on ne compte que la bande
