@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { Geist } from "next/font/google";
 import { Footer } from "@/components/footer";
-import { Nav } from "@/components/nav";
 import { Spotlight } from "@/components/spotlight";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { cn } from "@/lib/utils";
@@ -42,8 +41,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="flex min-h-full flex-col bg-background text-foreground">
         <Spotlight />
-        <Nav />
-        <div className="fixed right-4 top-16 z-50 lg:top-4">
+        {/* En desktop, le bouton de thème vit en bas de la colonne gauche (intro). */}
+        <div className="fixed right-4 top-4 z-50 rounded-md bg-background lg:hidden">
           <ThemeToggle />
         </div>
         {children}

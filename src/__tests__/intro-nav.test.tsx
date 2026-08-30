@@ -49,18 +49,6 @@ function stubIntersectionObserver() {
   return state;
 }
 
-function stubViewport(width: number) {
-  vi.stubGlobal("matchMedia", (query: string) => {
-    const min = Number(/min-width:\s*(\d+)px/.exec(query)?.[1] ?? 0);
-    return {
-      matches: width >= min,
-      media: query,
-      addEventListener() {},
-      removeEventListener() {},
-    };
-  });
-}
-
 function renderNavWithSections() {
   return render(
     <>
@@ -92,10 +80,11 @@ describe("Intro", () => {
     expect(site.email).toBe("cedric.gicquiaud@gmail.com");
   });
 
-  it("applique bg-grid et occupe la hauteur de l'écran, nom et titre en tête", () => {
+  it("applique bg-grid, nom et titre en tête (la hauteur vient du parent depuis PFO-28)", () => {
     const { container } = render(<Intro />);
     const section = container.querySelector("section#intro");
-    expect(section).toHaveClass("bg-grid", "min-h-screen");
+    expect(section).toHaveClass("bg-grid");
+    expect(section).not.toHaveClass("min-h-screen");
     const heading = screen.getByRole("heading", { level: 1 });
     expect(section?.firstElementChild?.contains(heading)).toBe(true);
   });
@@ -110,7 +99,7 @@ describe("site.json", () => {
 });
 
 describe("Nav", () => {
-  it("rend quatre liens vers À propos, Expérience, Projets et Contact", () => {
+  it("rend trois liens vers À propos, Expérience et Projets (Contact retiré par PFO-29)", () => {
     render(<Nav />);
     const nav = screen.getByRole("navigation");
     const links = Array.from(nav.querySelectorAll("a")).map((a) => [a.textContent, a.getAttribute("href")]);
@@ -118,23 +107,21 @@ describe("Nav", () => {
       ["À propos", "/#a-propos"],
       ["Expérience", "/#experience"],
       ["Projets", "/#projets"],
-      ["Contact", "/#contact"],
     ]);
   });
 
-  it("souligne la section visible (classe active) au fil du défilement", () => {
+  it("souligne la section visible (aria-current=location) au fil du défilement", () => {
     const observer = stubIntersectionObserver();
     renderNavWithSections();
     const ids = observer.observed.map((el) => el.id);
-    expect(ids).toEqual(["a-propos", "experience", "projets", "contact"]);
+    expect(ids).toEqual(["a-propos", "experience", "projets"]);
 
     const target = document.getElementById("experience")!;
     act(() => observer.callback!([{ target, isIntersecting: true }]));
 
     const active = screen.getByRole("link", { name: "Expérience" });
-    expect(active).toHaveClass("active");
     expect(active).toHaveAttribute("aria-current", "location");
-    expect(screen.getByRole("link", { name: "À propos" })).not.toHaveClass("active");
+    expect(screen.getByRole("link", { name: "À propos" })).not.toHaveAttribute("aria-current");
   });
 
   it("n'active aucun lien au chargement quand seule l'Intro est à l'écran", () => {
@@ -150,7 +137,7 @@ describe("Nav", () => {
         })),
       ),
     );
-    for (const name of ["À propos", "Expérience", "Projets", "Contact"]) {
+    for (const name of ["À propos", "Expérience", "Projets"]) {
       expect(screen.getByRole("link", { name })).not.toHaveAttribute("aria-current");
     }
   });
@@ -160,18 +147,18 @@ describe("Nav", () => {
     renderNavWithSections();
     const rect = (top: number) => ({ top }) as DOMRectReadOnly;
     const experience = document.getElementById("experience")!;
-    const contact = document.getElementById("contact")!;
+    const projets = document.getElementById("projets")!;
     act(() =>
       observer.callback!([
         { target: experience, isIntersecting: true, boundingClientRect: rect(120) },
-        { target: contact, isIntersecting: true, boundingClientRect: rect(600) },
+        { target: projets, isIntersecting: true, boundingClientRect: rect(600) },
       ]),
     );
     expect(screen.getByRole("link", { name: "Expérience" })).toHaveAttribute("aria-current", "location");
-    expect(screen.getByRole("link", { name: "Contact" })).not.toHaveAttribute("aria-current");
+    expect(screen.getByRole("link", { name: "Projets" })).not.toHaveAttribute("aria-current");
 
     act(() => observer.callback!([{ target: experience, isIntersecting: false, boundingClientRect: rect(-900) }]));
-    expect(screen.getByRole("link", { name: "Contact" })).toHaveAttribute("aria-current", "location");
+    expect(screen.getByRole("link", { name: "Projets" })).toHaveAttribute("aria-current", "location");
     expect(screen.getByRole("link", { name: "Expérience" })).not.toHaveAttribute("aria-current");
   });
 
@@ -181,30 +168,7 @@ describe("Nav", () => {
     expect(observer.options?.rootMargin).toMatch(/^-\d+% 0px -\d+% 0px$/);
   });
 
-  it("réserve à droite la place du bouton Thème en disposition top", () => {
-    stubViewport(375);
-    render(<Nav />);
-    const list = screen.getByRole("navigation").querySelector("ul")!;
-    expect(list.className.split(/\s+/)).toContain("pr-24");
-  });
-
-  it("passe en haut et en pleine largeur à 375 px, reste fixe à gauche à 1280 px", () => {
-    stubViewport(375);
-    const narrow = render(<Nav />);
-    const navNarrow = narrow.getByRole("navigation");
-    expect(navNarrow).toHaveAttribute("data-layout", "top");
-    expect(navNarrow).toHaveClass("w-full");
-    const fixedClasses = navNarrow.className.split(/\s+/).filter((c) => /(^|:)fixed$/.test(c));
-    expect(fixedClasses.every((c) => c.startsWith("lg:"))).toBe(true);
-    cleanup();
-
-    stubViewport(1280);
-    const wide = render(<Nav />);
-    expect(wide.getByRole("navigation")).toHaveAttribute("data-layout", "side");
-    expect(wide.getByRole("navigation")).toHaveClass("lg:fixed", "lg:left-0");
-  });
-
-  it("laisse Tab parcourir les quatre liens puis le bouton de thème, focus visible", () => {
+  it("laisse Tab parcourir les trois liens puis le bouton de thème, focus visible", () => {
     const { container } = render(
       <>
         <Nav />
@@ -214,7 +178,7 @@ describe("Nav", () => {
     const focusable = Array.from(
       container.querySelectorAll<HTMLElement>("a[href], button:not([disabled])"),
     ).filter((el) => el.tabIndex >= 0);
-    expect(focusable.map((el) => el.tagName)).toEqual(["A", "A", "A", "A", "BUTTON"]);
+    expect(focusable.map((el) => el.tagName)).toEqual(["A", "A", "A", "BUTTON"]);
     for (const el of focusable) {
       expect(el.className).toMatch(/focus-visible:/);
     }
