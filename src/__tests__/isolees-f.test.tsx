@@ -84,3 +84,19 @@ describe("Thème sombre seul : plus de bascule (PFO-55)", () => {
     expect(offenders).toEqual([]);
   });
 });
+
+describe("Thème sombre seul : bi-ton et classes dark: (PFO-55)", () => {
+  it("portrait et carte projet fondent le visuel en mix-blend-screen seul (plus de multiply)", () => {
+    for (const file of ["components/portrait.tsx", "components/project-card.tsx"]) {
+      const text = source(file);
+      expect(text, file).toContain("mix-blend-screen");
+      expect(text, file).not.toContain("mix-blend-multiply");
+    }
+  });
+
+  it("aucune classe dark: dans portrait, project-card, fiche et ui/badge", () => {
+    for (const file of ["components/portrait.tsx", "components/project-card.tsx", "components/fiche.tsx", "components/ui/badge.tsx"]) {
+      expect(source(file), file).not.toMatch(/\bdark:/);
+    }
+  });
+});
