@@ -115,4 +115,8 @@ describe("PFO-19 — script npm og", () => {
       rmSync(tmp, { recursive: true, force: true });
     }
   });
+
+  it("README.md documente la commande npm run og", () => {
+    expect(readFileSync(path.join(root, "README.md"), "utf8")).toMatch(/npm run og/);
+  });
 });
