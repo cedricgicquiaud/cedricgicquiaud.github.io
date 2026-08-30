@@ -179,3 +179,13 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 - [x] Dans « Ce que j'ai construit » : les puces de liste sont visibles, les passages en gras ressortent, le lien du dépôt dans « Artefacts » est souligné et cliquable. Vérifier à 375 px (aucun défilement horizontal) et en sombre (`document.documentElement.dataset.theme = "dark"`) : texte lisible, badges lisibles.
 - [x] Refus : ouvrir `/projets/ben/` (fiche `anonyme`) : ni lien « Code » ni lien « Démo » dans l'en-tête.
 - [x] Refus : dans `content/fiches/slice.md`, ajouter le mot « Nexus » dans la section « Preuves », lancer `npm run build` : `next build` réussit puis `check-output` échoue avec `projets/slice/index.html : mot interdit « Nexus »`. Annuler la modification.
+
+## Livraison 9 — Halo qui suit la souris
+
+### PFO-31 — Halo de lumière qui suit la souris
+
+- [ ] `npm run dev`, ouvrir `http://localhost:3000/` avec une souris : un cercle de lumière bleue très diffuse (environ 600 px) suit le pointeur sur toute la page, y compris par-dessus les sections et sur `/projets/slice/`. Passer en sombre (bouton « Thème ») : le halo reste visible, plus clair sur le fond sombre. Le texte reste aussi lisible qu'avant (aucun changement de contraste perceptible).
+- [ ] Refus : dans les outils de développement de Chrome, activer l'émulation tactile (barre d'outils appareil, iPhone) puis recharger : aucun halo, et `document.querySelector('body > div[aria-hidden]')` renvoie `null` dans la console.
+- [ ] Refus : avec la souris, cliquer sur le bouton « Thème », sur une entrée du menu et sur le lien « Code » d'une carte projet : chaque clic agit normalement (le halo ne capte rien ; son calque a `pointer-events: none`).
+- [ ] Refus : dans Chrome, Rendering → « Emulate CSS media feature prefers-reduced-motion: reduce », recharger : le halo est au centre de la fenêtre et ne bouge pas quand la souris bouge.
+- [ ] Refus : `npm run build` puis `grep -c radial-gradient out/index.html` affiche `0` (rien côté serveur, le halo n'apparaît qu'une fois la page montée).
