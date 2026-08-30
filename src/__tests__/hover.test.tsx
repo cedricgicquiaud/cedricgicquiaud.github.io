@@ -3,6 +3,7 @@ import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { Experience } from "../../components/experience";
 import { ProjectCard } from "../../components/project-card";
+import { Projects } from "../../components/projects";
 import type { Fiche } from "../../lib/fiches";
 
 afterEach(cleanup);
@@ -78,5 +79,12 @@ describe("ProjectCard — focus clavier", () => {
     expect(card).toHaveClass("focus-within:bg-accent/50", "focus-within:border-border");
     expect(card.className).not.toMatch(/focus-within[^ ]*opacity/);
     expect(within(card).getByRole("heading", { level: 3 })).toHaveClass("group-focus-within/item:text-primary");
+  });
+});
+
+describe("Projects — grille", () => {
+  it("la grille est le groupe de liste qui pilote l'estompe des cartes voisines", () => {
+    const { container } = render(<Projects fiches={[fiche(), fiche({ nom: "Beta" })]} />);
+    expect(container.querySelector("ol")).toHaveClass("group/list");
   });
 });
