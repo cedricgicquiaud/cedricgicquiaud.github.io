@@ -126,3 +126,12 @@ describe("Serveur de dev par PID (PFO-45)", () => {
     }, 120_000);
   });
 });
+
+describe("Barème anonymisé (PFO-15)", () => {
+  it(".pilot/calibration.md ne cite ni organisation ni dépôt tiers, seulement des mentions génériques", () => {
+    const md = read(".pilot/calibration.md");
+    expect(md).not.toMatch(/AlanZien|weme-studio|Nexus|\/SLICE/i);
+    expect(md).toContain("un projet personnel");
+    expect(md).toContain("un projet client");
+  });
+});
