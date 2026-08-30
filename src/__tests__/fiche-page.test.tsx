@@ -67,6 +67,7 @@ function fakeFiche(overrides: Partial<FicheData["frontmatter"]> = {}): FicheData
       { id: "appris", titre: "Ce que j'en ai appris", html: "<p>Texte des leçons.</p>" },
       { id: "artefacts", titre: "Artefacts", html: "<p>Texte des artefacts.</p>" },
     ],
+    visuel: "/projets/generated/factice.png",
   };
 }
 
@@ -256,8 +257,10 @@ describe("Sortie du build : une page par fiche (PFO-26)", () => {
     }
   });
 
-  it("refuse un slug inconnu : aucun dossier hors des 7 fiches", () => {
-    const dirs = readdirSync(path.join(out, "projets")).filter((n) => statSync(path.join(out, "projets", n)).isDirectory());
+  it("refuse un slug inconnu : aucun dossier hors des 7 fiches (et `generated/`, les visuels de PFO-35)", () => {
+    const dirs = readdirSync(path.join(out, "projets")).filter(
+      (n) => n !== "generated" && statSync(path.join(out, "projets", n)).isDirectory(),
+    );
     expect(dirs.sort()).toEqual(loadFiches().map((f) => f.slug).sort());
   });
 });
