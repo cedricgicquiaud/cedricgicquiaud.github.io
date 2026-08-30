@@ -16,10 +16,13 @@ export type Frontmatter = {
   ordre?: number;
 };
 
+export type EnBref = { quoi: string; chiffre: string; lien: string };
+
 export type Fiche = {
   slug: string;
   titre: string;
   frontmatter: Frontmatter;
+  enBref: EnBref;
 };
 
 /** Valeur de frontmatter en texte ; un nombre (ex. `periode: 2026`) est accepté, le reste devient vide. */
@@ -43,10 +46,18 @@ function toFrontmatter(data: Record<string, unknown>): Frontmatter {
   };
 }
 
+/** Le paragraphe qui suit « **En bref.** », replié sur une ligne, découpé en phrases. */
+function parseEnBref(content: string): EnBref {
+  const bloc = content.match(/\*\*En bref\.\*\*([^]*?)(?:\n\s*\n|$)/)?.[1] ?? "";
+  const phrases = bloc.replace(/\s+/g, " ").trim().split(/(?<=\.)\s+/).filter(Boolean);
+  const [quoi = "", chiffre = "", ...reste] = phrases;
+  return { quoi, chiffre, lien: reste.join(" ") };
+}
+
 function parseFiche(slug: string, raw: string): Fiche {
   const { data, content } = matter(raw);
   const titre = content.match(/^# (.+)$/m)?.[1].trim() ?? "";
-  return { slug, titre, frontmatter: toFrontmatter(data) };
+  return { slug, titre, frontmatter: toFrontmatter(data), enBref: parseEnBref(content) };
 }
 
 /** Sans `ordre` = en dernier ; à ordre égal, par nom. */
