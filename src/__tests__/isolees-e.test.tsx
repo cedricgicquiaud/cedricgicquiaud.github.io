@@ -1,8 +1,9 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
+import { Badge } from "../../components/ui/badge";
 
 afterEach(cleanup);
 
@@ -33,5 +34,14 @@ describe("Token --cyber dans globals.css (PFO-51)", () => {
 
   it("expose --color-cyber dans @theme inline pour les classes text-cyber et bg-cyber", () => {
     expect(cssBlock(css, "@theme inline {")).toMatch(/--color-cyber:\s*var\(--cyber\);/);
+  });
+});
+
+describe("Badge : variante cyber (PFO-51)", () => {
+  it("rend un fond cyber à 10 % et un texte cyber, toujours en pilule", () => {
+    render(<Badge variant="cyber">TypeScript</Badge>);
+    const badge = screen.getByText("TypeScript");
+    expect(badge).toHaveClass("bg-cyber/10", "text-cyber", "rounded-4xl");
+    expect(badge).not.toHaveClass("bg-primary", "bg-secondary");
   });
 });
