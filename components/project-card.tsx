@@ -30,7 +30,7 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
             {titre || frontmatter.nom}
           </a>
         </h3>
-        <p className="leading-relaxed">{enBref.quoi}</p>
+        <p className="text-base leading-relaxed">{enBref.quoi}</p>
         <p className="text-lg font-semibold tabular-nums">{enBref.chiffre}</p>
         <Badge variant="secondary" className="h-auto whitespace-normal">
           {frontmatter.statut}

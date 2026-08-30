@@ -7,7 +7,7 @@ export function Experience() {
   return (
     <section id={site.sections.experience} className="py-16">
       <div className="w-full">
-        <h2 className="mb-6 text-2xl font-semibold tracking-tight">{experience.titre}</h2>
+        <h2 className="mb-6 text-sm font-bold uppercase tracking-widest">{experience.titre}</h2>
         <ol className="group/list space-y-10">
           {experience.blocs.map((bloc) => (
             <li key={bloc.periode}>
@@ -16,7 +16,7 @@ export function Experience() {
                 <div className="space-y-2">
                   <h3 className="font-medium group-hover/item:text-primary group-focus-within/item:text-primary">{bloc.role}</h3>
                   <p className="text-sm text-muted-foreground">{bloc.secteur}</p>
-                  <p className="leading-relaxed">{bloc.description}</p>
+                  <p className="text-base leading-relaxed">{bloc.description}</p>
                   <ul className="flex flex-wrap gap-2 pt-1">
                     {bloc.tags.map((tag) => (
                       <li key={tag}>
