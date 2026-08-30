@@ -75,3 +75,24 @@ describe("ProjectCard — liens externes", () => {
     expect(screen.queryByText(/à venir \(mise en ligne prévue\)/)).not.toBeInTheDocument();
   });
 });
+
+describe("ProjectCard — vitrine", () => {
+  it("refus : vitrine sans dépôt, mention « code privé, démo à venir » et aucun lien externe", () => {
+    render(<ProjectCard fiche={fiche({ visibilite: "vitrine", depot: "", demo: "à venir (Vercel)" })} />);
+    expect(screen.getByText("code privé, démo à venir")).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Code" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Démo" })).not.toBeInTheDocument();
+  });
+
+  it("vitrine avec dépôt : lien « Code », pas de mention « code privé »", () => {
+    render(<ProjectCard fiche={fiche({ visibilite: "vitrine", depot: "https://github.com/x/landing" })} />);
+    expect(screen.getByRole("link", { name: "Code" })).toBeInTheDocument();
+    expect(screen.queryByText(/code privé/)).not.toBeInTheDocument();
+  });
+
+  it("anonyme sans dépôt : ni lien ni mention « code privé »", () => {
+    render(<ProjectCard fiche={fiche({ visibilite: "anonyme", depot: "", demo: "" })} />);
+    expect(screen.queryByRole("link")).not.toBeInTheDocument();
+    expect(screen.queryByText(/code privé/)).not.toBeInTheDocument();
+  });
+});
