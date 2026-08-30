@@ -160,3 +160,21 @@ describe("Rendu de la fiche : en-tête (PFO-27)", () => {
     expect(badges).toEqual(["TypeScript", "Vitest"]);
   });
 });
+
+describe("Rendu de la fiche : En bref et cinq sections (PFO-27)", () => {
+  it("rend le bloc En bref puis les cinq sections h2 dans l'ordre, avec le Markdown (liste, gras, lien) rendu", () => {
+    render(<Fiche fiche={fakeFiche()} />);
+    const enBref = screen.getByText(/Un service factice\./);
+    expect(enBref).toHaveTextContent("Un service factice. 12 tests verts. Code public.");
+
+    const h2 = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
+    expect(h2).toEqual(["Problème", "Ce que j'ai construit", "Preuves", "Ce que j'en ai appris", "Artefacts"]);
+    expect(document.body.textContent!.indexOf("Un service factice.")).toBeLessThan(document.body.textContent!.indexOf("Problème"));
+
+    const construit = screen.getByRole("heading", { level: 2, name: "Ce que j'ai construit" }).parentElement!;
+    expect(construit.querySelectorAll("ul li")).toHaveLength(2);
+    expect(construit.querySelector("strong")).toHaveTextContent("point fort");
+    expect(screen.getByRole("link", { name: "lien" })).toHaveAttribute("href", "https://github.com/cedricgicquiaud/factice");
+    expect(screen.getByText("Texte des artefacts.")).toBeInTheDocument();
+  });
+});
