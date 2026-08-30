@@ -164,3 +164,15 @@ describe("ProjectCard : sans chiffre clé (PFO-53)", () => {
     expect(within(card).getByText("en cours")).toHaveClass("whitespace-normal");
   });
 });
+
+describe("Fiche : pastilles Stack en bleu cyber (PFO-51)", () => {
+  it("chaque tag de la ligne Stack est une pastille cyber, comme sur les cartes", async () => {
+    const { Fiche } = await import("../../components/fiche");
+    render(<Fiche fiche={fiche()} />);
+    for (const tag of ["TypeScript", "React"]) {
+      const badge = screen.getByText(tag);
+      expect(badge).toHaveClass("bg-cyber/10", "text-cyber");
+      expect(badge).not.toHaveClass("bg-secondary", "border-border");
+    }
+  });
+});
