@@ -3,7 +3,7 @@ nom: PILOT
 statut: en cours (méthode rodée sur un bac à sable et branchée sur deux projets réels ; dépôt public pas encore ouvert)
 periode: avril 2026 (FORGE) → aujourd'hui ; PILOT depuis le 22 août 2026
 role: conception de la méthode, écriture des documents, de la skill et des fiches de poste des agents, expérimentation — seul
-stack: Linear (tableau de bord, API GraphQL + MCP), GitHub (branches, PR, git worktrees), Claude Code (skill `pilot` et agents `tdd-writer`, `verifier`, `testeur` en Markdown, allowlist `settings.json`, commande `/goal`), scripts Python pour l'API Linear
+stack: Linear, GitHub, Claude Code, skills et agents en Markdown, git worktrees, Python (API Linear)
 visibilite: public
 depot: à venir (nouveau dépôt public à historique neuf, sans `.workflow/sessions/`)
 demo: bac à sable `pilotage-sandbox` (CRM léger « Carnet »), à rendre public après audit
