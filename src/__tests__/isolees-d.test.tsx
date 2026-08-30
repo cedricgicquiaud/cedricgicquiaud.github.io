@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import Home from "../../app/page";
 import { About } from "../../components/about";
 import { Experience } from "../../components/experience";
 import { Intro } from "../../components/intro";
@@ -74,5 +75,24 @@ describe("Tailles du modèle : corps des sections (PFO-47)", () => {
     const cardBodies = container.querySelectorAll("section#projets article h3 + p");
     expect(cardBodies.length).toBeGreaterThan(0);
     for (const p of cardBodies) expect(classesOf(p)).toEqual(expect.arrayContaining(["text-base", "leading-relaxed"]));
+  });
+});
+
+describe("Grille du modèle : proportions et espace entre colonnes (PFO-47)", () => {
+  it("conteneur max-w-screen-xl, colonnes 48/52 avec lg:gap-24, colonne droite plafonnée à max-w-2xl", () => {
+    const { container } = render(<Home />);
+    const main = container.querySelector("main")!;
+    expect(classesOf(main)).toContain("max-w-screen-xl");
+    expect(classesOf(main)).not.toContain("max-w-6xl");
+
+    const sticky = container.querySelector(".lg\\:sticky")!;
+    const grid = sticky.parentElement!;
+    expect(classesOf(grid)).toEqual(
+      expect.arrayContaining(["lg:grid", "lg:grid-cols-[minmax(0,48fr)_minmax(0,52fr)]", "lg:gap-24"]),
+    );
+    expect(classesOf(grid)).not.toContain("lg:gap-16");
+
+    const right = sticky.nextElementSibling!;
+    expect(classesOf(right)).toContain("max-w-2xl");
   });
 });
