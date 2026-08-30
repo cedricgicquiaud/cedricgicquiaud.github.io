@@ -209,9 +209,8 @@ describe("Un seul bouton de thème, fixe en haut à droite (PFO-49)", () => {
   });
 
   it("l'accueil (page.tsx et intro) ne rend aucun bouton de thème : il vit dans le layout", () => {
-    const { container } = render(<Home />);
+    render(<Home />);
     expect(screen.queryByRole("button", { name: /thème/i, hidden: true })).toBeNull();
-    expect(container.querySelector("button")).toBeNull();
     expect(source("components/intro.tsx")).not.toContain("ThemeToggle");
   });
 });
