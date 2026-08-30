@@ -96,3 +96,13 @@ describe("ProjectCard — vitrine", () => {
     expect(screen.queryByText(/code privé/)).not.toBeInTheDocument();
   });
 });
+
+describe("ProjectCard — lien vers la fiche", () => {
+  it("le titre lie /projets/<slug>/, sans lien imbriqué", () => {
+    render(<ProjectCard fiche={fiche({ slug: "slice", titre: "SLICE — titre" })} />);
+    const title = screen.getByRole("link", { name: "SLICE — titre" });
+    expect(title).toHaveAttribute("href", "/projets/slice/");
+    expect(title.querySelector("a")).toBeNull();
+    expect(title.closest("a")).toBe(title);
+  });
+});
