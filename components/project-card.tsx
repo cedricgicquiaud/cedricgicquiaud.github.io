@@ -10,7 +10,7 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
     <article className="group/item grid min-w-0 gap-4 rounded-lg border border-transparent p-5 transition-colors hover:border-border hover:bg-accent/50 focus-within:border-border focus-within:bg-accent/50 sm:grid-cols-[200px_1fr] lg:group-hover/list:opacity-50 lg:hover:!opacity-100">
       {/* Monochrome bleu au repos : image en niveaux de gris fondue (multiply, screen en sombre) sur le bleu
           du parent ; au survol ou au focus, fondu et gris retirés, l'image reprend ses couleurs. */}
-      <div className="overflow-hidden rounded border border-border bg-primary">
+      <div className="self-start overflow-hidden rounded border border-border bg-primary">
         {/* Export statique : balise native, pas d'optimisation next/image. */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
