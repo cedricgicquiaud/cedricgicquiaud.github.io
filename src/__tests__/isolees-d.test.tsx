@@ -2,7 +2,7 @@ import "@testing-library/jest-dom/vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
 import { readFileSync } from "node:fs";
 import path from "node:path";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import Home from "../../app/page";
 import { About } from "../../components/about";
 import { Experience } from "../../components/experience";
@@ -11,6 +11,7 @@ import { Intro } from "../../components/intro";
 import { Projects } from "../../components/projects";
 import { ThemeToggle } from "../../components/theme-toggle";
 import { loadFiches } from "../../lib/fiches";
+import { ensureBuild } from "./helpers/build";
 
 afterEach(() => {
   cleanup();
@@ -203,5 +204,14 @@ describe("Un seul bouton de thème, fixe en haut à droite (PFO-49)", () => {
     expect(screen.queryByRole("button", { name: /thème/i, hidden: true })).toBeNull();
     expect(container.querySelector("button")).toBeNull();
     expect(source("components/intro.tsx")).not.toContain("ThemeToggle");
+  });
+});
+
+describe("Sortie du build : plus de portrait (PFO-48)", () => {
+  beforeAll(() => ensureBuild(["components/intro.tsx", "app/page.tsx", "app/layout.tsx"]), 250_000);
+
+  it("out/index.html ne contient pas le mot « portrait »", () => {
+    const html = readFileSync(path.join(root, "out", "index.html"), "utf8");
+    expect(html.toLowerCase()).not.toContain("portrait");
   });
 });
