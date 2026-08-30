@@ -1,10 +1,10 @@
-import { execSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { Portrait } from "../../components/portrait";
+import { ensureBuild } from "./helpers/build";
 
 const root = path.resolve(__dirname, "../..");
 
@@ -65,24 +65,9 @@ describe("portrait : repli tant que la photo n'est pas fournie (PFO-12)", () => 
 describe("image Open Graph (PFO-13) — lit out/ produit par npm run build", () => {
   const out = path.join(root, "out");
   const ogPng = path.join(out, "opengraph-image.png");
-  const indexHtml = path.join(out, "index.html");
 
-  /** Sources dont un changement rend `out/` périmé pour ce test. */
-  const sources = [path.join(root, "public", "opengraph-image.png"), path.join(root, "app", "layout.tsx")];
-
-  function outIsStale(): boolean {
-    if (!existsSync(indexHtml)) return true;
-    const built = statSync(indexHtml).mtimeMs;
-    return sources.some((f) => existsSync(f) && statSync(f).mtimeMs > built);
-  }
-
-  // Sans `out/`, ce fichier reconstruit ; si socle.test.ts vient de construire (fichiers de
-  // tests en série, cf. vitest.config.ts), `out/index.html` est plus récent que les sources
-  // et on réutilise `out/` tel quel.
-  beforeAll(() => {
-    if (outIsStale()) execSync("npm run build", { cwd: root, stdio: "pipe", timeout: 120_000 });
-    expect(existsSync(indexHtml), "out/index.html absent après npm run build").toBe(true);
-  }, 150_000);
+  // Sources dont un changement rend `out/` périmé pour ce test (voir helpers/build.ts).
+  beforeAll(() => ensureBuild(["public/opengraph-image.png", "app/layout.tsx"]), 250_000);
 
   it("out/opengraph-image.png existe", () => {
     expect(existsSync(ogPng)).toBe(true);

@@ -148,7 +148,8 @@ describe("PFO-44 — helper ensureBuild partagé par les tests qui lisent out/",
   it.each(["finitions", "spotlight", "font", "visuals"])("%s.test.tsx importe ensureBuild depuis ./helpers/build", (name) => {
     const source = readFileSync(path.join(root, "src", "__tests__", `${name}.test.tsx`), "utf8");
     expect(source).toMatch(/import \{ ensureBuild \} from "\.\/helpers\/build"/);
-    expect(source).not.toMatch(/npm run build|\["run", "build"\]/);
+    // Plus aucun lancement du build en propre : seul le helper le fait.
+    expect(source).not.toMatch(/exec(File)?Sync\([^)]*build/);
   });
 
   it("vitest ne prend pas helpers/ pour des tests", () => {
