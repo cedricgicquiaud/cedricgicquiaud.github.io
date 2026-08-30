@@ -31,7 +31,6 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
           </a>
         </h3>
         <p className="text-sm leading-relaxed text-muted-foreground">{enBref.quoi}</p>
-        <p className="text-lg font-semibold tabular-nums">{enBref.chiffre}</p>
         <Badge variant="secondary" className="h-auto whitespace-normal font-semibold uppercase tracking-wide">
           {frontmatter.statut}
         </Badge>
