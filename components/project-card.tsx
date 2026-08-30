@@ -25,7 +25,7 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
         />
       </div>
       <div className="min-w-0 space-y-3">
-        <h3 className="font-medium break-words group-hover/item:text-primary group-focus-within/item:text-primary">
+        <h3 className="font-medium break-words group-hover/item:text-cyber group-focus-within/item:text-cyber">
           <a href={`/projets/${fiche.slug}/`} className="hover:underline underline-offset-4">
             {titre || frontmatter.nom}
           </a>
@@ -38,7 +38,7 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
         <ul aria-label="Stack" className="flex flex-wrap gap-2">
           {frontmatter.stack.slice(0, 5).map((tag) => (
             <li key={tag}>
-              <Badge variant="outline">{tag}</Badge>
+              <Badge variant="cyber">{tag}</Badge>
             </li>
           ))}
         </ul>
