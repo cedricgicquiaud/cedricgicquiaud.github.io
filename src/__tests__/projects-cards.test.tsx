@@ -42,3 +42,11 @@ describe("ProjectCard — contenu", () => {
     expect(within(card).getByText("React")).toBeInTheDocument();
   });
 });
+
+describe("ProjectCard — tags", () => {
+  it("affiche au plus 5 tags, les premiers de la stack", () => {
+    render(<ProjectCard fiche={fiche({ stack: ["A", "B", "C", "D", "E", "F", "G"] })} />);
+    const tags = within(screen.getByRole("list", { name: /stack/i })).getAllByRole("listitem");
+    expect(tags.map((t) => t.textContent)).toEqual(["A", "B", "C", "D", "E"]);
+  });
+});
