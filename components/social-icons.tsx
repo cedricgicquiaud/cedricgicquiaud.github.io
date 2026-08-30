@@ -9,17 +9,23 @@ const MAIL_PATH =
   "M2 4h20a1 1 0 0 1 1 1v.4l-11 6.6L1 5.4V5a1 1 0 0 1 1-1zm-1 3.7 11 6.6 11-6.6V19a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V7.7z";
 
 const links = [
-  { label: "GitHub", href: site.links.github, path: GITHUB_PATH },
-  { label: "LinkedIn", href: site.links.linkedin, path: LINKEDIN_PATH },
-  { label: "Mail", href: `mailto:${site.email}`, path: MAIL_PATH },
+  { label: "GitHub", href: site.links.github, path: GITHUB_PATH, external: true },
+  { label: "LinkedIn", href: site.links.linkedin, path: LINKEDIN_PATH, external: true },
+  { label: "Mail", href: `mailto:${site.email}`, path: MAIL_PATH, external: false },
 ];
 
 export function SocialIcons() {
   return (
     <ul>
-      {links.map(({ label, href, path }) => (
+      {links.map(({ label, href, path, external }) => (
         <li key={label}>
-          <a href={href} aria-label={label} title={label}>
+          <a
+            href={href}
+            aria-label={label}
+            title={label}
+            target={external ? "_blank" : undefined}
+            rel={external ? "noreferrer" : undefined}
+          >
             <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
               <path d={path} />
             </svg>
