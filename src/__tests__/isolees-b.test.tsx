@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen } from "@testing-library/react";
-import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -86,5 +86,14 @@ describe("PFO-42 — check-output refuse Google Fonts", () => {
     } finally {
       rmSync(dir, { recursive: true, force: true });
     }
+  });
+});
+
+const root = path.resolve(__dirname, "../..");
+
+describe("PFO-19 — script npm og", () => {
+  it("package.json expose « og » : node scripts/og-image.mjs", () => {
+    const { scripts } = JSON.parse(readFileSync(path.join(root, "package.json"), "utf8"));
+    expect(scripts.og).toBe("node scripts/og-image.mjs");
   });
 });
