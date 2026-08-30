@@ -124,8 +124,9 @@ function cornerPixel(file: string): string {
 }
 
 describe("Thème sombre seul : images générées (PFO-55)", () => {
-  it("public/opengraph-image.png est régénérée : son fond est le --primary de :root", () => {
-    expect(cornerPixel(path.join(root, "public", "opengraph-image.png"))).toBe(token("primary"));
+  it("public/opengraph-image.png est régénérée : son fond est le --background de :root (#0b1220)", () => {
+    expect(token("background")).toBe("#0b1220");
+    expect(cornerPixel(path.join(root, "public", "opengraph-image.png"))).toBe(token("background"));
   });
 
   it("scripts/project-visuals.mjs sort un visuel sur fond sombre (--background #0b1220)", { timeout: 30_000 }, () => {
