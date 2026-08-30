@@ -1,5 +1,8 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen } from "@testing-library/react";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { act } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import Home from "../../app/page";
 import { Intro } from "../../components/intro";
@@ -10,6 +13,9 @@ afterEach(() => {
   vi.unstubAllGlobals();
   document.documentElement.removeAttribute("data-theme");
 });
+
+const root = path.resolve(__dirname, "../..");
+const source = (rel: string) => readFileSync(path.join(root, rel), "utf8");
 
 const classesOf = (el: Element | null | undefined) => (el?.className ?? "").split(/\s+/).filter(Boolean);
 
@@ -59,5 +65,62 @@ describe("Menu latéral à traits (PFO-29)", () => {
       expect(dash, `trait absent sur ${link.textContent}`).not.toBeNull();
       expect(classesOf(dash)).toEqual(expect.arrayContaining(["h-px", "w-8"]));
     }
+  });
+});
+
+type ObserverCallback = (entries: Partial<IntersectionObserverEntry>[]) => void;
+
+function stubIntersectionObserver() {
+  const state: { callback?: ObserverCallback; observed: Element[] } = { observed: [] };
+  vi.stubGlobal(
+    "IntersectionObserver",
+    class {
+      constructor(callback: ObserverCallback) {
+        state.callback = callback;
+      }
+      observe(el: Element) {
+        state.observed.push(el);
+      }
+      disconnect() {}
+      unobserve() {}
+    },
+  );
+  return state;
+}
+
+describe("Section active dans le menu latéral (PFO-29)", () => {
+  it("marque l'entrée visible aria-current=location, avec trait long et texte foreground", () => {
+    const observer = stubIntersectionObserver();
+    render(
+      <>
+        <Nav />
+        <main>
+          <section id="a-propos" />
+          <section id="experience" />
+          <section id="projets" />
+        </main>
+        <footer id="contact" />
+      </>,
+    );
+    expect(observer.observed.map((el) => el.id)).toEqual(["a-propos", "experience", "projets"]);
+
+    const target = document.getElementById("experience")!;
+    act(() => observer.callback!([{ target, isIntersecting: true }]));
+
+    const active = screen.getByRole("link", { name: "Expérience" });
+    expect(active).toHaveAttribute("aria-current", "location");
+    expect(classesOf(active)).toContain("aria-[current]:text-foreground");
+    expect(classesOf(active.querySelector("span"))).toEqual(
+      expect.arrayContaining(["group-aria-[current]:w-16", "group-aria-[current]:bg-foreground"]),
+    );
+    expect(screen.getByRole("link", { name: "À propos" })).not.toHaveAttribute("aria-current");
+  });
+
+  it("ne se positionne pas : aucune classe fixed, sticky, top-, left- ni bordure dans nav.tsx", () => {
+    const src = source("components/nav.tsx");
+    expect(src).not.toMatch(/\b(lg:)?(fixed|sticky)\b/);
+    expect(src).not.toMatch(/\b(lg:)?(top|left|right)-\d/);
+    expect(src).not.toMatch(/\bborder-[rb]\b/);
+    expect(src).not.toContain("matchMedia");
   });
 });
