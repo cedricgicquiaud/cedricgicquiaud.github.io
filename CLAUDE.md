@@ -33,4 +33,10 @@ ni d'employeur. Français seul.
 
 ## Idiomes de code
 
-(complété par `sync` au fil des audits)
+(validés le 30/08 après la feature F1)
+
+- Les ids de section et les ancres du menu sont définis à un seul endroit (`content/site.json`) ; tout composant les lit de là.
+- Aucune liste de mots sensibles en clair dans le dépôt : empreintes SHA-256 seulement (`content/forbidden.txt`).
+- Un test qui lance `next build` ne tourne jamais en parallèle d'un autre : `fileParallelism: false` reste en place dans `vitest.config.ts`.
+- Un composant ne se positionne pas lui-même (`fixed`, `top-*`, `right-*`) ; son parent dans `page.tsx` ou `layout.tsx` le place.
+- La variante `dark:` couvre les deux états sombres (système et forcé) ; ne pas la simplifier.
