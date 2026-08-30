@@ -88,3 +88,19 @@ describe("Projects — grille", () => {
     expect(container.querySelector("ol")).toHaveClass("group/list");
   });
 });
+
+describe("ProjectCard — liens et mobile", () => {
+  it("garde Code et Démo comme deux liens distincts avec leur href, sans transformer la carte en lien", () => {
+    render(<ProjectCard fiche={fiche()} />);
+    const card = screen.getByRole("article");
+    expect(card.closest("a")).toBeNull();
+    expect(screen.getByRole("link", { name: "Code" })).toHaveAttribute("href", "https://github.com/x/alpha");
+    expect(screen.getByRole("link", { name: "Démo" })).toHaveAttribute("href", "https://alpha.example");
+  });
+
+  it("à 375 px (classes seulement, jsdom ne mesure pas) : la carte et ses cellules gardent min-w-0", () => {
+    const { container } = render(<Projects fiches={[fiche()]} />);
+    for (const li of Array.from(container.querySelector("ol")!.children)) expect(li).toHaveClass("min-w-0");
+    expect(screen.getByRole("article")).toHaveClass("min-w-0");
+  });
+});
