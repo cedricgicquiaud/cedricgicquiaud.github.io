@@ -1,10 +1,18 @@
 import { cleanup, render } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { act, fireEvent } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Spotlight } from "../../components/spotlight";
 
 afterEach(cleanup);
+
+/** jsdom n'implémente pas `matchMedia` : ne « matche » que les requêtes listées. */
+function mockMatchMedia(matching: string[] = []) {
+  vi.stubGlobal("matchMedia", (query: string) => ({ matches: matching.includes(query), media: query }));
+}
+
+beforeEach(() => mockMatchMedia());
+afterEach(() => vi.unstubAllGlobals());
 
 /** Déclenche un `pointermove` sur la fenêtre (jsdom ne fournit pas toujours `PointerEvent`). */
 function movePointer(pointerType: "mouse" | "touch", clientX: number, clientY: number) {
@@ -45,5 +53,19 @@ describe("halo souris (PFO-31) — suivi du pointeur", () => {
     movePointer("touch", 120, 340);
     expect(halo.style.getPropertyValue("--x")).toBe("50%");
     expect(halo.style.getPropertyValue("--y")).toBe("50%");
+  });
+});
+
+describe("halo souris (PFO-31) — tactile et mouvement réduit", () => {
+  it("ne rend rien quand l'appareil n'a pas de survol (hover: none)", () => {
+    mockMatchMedia(["(hover: none)"]);
+    const { container } = render(<Spotlight />);
+    expect(container.querySelector("div")).toBeNull();
+  });
+
+  it("ne rend rien quand le pointeur est grossier (pointer: coarse)", () => {
+    mockMatchMedia(["(pointer: coarse)"]);
+    const { container } = render(<Spotlight />);
+    expect(container.querySelector("div")).toBeNull();
   });
 });
