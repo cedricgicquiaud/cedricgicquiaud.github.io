@@ -175,7 +175,7 @@ describe("Bas de colonne : liens sociaux et bouton de thème (PFO-30)", () => {
     const section = container.querySelector("section#intro")!;
     expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("Développeur d'agents IA");
 
-    const button = screen.getByRole("button", { name: "Thème", hidden: true });
+    const button = screen.getByRole("button", { name: /thème/i, hidden: true });
     expect(section.contains(button)).toBe(true);
     const toggleWrapper = button.parentElement!;
     expect(classesOf(toggleWrapper)).toEqual(expect.arrayContaining(["hidden", "lg:block"]));

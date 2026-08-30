@@ -95,7 +95,7 @@ describe("Intro : liens sociaux en logos (PFO-34)", () => {
       expect(el.className.split(/\s+/)).not.toContain("hidden");
     }
     expect(section.lastElementChild!.contains(list)).toBe(true);
-    const button = screen.getByRole("button", { name: "Thème", hidden: true });
+    const button = screen.getByRole("button", { name: /thème/i, hidden: true });
     expect(list.parentElement).toBe(button.parentElement!.parentElement);
   });
 });
