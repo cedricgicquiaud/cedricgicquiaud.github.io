@@ -133,6 +133,16 @@ describe("Route statique /projets/[slug]/ (PFO-26)", () => {
     expect(fichePage.dynamicParams).toBe(false);
   });
 
+  it("la page rend la fiche du slug dans un <main> : titre h1 et cinq sections", async () => {
+    const slice = loadFiches().find((f) => f.slug === "slice")!;
+    const page = await fichePage.default({ params: Promise.resolve({ slug: "slice" }), searchParams: Promise.resolve({}) });
+    render(page);
+    expect(screen.getByRole("main")).toBeInTheDocument();
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(slice.titre);
+    expect(screen.getAllByRole("heading", { level: 2 })).toHaveLength(5);
+    expect(screen.getByRole("link", { name: "← Projets" })).toBeInTheDocument();
+  });
+
   it("titre « <nom> — Cédric Gicquiaud » et description = première phrase d'En bref", async () => {
     const slice = loadFiches().find((f) => f.slug === "slice")!;
     const metadata = await fichePage.generateMetadata({ params: Promise.resolve({ slug: "slice" }), searchParams: Promise.resolve({}) });
