@@ -45,5 +45,5 @@ export function Spotlight() {
 
   if (!mounted) return null;
 
-  return <div ref={halo} aria-hidden="true" className="pointer-events-none fixed inset-0 z-30 transition-[background] duration-[80ms]" style={haloStyle} />;
+  return <div ref={halo} aria-hidden="true" className="pointer-events-none fixed inset-0 z-30" style={haloStyle} />;
 }
