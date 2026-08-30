@@ -17,24 +17,32 @@ afterEach(() => {
 const classesOf = (el: Element | null | undefined) => (el?.className ?? "").split(/\s+/).filter(Boolean);
 
 describe("Portrait dans la colonne gauche (PFO-37)", () => {
-  it("rend le portrait dans l'intro, sous le h1, en 160 px", () => {
+  it("rend le portrait dans l'intro, sous le h1, en 128 px", () => {
     const { container } = render(<Intro />);
     const section = container.querySelector("section#intro")!;
     const img = screen.getByRole("img", { name: /^Portrait de / });
     expect(section.contains(img)).toBe(true);
     const h1 = screen.getByRole("heading", { level: 1 });
     expect(h1.compareDocumentPosition(img) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(classesOf(img.parentElement)).toContain("w-40");
+    expect(classesOf(img.parentElement)).toContain("w-32");
+    expect(classesOf(img.parentElement)).not.toContain("w-40");
     expect(classesOf(img.parentElement)).not.toContain("sm:w-48");
   });
 
-  it("accepte une taille réduite ; la taille par défaut reste w-40 sm:w-48", () => {
+  it("accepte une taille réduite (w-32) ; la taille par défaut reste w-40 sm:w-48", () => {
     const { container, unmount } = render(<Portrait photoExists={false} size="sm" />);
     expect(container.querySelector("section#portrait"), "plus de section propre en taille réduite").toBeNull();
-    expect(classesOf(screen.getByRole("img").parentElement)).toEqual(expect.arrayContaining(["w-40", "rounded-lg"]));
+    expect(classesOf(screen.getByRole("img").parentElement)).toEqual(expect.arrayContaining(["w-32", "rounded-lg"]));
     unmount();
     render(<Portrait photoExists={false} />);
     expect(classesOf(screen.getByRole("img").parentElement)).toEqual(expect.arrayContaining(["w-40", "sm:w-48"]));
+  });
+
+  it("colonne gauche : lg:py-16, défilement interne borné à l'écran (lg:max-h-screen lg:overflow-y-auto), plus de lg:py-24", () => {
+    const { container } = render(<Home />);
+    const sticky = container.querySelector(".lg\\:sticky")!;
+    expect(classesOf(sticky)).toEqual(expect.arrayContaining(["lg:py-16", "lg:max-h-screen", "lg:overflow-y-auto"]));
+    expect(classesOf(sticky)).not.toContain("lg:py-24");
   });
 
   it("ne rend plus le portrait dans la colonne droite de l'accueil", () => {
