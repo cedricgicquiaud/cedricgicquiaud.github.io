@@ -189,4 +189,13 @@ describe("lib/fiches — loadFiches", () => {
     expect(f.sections[4].html).toContain('<a href="https://github.com/x/alpha">');
     expect(f.sections[4].html).not.toContain("<h2");
   });
+
+  it("vide depot et demo d'une fiche « anonyme », quoi qu'en dise le fichier", () => {
+    const [f] = loadFiches(
+      tempDir({ "ben.md": fiche({ ordre: 1, visibilite: "anonyme", depot: "https://github.com/x/secret", demo: "https://secret.example" }) }),
+    );
+    expect(f.frontmatter.visibilite).toBe("anonyme");
+    expect(f.frontmatter.depot).toBe("");
+    expect(f.frontmatter.demo).toBe("");
+  });
 });
