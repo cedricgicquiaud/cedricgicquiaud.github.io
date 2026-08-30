@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import { execFileSync } from "node:child_process";
-import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { cleanup, render, screen } from "@testing-library/react";
@@ -8,6 +8,7 @@ import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import { Fiche } from "../../components/fiche";
 import { ProjectCard } from "../../components/project-card";
 import { loadFiche, type Fiche as FicheData } from "../../lib/fiches";
+import { ensureBuild } from "./helpers/build";
 
 afterEach(cleanup);
 
@@ -198,18 +199,8 @@ describe("visuels dans out/ — lit out/ produit par npm run build (PFO-35)", ()
   const outGenerated = path.join(root, "out", "projets", "generated");
   const slicePng = path.join(outGenerated, "slice.png");
 
-  /** `out/` est périmé si le PNG de SLICE manque ou est plus vieux que le script ou la fiche. */
-  const stale = () => {
-    if (!existsSync(slicePng)) return true;
-    const built = statSync(slicePng).mtimeMs;
-    return [path.join(root, "scripts", "project-visuals.mjs"), path.join(root, "content", "fiches", "slice.md")].some(
-      (f) => statSync(f).mtimeMs > built,
-    );
-  };
-
-  beforeAll(() => {
-    if (stale()) execFileSync("npm", ["run", "build"], { cwd: root, stdio: "pipe" });
-  }, 240_000);
+  // `out/` est périmé s'il est plus vieux que le script ou la fiche (helpers/build.ts).
+  beforeAll(() => ensureBuild(["scripts/project-visuals.mjs", "content/fiches/slice.md"]), 250_000);
 
   it("contient un PNG généré par fiche (7) dont out/projets/generated/slice.png", () => {
     expect(existsSync(slicePng)).toBe(true);

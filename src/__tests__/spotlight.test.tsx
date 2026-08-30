@@ -1,10 +1,10 @@
-import { execSync } from "node:child_process";
-import { existsSync, readFileSync, statSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import path from "node:path";
 import { act, cleanup, fireEvent, render } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Spotlight } from "../../components/spotlight";
+import { ensureBuild } from "./helpers/build";
 
 const root = path.resolve(__dirname, "../..");
 
@@ -127,17 +127,9 @@ describe("halo souris (PFO-31) — montage dans app/layout.tsx", () => {
 
   const indexHtml = path.join(root, "out", "index.html");
 
-  /** `out/` est périmé si le layout ou le composant a changé depuis le dernier build. */
-  function outIsStale(): boolean {
-    if (!existsSync(indexHtml)) return true;
-    const built = statSync(indexHtml).mtimeMs;
-    const sources = [path.join(root, "app", "layout.tsx"), path.join(root, "components", "spotlight.tsx")];
-    return sources.some((f) => statSync(f).mtimeMs > built);
-  }
-
-  it("après build, out/index.html ne contient aucun radial-gradient inline", { timeout: 150_000 }, () => {
-    if (outIsStale()) execSync("npm run build", { cwd: root, stdio: "pipe", timeout: 120_000 });
-    expect(existsSync(indexHtml), "out/index.html absent après npm run build").toBe(true);
+  it("après build, out/index.html ne contient aucun radial-gradient inline", { timeout: 250_000 }, () => {
+    // `out/` est périmé si le layout ou le composant a changé depuis le dernier build.
+    ensureBuild(["app/layout.tsx", "components/spotlight.tsx"]);
     expect(readFileSync(indexHtml, "utf8")).not.toContain("radial-gradient");
   });
 });
