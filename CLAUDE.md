@@ -24,8 +24,8 @@ ni d'employeur. Français seul.
 - Merge : humain
 - Agents en parallèle : 1 (nombre de livraisons produites en même temps par `run` ; monter à 2 ou 3 quand la boucle a fait ses preuves)
 - Cahier de recette : `UAT.md` à la racine (lien depuis chaque feature)
-- Lancer l'app : `npm run dev` (Next.js, `http://localhost:3000/`)
-- Testeur : navigateur piloté (Chrome, extension Claude)
+- Lancer l'app : `scripts/dev-serve.sh start <port>` (Next.js, `http://localhost:<port>/` ; `npm run dev` pour un serveur au premier plan)
+- Testeur : navigateur piloté (Chrome, extension Claude) ; arrêt par `scripts/dev-serve.sh stop <port>`
 - Capacité : `days_per_week` dans `.pilot/calibration.md` (observed, ou un nombre pour forcer)
 - Échéance : 2026-09-13
 - Barème : `.pilot/calibration.md`
