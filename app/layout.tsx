@@ -41,8 +41,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="bg-grid flex min-h-full flex-col text-foreground">
         <Spotlight />
-        {/* En desktop, le bouton de thème vit en bas de la colonne gauche (intro). */}
-        <div className="fixed right-4 top-4 z-50 rounded-md bg-background lg:hidden">
+        {/* Seul bouton de thème du site, en haut à droite à toutes les largeurs. */}
+        <div className="fixed right-4 top-4 z-50">
           <ThemeToggle />
         </div>
         {children}

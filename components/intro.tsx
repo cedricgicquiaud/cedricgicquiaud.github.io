@@ -1,7 +1,6 @@
 import site from "../content/site.json";
 import { Nav } from "./nav";
 import { SocialIcons } from "./social-icons";
-import { ThemeToggle } from "./theme-toggle";
 
 // Titre court sous le nom (texte à confirmer : décision produit ouverte).
 const SHORT_TITLE = "Développeur d'agents IA";
@@ -17,14 +16,10 @@ export function Intro() {
           <Nav />
         </div>
       </div>
-      {/* Bas de colonne : logos des réseaux (un seul bloc, visible à toutes les largeurs :
-          sous la phrase en mobile, en bas de colonne en desktop) et bouton de thème
-          (desktop ; en mobile, le layout affiche un bouton fixe). */}
+      {/* Bas de colonne : logos des réseaux, un seul bloc visible à toutes les largeurs
+          (sous la phrase en mobile, en bas de colonne en desktop). */}
       <div className="flex flex-wrap items-center gap-6">
         <SocialIcons />
-        <div className="hidden lg:block">
-          <ThemeToggle />
-        </div>
       </div>
     </section>
   );

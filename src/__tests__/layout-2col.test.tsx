@@ -148,7 +148,7 @@ describe("Section active dans le menu latéral (PFO-29)", () => {
 });
 
 describe("Layout sans menu du haut (PFO-29, PFO-30)", () => {
-  it("app/layout.tsx ne rend plus <Nav/>, garde <Footer/> et un bouton de thème fixe en mobile seulement", () => {
+  it("app/layout.tsx ne rend plus <Nav/>, garde <Footer/> et un bouton de thème fixe à toutes les largeurs (PFO-49)", () => {
     const layout = source("app/layout.tsx");
     const body = layout.slice(layout.indexOf("<body"), layout.indexOf("</body>"));
     expect(body).not.toContain("<Nav");
@@ -156,33 +156,21 @@ describe("Layout sans menu du haut (PFO-29, PFO-30)", () => {
     expect(body).toContain("<Footer />");
     const wrapper = body.match(/<div className="([^"]*)">\s*<ThemeToggle \/>/);
     expect(wrapper, "conteneur du bouton Thème absent").not.toBeNull();
-    expect(wrapper![1].split(/\s+/)).toEqual([
-      "fixed",
-      "right-4",
-      "top-4",
-      "z-50",
-      "rounded-md",
-      "bg-background",
-      "lg:hidden",
-    ]);
+    expect(wrapper![1].split(/\s+/)).toEqual(["fixed", "right-4", "top-4", "z-50"]);
     expect(body.indexOf("{children}")).toBeLessThan(body.indexOf("<Footer />"));
   });
 });
 
-describe("Bas de colonne : liens sociaux et bouton de thème (PFO-30)", () => {
-  it("place le bouton Thème à côté des liens GitHub, LinkedIn, Mail, en desktop seulement ; les liens restent visibles en mobile", () => {
+describe("Bas de colonne : liens sociaux (PFO-30 ; bouton de thème déplacé dans le layout par PFO-49)", () => {
+  it("place les liens GitHub, LinkedIn, Mail en bas de colonne, visibles en mobile ; aucun bouton de thème dans l'intro", () => {
     const { container } = render(<Intro />);
     const section = container.querySelector("section#intro")!;
     expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("Développeur d'agents IA");
 
-    const button = screen.getByRole("button", { name: /thème/i, hidden: true });
-    expect(section.contains(button)).toBe(true);
-    const toggleWrapper = button.parentElement!;
-    expect(classesOf(toggleWrapper)).toEqual(expect.arrayContaining(["hidden", "lg:block"]));
+    expect(screen.queryByRole("button", { name: /thème/i, hidden: true })).toBeNull();
 
     const mail = screen.getByRole("link", { name: "Mail" });
     const list = mail.closest("ul")!;
-    expect(list.parentElement).toBe(toggleWrapper.parentElement);
     expect(classesOf(list.parentElement)).toEqual(expect.arrayContaining(["flex", "items-center"]));
     for (let el: Element | null = list; el && el !== section; el = el.parentElement) {
       expect(classesOf(el), `liens masqués par ${el.tagName}`).not.toContain("hidden");
