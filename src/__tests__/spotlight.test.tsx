@@ -107,14 +107,11 @@ describe("halo souris (PFO-31) — token de couleur", () => {
   /** Alpha d'une couleur `rgba(r, g, b, a)`. */
   const alphaOf = (value: string) => Number(value.match(/rgba?\([^)]*?,\s*([\d.]+)\s*\)/)?.[1]);
 
-  it.each([":root {", ":root:not([data-theme=\"light\"])", ":root[data-theme=\"dark\"]"])(
-    "définit --spotlight (alpha ≤ 0,15) dans le bloc %s",
-    (selector) => {
-      const value = spotlightIn(selector);
-      expect(value, `--spotlight absent du bloc ${selector}`).toBeDefined();
-      expect(alphaOf(value!)).toBeLessThanOrEqual(0.15);
-    },
-  );
+  it("définit --spotlight (alpha ≤ 0,15) dans le bloc :root (seul bloc de tokens depuis PFO-55)", () => {
+    const value = spotlightIn(":root {");
+    expect(value, "--spotlight absent du bloc :root").toBeDefined();
+    expect(alphaOf(value!)).toBeLessThanOrEqual(0.15);
+  });
 });
 
 describe("halo souris (PFO-31) — montage dans app/layout.tsx", () => {
