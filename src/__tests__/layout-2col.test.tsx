@@ -138,3 +138,25 @@ describe("Layout sans menu du haut (PFO-29, PFO-30)", () => {
     expect(body.indexOf("{children}")).toBeLessThan(body.indexOf("<Footer />"));
   });
 });
+
+describe("Bas de colonne : liens sociaux et bouton de thème (PFO-30)", () => {
+  it("place le bouton Thème à côté des liens GitHub, LinkedIn, Mail, en desktop seulement ; les liens restent visibles en mobile", () => {
+    const { container } = render(<Intro />);
+    const section = container.querySelector("section#intro")!;
+    expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("Développeur d'agents IA");
+
+    const button = screen.getByRole("button", { name: "Thème", hidden: true });
+    expect(section.contains(button)).toBe(true);
+    const toggleWrapper = button.parentElement!;
+    expect(classesOf(toggleWrapper)).toEqual(expect.arrayContaining(["hidden", "lg:block"]));
+
+    const mail = screen.getByRole("link", { name: "Mail" });
+    const list = mail.closest("ul")!;
+    expect(list.parentElement).toBe(toggleWrapper.parentElement);
+    expect(classesOf(list.parentElement)).toEqual(expect.arrayContaining(["flex", "items-center"]));
+    for (let el: Element | null = list; el && el !== section; el = el.parentElement) {
+      expect(classesOf(el), `liens masqués par ${el.tagName}`).not.toContain("hidden");
+    }
+    expect(section.lastElementChild!.contains(list)).toBe(true);
+  });
+});
