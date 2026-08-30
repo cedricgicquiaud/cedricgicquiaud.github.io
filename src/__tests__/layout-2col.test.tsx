@@ -9,7 +9,6 @@ import Home from "../../app/page";
 import { About } from "../../components/about";
 import { Intro } from "../../components/intro";
 import { Nav } from "../../components/nav";
-import { Portrait } from "../../components/portrait";
 
 afterEach(() => {
   cleanup();
@@ -23,7 +22,7 @@ const source = (rel: string) => readFileSync(path.join(root, rel), "utf8");
 const classesOf = (el: Element | null | undefined) => (el?.className ?? "").split(/\s+/).filter(Boolean);
 
 describe("Deux colonnes à partir de 1024 px (PFO-28)", () => {
-  it("rend une colonne gauche collante (nom) et une colonne droite Portrait, À propos, Expérience, Projets", () => {
+  it("rend une colonne gauche collante (nom) et une colonne droite À propos, Expérience, Projets (portrait déplacé à gauche par PFO-37)", () => {
     const { container } = render(<Home />);
     const sticky = container.querySelector(".lg\\:sticky");
     expect(sticky, "aucun conteneur lg:sticky").not.toBeNull();
@@ -37,14 +36,13 @@ describe("Deux colonnes à partir de 1024 px (PFO-28)", () => {
     const right = sticky!.nextElementSibling!;
     expect(right, "aucune colonne droite après la colonne collante").not.toBeNull();
     const ids = Array.from(right.querySelectorAll("section[id]")).map((s) => s.id);
-    expect(ids).toEqual(["portrait", "a-propos", "experience", "projets"]);
+    expect(ids).toEqual(["a-propos", "experience", "projets"]);
   });
 });
 
 describe("Sections de la colonne droite sans marge ni centrage propres (PFO-28)", () => {
   // Le conteneur deux colonnes porte déjà le padding horizontal.
   it.each([
-    ["Portrait", "portrait", () => <Portrait photoExists={false} />],
     ["About", "a-propos", () => <About />],
   ])("%s : aucune classe px-*, max-w-3xl ni mx-auto sur la section ni son bloc interne", (_name, id, Cmp) => {
     const { container } = render(<Cmp />);
@@ -177,7 +175,7 @@ describe("Bas de colonne : liens sociaux et bouton de thème (PFO-30)", () => {
     const section = container.querySelector("section#intro")!;
     expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("Développeur d'agents IA");
 
-    const button = screen.getByRole("button", { name: "Thème", hidden: true });
+    const button = screen.getByRole("button", { name: /thème/i, hidden: true });
     expect(section.contains(button)).toBe(true);
     const toggleWrapper = button.parentElement!;
     expect(classesOf(toggleWrapper)).toEqual(expect.arrayContaining(["hidden", "lg:block"]));
