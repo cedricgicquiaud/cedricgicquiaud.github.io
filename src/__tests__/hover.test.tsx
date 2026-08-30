@@ -1,9 +1,35 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup, render, within } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { Experience } from "../../components/experience";
+import { ProjectCard } from "../../components/project-card";
+import type { Fiche } from "../../lib/fiches";
 
 afterEach(cleanup);
+
+/** Une fiche factice publique avec dépôt et démo ; chaque test ne surcharge que ce qu'il observe. */
+function fiche(over: Partial<Fiche["frontmatter"]> = {}): Fiche {
+  return {
+    slug: "alpha",
+    titre: "Alpha — un titre",
+    frontmatter: {
+      nom: "Alpha",
+      statut: "en cours",
+      periode: "2026",
+      role: "conception",
+      stack: ["TypeScript"],
+      visibilite: "public",
+      depot: "https://github.com/x/alpha",
+      depotNote: "",
+      demo: "https://alpha.example",
+      demoNote: "",
+      ordre: 1,
+      ...over,
+    },
+    enBref: { quoi: "Un outil.", chiffre: "120 tests.", lien: "" },
+    sections: [],
+  };
+}
 
 describe("Experience — survol", () => {
   it("accentue l'expérience survolée et estompe les voisines sur grand écran seulement", () => {
@@ -31,5 +57,16 @@ describe("Experience — focus clavier", () => {
       expect(article.className).not.toMatch(/focus-within[^ ]*opacity/);
       expect(within(article).getByRole("heading", { level: 3 })).toHaveClass("group-focus-within/item:text-primary");
     }
+  });
+});
+
+describe("ProjectCard — survol", () => {
+  it("accentue la carte survolée et estompe les voisines sur grand écran seulement", () => {
+    render(<ProjectCard fiche={fiche()} />);
+    const card = screen.getByRole("article");
+    expect(card).toHaveClass("group/item", "rounded-lg", "transition-colors", "min-w-0");
+    expect(card).toHaveClass("border", "border-transparent", "hover:bg-accent/50", "hover:border-border");
+    expect(card).toHaveClass("lg:group-hover/list:opacity-50", "lg:hover:!opacity-100");
+    expect(within(card).getByRole("heading", { level: 3 })).toHaveClass("group-hover/item:text-primary");
   });
 });
