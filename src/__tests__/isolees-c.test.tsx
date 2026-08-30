@@ -4,6 +4,7 @@ import { afterAll, afterEach, describe, expect, it, vi } from "vitest";
 import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
+import { fingerprint } from "../../scripts/check-output.mjs";
 import { About } from "../../components/about";
 import { Experience } from "../../components/experience";
 import { Fiche } from "../../components/fiche";
@@ -129,8 +130,13 @@ describe("Serveur de dev par PID (PFO-45)", () => {
 
 describe("Barème anonymisé (PFO-15)", () => {
   it(".pilot/calibration.md ne cite ni organisation ni dépôt tiers, seulement des mentions génériques", () => {
+    // Aucun nom en clair ici : chaque mot du barème est haché et comparé aux empreintes
+    // de content/forbidden.txt (même fonction que check-output).
     const md = read(".pilot/calibration.md");
-    expect(md).not.toMatch(/AlanZien|weme-studio|Nexus|\/SLICE/i);
+    const forbidden = new Set(read("content/forbidden.txt").split("\n").map((l) => l.trim()).filter(Boolean));
+    const words = Array.from(md.matchAll(/\p{L}+/gu), ([w]) => w);
+    const hits = Array.from(new Set(words.filter((w) => forbidden.has(fingerprint(w)))));
+    expect(hits).toEqual([]);
     expect(md).toContain("un projet personnel");
     expect(md).toContain("un projet client");
   });
