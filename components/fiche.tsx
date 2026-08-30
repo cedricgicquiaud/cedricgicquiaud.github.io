@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { ReactNode } from "react";
 import type { Fiche as FicheData } from "../lib/fiches";
 import { Badge } from "./ui/badge";
 
@@ -63,7 +64,7 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
   );
 }
 
-function Row({ term, children }: { term: string; children: React.ReactNode }) {
+function Row({ term, children }: { term: string; children: ReactNode }) {
   return (
     <>
       <dt className="text-muted-foreground">{term}</dt>
