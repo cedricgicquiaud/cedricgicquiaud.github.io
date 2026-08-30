@@ -119,3 +119,23 @@ describe("Tailles du modèle : page fiche (PFO-47)", () => {
     expect(classesOf(enBref)).toEqual(expect.arrayContaining(["text-base", "leading-relaxed"]));
   });
 });
+
+describe("Portrait retiré (PFO-48)", () => {
+  it("aucune image de portrait sur l'accueil ni sur une fiche ; l'intro enchaîne h1, titre court, phrase, menu, puis les logos seuls en bas", () => {
+    const home = render(<Home />);
+    expect(home.container.querySelector("img[src*='portrait']")).toBeNull();
+    expect(screen.queryByRole("img", { name: /^Portrait de / })).toBeNull();
+
+    const section = home.container.querySelector("section#intro")!;
+    const top = section.firstElementChild!;
+    expect(Array.from(top.children).map((el) => el.tagName)).toEqual(["H1", "H2", "P", "DIV"]);
+    expect(top.lastElementChild!.querySelector("nav[aria-label='Sections']")).not.toBeNull();
+    const bottom = section.lastElementChild!;
+    expect(bottom.querySelector("ul")).not.toBeNull();
+    home.unmount();
+
+    const fiche = render(<Fiche fiche={loadFiches()[0]} />);
+    expect(fiche.container.querySelector("img[src*='portrait']")).toBeNull();
+    expect(screen.queryByRole("img", { name: /^Portrait de / })).toBeNull();
+  });
+});
