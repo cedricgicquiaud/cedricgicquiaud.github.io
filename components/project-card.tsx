@@ -5,6 +5,7 @@ const isUrl = (s: string) => s.startsWith("http");
 
 export function ProjectCard({ fiche }: { fiche: Fiche }) {
   const { titre, frontmatter, enBref } = fiche;
+  // Fiche anonyme : aucun lien, une mention à la place (lib/fiches vide déjà depot et demo).
   const anonyme = frontmatter.visibilite === "anonyme";
   const codePrive = frontmatter.visibilite === "vitrine" && !isUrl(frontmatter.depot);
   return (
@@ -42,18 +43,23 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
           ))}
         </ul>
         <p className="flex gap-4 text-sm">
-          {!anonyme && isUrl(frontmatter.depot) && (
-            <a href={frontmatter.depot} className="underline underline-offset-4">
-              Code
-            </a>
+          {anonyme ? (
+            <span className="text-muted-foreground">Projet anonymisé : code et client non publiés</span>
+          ) : (
+            <>
+              {isUrl(frontmatter.depot) && (
+                <a href={frontmatter.depot} className="underline underline-offset-4">
+                  Code
+                </a>
+              )}
+              {isUrl(frontmatter.demo) && (
+                <a href={frontmatter.demo} className="underline underline-offset-4">
+                  Démo
+                </a>
+              )}
+              {codePrive && <span className="text-muted-foreground">code privé, démo à venir</span>}
+            </>
           )}
-          {!anonyme && isUrl(frontmatter.demo) && (
-            <a href={frontmatter.demo} className="underline underline-offset-4">
-              Démo
-            </a>
-          )}
-          {codePrive && <span className="text-muted-foreground">code privé, démo à venir</span>}
-          {anonyme && <span className="text-muted-foreground">Projet anonymisé : code et client non publiés</span>}
         </p>
       </div>
     </article>
