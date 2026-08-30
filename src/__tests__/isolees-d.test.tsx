@@ -29,7 +29,7 @@ describe("Tailles du modèle : intro (PFO-47)", () => {
   it("h1 en 48 px gras serré, titre court en 20 px medium, phrase en 16 px atténuée plafonnée", () => {
     render(<Intro />);
     const h1 = screen.getByRole("heading", { level: 1 });
-    expect(classesOf(h1)).toEqual(expect.arrayContaining(["text-5xl", "font-bold", "tracking-tight"]));
+    expect(classesOf(h1)).toEqual(expect.arrayContaining(["text-5xl", "font-bold", "tracking-tight", "leading-tight"]));
     expect(classesOf(h1)).not.toContain("text-4xl");
     expect(classesOf(h1)).not.toContain("sm:text-5xl");
     expect(classesOf(h1)).not.toContain("font-semibold");
