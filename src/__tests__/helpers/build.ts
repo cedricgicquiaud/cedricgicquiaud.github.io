@@ -23,12 +23,14 @@ const npmRunBuild = (root: string) => execFileSync("npm", ["run", "build"], { cw
 export function ensureBuild(deps: string[], { marker, root = defaultRoot, run = npmRunBuild }: Options = {}): void {
   const indexHtml = path.join(root, "out", "index.html");
   const files = deps.map((f) => path.join(root, f));
+  const missing = deps.find((f) => !existsSync(path.join(root, f)));
+  if (missing) throw new Error(`ensureBuild : dépendance introuvable « ${missing} » (chemin relatif à la racine du projet)`);
   const markerPath = marker ? path.join(root, marker) : undefined;
   const stale = () => {
     if (!existsSync(indexHtml)) return true;
     if (markerPath && !existsSync(markerPath)) return true;
     const built = statSync(indexHtml).mtimeMs;
-    return files.some((f) => existsSync(f) && statSync(f).mtimeMs > built);
+    return files.some((f) => statSync(f).mtimeMs > built);
   };
   if (stale()) run(root);
   if (!existsSync(indexHtml)) throw new Error("out/index.html absent après npm run build");
