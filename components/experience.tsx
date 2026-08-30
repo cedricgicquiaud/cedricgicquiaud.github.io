@@ -1,10 +1,11 @@
+import site from "../content/site.json";
 import { contentDir, loadExperience } from "../lib/content";
 import { Badge } from "./ui/badge";
 
 export function Experience() {
   const experience = loadExperience(contentDir);
   return (
-    <section id="experience" className="py-16">
+    <section id={site.sections.experience} className="py-16">
       <div className="w-full">
         <h2 className="mb-6 text-2xl font-semibold tracking-tight">{experience.titre}</h2>
         <ol className="group/list space-y-10">

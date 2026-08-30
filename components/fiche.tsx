@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
+import site from "../content/site.json";
 import type { Fiche as FicheData } from "../lib/fiches";
 import { Badge } from "./ui/badge";
 
@@ -15,7 +16,7 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
   return (
     <article className="px-6 py-16 lg:px-16">
       <div className="mx-auto w-full max-w-3xl">
-        <Link href="/#projets" className={`text-sm text-muted-foreground ${LINK}`}>
+        <Link href={`/#${site.sections.projects}`} className={`text-sm text-muted-foreground ${LINK}`}>
           ← Projets
         </Link>
         <h1 className="mt-6 text-3xl font-semibold tracking-tight">{fiche.titre || frontmatter.nom}</h1>
