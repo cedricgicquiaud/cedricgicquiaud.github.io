@@ -65,4 +65,16 @@ describe("sync-fiches — copie", () => {
     expect(syncFiches(src, dest)).toBe(2);
     expect(readdirSync(dest).sort()).toEqual(["alpha.md", "beta.md"]);
   });
+
+  it("ne copie jamais PLAN.md, REPOS.md ni AUDIT.md", () => {
+    const src = tempDir({
+      "alpha.md": fiche({ ordre: 1 }),
+      "PLAN.md": "# Plan\n",
+      "REPOS.md": "# Dépôts\n",
+      "AUDIT.md": "# Audit\n",
+    });
+    const dest = tempDir();
+    expect(syncFiches(src, dest)).toBe(1);
+    expect(readdirSync(dest)).toEqual(["alpha.md"]);
+  });
 });
