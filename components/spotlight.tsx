@@ -14,6 +14,11 @@ function isTouchOnly(): boolean {
   return matchMedia("(hover: none)").matches || matchMedia("(pointer: coarse)").matches;
 }
 
+function prefersReducedMotion(): boolean {
+  if (typeof matchMedia === "undefined") return false;
+  return matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
 export function Spotlight() {
   const [mounted, setMounted] = useState(false);
   const halo = useRef<HTMLDivElement>(null);
@@ -23,7 +28,7 @@ export function Spotlight() {
   }, []);
 
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || prefersReducedMotion()) return;
     // Écrit directement sur l'élément : aucun re-render React à chaque mouvement.
     const follow = (event: PointerEvent) => {
       const el = halo.current;
