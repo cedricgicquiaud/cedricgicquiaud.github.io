@@ -120,3 +120,26 @@ describe("PFO-19 — script npm og", () => {
     expect(readFileSync(path.join(root, "README.md"), "utf8")).toMatch(/npm run og/);
   });
 });
+
+describe("PFO-43 — image OG et visuels en Inter, sans réseau", () => {
+  const scripts = ["og-image.mjs", "project-visuals.mjs"].map((f) => [f, readFileSync(path.join(root, "scripts", f), "utf8")] as const);
+
+  it("theme-tokens.mjs charge Inter 400 et 600 depuis @fontsource/inter (fichiers locaux)", () => {
+    const source = readFileSync(path.join(root, "scripts", "theme-tokens.mjs"), "utf8");
+    expect(source).toContain("@fontsource/inter");
+    expect(source).toMatch(/name:\s*"Inter"/);
+    expect(source).toMatch(/weight:\s*400/);
+    expect(source).toMatch(/weight:\s*600/);
+  });
+
+  it.each(scripts)("%s passe les polices Inter à ImageResponse et n'utilise plus sans-serif", (_file, source) => {
+    expect(source).toMatch(/fonts:\s*interFonts\(\)/);
+    expect(source).toMatch(/fontFamily:\s*"Inter"/);
+    expect(source).not.toMatch(/fontFamily:\s*"sans-serif"/);
+  });
+
+  it.each(scripts)("%s ne contient aucune URL http (aucune requête réseau à la génération)", (_file, source) => {
+    expect(source).not.toMatch(/https?:\/\//);
+    expect(source).not.toContain("experimental-network-imports");
+  });
+});
