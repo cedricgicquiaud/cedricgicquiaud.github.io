@@ -1,4 +1,4 @@
-// Couleurs du thème lues dans le bloc clair (`:root { … }`) de app/globals.css : aucune couleur
+// Couleurs du thème lues dans le bloc `:root` (thème sombre unique) de app/globals.css : aucune couleur
 // en dur dans les scripts d'images. Police Inter lue dans node_modules (@fontsource/inter) :
 // aucune requête réseau à la génération. Partagé par og-image.mjs et project-visuals.mjs.
 import { createRequire } from "node:module";
@@ -9,7 +9,7 @@ const require = createRequire(import.meta.url);
 
 const css = readFileSync(path.join(path.resolve(import.meta.dirname, ".."), "app", "globals.css"), "utf8");
 
-/** Valeur de la variable CSS `--<name>` du bloc clair ; erreur si elle manque. */
+/** Valeur de la variable CSS `--<name>` du bloc `:root` (thème sombre unique) ; erreur si elle manque. */
 export function token(name) {
   const block = css.slice(css.indexOf(":root {")).split("}")[0];
   const value = block.match(new RegExp(`--${name}:\\s*([^;]+);`))?.[1].trim();
