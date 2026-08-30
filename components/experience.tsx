@@ -10,10 +10,10 @@ export function Experience() {
         <ol className="group/list space-y-10">
           {experience.blocs.map((bloc) => (
             <li key={bloc.periode}>
-              <article className="group/item -mx-4 grid gap-2 rounded-lg border border-transparent p-4 transition-colors hover:border-border hover:bg-accent/50 sm:grid-cols-[8rem_1fr] sm:gap-6 lg:group-hover/list:opacity-50 lg:hover:!opacity-100">
+              <article className="group/item -mx-4 grid gap-2 rounded-lg border border-transparent p-4 transition-colors hover:border-border hover:bg-accent/50 focus-within:border-border focus-within:bg-accent/50 sm:grid-cols-[8rem_1fr] sm:gap-6 lg:group-hover/list:opacity-50 lg:hover:!opacity-100">
                 <p className="text-sm text-muted-foreground">{bloc.periode}</p>
                 <div className="space-y-2">
-                  <h3 className="font-medium group-hover/item:text-primary">{bloc.role}</h3>
+                  <h3 className="font-medium group-hover/item:text-primary group-focus-within/item:text-primary">{bloc.role}</h3>
                   <p className="text-sm text-muted-foreground">{bloc.secteur}</p>
                   <p className="leading-relaxed">{bloc.description}</p>
                   <ul className="flex flex-wrap gap-2 pt-1">
