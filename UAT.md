@@ -139,3 +139,22 @@ Ne rien cocher avant d'avoir constaté.
 - [x] `node --input-type=module -e 'const { loadFiches } = await import("./lib/fiches.ts"); for (const f of loadFiches("content/fiches")) console.log(f.frontmatter.ordre, f.slug, f.titre, f.enBref.chiffre, f.sections.map((s) => s.id).join(","))'` : sept lignes numérotées 1 à 7 dans l'ordre slice, pilot, foreman, parcours, dashboard, giveme5, ben ; chaque ligne a un titre, une phrase « chiffre » et `probleme,construit,preuves,appris,artefacts`.
 - [x] Refus : même commande en affichant `f.frontmatter.depot, f.frontmatter.demo` : la ligne `ben` (visibilite anonyme) montre deux chaînes vides, même si le fichier source en contient.
 - [x] Refus : `node --input-type=module -e 'const { loadFiches } = await import("./lib/fiches.ts"); const j = JSON.stringify(loadFiches("content/fiches")); console.log(j.includes("WATIDO"), /\/Users\//.test(j))'` : affiche `false false`.
+
+## Livraison 6 — Cartes projets
+
+_Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après son merge._
+
+### PFO-23 — Carte projet
+
+- [x] `npm run sync && npm run dev`, ouvrir `http://localhost:3000/#projets` : chaque carte montre un titre, une ligne de résumé, un chiffre clé en évidence, un badge de statut et au plus 5 pastilles de stack (BEN a 11 entrées de stack dans sa fiche : 5 pastilles seulement).
+- [x] Carte SLICE : lien « Code » vers `https://github.com/cedricgicquiaud/SLICE`, pas de lien « Démo » (la fiche dit « à venir »).
+- [x] Refus : dans `content/fiches/slice.md`, vider `depot:` puis recharger : aucun lien « Code » sur la carte SLICE. Restaurer (`npm run sync`).
+- [x] Refus : cartes Foreman, Parcours et Dashboard (vitrine sans dépôt) : mention « code privé, démo à venir », aucun lien « Code » ni « Démo ».
+- [x] Carte PILOT (`depot: à venir (…)`, pas une URL) : aucun lien « Code », aucune mention « code privé » (fiche publique). Voir « Décisions à prendre » de la PR.
+
+### PFO-24 — Section Projets : 7 cartes ordonnées
+
+- [x] La section « Projets » liste 7 cartes, de haut en bas : SLICE, PILOT, Foreman, Parcours, Dashboard, GiveMe5, BEN.
+- [x] Le titre de chaque carte est un lien vers `/projets/<slug>/` (survoler : `/projets/slice/`, `/projets/ben/`, …). Les pages cibles arrivent avec la livraison 3 : une 404 est attendue pour l'instant.
+- [x] Refus : dans `content/fiches/slice.md`, supprimer la ligne `ordre: 1` puis recharger : SLICE passe en dernière position, jamais en première. Restaurer (`npm run sync`).
+- [x] Le menu « Projets » mène à la section et l'entrée devient active quand la section est à l'écran (la section a maintenant de la hauteur).
