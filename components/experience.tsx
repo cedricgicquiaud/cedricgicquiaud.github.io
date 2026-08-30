@@ -15,7 +15,7 @@ export function Experience() {
                 <div className="space-y-2">
                   <h3 className="font-medium group-hover/item:text-primary group-focus-within/item:text-primary">{bloc.role}</h3>
                   <p className="text-sm text-muted-foreground">{bloc.secteur}</p>
-                  <p className="leading-relaxed">{bloc.description}</p>
+                  <p className="text-base leading-relaxed">{bloc.description}</p>
                   <ul className="flex flex-wrap gap-2 pt-1">
                     {bloc.tags.map((tag) => (
                       <li key={tag}>
