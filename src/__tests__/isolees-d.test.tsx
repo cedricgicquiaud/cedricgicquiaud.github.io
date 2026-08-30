@@ -4,8 +4,10 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import Home from "../../app/page";
 import { About } from "../../components/about";
 import { Experience } from "../../components/experience";
+import { Fiche } from "../../components/fiche";
 import { Intro } from "../../components/intro";
 import { Projects } from "../../components/projects";
+import { loadFiches } from "../../lib/fiches";
 
 afterEach(() => {
   cleanup();
@@ -94,5 +96,26 @@ describe("Grille du modèle : proportions et espace entre colonnes (PFO-47)", ()
 
     const right = sticky.nextElementSibling!;
     expect(classesOf(right)).toContain("max-w-2xl");
+  });
+});
+
+describe("Tailles du modèle : page fiche (PFO-47)", () => {
+  it("h1 en text-4xl font-bold, titres de section discrets, corps et « En bref » en text-base", () => {
+    const { container } = render(<Fiche fiche={loadFiches()[0]} />);
+    const h1 = screen.getByRole("heading", { level: 1 });
+    expect(classesOf(h1)).toEqual(expect.arrayContaining(["text-4xl", "font-bold", "tracking-tight"]));
+    expect(classesOf(h1)).not.toContain("text-3xl");
+
+    const sectionTitles = container.querySelectorAll("section h2");
+    expect(sectionTitles.length).toBeGreaterThan(0);
+    for (const h2 of sectionTitles) {
+      expect(classesOf(h2)).toEqual(expect.arrayContaining(["text-sm", "font-bold", "uppercase", "tracking-widest"]));
+      expect(classesOf(h2)).not.toContain("text-2xl");
+    }
+    for (const body of container.querySelectorAll("section h2 + div")) {
+      expect(classesOf(body)).toEqual(expect.arrayContaining(["text-base", "leading-relaxed"]));
+    }
+    const enBref = container.querySelector("p.border-l-2")!;
+    expect(classesOf(enBref)).toEqual(expect.arrayContaining(["text-base", "leading-relaxed"]));
   });
 });
