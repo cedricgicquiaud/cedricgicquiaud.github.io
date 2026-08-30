@@ -1,6 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
+import { Fiche } from "../../components/fiche";
 import { ProjectCard } from "../../components/project-card";
 import type { Fiche as FicheData } from "../../lib/fiches";
 
@@ -49,6 +50,15 @@ describe("PFO-39 — mention « projet anonymisé » sur la carte", () => {
   it("n'affiche aucun lien Code ni Démo avec la mention, même si la fiche porte des URL", () => {
     render(<ProjectCard fiche={fiche({ visibilite: "anonyme" })} />);
     expect(screen.getByText(MENTION)).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Code" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Démo" })).toBeNull();
+  });
+});
+
+describe("PFO-39 — mention « projet anonymisé » sur la page fiche", () => {
+  it("affiche la mention en text-muted-foreground pour une fiche anonyme, sans lien Code ni Démo", () => {
+    render(<Fiche fiche={fiche({ visibilite: "anonyme" })} />);
+    expect(screen.getByText(MENTION)).toHaveClass("text-muted-foreground");
     expect(screen.queryByRole("link", { name: "Code" })).toBeNull();
     expect(screen.queryByRole("link", { name: "Démo" })).toBeNull();
   });
