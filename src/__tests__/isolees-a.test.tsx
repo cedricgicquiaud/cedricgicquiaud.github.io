@@ -151,6 +151,16 @@ describe("Libellé du bouton de thème (PFO-18)", () => {
     expect(button).toHaveTextContent(/^Thème$/);
   });
 
+  it("ne porte pas aria-pressed : bouton d'action au libellé variable, pas un bouton bascule", () => {
+    stubStorage();
+    vi.stubGlobal("matchMedia", () => ({ matches: false }));
+    render(<ThemeToggle />);
+    const button = screen.getByRole("button");
+    expect(button).not.toHaveAttribute("aria-pressed");
+    fireEvent.click(button);
+    expect(button).not.toHaveAttribute("aria-pressed");
+  });
+
   it("suit le thème système quand aucun data-theme n'est posé", () => {
     stubStorage();
     vi.stubGlobal("matchMedia", () => ({ matches: true }));
