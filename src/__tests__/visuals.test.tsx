@@ -39,4 +39,9 @@ describe("loadFiche — champ visuel (PFO-35)", () => {
     writeFileSync(path.join(pub, "projets", "alpha.png"), "png");
     expect(loadFiche("alpha", fiches, pub).visuel).toBe("/projets/alpha.png");
   });
+
+  it("avec un champ visuel qui pointe sur un fichier absent, retombe sur le généré sans erreur", () => {
+    const { fiches, pub } = sandbox("visuel: /projets/absent.png\n");
+    expect(loadFiche("alpha", fiches, pub).visuel).toBe("/projets/generated/alpha.png");
+  });
 });
