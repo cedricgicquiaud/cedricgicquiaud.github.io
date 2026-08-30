@@ -151,6 +151,17 @@ describe("Route statique /projets/[slug]/ (PFO-26)", () => {
     expect(metadata.description).toBe(slice.enBref.quoi);
     expect(slice.enBref.quoi.trim().length).toBeGreaterThan(0);
   });
+
+  it("openGraph propre à la fiche : titre, description, type article et url /projets/<slug>/", async () => {
+    const slice = loadFiches().find((f) => f.slug === "slice")!;
+    const metadata = await fichePage.generateMetadata({ params: Promise.resolve({ slug: "slice" }), searchParams: Promise.resolve({}) });
+    expect(metadata.openGraph).toMatchObject({
+      title: `${slice.frontmatter.nom} — Cédric Gicquiaud`,
+      description: slice.enBref.quoi,
+      type: "article",
+      url: "/projets/slice/",
+    });
+  });
 });
 
 describe("Rendu de la fiche : en-tête (PFO-27)", () => {
@@ -221,8 +232,11 @@ describe("Sortie du build : une page par fiche (PFO-26)", () => {
   const pageOf = (slug: string) => path.join(out, "projets", slug, "index.html");
 
   beforeAll(() => {
-    // `next build` n'est relancé que si une page de fiche manque dans la sortie.
-    if (!loadFiches().every((f) => existsSync(pageOf(f.slug)))) {
+    // `next build` n'est relancé que si une page de fiche manque dans la sortie
+    // ou n'a pas encore son og:title propre.
+    const upToDate = (f: FicheData) =>
+      existsSync(pageOf(f.slug)) && readFileSync(pageOf(f.slug), "utf8").includes(`content="${f.frontmatter.nom} — Cédric Gicquiaud"`);
+    if (!loadFiches().every(upToDate)) {
       execFileSync("npx", ["next", "build"], { cwd: root, stdio: "pipe" });
     }
   }, 120_000);
@@ -235,6 +249,9 @@ describe("Sortie du build : une page par fiche (PFO-26)", () => {
       expect(existsSync(file), file).toBe(true);
       const html = readFileSync(file, "utf8");
       expect(html).toContain(`<title>${fiche.frontmatter.nom} — Cédric Gicquiaud</title>`);
+      expect(html).toContain(`<meta property="og:title" content="${fiche.frontmatter.nom} — Cédric Gicquiaud"/>`);
+      expect(html).toContain(`<meta property="og:description" content="${fiche.enBref.quoi}"/>`);
+      expect(html).toContain('<meta property="og:type" content="article"/>');
       expect(html).toContain('aria-label="Sections"');
       expect(html).toContain('href="/#a-propos"');
       expect(html).toContain('id="contact"');
