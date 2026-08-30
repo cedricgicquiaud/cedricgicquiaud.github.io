@@ -134,3 +134,19 @@ describe("Experience : typographie du modèle (PFO-52)", () => {
     }
   });
 });
+
+describe("ProjectCard : typographie du modèle (PFO-52)", () => {
+  it("statut en petites capitales, titre 16 px medium, phrase En bref 14 px atténuée", () => {
+    render(<ProjectCard fiche={fiche()} />);
+    const card = screen.getByRole("article");
+    const statut = within(card).getByText("en cours");
+    expect(statut).toHaveClass("text-xs", "font-semibold", "uppercase", "tracking-wide");
+
+    const title = within(card).getByRole("heading", { level: 3 });
+    expect(title).toHaveClass("text-base", "font-medium");
+
+    const quoi = within(card).getByText("Un outil qui fait une chose.");
+    expect(quoi).toHaveClass("text-sm", "leading-relaxed", "text-muted-foreground");
+    expect(quoi).not.toHaveClass("text-base");
+  });
+});
