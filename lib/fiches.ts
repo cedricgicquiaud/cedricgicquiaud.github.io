@@ -12,8 +12,12 @@ export type Frontmatter = {
   role: string;
   stack: string[];
   visibilite: Visibilite;
+  /** URL http(s) du dépôt, sinon chaîne vide. */
   depot: string;
+  /** Valeur brute du champ `depot` (URL ou prose, ex. « à venir (…) »). */
+  depotNote: string;
   demo: string;
+  demoNote: string;
   ordre?: number;
 };
 
@@ -41,6 +45,26 @@ export type Fiche = {
 const text = (v: unknown): string =>
   typeof v === "string" ? v.trim() : typeof v === "number" ? String(v) : "";
 
+/** Découpe sur les virgules hors parenthèses : « A (x, y), B » donne ["A (x, y)", "B"]. */
+function splitStack(value: string): string[] {
+  const parts: string[] = [];
+  let depth = 0;
+  let current = "";
+  for (const ch of value) {
+    if (ch === "(") depth++;
+    else if (ch === ")") depth = Math.max(0, depth - 1);
+    if (ch === "," && depth === 0) {
+      parts.push(current);
+      current = "";
+    } else current += ch;
+  }
+  parts.push(current);
+  return parts.map((s) => s.trim()).filter(Boolean);
+}
+
+/** Ne garde qu'une URL http(s) ; toute autre valeur (prose) devient vide. */
+const lien = (v: string): string => (/^https?:\/\//.test(v) ? v : "");
+
 function toFrontmatter(data: Record<string, unknown>): Frontmatter {
   const visibilite = text(data.visibilite) as Visibilite;
   // Une fiche anonyme ne pointe vers rien, même si le fichier source contient des liens.
@@ -50,13 +74,12 @@ function toFrontmatter(data: Record<string, unknown>): Frontmatter {
     statut: text(data.statut),
     periode: text(data.periode),
     role: text(data.role),
-    stack: text(data.stack)
-      .split(",")
-      .map((s) => s.trim())
-      .filter(Boolean),
+    stack: splitStack(text(data.stack)),
     visibilite,
-    depot: masque ? "" : text(data.depot),
-    demo: masque ? "" : text(data.demo),
+    depot: masque ? "" : lien(text(data.depot)),
+    depotNote: masque ? "" : text(data.depot),
+    demo: masque ? "" : lien(text(data.demo)),
+    demoNote: masque ? "" : text(data.demo),
     ...(Number.isInteger(data.ordre) ? { ordre: data.ordre as number } : {}),
   };
 }
