@@ -2,11 +2,12 @@
 
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import site from "../content/site.json";
 
 const entries = [
-  { label: "À propos", id: "a-propos" },
-  { label: "Expérience", id: "experience" },
-  { label: "Projets", id: "projets" },
+  { label: "À propos", id: site.sections.about },
+  { label: "Expérience", id: site.sections.experience },
+  { label: "Projets", id: site.sections.projects },
 ];
 
 // Bande centrale de la fenêtre prise en compte pour la section active :
