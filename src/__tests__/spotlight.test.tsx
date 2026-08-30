@@ -40,8 +40,9 @@ describe("halo souris (PFO-31) — monté dans le navigateur", () => {
   it("glisse en douceur (80 ms) et reste sous le bouton de thème (z-50)", () => {
     const { container } = render(<Spotlight />);
     const halo = container.querySelector("div")!;
-    expect(halo.className).toMatch(/\btransition-\[background\]\b/);
-    expect(halo.className).toMatch(/\bduration-\[80ms\]\b/);
+    const classes = halo.className.split(/\s+/);
+    expect(classes).toContain("transition-[background]");
+    expect(classes).toContain("duration-[80ms]");
     const z = Number(halo.className.match(/\bz-(\d+)\b/)?.[1]);
     expect(z).toBeLessThan(50);
   });
