@@ -5,7 +5,7 @@ import { Badge } from "./ui/badge";
 
 // Mise en forme du HTML Markdown (Tailwind retire les puces et le soulignement par défaut).
 const MARKDOWN =
-  "space-y-4 leading-relaxed [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:text-foreground [&_a]:break-words [&_strong]:font-semibold [&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_code]:text-sm";
+  "space-y-4 text-base leading-relaxed [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:text-foreground [&_a]:break-words [&_strong]:font-semibold [&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_code]:text-sm";
 
 const LINK =
   "underline underline-offset-4 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
@@ -18,7 +18,7 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
         <Link href="/#projets" className={`text-sm text-muted-foreground ${LINK}`}>
           ← Projets
         </Link>
-        <h1 className="mt-6 text-3xl font-semibold tracking-tight">{fiche.titre || frontmatter.nom}</h1>
+        <h1 className="mt-6 text-4xl font-bold tracking-tight">{fiche.titre || frontmatter.nom}</h1>
         {/* Même visuel que la carte, en couleur ; balise native (export statique, pas de next/image). Au-dessus du pli : pas de loading="lazy". */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -62,12 +62,12 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
             </p>
           )
         )}
-        <p className="mt-8 border-l-2 border-primary pl-4 leading-relaxed">
+        <p className="mt-8 border-l-2 border-primary pl-4 text-base leading-relaxed">
           <strong>En bref.</strong> {[fiche.enBref.quoi, fiche.enBref.chiffre, fiche.enBref.lien].filter(Boolean).join(" ")}
         </p>
         {fiche.sections.map(({ id, titre, html }) => (
           <section key={id} id={id} className="mt-12">
-            <h2 className="mb-4 text-2xl font-semibold tracking-tight">{titre}</h2>
+            <h2 className="mb-4 text-sm font-bold uppercase tracking-widest">{titre}</h2>
             {/* HTML produit par `marked` depuis les fiches du dépôt : contenu maîtrisé, contrôlé au build. */}
             <div className={MARKDOWN} dangerouslySetInnerHTML={{ __html: html }} />
           </section>
