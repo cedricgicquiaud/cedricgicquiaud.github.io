@@ -8,7 +8,11 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
   const codePrive = frontmatter.visibilite === "vitrine" && !isUrl(frontmatter.depot);
   return (
     <article className="space-y-3 rounded-lg border border-border p-5">
-      <h3 className="font-medium">{titre || frontmatter.nom}</h3>
+      <h3 className="font-medium">
+        <a href={`/projets/${fiche.slug}/`} className="hover:underline underline-offset-4">
+          {titre || frontmatter.nom}
+        </a>
+      </h3>
       <p className="leading-relaxed">{enBref.quoi}</p>
       <p className="text-lg font-semibold tabular-nums">{enBref.chiffre}</p>
       <Badge variant="secondary">{frontmatter.statut}</Badge>
