@@ -7,9 +7,9 @@ export function Projects({ fiches = loadFiches() }: { fiches?: Fiche[] }) {
     <section id="projets" className="px-6 py-16 lg:px-16">
       <div className="mx-auto w-full max-w-3xl">
         <h2 className="mb-6 text-2xl font-semibold tracking-tight">Projets</h2>
-        <ol className="grid gap-6">
+        <ol className="grid grid-cols-[minmax(0,1fr)] gap-6">
           {fiches.map((fiche) => (
-            <li key={fiche.slug}>
+            <li key={fiche.slug} className="min-w-0">
               <ProjectCard fiche={fiche} />
             </li>
           ))}

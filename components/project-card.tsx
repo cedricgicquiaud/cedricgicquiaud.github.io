@@ -7,15 +7,17 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
   const { titre, frontmatter, enBref } = fiche;
   const codePrive = frontmatter.visibilite === "vitrine" && !isUrl(frontmatter.depot);
   return (
-    <article className="space-y-3 rounded-lg border border-border p-5">
-      <h3 className="font-medium">
+    <article className="min-w-0 space-y-3 rounded-lg border border-border p-5">
+      <h3 className="font-medium break-words">
         <a href={`/projets/${fiche.slug}/`} className="hover:underline underline-offset-4">
           {titre || frontmatter.nom}
         </a>
       </h3>
       <p className="leading-relaxed">{enBref.quoi}</p>
       <p className="text-lg font-semibold tabular-nums">{enBref.chiffre}</p>
-      <Badge variant="secondary">{frontmatter.statut}</Badge>
+      <Badge variant="secondary" className="h-auto whitespace-normal">
+        {frontmatter.statut}
+      </Badge>
       <ul aria-label="Stack" className="flex flex-wrap gap-2">
         {frontmatter.stack.slice(0, 5).map((tag) => (
           <li key={tag}>
