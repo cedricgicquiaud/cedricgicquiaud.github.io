@@ -1,6 +1,6 @@
 ---
 nom: PILOT
-statut: en cours (méthode rodée sur un bac à sable et branchée sur deux projets réels ; dépôt public pas encore ouvert)
+statut: en cours
 periode: avril 2026 (FORGE) → aujourd'hui ; PILOT depuis le 22 août 2026
 role: conception de la méthode, écriture des documents, de la skill et des fiches de poste des agents, expérimentation — seul
 stack: Linear, GitHub, Claude Code, skills et agents en Markdown, git worktrees, Python (API Linear)
@@ -75,6 +75,9 @@ Linear : aucun fichier d'état à entretenir. Le code de la tâche Linear voyage
 la branche et le titre de la PR : c'est ce qui fait avancer le tableau de bord sans personne.
 
 ## Preuves
+
+État au 30/08/2026 : Méthode rodée sur un bac à sable et branchée sur deux projets réels ; dépôt public pas encore ouvert.
+
 
 Bac à sable : « Carnet », un CRM léger en HTML/JS sans dépendance, produit du 22 au 28 août 2026
 uniquement par cette méthode.

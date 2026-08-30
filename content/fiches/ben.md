@@ -1,6 +1,6 @@
 ---
 nom: BEN
-statut: en cours (en pause depuis juin 2026 ; moteur et dashboard fonctionnels, alertes et calibration restantes)
+statut: en cours
 periode: mars 2026 → juin 2026
 role: conception, développement, tests, benchmark des modèles — seul, avec des agents de code
 stack: Python, PyTorch, DINOv2, YOLOv8, NumPy, FastAPI, APScheduler, SQLite/SQLModel, SvelteKit, Tailwind, pytest
@@ -66,6 +66,9 @@ Décisions qui ont compté :
   renvoie jamais un résultat mélangé.
 
 ## Preuves
+
+État au 30/08/2026 : En pause depuis juin 2026 ; moteur et dashboard fonctionnels, alertes et calibration restantes.
+
 
 - 216 tests automatisés verts (vérifié le 29/08/2026 sur un clone propre, sans clé ni réseau).
   7 tests d'intégration supplémentaires exigent le téléchargement des modèles et n'ont pas été
