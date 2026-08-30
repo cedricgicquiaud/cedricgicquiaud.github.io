@@ -1,8 +1,13 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen } from "@testing-library/react";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { act } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Nav } from "../../components/nav";
+
+const root = path.resolve(__dirname, "../..");
+const source = (rel: string) => readFileSync(path.join(root, rel), "utf8");
 
 // `usePathname` est un hook client de Next : hors navigateur Next, on le simule.
 const pathname = vi.hoisted(() => ({ current: "/" }));
@@ -59,5 +64,26 @@ describe("Nav depuis une sous-page (PFO-25)", () => {
       expect(link).not.toHaveClass("active");
       expect(link).not.toHaveAttribute("aria-current");
     }
+  });
+});
+
+describe("Menu et pied de page dans le layout (PFO-25)", () => {
+  it("app/layout.tsx rend <Nav/>, le conteneur fixe du bouton de thème et <Footer/> autour de children", () => {
+    const layout = source("app/layout.tsx");
+    const body = layout.slice(layout.indexOf("<body"), layout.indexOf("</body>"));
+    expect(body).toContain("<Nav />");
+    expect(body).toContain("<ThemeToggle />");
+    expect(body).toContain("<Footer />");
+    expect(body).toMatch(/className="fixed right-4 top-16 z-50 lg:top-4"[^]*<ThemeToggle \/>/);
+    expect(body.indexOf("<Nav />")).toBeLessThan(body.indexOf("{children}"));
+    expect(body.indexOf("{children}")).toBeLessThan(body.indexOf("<Footer />"));
+  });
+
+  it("app/page.tsx ne rend plus ni Nav, ni ThemeToggle, ni Footer", () => {
+    const page = source("app/page.tsx");
+    expect(page).not.toContain("<Nav");
+    expect(page).not.toContain("<ThemeToggle");
+    expect(page).not.toContain("<Footer");
+    expect(page).not.toContain("fixed");
   });
 });
