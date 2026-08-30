@@ -62,4 +62,11 @@ describe("PFO-39 — mention « projet anonymisé » sur la page fiche", () => {
     expect(screen.queryByRole("link", { name: "Code" })).toBeNull();
     expect(screen.queryByRole("link", { name: "Démo" })).toBeNull();
   });
+
+  it("n'affiche jamais la mention sur une fiche public ou vitrine", () => {
+    render(<Fiche fiche={fiche({ visibilite: "public" })} />);
+    render(<Fiche fiche={fiche({ visibilite: "vitrine" })} />);
+    expect(screen.queryByText(MENTION)).toBeNull();
+    expect(screen.getAllByRole("link", { name: "Code" })).toHaveLength(2);
+  });
 });
