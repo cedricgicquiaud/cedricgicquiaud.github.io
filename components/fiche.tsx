@@ -43,20 +43,24 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
           </Row>
           <Row term="Visibilité">{frontmatter.visibilite}</Row>
         </dl>
-        {/* Mêmes règles que les cartes : un lien par URL non vide ; `lib/fiches` vide déjà tout pour `anonyme`. */}
-        {(frontmatter.depot || frontmatter.demo) && (
-          <p className="mt-4 flex gap-4 text-sm">
-            {frontmatter.depot && (
-              <a href={frontmatter.depot} className={LINK}>
-                Code
-              </a>
-            )}
-            {frontmatter.demo && (
-              <a href={frontmatter.demo} className={LINK}>
-                Démo
-              </a>
-            )}
-          </p>
+        {/* Mêmes règles que les cartes : un lien par URL non vide ; une fiche anonyme n'a aucun lien, une mention à la place. */}
+        {frontmatter.visibilite === "anonyme" ? (
+          <p className="mt-4 text-sm text-muted-foreground">Projet anonymisé : code et client non publiés</p>
+        ) : (
+          (frontmatter.depot || frontmatter.demo) && (
+            <p className="mt-4 flex gap-4 text-sm">
+              {frontmatter.depot && (
+                <a href={frontmatter.depot} className={LINK}>
+                  Code
+                </a>
+              )}
+              {frontmatter.demo && (
+                <a href={frontmatter.demo} className={LINK}>
+                  Démo
+                </a>
+              )}
+            </p>
+          )
         )}
         <p className="mt-8 border-l-2 border-primary pl-4 leading-relaxed">
           <strong>En bref.</strong> {[fiche.enBref.quoi, fiche.enBref.chiffre, fiche.enBref.lien].filter(Boolean).join(" ")}
