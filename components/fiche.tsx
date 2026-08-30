@@ -19,6 +19,16 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
           ← Projets
         </Link>
         <h1 className="mt-6 text-3xl font-semibold tracking-tight">{fiche.titre || frontmatter.nom}</h1>
+        {/* Même visuel que la carte, en couleur ; balise native (export statique, pas de next/image). */}
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={fiche.visuel}
+          alt=""
+          width={1200}
+          height={750}
+          loading="lazy"
+          className="mt-6 aspect-[16/10] w-full rounded-lg border border-border object-cover"
+        />
         <dl className="mt-6 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-[auto_1fr]">
           <Row term="Statut">{frontmatter.statut}</Row>
           <Row term="Période">{frontmatter.periode}</Row>
