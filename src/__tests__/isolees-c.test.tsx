@@ -102,15 +102,20 @@ describe("Serveur de dev par PID (PFO-45)", () => {
         return null;
       }
     };
+    // Sans DEV_SERVE_E2E=1 (posé par `npm test`), le test est sauté : il lance un vrai `next dev`.
+    const e2e = process.env.DEV_SERVE_E2E === "1" ? it : it.skip;
     afterAll(() => {
       try {
         run("stop");
       } catch {
         // déjà arrêté
+      } finally {
+        // `next dev` réécrit CLAUDE.md (bloc nextjs-agent-rules) et tsconfig.json : on les restaure.
+        execFileSync("git", ["checkout", "--", "CLAUDE.md", "tsconfig.json"], { cwd: root });
       }
     });
 
-    it("start répond 200 et écrit le PID ; stop libère le port et retire le fichier", async () => {
+    e2e("start répond 200 et écrit le PID ; stop libère le port et retire le fichier (DEV_SERVE_E2E=1 requis)", async () => {
       expect(await status(), "le port 3999 doit être libre avant le test").toBeNull();
       const started = run("start");
       expect(started).toMatch(/lancé \(PID \d+\)/);
