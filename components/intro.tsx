@@ -11,12 +11,12 @@ export function Intro() {
   return (
     <section id="intro" className="flex flex-1 flex-col justify-between gap-12">
       <div>
-        <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">{site.name}</h1>
+        <h1 className="text-5xl font-bold tracking-tight">{site.name}</h1>
         <div className="mt-6">
           <Portrait size="sm" />
         </div>
-        <h2 className="mt-3 text-lg font-medium tracking-tight sm:text-xl">{SHORT_TITLE}</h2>
-        <p className="mt-4 max-w-xs text-muted-foreground">{site.title}</p>
+        <h2 className="mt-3 text-xl font-medium tracking-tight">{SHORT_TITLE}</h2>
+        <p className="mt-4 max-w-xs text-base text-muted-foreground">{site.title}</p>
         <div className="mt-16 hidden lg:block">
           <Nav />
         </div>
