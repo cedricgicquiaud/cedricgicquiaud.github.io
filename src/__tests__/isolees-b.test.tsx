@@ -39,4 +39,17 @@ describe("PFO-39 — mention « projet anonymisé » sur la carte", () => {
     render(<ProjectCard fiche={anonyme()} />);
     expect(screen.getByText(MENTION)).toHaveClass("text-muted-foreground");
   });
+
+  it("n'affiche jamais la mention sur une fiche public ou vitrine", () => {
+    render(<ProjectCard fiche={fiche({ visibilite: "public" })} />);
+    render(<ProjectCard fiche={fiche({ visibilite: "vitrine", depot: "", depotNote: "à venir" })} />);
+    expect(screen.queryByText(MENTION)).toBeNull();
+  });
+
+  it("n'affiche aucun lien Code ni Démo avec la mention, même si la fiche porte des URL", () => {
+    render(<ProjectCard fiche={fiche({ visibilite: "anonyme" })} />);
+    expect(screen.getByText(MENTION)).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Code" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Démo" })).toBeNull();
+  });
 });
