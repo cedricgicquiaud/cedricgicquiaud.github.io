@@ -49,9 +49,11 @@ case "$command" in
       echo "port $port déjà occupé par un autre processus" >&2
       exit 1
     fi
-    (cd "$root" && nohup npx next dev -p "$port" >"${pidfile%.pid}.log" 2>&1 &
-     echo $! >"$pidfile")
-    pid="$(cat "$pidfile")"
+    # Sous-shell remplacé par `next dev` (exec) : aucun shell intermédiaire ne survit, et
+    # ses trois descripteurs sont détachés du terminal ou du tube de l'appelant.
+    (cd "$root" && exec nohup npx next dev -p "$port") </dev/null >"${pidfile%.pid}.log" 2>&1 &
+    pid=$!
+    echo "$pid" >"$pidfile"
     for _ in $(seq 1 "$TIMEOUT"); do
       if http_ok; then
         echo "lancé (PID $pid) sur $url"
