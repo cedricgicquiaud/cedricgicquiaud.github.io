@@ -25,7 +25,7 @@ export function SocialIcons() {
             title={label}
             target={external ? "_blank" : undefined}
             rel={external ? "noreferrer" : undefined}
-            className="text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="inline-flex rounded-sm p-1 -m-1 text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
             <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
               <path d={path} />
