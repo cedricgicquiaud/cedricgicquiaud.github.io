@@ -258,3 +258,33 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 - [ ] Ouvrir `/projets/slice/` : le visuel est juste sous le titre, pleine largeur, coins arrondis, en couleur.
 - [ ] Sombre (bouton « Thème ») : sur `/#projets`, les visuels au repos restent lisibles (teinte bleue claire sur fond sombre) et reprennent leurs couleurs au survol.
 - [ ] Refus : avec un lecteur d'écran ou dans l'arbre d'accessibilité de Chrome, aucune image de carte n'est annoncée (`alt=""`, décoratives) ; le titre de la carte reste le premier élément lu.
+
+## Tâches isolées B — Fiches anonymes, scripts, garde de sortie
+
+### PFO-39 — Mention « projet anonymisé »
+
+- [ ] `npm run dev`, ouvrir `http://localhost:3000/#projets` : la carte BEN (visibilité anonyme) affiche en bas, en gris atténué, « Projet anonymisé : code et client non publiés » et aucun lien « Code » ni « Démo ». Ouvrir `/projets/ben/` : même mention sous le tableau Statut/Période/Rôle/Stack/Visibilité, aucun lien Code/Démo.
+- [ ] Refus : ouvrir `/projets/slice/` (public) et la carte SLICE : la mention n'apparaît nulle part ; les liens Code/Démo restent présents selon la fiche.
+
+### PFO-42 — Google Fonts hors liste blanche
+
+- [ ] `npm run build` puis `node scripts/check-output.mjs` affiche « check-output : … propre ».
+- [ ] Refus : ajouter `<link href="https://fonts.googleapis.com/css2">` dans `out/index.html`, relancer `node scripts/check-output.mjs` : sortie « domaine tiers « fonts.googleapis.com » » et code de sortie 1 (`echo $?`). Même refus avec `fonts.gstatic.com`. Relancer `npm run build` ensuite.
+
+### PFO-43 — Image OG et visuels en Inter
+
+- [ ] `npm run og` puis ouvrir `public/opengraph-image.png` : nom en Inter graisse forte, titre en Inter graisse normale (comparer avec le `h1` du site en Inter) ; `npm run build` puis ouvrir `out/projets/generated/slice.png` : nom du projet en Inter.
+- [ ] Refus : couper le réseau (Wi-Fi désactivé), relancer `npm run og` et `node scripts/project-visuals.mjs` : les deux réussissent sans erreur.
+- [ ] Refus : `grep -c "http" scripts/og-image.mjs scripts/project-visuals.mjs scripts/theme-tokens.mjs` affiche `0` pour les trois.
+
+### PFO-19 — Script npm og
+
+- [ ] `npm run og` affiche « écrit public/opengraph-image.png » ; `git status` ne montre le PNG modifié que si `content/site.json` ou le thème a changé.
+- [ ] Refus : renommer `content/site.json` en `content/site.json.bak`, relancer `npm run og` : message « og-image : content/site.json introuvable … », code de sortie 1, aucune pile d'erreur ENOENT. Remettre le fichier.
+- [ ] `README.md` cite `npm run og` avec les commandes `dev` et `build`.
+
+### PFO-44 — Helper « build si out périmé »
+
+- [ ] Déplacer `out/` à la corbeille puis `npm test` : la suite passe ; un seul `next build` est lancé (les fichiers `finitions`, `spotlight`, `font`, `visuals` réutilisent `out/` construit par `socle`).
+- [ ] Refus : `touch app/layout.tsx && npx vitest run src/__tests__/font.test.tsx` : le build est relancé (durée > 30 s) et le test passe ; relancer aussitôt : pas de rebuild (durée < 5 s).
+- [ ] Refus : `npx vitest run src/__tests__/helpers` ne trouve aucun fichier de tests (`No test files found`).
