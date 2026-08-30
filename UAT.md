@@ -285,3 +285,33 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 - [ ] `npm run dev`, ouvrir `http://localhost:3000/` : inspecter le bouton « Thème » (colonne gauche à 1280 px, coin haut droit à 375 px) : en thème clair, `aria-label="Passer en thème sombre"` ; cliquer : `aria-label="Passer en thème clair"`. Le texte visible reste « Thème » et le bouton ne change pas de largeur. Refus : texte du bouton modifié, ou libellé qui ne suit pas le thème courant.
 - [ ] Lecteur d'écran (VoiceOver, Cmd+F5) : le bouton est annoncé « Passer en thème sombre, bouton » puis « Passer en thème clair, bouton » après activation. Refus : annonce « Thème, bouton » seule.
 - [ ] Système en sombre (Réglages macOS) sans choix mémorisé (`localStorage.removeItem('theme')`, recharger) : le libellé initial est « Passer en thème clair ».
+
+## Tâches isolées B — Fiches anonymes, scripts, garde de sortie
+
+### PFO-39 — Mention « projet anonymisé »
+
+- [ ] `npm run dev`, ouvrir `http://localhost:3000/#projets` : la carte BEN (visibilité anonyme) affiche en bas, en gris atténué, « Projet anonymisé : code et client non publiés » et aucun lien « Code » ni « Démo ». Ouvrir `/projets/ben/` : même mention sous le tableau Statut/Période/Rôle/Stack/Visibilité, aucun lien Code/Démo.
+- [ ] Refus : ouvrir `/projets/slice/` (public) et la carte SLICE : la mention n'apparaît nulle part ; les liens Code/Démo restent présents selon la fiche.
+
+### PFO-42 — Google Fonts hors liste blanche
+
+- [ ] `npm run build` puis `node scripts/check-output.mjs` affiche « check-output : … propre ».
+- [ ] Refus : ajouter `<link href="https://fonts.googleapis.com/css2">` dans `out/index.html`, relancer `node scripts/check-output.mjs` : sortie « domaine tiers « fonts.googleapis.com » » et code de sortie 1 (`echo $?`). Même refus avec `fonts.gstatic.com`. Relancer `npm run build` ensuite.
+
+### PFO-43 — Image OG et visuels en Inter
+
+- [ ] `npm run og` puis ouvrir `public/opengraph-image.png` : nom en Inter graisse forte, titre en Inter graisse normale (comparer avec le `h1` du site en Inter) ; `npm run build` puis ouvrir `out/projets/generated/slice.png` : nom du projet en Inter.
+- [ ] Refus : couper le réseau (Wi-Fi désactivé), relancer `npm run og` et `node scripts/project-visuals.mjs` : les deux réussissent sans erreur.
+- [ ] Refus : `grep -c "http" scripts/og-image.mjs scripts/project-visuals.mjs scripts/theme-tokens.mjs` affiche `0` pour les trois.
+
+### PFO-19 — Script npm og
+
+- [ ] `npm run og` affiche « écrit public/opengraph-image.png » ; `git status` ne montre le PNG modifié que si `content/site.json` ou le thème a changé.
+- [ ] Refus : renommer `content/site.json` en `content/site.json.bak`, relancer `npm run og` : message « og-image : content/site.json introuvable … », code de sortie 1, aucune pile d'erreur ENOENT. Remettre le fichier.
+- [ ] `README.md` cite `npm run og` avec les commandes `dev` et `build`.
+
+### PFO-44 — Helper « build si out périmé »
+
+- [ ] Déplacer `out/` à la corbeille puis `npm test` : la suite passe ; aucun rebuild inutile : relancer aussitôt `npm test` avec ce `out/` frais, la suite passe sans relancer le build (durée totale bien plus courte, aucune ligne `next build` dans la sortie).
+- [ ] Refus : `touch app/layout.tsx && npx vitest run src/__tests__/font.test.tsx` : le build est relancé et le test passe ; relancer aussitôt : pas de rebuild. Le premier passage est nettement plus long que le second (rebuild), le second dure moins de 5 s.
+- [ ] Refus : `npx vitest run src/__tests__/helpers` ne trouve aucun fichier de tests (`No test files found`).
