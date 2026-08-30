@@ -315,3 +315,24 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 - [ ] Déplacer `out/` à la corbeille puis `npm test` : la suite passe ; aucun rebuild inutile : relancer aussitôt `npm test` avec ce `out/` frais, la suite passe sans relancer le build (durée totale bien plus courte, aucune ligne `next build` dans la sortie).
 - [ ] Refus : `touch app/layout.tsx && npx vitest run src/__tests__/font.test.tsx` : le build est relancé et le test passe ; relancer aussitôt : pas de rebuild. Le premier passage est nettement plus long que le second (rebuild), le second dure moins de 5 s.
 - [ ] Refus : `npx vitest run src/__tests__/helpers` ne trouve aucun fichier de tests (`No test files found`).
+
+## Tâches isolées C — Ancres, serveur du testeur, calibration
+
+### PFO-40 — Ancres et ids de section depuis site.json
+
+- [ ] `content/site.json` contient un objet `sections` (`about`, `experience`, `projects`, `contact`). `scripts/dev-serve.sh start 3000`, ouvrir `http://localhost:3000/` : les trois entrées du menu pointent vers `/#a-propos`, `/#experience`, `/#projets` et chaque clic fait défiler la bonne section ; le pied de page porte `id="contact"` ; sur `/projets/slice/`, le lien « ← Projets » mène à `/#projets`.
+- [ ] Refus : dans `content/site.json`, remplacer `"projects": "projets"` par `"projects": "realisations"`, recharger : le menu pointe vers `/#realisations`, la section Projets porte `id="realisations"`, le lien retour de la fiche aussi, sans toucher aucun composant. Remettre la valeur.
+- [ ] Refus : `grep -rnE '"(a-propos|experience|projets|contact)"|#(a-propos|experience|projets|contact)' components/` n'affiche aucune ligne.
+
+### PFO-45 — Serveur de dev par PID
+
+- [ ] `scripts/dev-serve.sh start 3999` affiche « lancé (PID n) sur http://localhost:3999/ » et rend la main en moins de 60 s ; `cat "${TMPDIR:-/tmp}/watido-dev-3999.pid"` affiche le même PID ; `curl -s -o /dev/null -w '%{http_code}' http://localhost:3999/` affiche `200` ; `scripts/dev-serve.sh status 3999` affiche « PID n ».
+- [ ] `scripts/dev-serve.sh stop 3999` affiche « arrêté (port 3999 libre) » ; le fichier PID n'existe plus ; `status` affiche « arrêté » ; `curl http://localhost:3999/` échoue (connexion refusée).
+- [ ] Refus : `scripts/dev-serve.sh start` sans port, ou `start abc`, affiche l'usage et sort en code 2 (`echo $?`). Refus : `start 3999` deux fois de suite affiche « déjà lancé » sans second serveur (`pgrep -f "next dev -p 3999" | wc -l` → 1 chaîne npm, un seul `next-server`).
+- [ ] `CLAUDE.md`, section Pilot : la ligne « Lancer l'app » cite `scripts/dev-serve.sh start <port>` et la ligne « Testeur » cite `scripts/dev-serve.sh stop <port>` ; `git log -1 --stat -- CLAUDE.md` ne montre que ces deux lignes changées.
+- [ ] Après un `start`/`stop`, `git status` montre `CLAUDE.md` et `tsconfig.json` modifiés par `next dev` (bloc `nextjs-agent-rules`, reformatage) : `git checkout -- CLAUDE.md tsconfig.json` avant tout commit. Refus attendu si ce bloc arrive dans un diff.
+
+### PFO-15 — Barème anonymisé
+
+- [ ] `grep -n -i "alanzien\|weme\|nexus\|/slice" .pilot/calibration.md` n'affiche rien ; la ligne « Source » et le tableau des projets parlent d'« un projet personnel » (44 PR) et d'« un projet client » (300 PR) ; les chiffres (344 PR, jours actifs, heures) sont inchangés.
+- [ ] `git log --oneline -- .pilot/calibration.md` montre l'historique intact (aucun rebase ni réécriture) ; `content/forbidden.txt` est inchangé (`git diff main -- content/forbidden.txt` vide), les empreintes de ces noms y figurant déjà.
