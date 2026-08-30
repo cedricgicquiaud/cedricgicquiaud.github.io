@@ -203,18 +203,20 @@ describe("déploiement GitHub Pages", () => {
 });
 
 describe("ids des sections (attendus par le menu)", () => {
+  // Depuis PFO-40, les ancres du menu vivent dans content/site.json : chaque composant
+  // lit `site.sections.<clé>` au lieu d'un littéral. Seule l'intro, hors menu, garde son id en dur.
   const EXPECTED: Record<string, string> = {
-    about: "a-propos",
-    experience: "experience",
-    intro: "intro",
-    footer: "contact",
-    projects: "projets",
+    about: "id={site.sections.about}",
+    experience: "id={site.sections.experience}",
+    intro: 'id="intro"',
+    footer: "id={site.sections.contact}",
+    projects: "id={site.sections.projects}",
   };
 
   for (const [file, id] of Object.entries(EXPECTED)) {
-    it(`components/${file}.tsx porte id="${id}"`, () => {
+    it(`components/${file}.tsx porte ${id}`, () => {
       const source = readFileSync(path.join(root, "components", `${file}.tsx`), "utf8");
-      expect(source).toContain(`id="${id}"`);
+      expect(source).toContain(id);
     });
   }
 });
@@ -245,7 +247,7 @@ describe("bouton Thème dans app/layout.tsx", () => {
 describe("section Projets (PFO-14)", () => {
   it("porte le conteneur de mise en page commun aux sections de contenu", () => {
     const src = readFileSync(path.join(root, "components", "projects.tsx"), "utf8");
-    expect(src).toMatch(/<section id="projets" className="py-16">/);
+    expect(src).toMatch(/<section id=\{site\.sections\.projects\} className="py-16">/);
     expect(src).toMatch(/className="w-full"/);
   });
 });

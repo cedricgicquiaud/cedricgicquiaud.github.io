@@ -1,6 +1,6 @@
 # Barème de charge
 
-Source : AlanZien/SLICE, weme-studio/Nexus — 344 PR mergées.
+Source : un projet personnel (44 PR) et un projet client (300 PR) — 344 PR mergées.
 
 ## Paramètres (utilisés par `roadmap` et `sync`)
 
@@ -24,10 +24,10 @@ days_per_week: observed   # remplacer par un nombre (ex. 2) pour forcer la capac
 | L | 601–2000 | 74 | 0.65 | 1.94 (×3) |
 | XL | > 2000 | 14 | 0.65 | 3.27 (×5) |
 
-| Dépôt | PR | Période | Jours actifs | Heures / jour actif | Jours actifs / semaine |
+| Projet | PR | Période | Jours actifs | Heures / jour actif | Jours actifs / semaine |
 |---|---|---|---|---|---|
-| AlanZien/SLICE | 44 | 2026-05-25 → 2026-07-22 | 9 | 6.3 | 1.1 |
-| weme-studio/Nexus | 300 | 2026-06-10 → 2026-08-19 | 45 | 7.1 | 4.5 |
+| un projet personnel | 44 | 2026-05-25 → 2026-07-22 | 9 | 6.3 | 1.1 |
+| un projet client | 300 | 2026-06-10 → 2026-08-19 | 45 | 7.1 | 4.5 |
 
 ## Comment lire
 
