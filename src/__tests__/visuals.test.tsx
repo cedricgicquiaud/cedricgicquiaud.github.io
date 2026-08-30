@@ -63,4 +63,12 @@ describe("scripts/project-visuals.mjs (PFO-35)", () => {
     expect(existsSync(png)).toBe(true);
     expect(readFileSync(png).subarray(0, 4).equals(PNG_SIGNATURE)).toBe(true);
   });
+
+  it("ne génère rien pour une fiche dont le visuel fourni existe", { timeout: 30_000 }, () => {
+    const { fiches, pub } = sandbox("visuel: /projets/alpha.png\n");
+    mkdirSync(path.join(pub, "projets"));
+    writeFileSync(path.join(pub, "projets", "alpha.png"), "png");
+    generate(fiches, pub);
+    expect(existsSync(path.join(pub, "projets", "generated", "alpha.png"))).toBe(false);
+  });
 });
