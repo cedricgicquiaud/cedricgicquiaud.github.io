@@ -194,10 +194,9 @@ describe("scripts/check-output — contrôle du HTML généré", () => {
     expect(problems[0]).toMatch(/index\.html.*emoji/i);
   });
 
-  it("refuse un domaine tiers, mais accepte Google Fonts, GitHub, LinkedIn et le site", () => {
+  it("refuse un domaine tiers, mais accepte GitHub, LinkedIn et le site (Google Fonts refusés depuis PFO-42)", () => {
     const allowed = outDir(
-      '<link href="https://fonts.googleapis.com/css2"><link href="https://fonts.gstatic.com/x">' +
-        '<a href="https://github.com/cedricgicquiaud">a</a><a href="https://www.linkedin.com/in/x">b</a>' +
+      '<a href="https://github.com/cedricgicquiaud">a</a><a href="https://www.linkedin.com/in/x">b</a>' +
         '<a href="https://cedricgicquiaud.github.io/">c</a>',
     );
     expect(checkOutput(allowed, forbidden)).toEqual([]);

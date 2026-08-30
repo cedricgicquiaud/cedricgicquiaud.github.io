@@ -4,7 +4,6 @@ import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
-// @ts-expect-error script ESM sans déclaration de types
 import { checkOutput } from "../../scripts/check-output.mjs";
 import { Fiche } from "../../components/fiche";
 import { ProjectCard } from "../../components/project-card";
