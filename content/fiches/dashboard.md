@@ -1,6 +1,6 @@
 ---
 nom: Dashboard (Tablo)
-statut: en cours (fonctionnel en local, pas encore mis en ligne)
+statut: en cours
 periode: avril 2026 → mai 2026 (nettoyage du dépôt en août 2026)
 role: conception, développement, tests — seul, avec des agents de code
 stack: Next.js 16, TypeScript strict, Tailwind v4, shadcn/ui, Supabase (Postgres, Auth, RLS), Recharts, Vitest, Claude API
@@ -38,6 +38,9 @@ pour brancher les outils qu'un utilisateur a déjà.
   il génère 4-5 widgets de départ adaptés au type d'activité.
 
 ## Preuves
+
+État au 30/08/2026 : Fonctionnel en local, pas encore mis en ligne.
+
 
 Vérifié le 29/08/2026 sur un clone propre :
 - **436 tests Vitest verts**, sans base de données (5 tests exigent une clé de chiffrement

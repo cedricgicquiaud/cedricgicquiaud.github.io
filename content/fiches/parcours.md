@@ -1,6 +1,6 @@
 ---
 nom: Parcours
-statut: en cours (fonctionnel en local, pas encore public)
+statut: en cours
 periode: août 2026 → aujourd'hui
 role: conception, développement, tests, écriture des formations, recette — seul, avec des agents de code
 stack: TypeScript, Node/Hono, SQLite (better-sqlite3), React/Vite, Vitest, markdown-it, Shiki, Mermaid
@@ -57,6 +57,9 @@ Décisions qui ont compté :
   terminées, avec un lien. Il prévient, il ne verrouille jamais.
 
 ## Preuves
+
+État au 30/08/2026 : Fonctionnel en local, pas encore public.
+
 
 - **639 tests automatisés verts** dans 53 fichiers, typage strict sans erreur (vérifié le
   29/08/2026 sur un clone propre : `npm ci`, `npm test`, `npm run typecheck`, moins d'une
