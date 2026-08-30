@@ -20,6 +20,7 @@ npm run lint       # ESLint
 
 ```sh
 npm run build      # produit le dossier out/
+npm run og         # régénère public/opengraph-image.png depuis content/site.json (à commiter)
 ```
 
 Toutes les couleurs vivent dans `app/globals.css` (thème clair, système sombre, sombre forcé
