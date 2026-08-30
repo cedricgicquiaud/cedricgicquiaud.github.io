@@ -4,11 +4,12 @@ import { spawnSync } from "node:child_process";
 import { copyFileSync, mkdirSync, mkdtempSync, readFileSync, rmSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { checkOutput } from "../../scripts/check-output.mjs";
 import { Fiche } from "../../components/fiche";
 import { ProjectCard } from "../../components/project-card";
 import type { Fiche as FicheData } from "../../lib/fiches";
+import { ensureBuild } from "./helpers/build";
 
 afterEach(cleanup);
 
@@ -155,5 +156,37 @@ describe("PFO-44 — helper ensureBuild partagé par les tests qui lisent out/",
   it("vitest ne prend pas helpers/ pour des tests", () => {
     const config = readFileSync(path.join(root, "vitest.config.ts"), "utf8");
     expect(config).toMatch(/include: \["src\/__tests__\/\*\*\/\*\.test\.\{ts,tsx\}"\]/);
+  });
+});
+
+describe("PFO-44 — ensureBuild reconstruit si le marker manque", () => {
+  /** Une racine temporaire avec un `out/index.html` frais. */
+  function fakeRoot() {
+    const dir = mkdtempSync(path.join(tmpdir(), "ensure-build-"));
+    mkdirSync(path.join(dir, "out"));
+    writeFileSync(path.join(dir, "out", "index.html"), "<html></html>");
+    return dir;
+  }
+
+  const marker = "out/projets/generated/slice.png";
+
+  it("lance le build quand le marker est absent de out/, même si out/index.html est frais", () => {
+    const dir = fakeRoot();
+    // Faux build : ne lance rien, fabrique seulement le fichier attendu.
+    const run = vi.fn(() => {
+      mkdirSync(path.dirname(path.join(dir, marker)), { recursive: true });
+      writeFileSync(path.join(dir, marker), "png");
+    });
+    ensureBuild([], { marker, root: dir, run });
+    expect(run).toHaveBeenCalledTimes(1);
+  });
+
+  it("ne lance rien quand le marker est présent et out/index.html frais", () => {
+    const dir = fakeRoot();
+    mkdirSync(path.dirname(path.join(dir, marker)), { recursive: true });
+    writeFileSync(path.join(dir, marker), "png");
+    const run = vi.fn();
+    ensureBuild([], { marker, root: dir, run });
+    expect(run).not.toHaveBeenCalled();
   });
 });
