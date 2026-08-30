@@ -4,7 +4,9 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import { act } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
+import { loadFiches } from "../../lib/fiches";
 import { Nav } from "../../components/nav";
+import * as fichePage from "../../app/projets/[slug]/page";
 
 const root = path.resolve(__dirname, "../..");
 const source = (rel: string) => readFileSync(path.join(root, rel), "utf8");
@@ -85,5 +87,15 @@ describe("Menu et pied de page dans le layout (PFO-25)", () => {
     expect(page).not.toContain("<ThemeToggle");
     expect(page).not.toContain("<Footer");
     expect(page).not.toContain("fixed");
+  });
+});
+
+describe("Route statique /projets/[slug]/ (PFO-26)", () => {
+  it("génère un paramètre par fiche : les 7 slugs de content/fiches, et rien d'autre", async () => {
+    const params = await fichePage.generateStaticParams();
+    const expected = loadFiches().map((f) => ({ slug: f.slug }));
+    expect(expected).toHaveLength(7);
+    expect(params).toEqual(expected);
+    expect(fichePage.dynamicParams).toBe(false);
   });
 });
