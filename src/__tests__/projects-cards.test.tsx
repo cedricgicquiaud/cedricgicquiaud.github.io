@@ -64,6 +64,11 @@ describe("ProjectCard — liens externes", () => {
     expect(screen.getByRole("link", { name: "Démo" })).toBeInTheDocument();
   });
 
+  it("refus : depot qui n'est pas une URL (« à venir »), aucun lien « Code »", () => {
+    render(<ProjectCard fiche={fiche({ depot: "à venir (nouveau dépôt public)" })} />);
+    expect(screen.queryByRole("link", { name: "Code" })).not.toBeInTheDocument();
+  });
+
   it("refus : demo qui n'est pas une URL (« à venir »), aucun lien « Démo »", () => {
     render(<ProjectCard fiche={fiche({ demo: "à venir (mise en ligne prévue)" })} />);
     expect(screen.queryByRole("link", { name: "Démo" })).not.toBeInTheDocument();
