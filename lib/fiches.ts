@@ -42,6 +42,9 @@ const text = (v: unknown): string =>
   typeof v === "string" ? v.trim() : typeof v === "number" ? String(v) : "";
 
 function toFrontmatter(data: Record<string, unknown>): Frontmatter {
+  const visibilite = text(data.visibilite) as Visibilite;
+  // Une fiche anonyme ne pointe vers rien, même si le fichier source contient des liens.
+  const masque = visibilite === "anonyme";
   return {
     nom: text(data.nom),
     statut: text(data.statut),
@@ -51,9 +54,9 @@ function toFrontmatter(data: Record<string, unknown>): Frontmatter {
       .split(",")
       .map((s) => s.trim())
       .filter(Boolean),
-    visibilite: text(data.visibilite) as Visibilite,
-    depot: text(data.depot),
-    demo: text(data.demo),
+    visibilite,
+    depot: masque ? "" : text(data.depot),
+    demo: masque ? "" : text(data.demo),
     ...(Number.isInteger(data.ordre) ? { ordre: data.ordre as number } : {}),
   };
 }
