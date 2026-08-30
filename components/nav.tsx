@@ -9,8 +9,28 @@ const entries = [
   { label: "Projets", id: "projets" },
 ];
 
-// Bande centrale de la fenêtre prise en compte pour la section active.
-const ACTIVE_BAND = "-40% 0px -55% 0px";
+// Bande centrale de la fenêtre prise en compte pour la section active :
+// de 40 % à 45 % de la hauteur (marges de l'observer : haut 40 %, bas 55 %).
+const BAND_TOP = 0.4;
+const ACTIVE_BAND = `-${BAND_TOP * 100}% 0px -55% 0px`;
+
+// Au montage : la section dont le haut est le plus proche de la bande centrale.
+// L'observer prend ensuite le relais ; ce calcul unique rend le chargement déterministe.
+function nearestSection(): string | null {
+  const bandTop = window.innerHeight * BAND_TOP;
+  let best: string | null = null;
+  let bestDistance = Infinity;
+  for (const { id } of entries) {
+    const el = document.getElementById(id);
+    if (!el) continue;
+    const distance = Math.abs(el.getBoundingClientRect().top - bandTop);
+    if (distance < bestDistance) {
+      best = id;
+      bestDistance = distance;
+    }
+  }
+  return best;
+}
 
 export function Nav() {
   const [active, setActive] = useState<string | null>(null);
@@ -20,7 +40,9 @@ export function Nav() {
   const onHome = !pathname || pathname === "/";
 
   useEffect(() => {
-    if (!onHome || typeof IntersectionObserver === "undefined") return;
+    if (!onHome) return;
+    setActive(nearestSection());
+    if (typeof IntersectionObserver === "undefined") return;
     // Seules les sections du menu sont observées ; on ne compte que la bande
     // centrale de la fenêtre, et on retient la section visible la plus haute.
     const visible = new Map<string, number>();
