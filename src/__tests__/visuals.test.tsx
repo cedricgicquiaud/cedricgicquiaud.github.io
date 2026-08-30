@@ -199,8 +199,11 @@ describe("visuels dans out/ — lit out/ produit par npm run build (PFO-35)", ()
   const outGenerated = path.join(root, "out", "projets", "generated");
   const slicePng = path.join(outGenerated, "slice.png");
 
-  // `out/` est périmé s'il est plus vieux que le script ou la fiche (helpers/build.ts).
-  beforeAll(() => ensureBuild(["scripts/project-visuals.mjs", "content/fiches/slice.md"]), 250_000);
+  // `out/` est périmé s'il est plus vieux que le script ou la fiche, ou si slice.png manque (helpers/build.ts).
+  beforeAll(
+    () => ensureBuild(["scripts/project-visuals.mjs", "content/fiches/slice.md"], { marker: "out/projets/generated/slice.png" }),
+    250_000,
+  );
 
   it("contient un PNG généré par fiche (7) dont out/projets/generated/slice.png", () => {
     expect(existsSync(slicePng)).toBe(true);
