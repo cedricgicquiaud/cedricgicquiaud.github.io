@@ -109,3 +109,28 @@ describe("ProjectCard : pastilles et titre en bleu cyber (PFO-51)", () => {
     expect(title.className).not.toMatch(/text-primary/);
   });
 });
+
+describe("Experience : typographie du modèle (PFO-52)", () => {
+  it("période en petites capitales atténuées, titre 16 px medium, secteur 14 px atténué, description 14 px atténuée", () => {
+    const { container } = render(<Experience />);
+    const articles = within(container.querySelector("ol") as HTMLElement).getAllByRole("article");
+    for (const article of articles) {
+      const periode = article.firstElementChild as HTMLElement;
+      expect(periode.tagName).toBe("P");
+      expect(periode).toHaveClass("text-xs", "font-semibold", "uppercase", "tracking-wide", "text-muted-foreground");
+      expect(periode).not.toHaveClass("text-sm");
+
+      const title = within(article).getByRole("heading", { level: 3 });
+      expect(title).toHaveClass("text-base", "font-medium");
+
+      const secteur = title.nextElementSibling as HTMLElement;
+      expect(secteur.tagName).toBe("P");
+      expect(secteur).toHaveClass("text-sm", "text-muted-foreground");
+
+      const description = secteur.nextElementSibling as HTMLElement;
+      expect(description.tagName).toBe("P");
+      expect(description).toHaveClass("text-sm", "leading-relaxed", "text-muted-foreground");
+      expect(description).not.toHaveClass("text-base");
+    }
+  });
+});
