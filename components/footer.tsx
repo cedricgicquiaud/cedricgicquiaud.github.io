@@ -10,7 +10,7 @@ export function Footer() {
           Site généré depuis mes fiches de preuve.{" "}
           <a
             href={site.links.repo}
-            className="underline underline-offset-4 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
+            className="break-all underline underline-offset-4 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
             {repoLabel}
           </a>

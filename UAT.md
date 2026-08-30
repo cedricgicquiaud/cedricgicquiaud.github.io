@@ -336,3 +336,25 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 
 - [ ] Aucun mot de `content/forbidden.txt` n'apparaît dans `.pilot/calibration.md` (test `isolees-c`, vérification par empreintes) ; la ligne « Source » et le tableau des projets parlent d'« un projet personnel » (44 PR) et d'« un projet client » (300 PR) ; les chiffres (344 PR, jours actifs, heures) sont inchangés.
 - [ ] `git log --oneline -- .pilot/calibration.md` montre l'historique intact (aucun rebase ni réécriture) ; `content/forbidden.txt` est inchangé (`git diff main -- content/forbidden.txt` vide), les empreintes de ces noms y figurant déjà.
+
+## Tâches isolées D — Tailles, portrait, icône de thème
+
+### PFO-47 — Tailles de police et espace entre colonnes
+
+- [ ] `npm run dev`, ouvrir `http://localhost:3000/` à 1280 px de large : un espace net (96 px, `gap-24`) sépare la colonne gauche (nom, titre court, phrase, menu) du texte de droite ; le texte de droite s'arrête avant le bord (largeur plafonnée à 672 px).
+- [ ] Inspecteur, styles calculés : le `h1` (nom) mesure `font-size: 48px`, graisse 700 ; le titre court `20px` ; la phrase sous le titre `16px` ; un paragraphe d'À propos `16px` ; un titre de section (« À propos », « Expérience », « Projets ») `14px` en capitales espacées ; un libellé du menu `12px`.
+- [ ] Ouvrir `/projets/slice/` : le `h1` mesure `36px`, le corps `16px`, les titres de section en petites capitales comme sur l'accueil.
+- [ ] Refus : réduire la fenêtre à 375 px : aucun défilement horizontal, le nom se coupe sur deux lignes sans dépasser du bord, les cartes projets restent dans la largeur.
+
+### PFO-48 — Portrait retiré
+
+- [ ] Accueil à 1280 px puis à 375 px : aucune photo ni cadre bleu sous le nom ; la colonne gauche enchaîne nom, titre court, phrase, menu (desktop), puis les trois logos en bas ; aucun vide laissé entre le nom et le titre court.
+- [ ] Ouvrir `/projets/slice/` : aucune image de portrait (seul le visuel du projet est présent).
+- [ ] Refus : `npm run build` puis `grep -ci portrait out/index.html` affiche `0` ; `ls public/portrait*` liste toujours les fichiers (conservés, non servis dans la page).
+
+### PFO-49 — Bouton de thème en icône, en haut à droite
+
+- [ ] Accueil à 1280 px : un seul bouton de thème, carré de 40 px, en haut à droite, sans texte, une lune en thème clair ; aucun bouton en bas de la colonne gauche à côté des logos. Même chose à 375 px (bouton fixe, reste visible en défilant).
+- [ ] Cliquer : le site passe en sombre, l'icône devient un soleil ; recliquer : retour au clair avec la lune. Inspecteur : l'`aria-label` vaut « Passer en thème sombre » en clair et « Passer en thème clair » en sombre ; le `<svg>` porte `aria-hidden="true"`.
+- [ ] Refus : système en sombre (Réglages > Apparence) sans choix mémorisé (`localStorage.removeItem('theme')` puis recharger) : le bouton affiche le soleil et annonce « Passer en thème clair ».
+- [ ] Ouvrir `/projets/slice/` à 1280 px puis à 375 px : le bouton est présent en haut à droite sur les fiches, à toutes les largeurs (décision du 30/08 mise à jour).
