@@ -86,7 +86,7 @@ Ne rien cocher avant d'avoir constaté.
 
 - [x] Lire « À propos » dans le navigateur : au moins trois paragraphes, dans l'ordre ESN, immobilier, agents IA ; aucun nom d'employeur ni de client, aucun superlatif. Corriger le texte à la PR si besoin. — constaté le 2026-08-29 : 4 paragraphes dans l'ordre ESN → immobilier → agents IA (+ un 4e de conclusion) ; aucun nom d'employeur ni de client, aucun superlatif relevé (voir « hors cahier » pour une incohérence de dates).
 - [x] Lire « Expérience » : quatre blocs (2026, 2023–2025, 2013–2023, 2000–2013), chacun avec période, rôle, secteur, description et au moins un tag. Les dates sont des hypothèses : confirmer ou corriger dans `content/experience.md`. — constaté le 2026-08-29 : 4 blocs 2026, 2023–2025, 2013–2023, 2000–2013, chacun avec période, rôle, secteur, description et 3 à 5 tags ; dates non confirmées par le testeur (hypothèses à valider par l'auteur).
-- [x] Refus : dans `content/about.md`, remplacer « Treize ans en ESN » par « Treize ans chez Nexus », lancer `npm run build` : `next build` réussit puis `check-output` échoue avec `index.html : mot interdit « Nexus »`. Annuler la modification. — constaté le 2026-08-29 : `next build` réussit puis `check-output : 1 problème(s)` / `index.html : mot interdit « Nexus »` ; modification annulée.
+- [x] Refus : dans `content/about.md`, remplacer « Treize ans en ESN » par « Treize ans chez » suivi d'un mot figurant dans `content/forbidden.txt` (le nom d'un ancien client), lancer `npm run build` : `next build` réussit puis `check-output` échoue avec `index.html : mot interdit « … »`. Annuler la modification. — constaté le 2026-08-29 : `next build` réussit puis `check-output : 1 problème(s)` / `index.html : mot interdit « … »` ; modification annulée.
 
 ### PFO-10 — Sections À propos et Expérience rendues
 
@@ -97,7 +97,7 @@ Ne rien cocher avant d'avoir constaté.
 ### PFO-11 — Contrôle du HTML généré
 
 - [x] `npm run build` : la dernière ligne affiche `check-output : …/out propre`. — constaté le 2026-08-29 : dernière ligne `check-output : /Users/cedricgicquiaud/Desktop/WATIDO/site-3/out propre`.
-- [x] Refus : ajouter « Nexus » dans `content/about.md`, lancer `npm run build` : échec avec `mot interdit « Nexus »`. Annuler. — constaté le 2026-08-29 : échec `index.html : mot interdit « Nexus »` ; annulé.
+- [x] Refus : ajouter un mot figurant dans `content/forbidden.txt` (le nom d'un ancien client) dans `content/about.md`, lancer `npm run build` : échec avec `mot interdit « … »`. Annuler. — constaté le 2026-08-29 : échec `index.html : mot interdit « … »` ; annulé.
 - [x] Refus : ajouter un emoji (par exemple une fusée) dans `content/about.md`, lancer `npm run build` : échec avec `emoji « … »`. Annuler. — constaté le 2026-08-29 : échec `index.html : emoji « 🚀 »` ; annulé.
 - [x] Refus : dans `content/about.md`, ajouter `<script src="https://cdn.example.com/x.js"></script>`, lancer `npm run build` : échec avec `domaine tiers « cdn.example.com »`. Annuler. — constaté le 2026-08-29 : échec `index.html : domaine tiers « cdn.example.com »` (signalé 2 fois) ; annulé.
 - [x] Refus : ajouter « 06 12 34 56 78 » dans `content/about.md`, lancer `npm run build` : échec avec `numéro de téléphone « 06 12 34 56 78 »`. Annuler. — constaté le 2026-08-29 : échec `index.html : numéro de téléphone « 06 12 34 56 78 »` ; annulé.
@@ -178,7 +178,7 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 - [x] Ouvrir `/projets/slice/` : lien « ← Projets » en haut (retour sur `/#projets`), titre de la fiche en h1, en-tête Statut / Période / Rôle / Stack (pastilles) / Visibilité, liens « Code » (dépôt) sans « Démo » (pas d'URL), bloc « En bref », puis les cinq titres dans l'ordre Problème, Ce que j'ai construit, Preuves, Ce que j'en ai appris, Artefacts.
 - [x] Dans « Ce que j'ai construit » : les puces de liste sont visibles, les passages en gras ressortent, le lien du dépôt dans « Artefacts » est souligné et cliquable. Vérifier à 375 px (aucun défilement horizontal) et en sombre (`document.documentElement.dataset.theme = "dark"`) : texte lisible, badges lisibles.
 - [x] Refus : ouvrir `/projets/ben/` (fiche `anonyme`) : ni lien « Code » ni lien « Démo » dans l'en-tête.
-- [x] Refus : dans `content/fiches/slice.md`, ajouter le mot « Nexus » dans la section « Preuves », lancer `npm run build` : `next build` réussit puis `check-output` échoue avec `projets/slice/index.html : mot interdit « Nexus »`. Annuler la modification.
+- [x] Refus : dans `content/fiches/slice.md`, ajouter un mot figurant dans `content/forbidden.txt` (le nom d'un ancien client) dans la section « Preuves », lancer `npm run build` : `next build` réussit puis `check-output` échoue avec `projets/slice/index.html : mot interdit « … »`. Annuler la modification.
 
 ## Livraison 8 — Deux colonnes et menu latéral
 
@@ -315,3 +315,24 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 - [ ] Déplacer `out/` à la corbeille puis `npm test` : la suite passe ; aucun rebuild inutile : relancer aussitôt `npm test` avec ce `out/` frais, la suite passe sans relancer le build (durée totale bien plus courte, aucune ligne `next build` dans la sortie).
 - [ ] Refus : `touch app/layout.tsx && npx vitest run src/__tests__/font.test.tsx` : le build est relancé et le test passe ; relancer aussitôt : pas de rebuild. Le premier passage est nettement plus long que le second (rebuild), le second dure moins de 5 s.
 - [ ] Refus : `npx vitest run src/__tests__/helpers` ne trouve aucun fichier de tests (`No test files found`).
+
+## Tâches isolées C — Ancres, serveur du testeur, calibration
+
+### PFO-40 — Ancres et ids de section depuis site.json
+
+- [ ] `content/site.json` contient un objet `sections` (`about`, `experience`, `projects`, `contact`). `scripts/dev-serve.sh start 3000`, ouvrir `http://localhost:3000/` : les trois entrées du menu pointent vers `/#a-propos`, `/#experience`, `/#projets` et chaque clic fait défiler la bonne section ; le pied de page porte `id="contact"` ; sur `/projets/slice/`, le lien « ← Projets » mène à `/#projets`.
+- [ ] Refus : dans `content/site.json`, remplacer `"projects": "projets"` par `"projects": "realisations"`, recharger : le menu pointe vers `/#realisations`, la section Projets porte `id="realisations"`, le lien retour de la fiche aussi, sans toucher aucun composant. Remettre la valeur.
+- [ ] Refus : `grep -rnE '"(a-propos|experience|projets|contact)"|#(a-propos|experience|projets|contact)' components/` n'affiche aucune ligne.
+
+### PFO-45 — Serveur de dev par PID
+
+- [ ] `scripts/dev-serve.sh start 3999` affiche « lancé (PID n) sur http://localhost:3999/ » et rend la main en moins de 60 s ; `cat "${TMPDIR:-/tmp}/watido-dev-3999.pid"` affiche le même PID ; `curl -s -o /dev/null -w '%{http_code}' http://localhost:3999/` affiche `200` ; `scripts/dev-serve.sh status 3999` affiche « PID n ».
+- [ ] `scripts/dev-serve.sh stop 3999` affiche « arrêté (port 3999 libre) » ; le fichier PID n'existe plus ; `status` affiche « arrêté » ; `curl http://localhost:3999/` échoue (connexion refusée).
+- [ ] Refus : `scripts/dev-serve.sh start` sans port, ou `start abc`, affiche l'usage et sort en code 2 (`echo $?`). Refus : `start 3999` deux fois de suite affiche « déjà lancé » sans second serveur (`pgrep -f "next dev -p 3999" | wc -l` → 1 chaîne npm, un seul `next-server`).
+- [ ] `CLAUDE.md`, section Pilot : la ligne « Lancer l'app » cite `scripts/dev-serve.sh start <port>` et la ligne « Testeur » cite `scripts/dev-serve.sh stop <port>` ; `git log -1 --stat -- CLAUDE.md` ne montre que ces deux lignes changées.
+- [ ] Après un `start`/`stop`, `git status` montre `CLAUDE.md` et `tsconfig.json` modifiés par `next dev` (bloc `nextjs-agent-rules`, reformatage) : `git checkout -- CLAUDE.md tsconfig.json` avant tout commit. Refus attendu si ce bloc arrive dans un diff.
+
+### PFO-15 — Barème anonymisé
+
+- [ ] Aucun mot de `content/forbidden.txt` n'apparaît dans `.pilot/calibration.md` (test `isolees-c`, vérification par empreintes) ; la ligne « Source » et le tableau des projets parlent d'« un projet personnel » (44 PR) et d'« un projet client » (300 PR) ; les chiffres (344 PR, jours actifs, heures) sont inchangés.
+- [ ] `git log --oneline -- .pilot/calibration.md` montre l'historique intact (aucun rebase ni réécriture) ; `content/forbidden.txt` est inchangé (`git diff main -- content/forbidden.txt` vide), les empreintes de ces noms y figurant déjà.

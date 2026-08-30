@@ -6,5 +6,11 @@
     "github": "https://github.com/cedricgicquiaud",
     "linkedin": "https://www.linkedin.com/in/cedric-gicquiaud/",
     "repo": "https://github.com/cedricgicquiaud/cedricgicquiaud.github.io"
+  },
+  "sections": {
+    "about": "a-propos",
+    "experience": "experience",
+    "projects": "projets",
+    "contact": "contact"
   }
 }
