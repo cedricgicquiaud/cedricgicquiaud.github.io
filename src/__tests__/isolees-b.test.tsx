@@ -6,6 +6,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { checkOutput } from "../../scripts/check-output.mjs";
+import { interFonts } from "../../scripts/theme-tokens.mjs";
 import { Fiche } from "../../components/fiche";
 import { ProjectCard } from "../../components/project-card";
 import type { Fiche as FicheData } from "../../lib/fiches";
@@ -137,6 +138,16 @@ describe("PFO-43 — image OG et visuels en Inter, sans réseau", () => {
     expect(source).toMatch(/fonts:\s*interFonts\(\)/);
     expect(source).toMatch(/fontFamily:\s*"Inter"/);
     expect(source).not.toMatch(/fontFamily:\s*"sans-serif"/);
+  });
+
+  it("interFonts() renvoie deux polices « Inter » dont les données sont des Buffer non vides (smoke)", () => {
+    const fonts = interFonts();
+    expect(fonts).toHaveLength(2);
+    for (const font of fonts) {
+      expect(font.name).toBe("Inter");
+      expect(Buffer.isBuffer(font.data)).toBe(true);
+      expect(font.data.length).toBeGreaterThan(0);
+    }
   });
 
   it.each(scripts)("%s ne contient aucune URL http (aucune requête réseau à la génération)", (_file, source) => {
