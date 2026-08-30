@@ -1,8 +1,11 @@
-import { cleanup, render } from "@testing-library/react";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { act, cleanup, fireEvent, render } from "@testing-library/react";
 import { renderToString } from "react-dom/server";
-import { act, fireEvent } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { Spotlight } from "../../components/spotlight";
+
+const root = path.resolve(__dirname, "../..");
 
 afterEach(cleanup);
 
@@ -88,4 +91,28 @@ describe("halo souris (PFO-31) — tactile et mouvement réduit", () => {
     expect(halo!.style.getPropertyValue("--x")).toBe("50%");
     expect(halo!.style.getPropertyValue("--y")).toBe("50%");
   });
+});
+
+describe("halo souris (PFO-31) — token de couleur", () => {
+  const css = readFileSync(path.join(root, "app", "globals.css"), "utf8");
+
+  /** Valeur de `--spotlight` dans le bloc qui suit `selector` (dernier bloc portant ce sélecteur). */
+  function spotlightIn(selector: string): string | undefined {
+    const start = css.lastIndexOf(selector);
+    if (start === -1) throw new Error(`bloc introuvable : ${selector}`);
+    const body = css.slice(start).split("{")[1].split("}")[0];
+    return body.match(/--spotlight:\s*([^;]+);/)?.[1].trim();
+  }
+
+  /** Alpha d'une couleur `rgba(r, g, b, a)`. */
+  const alphaOf = (value: string) => Number(value.match(/rgba?\([^)]*?,\s*([\d.]+)\s*\)/)?.[1]);
+
+  it.each([":root {", ":root:not([data-theme=\"light\"])", ":root[data-theme=\"dark\"]"])(
+    "définit --spotlight (alpha ≤ 0,15) dans le bloc %s",
+    (selector) => {
+      const value = spotlightIn(selector);
+      expect(value, `--spotlight absent du bloc ${selector}`).toBeDefined();
+      expect(alphaOf(value!)).toBeLessThanOrEqual(0.15);
+    },
+  );
 });
