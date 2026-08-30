@@ -5,6 +5,7 @@ const isUrl = (s: string) => s.startsWith("http");
 
 export function ProjectCard({ fiche }: { fiche: Fiche }) {
   const { titre, frontmatter, enBref } = fiche;
+  const codePrive = frontmatter.visibilite === "vitrine" && !isUrl(frontmatter.depot);
   return (
     <article className="space-y-3 rounded-lg border border-border p-5">
       <h3 className="font-medium">{titre || frontmatter.nom}</h3>
@@ -29,6 +30,7 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
             Démo
           </a>
         )}
+        {codePrive && <span className="text-muted-foreground">code privé, démo à venir</span>}
       </p>
     </article>
   );
