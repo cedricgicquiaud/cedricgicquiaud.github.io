@@ -2,6 +2,7 @@
 
 import { copyFileSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
 
 // Fichiers du dossier parent qui ne quittent jamais la machine.
@@ -52,4 +53,18 @@ export function syncFiches(srcDir, destDir) {
   mkdirSync(destDir, { recursive: true });
   for (const name of files) copyFileSync(path.join(srcDir, name), path.join(destDir, name));
   return files.length;
+}
+
+// Entrée en ligne de commande : `node scripts/sync-fiches.mjs [destination]` (défaut : content/fiches).
+// Source : `FICHES_DIR` si défini, sinon le dossier `fiches/` voisin de la racine du site.
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const here = path.dirname(fileURLToPath(import.meta.url));
+  const src = process.env.FICHES_DIR ?? path.resolve(here, "..", "..", "fiches");
+  const dest = path.resolve(process.argv[2] ?? path.join("content", "fiches"));
+  try {
+    console.log(`${syncFiches(src, dest)} fiches synchronisées`);
+  } catch (e) {
+    console.error(e instanceof Error ? e.message : String(e));
+    process.exit(1);
+  }
 }
