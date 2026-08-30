@@ -102,14 +102,15 @@ function compare(a: Fiche, b: Fiche): number {
 /** Dossier des fiches copiées par `npm run sync`. */
 const defaultDir = () => path.join(process.cwd(), "content", "fiches");
 
+/** Une fiche par son slug (nom de fichier sans `.md`). */
+export function loadFiche(slug: string, dir: string = defaultDir()): Fiche {
+  return parseFiche(slug, readFileSync(path.join(dir, `${slug}.md`), "utf8"));
+}
+
+/** Toutes les fiches du dossier, triées par `ordre` puis `nom`. */
 export function loadFiches(dir: string = defaultDir()): Fiche[] {
   return readdirSync(dir)
     .filter((name) => name.endsWith(".md"))
-    .map((name) => parseFiche(name.slice(0, -3), readFileSync(path.join(dir, name), "utf8")))
+    .map((name) => loadFiche(name.slice(0, -3), dir))
     .sort(compare);
-}
-
-export function loadFiche(slug: string, dir: string = defaultDir()): Fiche {
-  const file = path.join(dir, `${slug}.md`);
-  return parseFiche(slug, readFileSync(file, "utf8"));
 }
