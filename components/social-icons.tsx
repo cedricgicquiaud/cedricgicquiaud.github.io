@@ -16,7 +16,7 @@ const links = [
 
 export function SocialIcons() {
   return (
-    <ul>
+    <ul className="flex items-center gap-5">
       {links.map(({ label, href, path, external }) => (
         <li key={label}>
           <a
@@ -25,6 +25,7 @@ export function SocialIcons() {
             title={label}
             target={external ? "_blank" : undefined}
             rel={external ? "noreferrer" : undefined}
+            className="text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring"
           >
             <svg aria-hidden="true" width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
               <path d={path} />
