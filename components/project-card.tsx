@@ -19,7 +19,7 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
         ))}
       </ul>
       <p className="flex gap-4 text-sm">
-        {frontmatter.depot && (
+        {isUrl(frontmatter.depot) && (
           <a href={frontmatter.depot} className="underline underline-offset-4">
             Code
           </a>
