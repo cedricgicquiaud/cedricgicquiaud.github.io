@@ -104,15 +104,14 @@ describe("Nav depuis une sous-page (PFO-25)", () => {
   });
 });
 
-describe("Layout (PFO-25, menu du haut retiré par PFO-29, pied de page retiré par PFO-54)", () => {
-  it("app/layout.tsx rend le conteneur fixe du bouton de thème et rend children", () => {
+describe("Layout (PFO-25 ; menu du haut retiré par PFO-29, pied de page par PFO-54, bouton de thème par PFO-55)", () => {
+  it("app/layout.tsx rend children dans <body>", () => {
     const layout = source("app/layout.tsx");
     const body = layout.slice(layout.indexOf("<body"), layout.indexOf("</body>"));
-    expect(body).toContain("<ThemeToggle />");
     expect(body).toContain("{children}");
   });
 
-  it("app/page.tsx ne rend plus ni Nav, ni ThemeToggle, ni Footer", () => {
+  it("app/page.tsx ne rend ni Nav, ni bouton de thème, ni Footer", () => {
     const page = source("app/page.tsx");
     expect(page).not.toContain("<Nav");
     expect(page).not.toContain("<ThemeToggle");

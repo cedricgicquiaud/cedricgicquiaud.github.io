@@ -191,19 +191,6 @@ describe("ordre des sections dans app/page.tsx", () => {
   });
 });
 
-describe("bouton Thème dans app/layout.tsx", () => {
-  it("est fixe en haut à droite à toutes les largeurs (PFO-30, étendu par PFO-49)", () => {
-    const source = readFileSync(path.join(root, "app", "layout.tsx"), "utf8");
-    const wrapper = source.match(/<div className="([^"]*)">\s*<ThemeToggle \/>/);
-    expect(wrapper, "conteneur du bouton Thème absent").not.toBeNull();
-    const classes = wrapper![1].split(/\s+/);
-    expect(classes).toContain("fixed");
-    expect(classes).toContain("right-4");
-    expect(classes).toContain("top-4");
-    expect(classes).not.toContain("lg:hidden");
-  });
-});
-
 describe("section Projets (PFO-14)", () => {
   it("porte le conteneur de mise en page commun aux sections de contenu", () => {
     const src = readFileSync(path.join(root, "components", "projects.tsx"), "utf8");
