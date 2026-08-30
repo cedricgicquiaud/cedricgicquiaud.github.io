@@ -24,8 +24,8 @@ describe("portrait bi-ton : filtre et fusion (PFO-12)", () => {
     const img = screen.getByRole("img");
     expect(img.className).toMatch(/\bgrayscale\b/);
     expect(img.className).toMatch(/\bcontrast-110\b/);
-    expect(img.className).toMatch(/\bmix-blend-multiply\b/);
-    expect(img.className).toMatch(/\bdark:mix-blend-screen\b/);
+    expect(img.className).toMatch(/\bmix-blend-screen\b/);
+    expect(img.className).not.toMatch(/multiply|dark:/);
     expect(img.parentElement?.className).toMatch(/\bbg-primary\b/);
   });
 });

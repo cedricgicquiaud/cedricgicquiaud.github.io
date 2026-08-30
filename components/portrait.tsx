@@ -30,7 +30,7 @@ function Frame({ photoExists, size }: Required<Props>) {
           alt={`Portrait de ${site.name}`}
           width={480}
           height={600}
-          className="block h-auto w-full grayscale contrast-110 mix-blend-multiply dark:mix-blend-screen"
+          className="block h-auto w-full grayscale contrast-110 mix-blend-screen"
         />
       </div>
     </figure>
