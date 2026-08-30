@@ -50,7 +50,8 @@ ni d'employeur. Français seul.
 ## Décisions produit (30/08)
 
 - Titre court sous le nom : « Développeur d'agents IA ».
-- Portrait dans la colonne gauche, sous le nom (pas en tête de la colonne droite).
+- Pas de photo sur le site (portrait retiré le 30/08 ; composant conservé, non rendu).
 - Pied de page pleine largeur sous les deux colonnes.
-- Pages fiche : pas de bouton de thème en desktop.
+- Bouton de thème : une icône lune/soleil fixée en haut à droite, sur toutes les pages et à toutes les largeurs.
 - Quadrillage `bg-grid` sur toute la page.
+- Échelle typographique du modèle : titre 48 px, titre court 20 px, corps 16 px, titres de section 14 px en capitales.
