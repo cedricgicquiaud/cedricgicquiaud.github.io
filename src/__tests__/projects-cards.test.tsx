@@ -2,6 +2,7 @@ import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { ProjectCard } from "../../components/project-card";
+import { Projects } from "../../components/projects";
 import type { Fiche } from "../../lib/fiches";
 
 afterEach(cleanup);
@@ -105,5 +106,31 @@ describe("ProjectCard — lien vers la fiche", () => {
     expect(title).toHaveAttribute("href", "/projets/slice/");
     expect(title.querySelector("a")).toBeNull();
     expect(title.closest("a")).toBe(title);
+  });
+});
+
+const NOMS = ["SLICE", "PILOT", "Foreman", "Parcours", "Dashboard", "GiveMe5", "BEN"];
+const septFiches = () =>
+  NOMS.map((nom, i) => fiche({ slug: nom.toLowerCase(), titre: `${nom} — titre`, nom, ordre: i + 1 }));
+
+describe("Projects — section", () => {
+  it("rend 7 cartes dans l'ordre reçu, chacune liant /projets/<slug>/", () => {
+    render(<Projects fiches={septFiches()} />);
+    const cards = screen.getAllByRole("article");
+    expect(cards).toHaveLength(7);
+    expect(cards.map((c) => within(c).getByRole("heading").textContent)).toEqual(NOMS.map((n) => `${n} — titre`));
+    for (const [i, card] of cards.entries()) {
+      expect(within(card).getByRole("link", { name: `${NOMS[i]} — titre` })).toHaveAttribute(
+        "href",
+        `/projets/${NOMS[i].toLowerCase()}/`,
+      );
+    }
+  });
+
+  it("garde l'id de section et le conteneur partagé", () => {
+    const { container } = render(<Projects fiches={septFiches()} />);
+    const section = container.querySelector("section#projets");
+    expect(section).toHaveClass("px-6", "py-16", "lg:px-16");
+    expect(section?.querySelector(".mx-auto.w-full.max-w-3xl")).not.toBeNull();
   });
 });
