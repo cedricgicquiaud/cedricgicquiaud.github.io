@@ -1,4 +1,5 @@
 import site from "../content/site.json";
+import { Nav } from "./nav";
 
 const links = [
   { label: "GitHub", href: site.links.github },
@@ -10,7 +11,7 @@ export function Intro() {
   return (
     <section
       id="intro"
-      className="bg-grid flex min-h-screen flex-col justify-center px-6 py-16 lg:px-16"
+      className="bg-grid flex flex-col justify-center"
     >
       <div className="mx-auto w-full max-w-3xl">
         <h1 className="text-4xl font-semibold tracking-tight sm:text-5xl">{site.name}</h1>
@@ -27,6 +28,9 @@ export function Intro() {
             </li>
           ))}
         </ul>
+        <div className="hidden lg:block">
+          <Nav />
+        </div>
       </div>
     </section>
   );
