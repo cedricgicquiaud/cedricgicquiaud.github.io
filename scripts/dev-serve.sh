@@ -12,24 +12,38 @@ usage() {
   exit 2
 }
 
-[ $# -eq 2 ] || usage
-command="$1"
-port="$2"
-case "$port" in
-  ''|*[!0-9]*) usage ;;
-esac
-
-root="$(cd "$(dirname "$0")/.." && pwd)"
-pidfile="${TMPDIR:-/tmp}/watido-dev-${port}.pid"
-url="http://localhost:${port}/"
-TIMEOUT=60
-
 http_ok() {
   [ "$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 "$url" || true)" = "200" ]
 }
 
 port_listening() {
-  lsof -nP -iTCP:"$port" -sTCP:LISTEN >/dev/null 2>&1
+  lsof -nP -iTCP:"$1" -sTCP:LISTEN >/dev/null 2>&1
+}
+
+# Tue tout processus qui écoute encore sur le port (`next-server` est un petit-enfant du PID
+# du script : `pkill -P` ne l'atteint pas), puis attend jusqu'à 5 s que le port soit libre.
+# Échec explicite (exit 1) s'il ne l'est pas.
+free_port() {
+  local p="$1" pids
+  pids="$(lsof -nP -iTCP:"$p" -sTCP:LISTEN -t 2>/dev/null || true)"
+  if [ -n "$pids" ]; then
+    # shellcheck disable=SC2086
+    kill -TERM $pids 2>/dev/null || true
+  fi
+  for _ in $(seq 1 5); do
+    port_listening "$p" || return 0
+    sleep 1
+  done
+  pids="$(lsof -nP -iTCP:"$p" -sTCP:LISTEN -t 2>/dev/null || true)"
+  if [ -n "$pids" ]; then
+    # shellcheck disable=SC2086
+    kill -KILL $pids 2>/dev/null || true
+    sleep 1
+  fi
+  if port_listening "$p"; then
+    echo "port $p encore occupé" >&2
+    return 1
+  fi
 }
 
 # Lit le fichier PID dans la variable `filepid` (vide si absent). Fichier corrompu (autre chose
@@ -57,6 +71,19 @@ running_pid() {
   esac
 }
 
+main() {
+[ $# -eq 2 ] || usage
+command="$1"
+port="$2"
+case "$port" in
+  ''|*[!0-9]*) usage ;;
+esac
+
+root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+pidfile="${TMPDIR:-/tmp}/watido-dev-${port}.pid"
+url="http://localhost:${port}/"
+TIMEOUT=60
+
 read_pidfile
 
 case "$command" in
@@ -65,7 +92,7 @@ case "$command" in
       echo "déjà lancé (PID $pid) sur $url"
       exit 0
     fi
-    if port_listening; then
+    if port_listening "$port"; then
       echo "port $port déjà occupé par un autre processus" >&2
       exit 1
     fi
@@ -104,14 +131,7 @@ case "$command" in
       fi
     fi
     rm -f "$pidfile" "${pidfile%.pid}.log"
-    for _ in $(seq 1 10); do
-      port_listening || break
-      sleep 1
-    done
-    if port_listening; then
-      echo "port $port encore occupé" >&2
-      exit 1
-    fi
+    free_port "$port" || exit 1
     echo "arrêté (port $port libre)"
     ;;
   status)
@@ -124,3 +144,9 @@ case "$command" in
     ;;
   *) usage ;;
 esac
+}
+
+# Exécuté directement : lance `main`. Sourcé (tests) : expose seulement les fonctions.
+if [ "${BASH_SOURCE[0]}" = "$0" ]; then
+  main "$@"
+fi
