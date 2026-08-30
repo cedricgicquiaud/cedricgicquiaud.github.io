@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterAll, afterEach, describe, expect, it, vi } from "vitest";
 import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
@@ -87,5 +87,42 @@ describe("Serveur de dev par PID (PFO-45)", () => {
     expect(existsSync(script)).toBe(true);
     expect(statSync(script).mode & 0o111, "bit exécutable absent").not.toBe(0);
     expect(() => execFileSync("bash", ["-n", script])).not.toThrow();
+  });
+
+  // Lance un vrai `next dev` : un seul à la fois, sur un port réservé au test.
+  describe.sequential("start / stop sur le port 3999", () => {
+    const port = "3999";
+    const pidfile = path.join(process.env.TMPDIR ?? "/tmp", `watido-dev-${port}.pid`);
+    const run = (cmd: string) => execFileSync(script, [cmd, port], { cwd: root, encoding: "utf8" });
+    const status = async () => {
+      try {
+        return (await fetch(`http://localhost:${port}/`)).status;
+      } catch {
+        return null;
+      }
+    };
+    afterAll(() => {
+      try {
+        run("stop");
+      } catch {
+        // déjà arrêté
+      }
+    });
+
+    it("start répond 200 et écrit le PID ; stop libère le port et retire le fichier", async () => {
+      expect(await status(), "le port 3999 doit être libre avant le test").toBeNull();
+      const started = run("start");
+      expect(started).toMatch(/lancé \(PID \d+\)/);
+      expect(existsSync(pidfile)).toBe(true);
+      const pid = Number(readFileSync(pidfile, "utf8").trim());
+      expect(pid).toBeGreaterThan(0);
+      expect(await status()).toBe(200);
+      expect(run("status")).toContain(`PID ${pid}`);
+
+      expect(run("stop")).toContain("arrêté");
+      expect(existsSync(pidfile)).toBe(false);
+      expect(run("status").trim()).toBe("arrêté");
+      expect(await status()).toBeNull();
+    }, 120_000);
   });
 });
