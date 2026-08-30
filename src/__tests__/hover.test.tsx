@@ -45,7 +45,8 @@ describe("Experience — survol", () => {
       expect(article).toHaveClass("hover:bg-accent/50", "hover:border-border", "border-transparent");
       expect(article).toHaveClass("lg:group-hover/list:opacity-50", "lg:hover:!opacity-100");
       const title = within(article).getByRole("heading", { level: 3 });
-      expect(title).toHaveClass("group-hover/item:text-primary");
+      // PFO-51 : le titre survolé passe en bleu cyber, plus en --primary.
+      expect(title).toHaveClass("group-hover/item:text-cyber");
     }
   });
 });
@@ -57,7 +58,7 @@ describe("Experience — focus clavier", () => {
     for (const article of articles) {
       expect(article).toHaveClass("focus-within:bg-accent/50", "focus-within:border-border");
       expect(article.className).not.toMatch(/focus-within[^ ]*opacity/);
-      expect(within(article).getByRole("heading", { level: 3 })).toHaveClass("group-focus-within/item:text-primary");
+      expect(within(article).getByRole("heading", { level: 3 })).toHaveClass("group-focus-within/item:text-cyber");
     }
   });
 });
