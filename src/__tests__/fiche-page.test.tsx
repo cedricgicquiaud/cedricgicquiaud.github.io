@@ -1,9 +1,10 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen } from "@testing-library/react";
-import { readFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { act } from "react";
-import { afterEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import { loadFiches, type Fiche as FicheData } from "../../lib/fiches";
 import { Fiche } from "../../components/fiche";
 import { Nav } from "../../components/nav";
@@ -212,5 +213,33 @@ describe("Rendu de la fiche : liens Code et Démo (PFO-27)", () => {
     expect(screen.queryByRole("link", { name: "Code" })).toBeNull();
     expect(screen.queryByRole("link", { name: "Démo" })).toBeNull();
     expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
+  });
+});
+
+describe("Sortie du build : une page par fiche (PFO-26)", () => {
+  const out = path.join(root, "out");
+
+  beforeAll(() => {
+    // `next build` n'est relancé que si la sortie ne contient pas encore les pages de fiches.
+    if (!existsSync(path.join(out, "projets"))) execFileSync("npx", ["next", "build"], { cwd: root, stdio: "pipe" });
+  }, 120_000);
+
+  it("écrit out/projets/<slug>/index.html pour les 7 fiches, avec titre, menu et pied de page", () => {
+    const fiches = loadFiches();
+    expect(fiches).toHaveLength(7);
+    for (const fiche of fiches) {
+      const file = path.join(out, "projets", fiche.slug, "index.html");
+      expect(existsSync(file), file).toBe(true);
+      const html = readFileSync(file, "utf8");
+      expect(html).toContain(`<title>${fiche.frontmatter.nom} — Cédric Gicquiaud</title>`);
+      expect(html).toContain('aria-label="Sections"');
+      expect(html).toContain('href="/#a-propos"');
+      expect(html).toContain('id="contact"');
+    }
+  });
+
+  it("refuse un slug inconnu : aucun dossier hors des 7 fiches", () => {
+    const dirs = readdirSync(path.join(out, "projets")).filter((n) => statSync(path.join(out, "projets", n)).isDirectory());
+    expect(dirs.sort()).toEqual(loadFiches().map((f) => f.slug).sort());
   });
 });
