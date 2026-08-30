@@ -1,4 +1,4 @@
-import { readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { marked } from "marked";
@@ -111,16 +111,23 @@ function parseSections(content: string): Section[] {
 /** Visuel généré par `scripts/project-visuals.mjs` pour une fiche sans visuel fourni. */
 const generatedVisual = (slug: string) => `/projets/generated/${slug}.png`;
 
-function parseFiche(slug: string, raw: string): Fiche {
+/** Le visuel fourni (`frontmatter.visuel`) s'il existe dans `publicDir`, sinon le généré. */
+function resolveVisual(slug: string, provided: string | undefined, publicDir: string): string {
+  if (provided && existsSync(path.join(publicDir, provided))) return provided;
+  return generatedVisual(slug);
+}
+
+function parseFiche(slug: string, raw: string, publicDir: string): Fiche {
   const { data, content } = matter(raw);
   const titre = content.match(/^# (.+)$/m)?.[1].trim() ?? "";
+  const frontmatter = toFrontmatter(data);
   return {
     slug,
     titre,
-    frontmatter: toFrontmatter(data),
+    frontmatter,
     enBref: parseEnBref(content),
     sections: parseSections(content),
-    visuel: generatedVisual(slug),
+    visuel: resolveVisual(slug, frontmatter.visuel, publicDir),
   };
 }
 
@@ -138,7 +145,7 @@ const defaultPublicDir = () => path.join(process.cwd(), "public");
 
 /** Une fiche par son slug (nom de fichier sans `.md`) ; `publicDir` sert à vérifier le visuel fourni. */
 export function loadFiche(slug: string, dir: string = defaultDir(), publicDir: string = defaultPublicDir()): Fiche {
-  return parseFiche(slug, readFileSync(path.join(dir, `${slug}.md`), "utf8"));
+  return parseFiche(slug, readFileSync(path.join(dir, `${slug}.md`), "utf8"), publicDir);
 }
 
 /** Toutes les fiches du dossier, triées par `ordre` puis `nom`. */
