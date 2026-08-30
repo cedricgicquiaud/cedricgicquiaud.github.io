@@ -52,6 +52,19 @@ describe("loadFiche — champ visuel (PFO-35)", () => {
     const { fiches, pub } = sandbox("visuel: /projets/absent.png\n");
     expect(loadFiche("alpha", fiches, pub).visuel).toBe("/projets/generated/alpha.png");
   });
+
+  it("refuse un chemin qui sort de public/ (../../x), même si le fichier existe", () => {
+    const { fiches, pub } = sandbox("visuel: /../outside.png\n");
+    writeFileSync(path.join(pub, "..", "outside.png"), "png");
+    expect(loadFiche("alpha", fiches, pub).visuel).toBe("/projets/generated/alpha.png");
+  });
+
+  it("refuse un chemin sans / initial (projets/x.png), même si le fichier existe", () => {
+    const { fiches, pub } = sandbox("visuel: projets/alpha.png\n");
+    mkdirSync(path.join(pub, "projets"));
+    writeFileSync(path.join(pub, "projets", "alpha.png"), "png");
+    expect(loadFiche("alpha", fiches, pub).visuel).toBe("/projets/generated/alpha.png");
+  });
 });
 
 /** Lance `scripts/project-visuals.mjs` sur un bac à sable (dossier des fiches, dossier public). */
@@ -75,6 +88,21 @@ describe("scripts/project-visuals.mjs (PFO-35)", () => {
     writeFileSync(path.join(pub, "projets", "alpha.png"), "png");
     generate(fiches, pub);
     expect(existsSync(path.join(pub, "projets", "generated", "alpha.png"))).toBe(false);
+  });
+
+  it("génère quand même si le visuel fourni sort de public/ (../../x)", { timeout: 30_000 }, () => {
+    const { fiches, pub } = sandbox("visuel: /../outside.png\n");
+    writeFileSync(path.join(pub, "..", "outside.png"), "png");
+    generate(fiches, pub);
+    expect(existsSync(path.join(pub, "projets", "generated", "alpha.png"))).toBe(true);
+  });
+
+  it("génère quand même si le visuel fourni n'a pas de / initial (projets/x.png)", { timeout: 30_000 }, () => {
+    const { fiches, pub } = sandbox("visuel: projets/alpha.png\n");
+    mkdirSync(path.join(pub, "projets"));
+    writeFileSync(path.join(pub, "projets", "alpha.png"), "png");
+    generate(fiches, pub);
+    expect(existsSync(path.join(pub, "projets", "generated", "alpha.png"))).toBe(true);
   });
 });
 
