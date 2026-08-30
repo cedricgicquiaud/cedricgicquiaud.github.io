@@ -364,7 +364,7 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 ### PFO-51 — Pastilles et titres survolés en bleu cyber
 
 - [ ] `scripts/dev-serve.sh start 3000`, ouvrir `http://localhost:3000/` en thème clair : les pastilles de compétences (Expérience) et de stack (cartes Projets) sont en teal foncé sur fond teal très pâle, en pilule ; le badge de statut d'une carte (« en cours », « livré ») reste gris neutre. Inspecteur, styles calculés sur une pastille : `color: rgb(15, 118, 110)` (`--cyber: #0f766e`).
-- [ ] Survoler une expérience puis une carte projet : le titre (`h3`) passe en teal (même couleur que les pastilles), plus en bleu ; Tab jusqu'au lien d'une carte : même couleur au focus. Le halo souris, le bouton de thème et les liens « Code » / « Démo » restent en bleu `--primary`.
+- [ ] Survoler une expérience puis une carte projet : le titre (`h3`) passe en teal (même couleur que les pastilles), plus en bleu ; Tab jusqu'au lien d'une carte : même couleur au focus. Le halo reste bleu ; le bouton de thème et les liens gardent leur couleur de texte habituelle.
 - [ ] Cliquer le bouton de thème (sombre forcé) puis, en thème clair mémorisé retiré (`localStorage.removeItem('theme')`) avec le système en sombre : dans les deux cas les pastilles et le titre survolé sont en teal clair `rgb(94, 234, 212)` (`--cyber: #5eead4`).
 - [ ] Refus : `grep -n "cyber" app/globals.css` montre quatre lignes (trois blocs de thème + `--color-cyber` dans `@theme inline`) et aucune autre couleur en dur ailleurs : `grep -rn "#0f766e\|#5eead4" components/` n'affiche rien.
 
