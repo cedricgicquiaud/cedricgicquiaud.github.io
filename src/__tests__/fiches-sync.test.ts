@@ -96,4 +96,14 @@ describe("sync-fiches — contrôle du frontmatter", () => {
     });
     expect(() => syncFiches(src, tempDir())).toThrow(/^alpha\.md : .*En bref/);
   });
+
+  it("refuse deux fiches avec le même « ordre »", () => {
+    const src = tempDir({ "alpha.md": fiche({ ordre: 1 }), "beta.md": fiche({ nom: "Beta", ordre: 1 }) });
+    expect(() => syncFiches(src, tempDir())).toThrow(/^beta\.md : .*ordre.*1.*alpha\.md/);
+  });
+
+  it("refuse un « ordre » qui n'est pas un entier", () => {
+    const src = tempDir({ "alpha.md": fiche({ ordre: "premier" }) });
+    expect(() => syncFiches(src, tempDir())).toThrow(/^alpha\.md : .*ordre/);
+  });
 });
