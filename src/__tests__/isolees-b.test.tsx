@@ -189,4 +189,11 @@ describe("PFO-44 — ensureBuild reconstruit si le marker manque", () => {
     ensureBuild([], { marker, root: dir, run });
     expect(run).not.toHaveBeenCalled();
   });
+
+  it("lève une erreur explicite quand une dépendance n'existe pas, au lieu de l'ignorer", () => {
+    const dir = fakeRoot();
+    const run = vi.fn();
+    expect(() => ensureBuild(["scripts/nope.mjs"], { root: dir, run })).toThrow("scripts/nope.mjs");
+    expect(run).not.toHaveBeenCalled();
+  });
 });
