@@ -7,7 +7,7 @@ Source : AlanZien/SLICE, weme-studio/Nexus — 344 PR mergées.
 ```yaml
 # heures de session par feature, selon sa taille
 feature_hours_S: 0.22
-feature_hours_M: 0.69
+feature_hours_M: 0.65   # médiane projet PFO, 3 livraisons M (29/08)
 feature_hours_L: 1.94
 feature_hours_XL: 3.27
 feature_overhead_hours: 0.5   # validation du découpage + relecture de PR, hypothèse initiale recalibrée par sync
@@ -43,3 +43,13 @@ days_per_week: observed   # remplacer par un nombre (ex. 2) pour forcer la capac
 
 | Feature | Taille | Tâches | Début | PR ouverte | Mergée | Heures réelles |
 |---|---|---|---|---|---|---|
+
+## Historique du projet Portfolio (PFO)
+
+| Feature | Taille | Livraisons | Tâches | Début | PR ouvertes | Heures de session | Mergée |
+|---|---|---|---|---|---|---|---|
+| Le site présente qui je suis | L | 4 (M, M, M, S) | 13 | 2026-08-29 17:28 | 2026-08-29 17:31 / 17:43 / 17:55 / 18:03 ; corrections jusqu'à 18:22 | 0,9 h de production (17:28 → 18:22, tuilage) ; 1,0 h d'attente de merge (18:22 → 19:11, 4 merges + rebases) | mergée 29/08 |
+
+Mesure par livraison (session, PR ouverte → prête après audit/recette/corrections) : L1 M 0,85 h ; L2 M 0,65 h ; L3 M 0,60 h ; L4 S 0,45 h.
+Barème M global 0,69 h : réel médian 0,65 h (3 mesures) → `feature_hours_M` du projet = 0,65. S : 1 mesure, barème global conservé.
+Ce que la boucle a attrapé : audit 1 bloquant + 5 importants (2 dus au cadrage : ancres incohérentes, liste en clair) ; recette 3 cases refusées (2 corrigées, 1 dépendante du contenu). Aucune régression après merge.
