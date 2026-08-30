@@ -7,7 +7,8 @@
     "build": "next build && node scripts/check-output.mjs",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "sync": "node scripts/sync-fiches.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
