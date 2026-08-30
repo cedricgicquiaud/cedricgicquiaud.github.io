@@ -218,17 +218,20 @@ describe("Rendu de la fiche : liens Code et Démo (PFO-27)", () => {
 
 describe("Sortie du build : une page par fiche (PFO-26)", () => {
   const out = path.join(root, "out");
+  const pageOf = (slug: string) => path.join(out, "projets", slug, "index.html");
 
   beforeAll(() => {
-    // `next build` n'est relancé que si la sortie ne contient pas encore les pages de fiches.
-    if (!existsSync(path.join(out, "projets"))) execFileSync("npx", ["next", "build"], { cwd: root, stdio: "pipe" });
+    // `next build` n'est relancé que si une page de fiche manque dans la sortie.
+    if (!loadFiches().every((f) => existsSync(pageOf(f.slug)))) {
+      execFileSync("npx", ["next", "build"], { cwd: root, stdio: "pipe" });
+    }
   }, 120_000);
 
   it("écrit out/projets/<slug>/index.html pour les 7 fiches, avec titre, menu et pied de page", () => {
     const fiches = loadFiches();
     expect(fiches).toHaveLength(7);
     for (const fiche of fiches) {
-      const file = path.join(out, "projets", fiche.slug, "index.html");
+      const file = pageOf(fiche.slug);
       expect(existsSync(file), file).toBe(true);
       const html = readFileSync(file, "utf8");
       expect(html).toContain(`<title>${fiche.frontmatter.nom} — Cédric Gicquiaud</title>`);
