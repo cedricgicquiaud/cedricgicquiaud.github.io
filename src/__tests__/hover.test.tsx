@@ -21,3 +21,15 @@ describe("Experience — survol", () => {
     }
   });
 });
+
+describe("Experience — focus clavier", () => {
+  it("produit le même état au focus, sans estomper les voisines", () => {
+    const { container } = render(<Experience />);
+    const articles = within(container.querySelector("ol") as HTMLElement).getAllByRole("article");
+    for (const article of articles) {
+      expect(article).toHaveClass("focus-within:bg-accent/50", "focus-within:border-border");
+      expect(article.className).not.toMatch(/focus-within[^ ]*opacity/);
+      expect(within(article).getByRole("heading", { level: 3 })).toHaveClass("group-focus-within/item:text-primary");
+    }
+  });
+});
