@@ -1,9 +1,12 @@
 import "@testing-library/jest-dom/vitest";
-import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { loadFiche } from "../../lib/fiches";
+
+const root = path.resolve(__dirname, "../..");
 
 const FICHE = `---
 nom: Alpha
@@ -43,5 +46,21 @@ describe("loadFiche — champ visuel (PFO-35)", () => {
   it("avec un champ visuel qui pointe sur un fichier absent, retombe sur le généré sans erreur", () => {
     const { fiches, pub } = sandbox("visuel: /projets/absent.png\n");
     expect(loadFiche("alpha", fiches, pub).visuel).toBe("/projets/generated/alpha.png");
+  });
+});
+
+/** Lance `scripts/project-visuals.mjs` sur un bac à sable (dossier des fiches, dossier public). */
+const generate = (fiches: string, pub: string) =>
+  execFileSync("node", [path.join(root, "scripts", "project-visuals.mjs"), fiches, pub], { cwd: root, stdio: "pipe" });
+
+const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47]);
+
+describe("scripts/project-visuals.mjs (PFO-35)", () => {
+  it("écrit public/projets/generated/<slug>.png (un vrai PNG) pour une fiche sans visuel fourni", { timeout: 30_000 }, () => {
+    const { fiches, pub } = sandbox();
+    generate(fiches, pub);
+    const png = path.join(pub, "projets", "generated", "alpha.png");
+    expect(existsSync(png)).toBe(true);
+    expect(readFileSync(png).subarray(0, 4).equals(PNG_SIGNATURE)).toBe(true);
   });
 });
