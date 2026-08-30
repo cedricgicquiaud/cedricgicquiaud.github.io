@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
 const entries = [
@@ -23,6 +24,10 @@ function currentLayout(): Layout {
 export function Nav() {
   const [active, setActive] = useState<string | null>(null);
   const [layout, setLayout] = useState<Layout>("top");
+  // Les sections n'existent que sur l'accueil : ailleurs, aucune entrée n'est active.
+  // Sans routeur (rendu isolé), `usePathname` vaut null : on se comporte comme sur l'accueil.
+  const pathname = usePathname();
+  const onHome = !pathname || pathname === "/";
 
   useEffect(() => {
     if (typeof matchMedia === "undefined") return;
@@ -34,7 +39,7 @@ export function Nav() {
   }, []);
 
   useEffect(() => {
-    if (typeof IntersectionObserver === "undefined") return;
+    if (!onHome || typeof IntersectionObserver === "undefined") return;
     // Seules les sections du menu sont observées ; on ne compte que la bande
     // centrale de la fenêtre, et on retient la section visible la plus haute.
     const visible = new Map<string, number>();
@@ -61,7 +66,7 @@ export function Nav() {
       if (el) observer.observe(el);
     }
     return () => observer.disconnect();
-  }, []);
+  }, [onHome]);
 
   return (
     <nav
