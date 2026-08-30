@@ -144,22 +144,22 @@ describe("Libellé du bouton de thème (PFO-18)", () => {
     vi.stubGlobal("localStorage", { getItem: () => null, setItem: () => {}, removeItem: () => {} });
   }
 
-  it("annonce « Passer en thème sombre » en clair et « Passer en thème clair » en sombre ; texte « Thème » constant", () => {
+  it("annonce « Passer en thème sombre » en clair et « Passer en thème clair » en sombre ; aucun texte visible (icône depuis PFO-49)", () => {
     stubStorage();
     vi.stubGlobal("matchMedia", () => ({ matches: false }));
     render(<ThemeToggle />);
     const button = screen.getByRole("button");
     expect(button).toHaveAttribute("aria-label", "Passer en thème sombre");
-    expect(button).toHaveTextContent(/^Thème$/);
+    expect(button.textContent?.trim()).toBe("");
 
     fireEvent.click(button);
     expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
     expect(button).toHaveAttribute("aria-label", "Passer en thème clair");
-    expect(button).toHaveTextContent(/^Thème$/);
+    expect(button.textContent?.trim()).toBe("");
 
     fireEvent.click(button);
     expect(button).toHaveAttribute("aria-label", "Passer en thème sombre");
-    expect(button).toHaveTextContent(/^Thème$/);
+    expect(button.textContent?.trim()).toBe("");
   });
 
   it("ne porte pas aria-pressed : bouton d'action au libellé variable, pas un bouton bascule", () => {
