@@ -13,7 +13,15 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/projets/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const fiche = loadFiche(slug);
-  return { title: `${fiche.frontmatter.nom} — ${site.name}`, description: fiche.enBref.quoi };
+  const title = `${fiche.frontmatter.nom} — ${site.name}`;
+  // openGraph explicite : sinon la page hérite la carte générique du layout
+  // (og:title = nom du site) et un lien partagé sur LinkedIn ne nomme pas le projet.
+  // L'image OG reste celle du site, résolue via metadataBase.
+  return {
+    title,
+    description: fiche.enBref.quoi,
+    openGraph: { title, description: fiche.enBref.quoi, type: "article", url: `/projets/${slug}/` },
+  };
 }
 
 export default async function ProjetPage({ params }: PageProps<"/projets/[slug]">) {

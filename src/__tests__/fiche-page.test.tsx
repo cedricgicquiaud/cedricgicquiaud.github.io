@@ -250,7 +250,9 @@ describe("Sortie du build : une page par fiche (PFO-26)", () => {
       const html = readFileSync(file, "utf8");
       expect(html).toContain(`<title>${fiche.frontmatter.nom} — Cédric Gicquiaud</title>`);
       expect(html).toContain(`<meta property="og:title" content="${fiche.frontmatter.nom} — Cédric Gicquiaud"/>`);
-      expect(html).toContain(`<meta property="og:description" content="${fiche.enBref.quoi}"/>`);
+      // React encode l'apostrophe en &#x27; dans les attributs : on compare la valeur décodée.
+      const ogDescription = html.match(/<meta property="og:description" content="([^"]*)"/)?.[1].replace(/&#x27;/g, "'");
+      expect(ogDescription).toBe(fiche.enBref.quoi);
       expect(html).toContain('<meta property="og:type" content="article"/>');
       expect(html).toContain('aria-label="Sections"');
       expect(html).toContain('href="/#a-propos"');
