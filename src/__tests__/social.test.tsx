@@ -59,8 +59,13 @@ describe("SocialIcons : style et focus (PFO-34)", () => {
     const list = container.querySelector("ul")!;
     expect(list.className.split(/\s+/)).toEqual(expect.arrayContaining(["flex", "items-center", "gap-5"]));
     for (const link of screen.getAllByRole("link")) {
+      // inline-flex donne une boîte au lien (sinon 0×0 autour d'un SVG block) ; p-1 -m-1 = zone 32 px, rendu inchangé.
       expect(link.className.split(/\s+/)).toEqual(
         expect.arrayContaining([
+          "inline-flex",
+          "rounded-sm",
+          "p-1",
+          "-m-1",
           "text-muted-foreground",
           "hover:text-foreground",
           "focus-visible:outline-2",
