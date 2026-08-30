@@ -2,6 +2,7 @@ import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import Home from "../../app/page";
+import { Intro } from "../../components/intro";
 
 afterEach(() => {
   cleanup();
@@ -27,5 +28,18 @@ describe("Deux colonnes à partir de 1024 px (PFO-28)", () => {
     expect(right, "aucune colonne droite après la colonne collante").not.toBeNull();
     const ids = Array.from(right.querySelectorAll("section[id]")).map((s) => s.id);
     expect(ids).toEqual(["portrait", "a-propos", "experience", "projets"]);
+  });
+});
+
+describe("Intro en bloc classique sous 1024 px (PFO-28)", () => {
+  it("ne prend plus la hauteur de l'écran et porte le menu en desktop seulement (hidden lg:block)", () => {
+    const { container } = render(<Intro />);
+    const section = container.querySelector("section#intro")!;
+    expect(classesOf(section)).not.toContain("min-h-screen");
+    const nav = screen.getByRole("navigation", { hidden: true });
+    expect(section.contains(nav)).toBe(true);
+    const wrapper = nav.closest(".hidden");
+    expect(wrapper, "le menu n'est pas dans un conteneur hidden lg:block").not.toBeNull();
+    expect(classesOf(wrapper)).toEqual(expect.arrayContaining(["hidden", "lg:block"]));
   });
 });
