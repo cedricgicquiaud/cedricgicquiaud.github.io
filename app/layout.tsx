@@ -40,7 +40,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       </head>
       <body className="flex min-h-full flex-col bg-background text-foreground">
         {/* En desktop, le bouton de thème vit en bas de la colonne gauche (intro). */}
-        <div className="fixed right-4 top-4 z-50 lg:hidden">
+        <div className="fixed right-4 top-4 z-50 rounded-md bg-background lg:hidden">
           <ThemeToggle />
         </div>
         {children}
