@@ -1,7 +1,7 @@
-import { execSync } from "node:child_process";
-import { existsSync, readFileSync, statSync } from "node:fs";
+import { readFileSync } from "node:fs";
 import path from "node:path";
 import { beforeAll, describe, expect, it } from "vitest";
+import { ensureBuild } from "./helpers/build";
 
 const root = path.resolve(__dirname, "../..");
 const source = (rel: string) => readFileSync(path.join(root, rel), "utf8");
@@ -33,20 +33,9 @@ describe("police Inter (PFO-33)", () => {
 
 describe("police Inter (PFO-33) — lit out/ produit par npm run build", () => {
   const indexHtml = path.join(root, "out", "index.html");
-  const sources = ["app/layout.tsx", "app/globals.css"].map((f) => path.join(root, f));
 
-  function outIsStale(): boolean {
-    if (!existsSync(indexHtml)) return true;
-    const built = statSync(indexHtml).mtimeMs;
-    return sources.some((f) => statSync(f).mtimeMs > built);
-  }
-
-  // Même logique que finitions.test.tsx : on reconstruit seulement si out/ manque ou est
-  // plus vieux que les sources (fichiers de tests en série, cf. vitest.config.ts).
-  beforeAll(() => {
-    if (outIsStale()) execSync("npm run build", { cwd: root, stdio: "pipe", timeout: 120_000 });
-    expect(existsSync(indexHtml), "out/index.html absent après npm run build").toBe(true);
-  }, 150_000);
+  // On reconstruit seulement si out/ manque ou est plus vieux que les sources (helpers/build.ts).
+  beforeAll(() => ensureBuild(["app/layout.tsx", "app/globals.css"]), 250_000);
 
   it("out/index.html précharge une police auto-hébergée (woff2 sous /_next/static/media)", () => {
     const html = readFileSync(indexHtml, "utf8");
