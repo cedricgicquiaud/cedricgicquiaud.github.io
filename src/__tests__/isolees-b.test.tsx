@@ -143,3 +143,16 @@ describe("PFO-43 — image OG et visuels en Inter, sans réseau", () => {
     expect(source).not.toContain("experimental-network-imports");
   });
 });
+
+describe("PFO-44 — helper ensureBuild partagé par les tests qui lisent out/", () => {
+  it.each(["finitions", "spotlight", "font", "visuals"])("%s.test.tsx importe ensureBuild depuis ./helpers/build", (name) => {
+    const source = readFileSync(path.join(root, "src", "__tests__", `${name}.test.tsx`), "utf8");
+    expect(source).toMatch(/import \{ ensureBuild \} from "\.\/helpers\/build"/);
+    expect(source).not.toMatch(/npm run build|\["run", "build"\]/);
+  });
+
+  it("vitest ne prend pas helpers/ pour des tests", () => {
+    const config = readFileSync(path.join(root, "vitest.config.ts"), "utf8");
+    expect(config).toMatch(/include: \["src\/__tests__\/\*\*\/\*\.test\.\{ts,tsx\}"\]/);
+  });
+});
