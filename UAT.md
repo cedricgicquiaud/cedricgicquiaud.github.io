@@ -119,3 +119,22 @@ Ne rien cocher avant d'avoir constaté.
 - [x] Mobile : `npm run dev`, largeur de fenêtre 375 px (DevTools, mode appareil) : aucun défilement horizontal (`document.documentElement.scrollWidth <= 375` dans la console), le menu reste en haut.
 - [x] Clavier : depuis le haut de la page, Tab parcourt le menu, le bouton de thème, les liens de l'Intro et du pied de page ; chaque élément reçoit un contour de focus visible, aucun n'est sauté.
 - [x] Contraste sombre : en thème sombre, tout texte visible (titre, sous-titre, liens, texte secondaire) atteint ≥ 4,5:1 sur son fond (DevTools → panneau Accessibilité, ou `npm test` pour les paires de tokens).
+
+## Livraison 6 — Cartes projets
+
+_Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après son merge._
+
+### PFO-23 — Carte projet
+
+- [ ] `npm run sync && npm run dev`, ouvrir `http://localhost:3000/#projets` : chaque carte montre un titre, une ligne de résumé, un chiffre clé en évidence, un badge de statut et au plus 5 pastilles de stack (BEN a 11 entrées de stack dans sa fiche : 5 pastilles seulement).
+- [ ] Carte SLICE : lien « Code » vers `https://github.com/cedricgicquiaud/SLICE`, pas de lien « Démo » (la fiche dit « à venir »).
+- [ ] Refus : dans `content/fiches/slice.md`, vider `depot:` puis recharger : aucun lien « Code » sur la carte SLICE. Restaurer (`npm run sync`).
+- [ ] Refus : cartes Foreman, Parcours et Dashboard (vitrine sans dépôt) : mention « code privé, démo à venir », aucun lien « Code » ni « Démo ».
+- [ ] Carte PILOT (`depot: à venir (…)`, pas une URL) : aucun lien « Code », aucune mention « code privé » (fiche publique). Voir « Décisions à prendre » de la PR.
+
+### PFO-24 — Section Projets : 7 cartes ordonnées
+
+- [ ] La section « Projets » liste 7 cartes, de haut en bas : SLICE, PILOT, Foreman, Parcours, Dashboard, GiveMe5, BEN.
+- [ ] Le titre de chaque carte est un lien vers `/projets/<slug>/` (survoler : `/projets/slice/`, `/projets/ben/`, …). Les pages cibles arrivent avec la livraison 3 : une 404 est attendue pour l'instant.
+- [ ] Refus : dans `content/fiches/slice.md`, supprimer la ligne `ordre: 1` puis recharger : SLICE passe en dernière position, jamais en première. Restaurer (`npm run sync`).
+- [ ] Le menu « Projets » mène à la section et l'entrée devient active quand la section est à l'écran (la section a maintenant de la hauteur).
