@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup, render, screen, within } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import path from "node:path";
@@ -7,6 +7,7 @@ import Home from "../../app/page";
 import { Intro } from "../../components/intro";
 import { Nav } from "../../components/nav";
 import { Portrait } from "../../components/portrait";
+import { ThemeToggle } from "../../components/theme-toggle";
 
 afterEach(() => {
   cleanup();
@@ -124,5 +125,36 @@ describe("Entrée active du menu au chargement (PFO-41)", () => {
       expect(screen.getByRole("link", { name: "À propos" })).toHaveAttribute("aria-current", "location");
       unmount();
     }
+  });
+});
+
+describe("Libellé du bouton de thème (PFO-18)", () => {
+  function stubStorage() {
+    vi.stubGlobal("localStorage", { getItem: () => null, setItem: () => {}, removeItem: () => {} });
+  }
+
+  it("annonce « Passer en thème sombre » en clair et « Passer en thème clair » en sombre ; texte « Thème » constant", () => {
+    stubStorage();
+    vi.stubGlobal("matchMedia", () => ({ matches: false }));
+    render(<ThemeToggle />);
+    const button = screen.getByRole("button");
+    expect(button).toHaveAttribute("aria-label", "Passer en thème sombre");
+    expect(button).toHaveTextContent(/^Thème$/);
+
+    fireEvent.click(button);
+    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
+    expect(button).toHaveAttribute("aria-label", "Passer en thème clair");
+    expect(button).toHaveTextContent(/^Thème$/);
+
+    fireEvent.click(button);
+    expect(button).toHaveAttribute("aria-label", "Passer en thème sombre");
+    expect(button).toHaveTextContent(/^Thème$/);
+  });
+
+  it("suit le thème système quand aucun data-theme n'est posé", () => {
+    stubStorage();
+    vi.stubGlobal("matchMedia", () => ({ matches: true }));
+    render(<ThemeToggle />);
+    expect(screen.getByRole("button")).toHaveAttribute("aria-label", "Passer en thème clair");
   });
 });
