@@ -1,4 +1,4 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -50,5 +50,37 @@ describe("Thème sombre seul : tokens (PFO-55)", () => {
     expect(css).not.toContain("prefers-color-scheme");
     expect(css.match(/--background:/g)).toHaveLength(1);
     expect(css.match(/color-scheme:/g)).toHaveLength(1);
+  });
+});
+
+/** Fichiers .ts/.tsx/.css d'un dossier (récursif), chemins relatifs à la racine. */
+function filesUnder(dir: string): string[] {
+  return readdirSync(path.join(root, dir), { withFileTypes: true }).flatMap((entry) => {
+    const rel = path.join(dir, entry.name);
+    if (entry.isDirectory()) return filesUnder(rel);
+    return /\.(tsx?|css)$/.test(entry.name) ? [rel] : [];
+  });
+}
+
+describe("Thème sombre seul : plus de bascule (PFO-55)", () => {
+  it("components/theme-toggle.tsx n'existe plus ; app/layout.tsx n'a ni bouton de thème, ni script inline, ni suppressHydrationWarning", () => {
+    expect(existsSync(path.join(root, "components", "theme-toggle.tsx"))).toBe(false);
+    const layout = source("app/layout.tsx");
+    expect(layout).not.toContain("ThemeToggle");
+    expect(layout).not.toContain("<script");
+    expect(layout).not.toContain("dangerouslySetInnerHTML");
+    expect(layout).not.toContain("suppressHydrationWarning");
+    expect(layout).not.toMatch(/\bfixed\b/);
+  });
+
+  it("aucun data-theme, prefers-color-scheme ni localStorage dans app/ et components/", () => {
+    const offenders: string[] = [];
+    for (const file of [...filesUnder("app"), ...filesUnder("components")]) {
+      const text = source(file);
+      for (const word of ["data-theme", "prefers-color-scheme", "localStorage"]) {
+        if (text.includes(word)) offenders.push(`${file}: ${word}`);
+      }
+    }
+    expect(offenders).toEqual([]);
   });
 });
