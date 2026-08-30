@@ -1,6 +1,10 @@
 import type { Fiche as FicheData } from "../lib/fiches";
 import { Badge } from "./ui/badge";
 
+// Mise en forme du HTML Markdown (Tailwind retire les puces et le soulignement par défaut).
+const MARKDOWN =
+  "space-y-4 leading-relaxed [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:text-foreground [&_a]:break-words [&_strong]:font-semibold [&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_code]:text-sm";
+
 export function Fiche({ fiche }: { fiche: FicheData }) {
   const { frontmatter } = fiche;
   return (
@@ -25,6 +29,16 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
           </Row>
           <Row term="Visibilité">{frontmatter.visibilite}</Row>
         </dl>
+        <p className="mt-8 border-l-2 border-primary pl-4 leading-relaxed">
+          <strong>En bref.</strong> {[fiche.enBref.quoi, fiche.enBref.chiffre, fiche.enBref.lien].filter(Boolean).join(" ")}
+        </p>
+        {fiche.sections.map(({ id, titre, html }) => (
+          <section key={id} id={id} className="mt-12">
+            <h2 className="mb-4 text-2xl font-semibold tracking-tight">{titre}</h2>
+            {/* HTML produit par `marked` depuis les fiches du dépôt : contenu maîtrisé, contrôlé au build. */}
+            <div className={MARKDOWN} dangerouslySetInnerHTML={{ __html: html }} />
+          </section>
+        ))}
       </div>
     </article>
   );
