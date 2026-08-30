@@ -187,6 +187,11 @@ describe("page fiche — visuel (PFO-36)", () => {
     // L'image est l'élément qui suit immédiatement le h1.
     expect(h1.nextElementSibling?.contains(img) || h1.nextElementSibling === img).toBe(true);
   });
+
+  it("ne diffère pas le chargement du visuel (au-dessus du pli : pas de loading=lazy)", () => {
+    const { container } = render(<Fiche fiche={fakeFiche()} />);
+    expect(onlyImg(container).getAttribute("loading")).toBeNull();
+  });
 });
 
 describe("visuels dans out/ — lit out/ produit par npm run build (PFO-35)", () => {
