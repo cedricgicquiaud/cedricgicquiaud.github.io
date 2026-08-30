@@ -86,7 +86,7 @@ Ne rien cocher avant d'avoir constaté.
 
 - [x] Lire « À propos » dans le navigateur : au moins trois paragraphes, dans l'ordre ESN, immobilier, agents IA ; aucun nom d'employeur ni de client, aucun superlatif. Corriger le texte à la PR si besoin. — constaté le 2026-08-29 : 4 paragraphes dans l'ordre ESN → immobilier → agents IA (+ un 4e de conclusion) ; aucun nom d'employeur ni de client, aucun superlatif relevé (voir « hors cahier » pour une incohérence de dates).
 - [x] Lire « Expérience » : quatre blocs (2026, 2023–2025, 2013–2023, 2000–2013), chacun avec période, rôle, secteur, description et au moins un tag. Les dates sont des hypothèses : confirmer ou corriger dans `content/experience.md`. — constaté le 2026-08-29 : 4 blocs 2026, 2023–2025, 2013–2023, 2000–2013, chacun avec période, rôle, secteur, description et 3 à 5 tags ; dates non confirmées par le testeur (hypothèses à valider par l'auteur).
-- [x] Refus : dans `content/about.md`, remplacer « Treize ans en ESN » par « Treize ans chez Nexus », lancer `npm run build` : `next build` réussit puis `check-output` échoue avec `index.html : mot interdit « Nexus »`. Annuler la modification. — constaté le 2026-08-29 : `next build` réussit puis `check-output : 1 problème(s)` / `index.html : mot interdit « Nexus »` ; modification annulée.
+- [x] Refus : dans `content/about.md`, remplacer « Treize ans en ESN » par « Treize ans chez » suivi d'un mot figurant dans `content/forbidden.txt` (le nom d'un ancien client), lancer `npm run build` : `next build` réussit puis `check-output` échoue avec `index.html : mot interdit « … »`. Annuler la modification. — constaté le 2026-08-29 : `next build` réussit puis `check-output : 1 problème(s)` / `index.html : mot interdit « … »` ; modification annulée.
 
 ### PFO-10 — Sections À propos et Expérience rendues
 
@@ -97,7 +97,7 @@ Ne rien cocher avant d'avoir constaté.
 ### PFO-11 — Contrôle du HTML généré
 
 - [x] `npm run build` : la dernière ligne affiche `check-output : …/out propre`. — constaté le 2026-08-29 : dernière ligne `check-output : /Users/cedricgicquiaud/Desktop/WATIDO/site-3/out propre`.
-- [x] Refus : ajouter « Nexus » dans `content/about.md`, lancer `npm run build` : échec avec `mot interdit « Nexus »`. Annuler. — constaté le 2026-08-29 : échec `index.html : mot interdit « Nexus »` ; annulé.
+- [x] Refus : ajouter un mot figurant dans `content/forbidden.txt` (le nom d'un ancien client) dans `content/about.md`, lancer `npm run build` : échec avec `mot interdit « … »`. Annuler. — constaté le 2026-08-29 : échec `index.html : mot interdit « … »` ; annulé.
 - [x] Refus : ajouter un emoji (par exemple une fusée) dans `content/about.md`, lancer `npm run build` : échec avec `emoji « … »`. Annuler. — constaté le 2026-08-29 : échec `index.html : emoji « 🚀 »` ; annulé.
 - [x] Refus : dans `content/about.md`, ajouter `<script src="https://cdn.example.com/x.js"></script>`, lancer `npm run build` : échec avec `domaine tiers « cdn.example.com »`. Annuler. — constaté le 2026-08-29 : échec `index.html : domaine tiers « cdn.example.com »` (signalé 2 fois) ; annulé.
 - [x] Refus : ajouter « 06 12 34 56 78 » dans `content/about.md`, lancer `npm run build` : échec avec `numéro de téléphone « 06 12 34 56 78 »`. Annuler. — constaté le 2026-08-29 : échec `index.html : numéro de téléphone « 06 12 34 56 78 »` ; annulé.
@@ -178,7 +178,7 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 - [x] Ouvrir `/projets/slice/` : lien « ← Projets » en haut (retour sur `/#projets`), titre de la fiche en h1, en-tête Statut / Période / Rôle / Stack (pastilles) / Visibilité, liens « Code » (dépôt) sans « Démo » (pas d'URL), bloc « En bref », puis les cinq titres dans l'ordre Problème, Ce que j'ai construit, Preuves, Ce que j'en ai appris, Artefacts.
 - [x] Dans « Ce que j'ai construit » : les puces de liste sont visibles, les passages en gras ressortent, le lien du dépôt dans « Artefacts » est souligné et cliquable. Vérifier à 375 px (aucun défilement horizontal) et en sombre (`document.documentElement.dataset.theme = "dark"`) : texte lisible, badges lisibles.
 - [x] Refus : ouvrir `/projets/ben/` (fiche `anonyme`) : ni lien « Code » ni lien « Démo » dans l'en-tête.
-- [x] Refus : dans `content/fiches/slice.md`, ajouter le mot « Nexus » dans la section « Preuves », lancer `npm run build` : `next build` réussit puis `check-output` échoue avec `projets/slice/index.html : mot interdit « Nexus »`. Annuler la modification.
+- [x] Refus : dans `content/fiches/slice.md`, ajouter un mot figurant dans `content/forbidden.txt` (le nom d'un ancien client) dans la section « Preuves », lancer `npm run build` : `next build` réussit puis `check-output` échoue avec `projets/slice/index.html : mot interdit « … »`. Annuler la modification.
 
 ## Livraison 8 — Deux colonnes et menu latéral
 
@@ -334,5 +334,5 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 
 ### PFO-15 — Barème anonymisé
 
-- [ ] `grep -n -i "alanzien\|weme\|nexus\|/slice" .pilot/calibration.md` n'affiche rien ; la ligne « Source » et le tableau des projets parlent d'« un projet personnel » (44 PR) et d'« un projet client » (300 PR) ; les chiffres (344 PR, jours actifs, heures) sont inchangés.
+- [ ] Aucun mot de `content/forbidden.txt` n'apparaît dans `.pilot/calibration.md` (test `isolees-c`, vérification par empreintes) ; la ligne « Source » et le tableau des projets parlent d'« un projet personnel » (44 PR) et d'« un projet client » (300 PR) ; les chiffres (344 PR, jours actifs, heures) sont inchangés.
 - [ ] `git log --oneline -- .pilot/calibration.md` montre l'historique intact (aucun rebase ni réécriture) ; `content/forbidden.txt` est inchangé (`git diff main -- content/forbidden.txt` vide), les empreintes de ces noms y figurant déjà.
