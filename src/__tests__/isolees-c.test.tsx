@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterAll, afterEach, describe, expect, it, vi } from "vitest";
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawn } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, rmSync, statSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { fingerprint } from "../../scripts/check-output.mjs";
@@ -107,6 +107,33 @@ describe("Serveur de dev par PID (PFO-45)", () => {
       expect(stderr).toContain("fichier PID corrompu");
     } finally {
       rmSync(pidfile, { force: true });
+    }
+  });
+
+  it("free_port <port> tue un processus qui écoute encore sur le port et rend la main quand il est libre", async () => {
+    const port = 3997;
+    const listening = () => {
+      try {
+        execFileSync("lsof", ["-nP", `-iTCP:${port}`, "-sTCP:LISTEN"], { stdio: "pipe" });
+        return true;
+      } catch {
+        return false;
+      }
+    };
+    // Écouteur orphelin (comme `next-server`, petit-enfant du PID du script).
+    const child = spawn("node", ["-e", `require("http").createServer().listen(${port})`], { detached: true, stdio: "ignore" });
+    child.unref();
+    try {
+      for (let i = 0; i < 50 && !listening(); i++) await new Promise((r) => setTimeout(r, 100));
+      expect(listening(), "l'écouteur de test doit être en place").toBe(true);
+      execFileSync("bash", ["-c", `source "${script}" && free_port ${port}`], { cwd: root, stdio: "pipe" });
+      expect(listening()).toBe(false);
+    } finally {
+      try {
+        process.kill(child.pid!, "SIGKILL");
+      } catch {
+        // déjà tué
+      }
     }
   });
 
