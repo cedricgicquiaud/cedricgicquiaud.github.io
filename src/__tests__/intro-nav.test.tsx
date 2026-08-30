@@ -110,7 +110,7 @@ describe("Nav", () => {
     ]);
   });
 
-  it("souligne la section visible (classe active) au fil du défilement", () => {
+  it("souligne la section visible (aria-current=location) au fil du défilement", () => {
     const observer = stubIntersectionObserver();
     renderNavWithSections();
     const ids = observer.observed.map((el) => el.id);
@@ -120,9 +120,8 @@ describe("Nav", () => {
     act(() => observer.callback!([{ target, isIntersecting: true }]));
 
     const active = screen.getByRole("link", { name: "Expérience" });
-    expect(active).toHaveClass("active");
     expect(active).toHaveAttribute("aria-current", "location");
-    expect(screen.getByRole("link", { name: "À propos" })).not.toHaveClass("active");
+    expect(screen.getByRole("link", { name: "À propos" })).not.toHaveAttribute("aria-current");
   });
 
   it("n'active aucun lien au chargement quand seule l'Intro est à l'écran", () => {

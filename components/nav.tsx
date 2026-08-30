@@ -57,10 +57,7 @@ export function Nav() {
           <li key={id}>
             <a
               href={`/#${id}`}
-              className={
-                "group flex items-center gap-4 py-1 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-[current]:text-foreground" +
-                (active === id ? " active" : "")
-              }
+              className="group flex items-center gap-4 py-1 text-xs font-bold uppercase tracking-widest text-muted-foreground hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-[current]:text-foreground"
               aria-current={active === id ? "location" : undefined}
             >
               <span

@@ -98,7 +98,6 @@ describe("Nav depuis une sous-page (PFO-25)", () => {
       act(() => observer.callback!([{ target, isIntersecting: true }]));
     }
     for (const link of screen.getByRole("navigation").querySelectorAll("a")) {
-      expect(link).not.toHaveClass("active");
       expect(link).not.toHaveAttribute("aria-current");
     }
   });
