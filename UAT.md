@@ -263,8 +263,9 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 
 ### PFO-37 — Portrait dans la colonne gauche
 
-- [ ] `npm run dev`, ouvrir `http://localhost:3000/` à 1280 px de large : le portrait (photo ou cadre provisoire, bi-ton bleu) est dans la colonne de gauche, juste sous le nom, environ 160 px de large, coins arrondis ; la colonne de droite commence directement par « À propos ». Refus : un portrait encore visible en haut de la colonne droite, ou plus large que 200 px.
-- [ ] À 375 px (outils de développement, mode mobile) : sous le nom, le portrait ; puis le titre, la phrase, les logos ; « À propos » suit sans vide de plus d'un écart de section (`py-16`, environ 64 px). Refus : un vide blanc d'environ 170 px entre l'intro et « À propos ».
+- [ ] `npm run dev`, ouvrir `http://localhost:3000/` à 1280 px de large : le portrait (photo ou cadre provisoire, bi-ton bleu) est dans la colonne de gauche, juste sous le nom, environ 128 px de large, coins arrondis ; la colonne de droite commence directement par « À propos ». Refus : un portrait encore visible en haut de la colonne droite, ou plus large que 200 px.
+- [ ] À 375 px (outils de développement, mode mobile) : sous le nom, le portrait ; puis le titre, la phrase, les logos ; l'écart entre les logos et « À propos » est le même qu'entre deux sections (environ 128 px). Refus : un vide blanc d'environ 170 px entre l'intro et « À propos ».
+- [ ] À 1280×720, les logos et le bouton Thème de la colonne gauche sont entièrement visibles sans défiler.
 - [ ] Sombre (bouton « Thème ») : le portrait reste bi-ton (fusion écran sur fond bleu), lisible.
 
 ### PFO-38 — Quadrillage sur toute la page
