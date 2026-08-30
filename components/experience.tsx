@@ -7,13 +7,13 @@ export function Experience() {
     <section id="experience" className="px-6 py-16 lg:px-16">
       <div className="mx-auto w-full max-w-3xl">
         <h2 className="mb-6 text-2xl font-semibold tracking-tight">{experience.titre}</h2>
-        <ol className="space-y-10">
+        <ol className="group/list space-y-10">
           {experience.blocs.map((bloc) => (
             <li key={bloc.periode}>
-              <article className="grid gap-2 sm:grid-cols-[8rem_1fr] sm:gap-6">
+              <article className="group/item -mx-4 grid gap-2 rounded-lg border border-transparent p-4 transition-colors hover:border-border hover:bg-accent/50 sm:grid-cols-[8rem_1fr] sm:gap-6 lg:group-hover/list:opacity-50 lg:hover:!opacity-100">
                 <p className="text-sm text-muted-foreground">{bloc.periode}</p>
                 <div className="space-y-2">
-                  <h3 className="font-medium">{bloc.role}</h3>
+                  <h3 className="font-medium group-hover/item:text-primary">{bloc.role}</h3>
                   <p className="text-sm text-muted-foreground">{bloc.secteur}</p>
                   <p className="leading-relaxed">{bloc.description}</p>
                   <ul className="flex flex-wrap gap-2 pt-1">
