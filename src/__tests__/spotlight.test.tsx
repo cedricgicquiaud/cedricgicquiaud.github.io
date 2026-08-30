@@ -41,12 +41,11 @@ describe("halo souris (PFO-31) — monté dans le navigateur", () => {
     expect(halo!.style.background).toContain("radial-gradient(600px at var(--x) var(--y), var(--spotlight), transparent 80%)");
   });
 
-  it("glisse en douceur (80 ms) et reste sous le bouton de thème (z-50)", () => {
+  it("ne porte aucune transition (inerte sur un radial-gradient) et reste sous le bouton de thème (z-50)", () => {
     const { container } = render(<Spotlight />);
     const halo = container.querySelector("div")!;
     const classes = halo.className.split(/\s+/);
-    expect(classes).toContain("transition-[background]");
-    expect(classes).toContain("duration-[80ms]");
+    expect(classes.filter((c) => /^(transition|duration)/.test(c))).toEqual([]);
     const z = Number(halo.className.match(/\bz-(\d+)\b/)?.[1]);
     expect(z).toBeLessThan(50);
   });
