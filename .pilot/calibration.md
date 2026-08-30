@@ -53,3 +53,9 @@ days_per_week: observed   # remplacer par un nombre (ex. 2) pour forcer la capac
 Mesure par livraison (session, PR ouverte → prête après audit/recette/corrections) : L1 M 0,85 h ; L2 M 0,65 h ; L3 M 0,60 h ; L4 S 0,45 h.
 Barème M global 0,69 h : réel médian 0,65 h (3 mesures) → `feature_hours_M` du projet = 0,65. S : 1 mesure, barème global conservé.
 Ce que la boucle a attrapé : audit 1 bloquant + 5 importants (2 dus au cadrage : ancres incohérentes, liste en clair) ; recette 3 cases refusées (2 corrigées, 1 dépendante du contenu). Aucune régression après merge.
+| Le visiteur explore mes projets | M | 3 (M, S, M) | 8 | 2026-08-30 04:42 | 04:52 / 04:58 / 05:14 | 0,9 h de production ; 0,4 h d'attente de merge | mergée 30/08 |
+| Le site se lit comme le modèle | M | 3 (M, S, S) | 5 | 2026-08-30 06:10 | 06:21 / 06:22 / 06:24 | 0,45 h de production (interruption comprise) ; 1,1 h d'attente | mergée 30/08 |
+| Le site a le grain du modèle | M | 3 (S, S, M) | 4 | 2026-08-30 07:45 | 07:53 / 07:54 / 07:59 | 1,4 h (production, audits, recettes, corrections) ; 0,2 h d'attente | mergée 30/08 |
+
+Après 4 features : barème M (2,0 h avec validation) tient ; réel 0,9–1,4 h de production par feature M à 3 livraisons en parallèle. `feature_hours_M` inchangé à 0,65.
+Ce que la boucle attrape par feature : 0 bloquant depuis F2 ; 3–4 importants par feature (moitié issus de l'ordre de mission) ; recettes : 1–2 refus réels par feature, toujours corrigés avant merge.
