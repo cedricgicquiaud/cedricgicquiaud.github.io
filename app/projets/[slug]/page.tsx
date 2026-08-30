@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Fiche } from "@/components/fiche";
 import { loadFiche, loadFiches } from "@/lib/fiches";
 import site from "../../../content/site.json";
 
@@ -17,6 +18,9 @@ export async function generateMetadata({ params }: PageProps<"/projets/[slug]">)
 
 export default async function ProjetPage({ params }: PageProps<"/projets/[slug]">) {
   const { slug } = await params;
-  const fiche = loadFiche(slug);
-  return <h1>{fiche.titre}</h1>;
+  return (
+    <main className="flex flex-1 flex-col">
+      <Fiche fiche={loadFiche(slug)} />
+    </main>
+  );
 }
