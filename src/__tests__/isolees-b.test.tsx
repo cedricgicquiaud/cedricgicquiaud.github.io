@@ -1,6 +1,11 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen } from "@testing-library/react";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
+// @ts-expect-error script ESM sans déclaration de types
+import { checkOutput } from "../../scripts/check-output.mjs";
 import { Fiche } from "../../components/fiche";
 import { ProjectCard } from "../../components/project-card";
 import type { Fiche as FicheData } from "../../lib/fiches";
@@ -68,5 +73,19 @@ describe("PFO-39 — mention « projet anonymisé » sur la page fiche", () => {
     render(<Fiche fiche={fiche({ visibilite: "vitrine" })} />);
     expect(screen.queryByText(MENTION)).toBeNull();
     expect(screen.getAllByRole("link", { name: "Code" })).toHaveLength(2);
+  });
+});
+
+describe("PFO-42 — check-output refuse Google Fonts", () => {
+  it.each(["fonts.googleapis.com", "fonts.gstatic.com"])("signale un domaine tiers pour %s", (host) => {
+    const dir = mkdtempSync(path.join(tmpdir(), "check-fonts-"));
+    try {
+      writeFileSync(path.join(dir, "index.html"), `<link rel="stylesheet" href="https://${host}/css2?family=Inter">`);
+      const problems = checkOutput(dir, []);
+      expect(problems).toHaveLength(1);
+      expect(problems[0]).toContain(`domaine tiers « ${host} »`);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
   });
 });
