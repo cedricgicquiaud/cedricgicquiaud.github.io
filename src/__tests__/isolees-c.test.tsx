@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import { About } from "../../components/about";
 import { Experience } from "../../components/experience";
@@ -60,5 +60,21 @@ describe("Ancres et ids de section depuis site.json (PFO-40)", () => {
     ]);
     expect(container.querySelector("footer")).toHaveAttribute("id", "x-contact");
     expect(screen.getByRole("link", { name: "← Projets" })).toHaveAttribute("href", "/#x-proj");
+  });
+
+  it("aucun littéral d'ancre dans components/ (hors import de site.json)", () => {
+    const dir = path.join(root, "components");
+    const files = readdirSync(dir).filter((n) => n.endsWith(".tsx"));
+    const literal = /["'`](a-propos|experience|projets|contact)["'`]|#(a-propos|experience|projets|contact)\b/;
+    const offenders: string[] = [];
+    for (const name of files) {
+      read(path.join("components", name))
+        .split("\n")
+        .forEach((line, i) => {
+          if (line.includes("site.json")) return;
+          if (literal.test(line)) offenders.push(`${name}:${i + 1}: ${line.trim()}`);
+        });
+    }
+    expect(offenders).toEqual([]);
   });
 });
