@@ -3,7 +3,7 @@ import { mkdtempSync, readdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { loadFiches } from "../../lib/fiches";
+import { loadFiche, loadFiches } from "../../lib/fiches";
 import { syncFiches } from "../../scripts/sync-fiches.mjs";
 
 /** Une fiche factice complète ; `front` surcharge le frontmatter, `body` le corps. */
@@ -197,5 +197,28 @@ describe("lib/fiches — loadFiches", () => {
     expect(f.frontmatter.visibilite).toBe("anonyme");
     expect(f.frontmatter.depot).toBe("");
     expect(f.frontmatter.demo).toBe("");
+  });
+});
+
+describe("lib/fiches — vraies fiches copiées dans content/fiches", () => {
+  const contentDir = path.resolve(__dirname, "../../content/fiches");
+
+  it("renvoie 7 fiches, ordre 1..7 distincts, chacune retrouvable par loadFiche(slug)", () => {
+    const fiches = loadFiches(contentDir);
+    expect(fiches).toHaveLength(7);
+    expect(fiches.map((f) => f.frontmatter.ordre)).toEqual([1, 2, 3, 4, 5, 6, 7]);
+    for (const f of fiches) {
+      expect(f.titre).not.toBe("");
+      expect(f.enBref.quoi).not.toBe("");
+      expect(f.sections.every((s) => s.html !== "")).toBe(true);
+      expect(loadFiche(f.slug, contentDir)).toEqual(f);
+    }
+  });
+
+  it("ne renvoie aucun chemin absolu ni le nom du dossier parent", () => {
+    const json = JSON.stringify(loadFiches(contentDir));
+    expect(json).not.toContain("WATIDO");
+    expect(json).not.toMatch(/(^|[^\w:])\/(Users|home|tmp|private)\//);
+    expect(json).not.toContain(contentDir);
   });
 });
