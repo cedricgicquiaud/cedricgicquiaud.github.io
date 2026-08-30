@@ -8,12 +8,18 @@ const haloStyle = {
   background: "radial-gradient(600px at var(--x) var(--y), var(--spotlight), transparent 80%)",
 } as CSSProperties;
 
+/** Vrai sur un appareil sans survol ou au pointeur grossier (tactile). */
+function isTouchOnly(): boolean {
+  if (typeof matchMedia === "undefined") return false;
+  return matchMedia("(hover: none)").matches || matchMedia("(pointer: coarse)").matches;
+}
+
 export function Spotlight() {
   const [mounted, setMounted] = useState(false);
   const halo = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    setMounted(true);
+    setMounted(!isTouchOnly());
   }, []);
 
   useEffect(() => {
