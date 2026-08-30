@@ -13,11 +13,10 @@ ordre: 6
 # GiveMe5 — une plaque sur le comptoir, un avis Google en trente secondes
 
 **En bref.** Des plaques et cartes NFC / QR code vendues aux commerçants : le client approche
-son téléphone et arrive directement sur le formulaire d'avis Google de la boutique. Un
-backoffice Django génère les plaques et fait la redirection, trois automatisations n8n/Make
-gèrent le service client, la facturation et la communication, une landing statique avec
-paiement Stripe vend le produit 49 €. Side project, mon premier produit : écrit en 2023,
-outillé en 2025, remis à jour en 2026.
+son téléphone et arrive directement sur le formulaire d'avis Google de la boutique. Mon premier
+produit, vendu 49 € pièce, avec un backoffice Django, trois automatisations n8n/Make et une
+landing Stripe — écrit en 2023, outillé en 2025, remis à jour en 2026. Landing publique ;
+backoffice privé.
 
 ## Problème
 
