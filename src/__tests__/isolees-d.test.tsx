@@ -1,5 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { readFileSync } from "node:fs";
+import path from "node:path";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import Home from "../../app/page";
 import { About } from "../../components/about";
@@ -15,6 +17,9 @@ afterEach(() => {
   vi.unstubAllGlobals();
   document.documentElement.removeAttribute("data-theme");
 });
+
+const root = path.resolve(__dirname, "../..");
+const source = (rel: string) => readFileSync(path.join(root, rel), "utf8");
 
 const classesOf = (el: Element | null | undefined) => (el?.className ?? "").split(/\s+/).filter(Boolean);
 
@@ -178,5 +183,25 @@ describe("Bouton de thème en icône (PFO-49)", () => {
     render(<ThemeToggle />);
     expect(screen.getByRole("button").querySelector("svg")).toHaveAttribute("data-icon", "sun");
     expect(screen.getByRole("button")).toHaveAttribute("aria-label", "Passer en thème clair");
+  });
+});
+
+describe("Un seul bouton de thème, fixe en haut à droite (PFO-49)", () => {
+  it("app/layout.tsx place <ThemeToggle/> une seule fois dans un conteneur fixed right-4 top-4 z-50 visible à toutes les largeurs", () => {
+    const layout = source("app/layout.tsx");
+    const body = layout.slice(layout.indexOf("<body"), layout.indexOf("</body>"));
+    expect(body.split("<ThemeToggle />")).toHaveLength(2);
+    const wrapper = body.match(/<div className="([^"]*)">\s*<ThemeToggle \/>/);
+    expect(wrapper, "conteneur du bouton de thème absent").not.toBeNull();
+    const classes = wrapper![1].split(/\s+/);
+    expect(classes).toEqual(expect.arrayContaining(["fixed", "right-4", "top-4", "z-50"]));
+    expect(classes).not.toContain("lg:hidden");
+  });
+
+  it("l'accueil (page.tsx et intro) ne rend aucun bouton de thème : il vit dans le layout", () => {
+    const { container } = render(<Home />);
+    expect(screen.queryByRole("button", { name: /thème/i, hidden: true })).toBeNull();
+    expect(container.querySelector("button")).toBeNull();
+    expect(source("components/intro.tsx")).not.toContain("ThemeToggle");
   });
 });
