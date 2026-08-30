@@ -150,3 +150,17 @@ describe("ProjectCard : typographie du modèle (PFO-52)", () => {
     expect(quoi).not.toHaveClass("text-base");
   });
 });
+
+describe("ProjectCard : sans chiffre clé (PFO-53)", () => {
+  it("le chiffre d'En bref n'apparaît nulle part dans la carte ; min-w-0 et whitespace-normal restent en place", () => {
+    render(<ProjectCard fiche={fiche()} />);
+    const card = screen.getByRole("article");
+    expect(card.textContent).not.toContain("4242");
+    expect(within(card).queryByText("4242 tests verts.")).not.toBeInTheDocument();
+    expect(card.querySelector(".tabular-nums")).toBeNull();
+
+    expect(card).toHaveClass("min-w-0");
+    expect(within(card).getByRole("heading", { level: 3 }).parentElement).toHaveClass("min-w-0");
+    expect(within(card).getByText("en cours")).toHaveClass("whitespace-normal");
+  });
+});
