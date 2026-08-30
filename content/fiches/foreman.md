@@ -1,6 +1,6 @@
 ---
 nom: Foreman
-statut: en cours (MVP recetté sur machine réelle ; V2 livrée en code, recette manuelle à faire)
+statut: en cours
 periode: juillet 2026 → aujourd'hui (dernier commit le 11/08/2026)
 role: conception, développement, tests, recette — seul, avec des agents de code
 stack: TypeScript, Node/Hono, SQLite (better-sqlite3), SSE, React/Vite, Vitest, cmux (CLI)
@@ -64,6 +64,9 @@ Décisions qui ont compté :
   des tests automatisés.
 
 ## Preuves
+
+État au 30/08/2026 : MVP recetté sur machine réelle ; V2 livrée en code, recette manuelle à faire.
+
 
 - **565 tests automatisés verts** (74 fichiers), typage strict sans erreur — vérifié le
   29/08/2026 sur un clone propre : installation, tests et typecheck en moins d'une minute,
