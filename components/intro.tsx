@@ -1,12 +1,7 @@
 import site from "../content/site.json";
 import { Nav } from "./nav";
+import { SocialIcons } from "./social-icons";
 import { ThemeToggle } from "./theme-toggle";
-
-const links = [
-  { label: "GitHub", href: site.links.github },
-  { label: "LinkedIn", href: site.links.linkedin },
-  { label: "Mail", href: `mailto:${site.email}` },
-];
 
 // Titre court sous le nom (texte à confirmer : décision produit ouverte).
 const SHORT_TITLE = "Développeur d'agents IA";
@@ -22,21 +17,11 @@ export function Intro() {
           <Nav />
         </div>
       </div>
-      {/* Bas de colonne : liens sociaux (toujours visibles) et bouton de thème (desktop ;
-          en mobile, le layout affiche un bouton fixe). */}
+      {/* Bas de colonne : logos des réseaux (un seul bloc, visible à toutes les largeurs :
+          sous la phrase en mobile, en bas de colonne en desktop) et bouton de thème
+          (desktop ; en mobile, le layout affiche un bouton fixe). */}
       <div className="flex flex-wrap items-center gap-6">
-        <ul className="flex flex-wrap gap-6">
-          {links.map(({ label, href }) => (
-            <li key={label}>
-              <a
-                href={href}
-                className="underline underline-offset-4 hover:text-primary focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
-              >
-                {label}
-              </a>
-            </li>
-          ))}
-        </ul>
+        <SocialIcons />
         <div className="hidden lg:block">
           <ThemeToggle />
         </div>
