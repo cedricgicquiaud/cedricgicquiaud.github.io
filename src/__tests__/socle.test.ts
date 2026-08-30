@@ -230,15 +230,15 @@ describe("ordre des sections dans app/page.tsx", () => {
 });
 
 describe("bouton Thème dans app/layout.tsx", () => {
-  it("est décalé sous le bandeau du menu en mobile et remonte en top-4 à partir de lg", () => {
+  it("est fixe en haut à droite en mobile seulement (en desktop il vit dans la colonne gauche, PFO-30)", () => {
     const source = readFileSync(path.join(root, "app", "layout.tsx"), "utf8");
     const wrapper = source.match(/<div className="([^"]*)">\s*<ThemeToggle \/>/);
     expect(wrapper, "conteneur du bouton Thème absent").not.toBeNull();
     const classes = wrapper![1].split(/\s+/);
     expect(classes).toContain("fixed");
     expect(classes).toContain("right-4");
-    expect(classes).toContain("top-16");
-    expect(classes).toContain("lg:top-4");
+    expect(classes).toContain("top-4");
+    expect(classes).toContain("lg:hidden");
   });
 });
 
