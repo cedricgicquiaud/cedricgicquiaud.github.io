@@ -1,10 +1,11 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen, within } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import Home from "../../app/page";
 import { Intro } from "../../components/intro";
+import { Nav } from "../../components/nav";
 import { Portrait } from "../../components/portrait";
 
 afterEach(() => {
@@ -63,5 +64,65 @@ describe("Quadrillage sur toute la page (PFO-38)", () => {
     expect(rule).toContain("var(--grid-line)");
     expect(rule).not.toMatch(/background-attachment/);
     expect(css.match(/--grid-line:/g)).toHaveLength(3);
+  });
+});
+
+describe("Entrée active du menu au chargement (PFO-41)", () => {
+  function stubObserverThatNeverFires() {
+    vi.stubGlobal(
+      "IntersectionObserver",
+      class {
+        observe() {}
+        disconnect() {}
+        unobserve() {}
+      },
+    );
+  }
+
+  function renderNavWithTops(tops: Record<string, number>) {
+    const utils = render(
+      <>
+        <Nav />
+        <main>
+          {Object.keys(tops).map((id) => (
+            <section key={id} id={id} />
+          ))}
+        </main>
+      </>,
+    );
+    return utils;
+  }
+
+  function stubRects(tops: Record<string, number>) {
+    vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function (this: Element) {
+      return { top: tops[this.id] ?? 0 } as DOMRect;
+    });
+  }
+
+  afterEach(() => {
+    vi.restoreAllMocks();
+    vi.unstubAllGlobals();
+  });
+
+  it("au montage, sans événement d'observer, active la section dont le haut est le plus proche de la bande centrale", () => {
+    stubObserverThatNeverFires();
+    vi.stubGlobal("innerHeight", 1000);
+    // Bande centrale : 40 % du haut → 400 px. Expérience (380) est la plus proche.
+    stubRects({ "a-propos": -500, experience: 380, projets: 1300 });
+    renderNavWithTops({ "a-propos": 0, experience: 0, projets: 0 });
+    expect(screen.getByRole("link", { name: "Expérience" })).toHaveAttribute("aria-current", "location");
+    expect(screen.getByRole("link", { name: "À propos" })).not.toHaveAttribute("aria-current");
+    expect(screen.getByRole("link", { name: "Projets" })).not.toHaveAttribute("aria-current");
+  });
+
+  it("donne le même résultat à chaque rendu (déterministe au rechargement)", () => {
+    stubObserverThatNeverFires();
+    vi.stubGlobal("innerHeight", 1000);
+    stubRects({ "a-propos": 96, experience: 900, projets: 1700 });
+    for (let i = 0; i < 3; i++) {
+      const { unmount } = renderNavWithTops({ "a-propos": 0, experience: 0, projets: 0 });
+      expect(screen.getByRole("link", { name: "À propos" })).toHaveAttribute("aria-current", "location");
+      unmount();
+    }
   });
 });
