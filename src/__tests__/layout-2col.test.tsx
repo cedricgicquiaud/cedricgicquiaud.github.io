@@ -30,7 +30,7 @@ describe("Deux colonnes à partir de 1024 px (PFO-28)", () => {
     expect(sticky!.contains(screen.getByRole("heading", { level: 1 }))).toBe(true);
 
     const grid = sticky!.parentElement!;
-    expect(classesOf(grid)).toEqual(expect.arrayContaining(["lg:grid", "lg:gap-16"]));
+    expect(classesOf(grid)).toEqual(expect.arrayContaining(["lg:grid", "lg:gap-24"]));
     expect(classesOf(grid).some((c) => c.startsWith("lg:grid-cols-"))).toBe(true);
 
     const right = sticky!.nextElementSibling!;
