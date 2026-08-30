@@ -1,6 +1,10 @@
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { execFileSync } from "node:child_process";
+import { existsSync, mkdirSync, mkdtempSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import path from "node:path";
+import { inflateSync } from "node:zlib";
 import { describe, expect, it } from "vitest";
+import { token } from "../../scripts/theme-tokens.mjs";
 
 const root = path.resolve(__dirname, "../..");
 const source = (rel: string) => readFileSync(path.join(root, rel), "utf8");
@@ -98,5 +102,40 @@ describe("Thème sombre seul : bi-ton et classes dark: (PFO-55)", () => {
     for (const file of ["components/portrait.tsx", "components/project-card.tsx", "components/fiche.tsx", "components/ui/badge.tsx"]) {
       expect(source(file), file).not.toMatch(/\bdark:/);
     }
+  });
+});
+
+/** Couleur `#rrggbb` du pixel (0,0) d'un PNG 8 bits RGB/RGBA non entrelacé (le premier pixel d'une ligne n'a pas de voisin : le filtre PNG le laisse brut). */
+function cornerPixel(file: string): string {
+  const png = readFileSync(file);
+  expect(png.subarray(1, 4).toString("ascii"), `${file} n'est pas un PNG`).toBe("PNG");
+  expect(png[24], "profondeur 8 bits attendue").toBe(8);
+  expect(png[28], "PNG non entrelacé attendu").toBe(0);
+  const idat: Buffer[] = [];
+  for (let offset = 8; offset < png.length; ) {
+    const length = png.readUInt32BE(offset);
+    const type = png.subarray(offset + 4, offset + 8).toString("ascii");
+    if (type === "IDAT") idat.push(png.subarray(offset + 8, offset + 8 + length));
+    offset += 12 + length;
+  }
+  const raw = inflateSync(Buffer.concat(idat));
+  return "#" + [1, 2, 3].map((i) => raw[i].toString(16).padStart(2, "0")).join("");
+}
+
+describe("Thème sombre seul : images générées (PFO-55)", () => {
+  it("public/opengraph-image.png est régénérée : son fond est le --primary de :root", () => {
+    expect(cornerPixel(path.join(root, "public", "opengraph-image.png"))).toBe(token("primary"));
+  });
+
+  it("scripts/project-visuals.mjs sort un visuel sur fond sombre (--background #0b1220)", { timeout: 30_000 }, () => {
+    const dir = mkdtempSync(path.join(tmpdir(), "isolees-f-"));
+    const fiches = path.join(dir, "fiches");
+    const pub = path.join(dir, "public");
+    mkdirSync(fiches);
+    mkdirSync(pub);
+    writeFileSync(path.join(fiches, "alpha.md"), "---\nnom: Alpha\nstatut: en cours\nvisibilite: public\n---\n\n# Alpha\n\n**En bref.** Un outil. 12 tests. Code public.\n");
+    execFileSync("node", [path.join(root, "scripts", "project-visuals.mjs"), fiches, pub], { cwd: root, stdio: "pipe" });
+    expect(token("background")).toBe("#0b1220");
+    expect(cornerPixel(path.join(pub, "projets", "generated", "alpha.png"))).toBe("#0b1220");
   });
 });
