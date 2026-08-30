@@ -78,3 +78,15 @@ describe("sync-fiches — copie", () => {
     expect(readdirSync(dest)).toEqual(["alpha.md"]);
   });
 });
+
+describe("sync-fiches — contrôle du frontmatter", () => {
+  it.each(["nom", "statut", "visibilite"])("refuse une fiche sans « %s » en citant le fichier", (champ) => {
+    const src = tempDir({ "alpha.md": fiche({ ordre: 1, [champ]: undefined }) });
+    expect(() => syncFiches(src, tempDir())).toThrow(new RegExp(`^alpha\\.md : .*${champ}`));
+  });
+
+  it("refuse une visibilite hors public / vitrine / anonyme", () => {
+    const src = tempDir({ "alpha.md": fiche({ ordre: 1, visibilite: "secret" }) });
+    expect(() => syncFiches(src, tempDir())).toThrow(/^alpha\.md : .*visibilite/);
+  });
+});
