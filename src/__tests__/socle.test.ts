@@ -220,18 +220,18 @@ describe("ids des sections (attendus par le menu)", () => {
 });
 
 describe("ordre des sections dans app/page.tsx", () => {
-  it("rend <Projects /> entre <Experience /> et <Footer />", () => {
+  it("rend <Projects /> après <Experience />, en dernière section (le pied de page vit dans le layout)", () => {
     const source = readFileSync(path.join(root, "app", "page.tsx"), "utf8");
     const at = (tag: string) => source.indexOf(tag);
     expect(at("<Projects />")).toBeGreaterThan(-1);
     expect(at("<Experience />")).toBeLessThan(at("<Projects />"));
-    expect(at("<Projects />")).toBeLessThan(at("<Footer />"));
+    expect(at("<Projects />")).toBeLessThan(at("</main>"));
   });
 });
 
-describe("bouton Thème dans app/page.tsx", () => {
+describe("bouton Thème dans app/layout.tsx", () => {
   it("est décalé sous le bandeau du menu en mobile et remonte en top-4 à partir de lg", () => {
-    const source = readFileSync(path.join(root, "app", "page.tsx"), "utf8");
+    const source = readFileSync(path.join(root, "app", "layout.tsx"), "utf8");
     const wrapper = source.match(/<div className="([^"]*)">\s*<ThemeToggle \/>/);
     expect(wrapper, "conteneur du bouton Thème absent").not.toBeNull();
     const classes = wrapper![1].split(/\s+/);

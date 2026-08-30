@@ -115,10 +115,10 @@ describe("Nav", () => {
     const nav = screen.getByRole("navigation");
     const links = Array.from(nav.querySelectorAll("a")).map((a) => [a.textContent, a.getAttribute("href")]);
     expect(links).toEqual([
-      ["À propos", "#a-propos"],
-      ["Expérience", "#experience"],
-      ["Projets", "#projets"],
-      ["Contact", "#contact"],
+      ["À propos", "/#a-propos"],
+      ["Expérience", "/#experience"],
+      ["Projets", "/#projets"],
+      ["Contact", "/#contact"],
     ]);
   });
 
