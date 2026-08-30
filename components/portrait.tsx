@@ -13,8 +13,8 @@ export function hasPortraitPhoto(): boolean {
 type Size = "sm" | "md";
 
 const FRAME: Record<Size, string> = {
-  // 160 px fixes : colonne gauche (intro).
-  sm: "w-40",
+  // 128 px fixes : colonne gauche (intro), pour tenir dans 720 px de haut.
+  sm: "w-32",
   md: "w-40 sm:w-48",
 };
 
