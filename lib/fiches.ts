@@ -108,3 +108,8 @@ export function loadFiches(dir: string = defaultDir()): Fiche[] {
     .map((name) => parseFiche(name.slice(0, -3), readFileSync(path.join(dir, name), "utf8")))
     .sort(compare);
 }
+
+export function loadFiche(slug: string, dir: string = defaultDir()): Fiche {
+  const file = path.join(dir, `${slug}.md`);
+  return parseFiche(slug, readFileSync(file, "utf8"));
+}
