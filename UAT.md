@@ -179,3 +179,13 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 - [x] Dans « Ce que j'ai construit » : les puces de liste sont visibles, les passages en gras ressortent, le lien du dépôt dans « Artefacts » est souligné et cliquable. Vérifier à 375 px (aucun défilement horizontal) et en sombre (`document.documentElement.dataset.theme = "dark"`) : texte lisible, badges lisibles.
 - [x] Refus : ouvrir `/projets/ben/` (fiche `anonyme`) : ni lien « Code » ni lien « Démo » dans l'en-tête.
 - [x] Refus : dans `content/fiches/slice.md`, ajouter le mot « Nexus » dans la section « Preuves », lancer `npm run build` : `next build` réussit puis `check-output` échoue avec `projets/slice/index.html : mot interdit « Nexus »`. Annuler la modification.
+
+## Livraison 10 — Surbrillance des expériences et projets
+
+### PFO-32 — Surbrillance au survol et au focus
+
+- [ ] `npm run dev`, ouvrir `http://localhost:3000/#projets` à 1280 px de large : survoler une carte : fond léger, bordure visible, titre en couleur d'accent ; les six autres cartes s'estompent (opacité réduite). Même comportement sur `#experience` en survolant une expérience.
+- [ ] Au repos (aucun survol), les cartes n'ont plus de bordure visible ; elle apparaît au survol seulement.
+- [ ] Clavier : Tab jusqu'au titre ou au lien « Code » d'une carte : la carte prend le même fond, la même bordure et le même titre accentué. Refus : les cartes voisines ne s'estompent pas au focus (lecture au clavier non gênée).
+- [ ] Refus : à 375 px (outils de développement, mode mobile, écran tactile) : survoler ou toucher une carte n'estompe aucune voisine ; aucun défilement horizontal ; les liens « Code » et « Démo » de la carte SLICE restent deux liens distincts et cliquables (la carte entière n'est pas un lien).
+- [ ] Sombre (`document.documentElement.dataset.theme = "dark"`) : fond et bordure de survol lisibles, titre accentué visible.
