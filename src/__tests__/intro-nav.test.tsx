@@ -80,10 +80,10 @@ describe("Intro", () => {
     expect(site.email).toBe("cedric.gicquiaud@gmail.com");
   });
 
-  it("applique bg-grid, nom et titre en tête (la hauteur vient du parent depuis PFO-28)", () => {
+  it("nom et titre en tête, sans bg-grid (porté par body depuis PFO-38 ; la hauteur vient du parent depuis PFO-28)", () => {
     const { container } = render(<Intro />);
     const section = container.querySelector("section#intro");
-    expect(section).toHaveClass("bg-grid");
+    expect(section).not.toHaveClass("bg-grid");
     expect(section).not.toHaveClass("min-h-screen");
     const heading = screen.getByRole("heading", { level: 1 });
     expect(section?.firstElementChild?.contains(heading)).toBe(true);
@@ -216,7 +216,7 @@ describe("ThemeToggle", () => {
     stubStorage({ theme: "dark" });
     render(<ThemeToggle />);
     expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
-    expect(screen.getByRole("button")).toHaveAttribute("aria-pressed", "true");
+    expect(screen.getByRole("button")).toHaveAttribute("aria-label", "Passer en thème clair");
   });
 
   it("rend quand même en thème système si localStorage lève une exception", () => {

@@ -258,3 +258,30 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 - [ ] Ouvrir `/projets/slice/` : le visuel est juste sous le titre, pleine largeur, coins arrondis, en couleur.
 - [ ] Sombre (bouton « Thème ») : sur `/#projets`, les visuels au repos restent lisibles (teinte bleue claire sur fond sombre) et reprennent leurs couleurs au survol.
 - [ ] Refus : avec un lecteur d'écran ou dans l'arbre d'accessibilité de Chrome, aucune image de carte n'est annoncée (`alt=""`, décoratives) ; le titre de la carte reste le premier élément lu.
+
+## Tâches isolées A — Portrait, quadrillage, menu, thème
+
+### PFO-37 — Portrait dans la colonne gauche
+
+- [ ] `npm run dev`, ouvrir `http://localhost:3000/` à 1280 px de large : le portrait (photo ou cadre provisoire, bi-ton bleu) est dans la colonne de gauche, juste sous le nom, environ 128 px de large, coins arrondis ; la colonne de droite commence directement par « À propos ». Refus : un portrait encore visible en haut de la colonne droite, ou plus large que 200 px.
+- [ ] À 375 px (outils de développement, mode mobile) : sous le nom, le portrait ; puis le titre, la phrase, les logos ; l'écart entre les logos et « À propos » est le même qu'entre deux sections (environ 128 px). Refus : un vide blanc d'environ 170 px entre l'intro et « À propos ».
+- [ ] À 1280×720, les logos et le bouton Thème de la colonne gauche sont entièrement visibles sans défiler.
+- [ ] Sombre (bouton « Thème ») : le portrait reste bi-ton (fusion écran sur fond bleu), lisible.
+
+### PFO-38 — Quadrillage sur toute la page
+
+- [ ] `npm run dev`, ouvrir `http://localhost:3000/` à 1280 px : le quadrillage fin couvre toute la page (colonne droite comprise, jusqu'au pied de page), et défile avec le contenu. Refus : quadrillage limité au bloc de l'intro.
+- [ ] Ouvrir `/projets/slice/` : même quadrillage sur la page fiche.
+- [ ] Sombre (bouton « Thème ») puis retour en clair : les lignes du quadrillage sont visibles mais discrètes dans les deux thèmes ; le texte garde le même contraste qu'avant (couleurs de texte inchangées). Refus : texte moins lisible ou lignes du quadrillage plus visibles que le texte atténué.
+
+### PFO-41 — Entrée active du menu au chargement
+
+- [ ] `npm run dev`, ouvrir `http://localhost:3000/` à 1280 px, recharger cinq fois de suite (Cmd+R) : à chaque chargement, la même entrée du menu de gauche porte le trait long (« À propos » en haut de page). Refus : une entrée différente selon le rechargement, ou aucune entrée active alors qu'une section est à l'écran.
+- [ ] Défiler jusqu'à « Projets », recharger : l'entrée « Projets » est active dès l'affichage, sans attendre un défilement. Refus : il faut bouger la page pour que le menu se mette à jour.
+- [ ] Le défilement continue de mettre à jour l'entrée active comme avant (PFO-29).
+
+### PFO-18 — Libellé du bouton de thème
+
+- [ ] `npm run dev`, ouvrir `http://localhost:3000/` : inspecter le bouton « Thème » (colonne gauche à 1280 px, coin haut droit à 375 px) : en thème clair, `aria-label="Passer en thème sombre"` ; cliquer : `aria-label="Passer en thème clair"`. Le texte visible reste « Thème » et le bouton ne change pas de largeur. Refus : texte du bouton modifié, ou libellé qui ne suit pas le thème courant.
+- [ ] Lecteur d'écran (VoiceOver, Cmd+F5) : le bouton est annoncé « Passer en thème sombre, bouton » puis « Passer en thème clair, bouton » après activation. Refus : annonce « Thème, bouton » seule.
+- [ ] Système en sombre (Réglages macOS) sans choix mémorisé (`localStorage.removeItem('theme')`, recharger) : le libellé initial est « Passer en thème clair ».

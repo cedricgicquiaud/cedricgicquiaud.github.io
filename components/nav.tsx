@@ -9,8 +9,33 @@ const entries = [
   { label: "Projets", id: "projets" },
 ];
 
-// Bande centrale de la fenêtre prise en compte pour la section active.
-const ACTIVE_BAND = "-40% 0px -55% 0px";
+// Bande centrale de la fenêtre prise en compte pour la section active :
+// de 40 % à 45 % de la hauteur (marges de l'observer : haut 40 %, bas 55 %).
+const BAND_TOP_PERCENT = 40;
+const BAND_BOTTOM_PERCENT = 45;
+const BAND_TOP = BAND_TOP_PERCENT / 100;
+const ACTIVE_BAND = `-${BAND_TOP_PERCENT}% 0px -${100 - BAND_BOTTOM_PERCENT}% 0px`;
+
+// Au montage : la section qui contient le haut de la bande centrale ; à défaut,
+// celle dont le haut en est le plus proche. L'observer prend ensuite le relais ;
+// ce calcul unique rend le chargement déterministe.
+function sectionAtBand(): string | null {
+  const bandTop = window.innerHeight * BAND_TOP;
+  let nearest: string | null = null;
+  let nearestDistance = Infinity;
+  for (const { id } of entries) {
+    const el = document.getElementById(id);
+    if (!el) continue;
+    const { top, bottom } = el.getBoundingClientRect();
+    if (top <= bandTop && bandTop < bottom) return id;
+    const distance = Math.abs(top - bandTop);
+    if (distance < nearestDistance) {
+      nearest = id;
+      nearestDistance = distance;
+    }
+  }
+  return nearest;
+}
 
 export function Nav() {
   const [active, setActive] = useState<string | null>(null);
@@ -20,7 +45,12 @@ export function Nav() {
   const onHome = !pathname || pathname === "/";
 
   useEffect(() => {
-    if (!onHome || typeof IntersectionObserver === "undefined") return;
+    if (!onHome) return;
+    // Mesure unique du DOM après montage (getBoundingClientRect) : un seul rendu
+    // supplémentaire, voulu, pour que l'entrée active soit posée avant l'observer.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setActive(sectionAtBand());
+    if (typeof IntersectionObserver === "undefined") return;
     // Seules les sections du menu sont observées ; on ne compte que la bande
     // centrale de la fenêtre, et on retient la section visible la plus haute.
     const visible = new Map<string, number>();
