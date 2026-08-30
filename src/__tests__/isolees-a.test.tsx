@@ -94,9 +94,10 @@ describe("Entrée active du menu au chargement (PFO-41)", () => {
     return utils;
   }
 
-  function stubRects(tops: Record<string, number>) {
+  function stubRects(rects: Record<string, number | { top: number; bottom: number }>) {
     vi.spyOn(Element.prototype, "getBoundingClientRect").mockImplementation(function (this: Element) {
-      return { top: tops[this.id] ?? 0 } as DOMRect;
+      const rect = rects[this.id] ?? 0;
+      return (typeof rect === "number" ? { top: rect, bottom: rect } : rect) as DOMRect;
     });
   }
 
@@ -113,6 +114,20 @@ describe("Entrée active du menu au chargement (PFO-41)", () => {
     renderNavWithTops({ "a-propos": 0, experience: 0, projets: 0 });
     expect(screen.getByRole("link", { name: "Expérience" })).toHaveAttribute("aria-current", "location");
     expect(screen.getByRole("link", { name: "À propos" })).not.toHaveAttribute("aria-current");
+    expect(screen.getByRole("link", { name: "Projets" })).not.toHaveAttribute("aria-current");
+  });
+
+  it("rechargé au milieu d'une section longue, active cette section même si une autre a son haut plus proche", () => {
+    stubObserverThatNeverFires();
+    vi.stubGlobal("innerHeight", 1000);
+    // Bande à 400 px. Expérience couvre -1500 → 500 (contient 400) ; Projets commence à 500, plus proche de 400.
+    stubRects({
+      "a-propos": { top: -3000, bottom: -1500 },
+      experience: { top: -1500, bottom: 500 },
+      projets: { top: 500, bottom: 2000 },
+    });
+    renderNavWithTops({ "a-propos": 0, experience: 0, projets: 0 });
+    expect(screen.getByRole("link", { name: "Expérience" })).toHaveAttribute("aria-current", "location");
     expect(screen.getByRole("link", { name: "Projets" })).not.toHaveAttribute("aria-current");
   });
 
