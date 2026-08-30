@@ -14,8 +14,9 @@ ordre: 2
 
 **En bref.** Une méthode, pas un logiciel : Linear pour piloter, GitHub pour le code, Claude Code
 pour produire, avec une boucle où celui qui écrit le code n'est jamais celui qui le vérifie.
-Éprouvée sur un bac à sable : 6 features livrées, 269 tests, 8 défauts trouvés par l'audit derrière
-des tests verts. Remplace FORGE, ma première version (avril 2026).
+Éprouvée sur un bac à sable puis sur ce site : 7 features livrées, 8 défauts attrapés par l'audit
+derrière des tests verts, 0,66 h de session là où le barème en prévoyait 2,44. Méthode publique à
+venir ; remplace FORGE, ma première version (avril 2026).
 
 ## Problème
 
