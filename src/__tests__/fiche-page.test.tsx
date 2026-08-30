@@ -178,3 +178,29 @@ describe("Rendu de la fiche : En bref et cinq sections (PFO-27)", () => {
     expect(screen.getByText("Texte des artefacts.")).toBeInTheDocument();
   });
 });
+
+describe("Rendu de la fiche : liens Code et Démo (PFO-27)", () => {
+  it("rend Code et Démo en fin d'en-tête quand la fiche a une URL de dépôt et de démo", () => {
+    render(<Fiche fiche={fakeFiche()} />);
+    const code = screen.getByRole("link", { name: "Code" });
+    const demo = screen.getByRole("link", { name: "Démo" });
+    expect(code).toHaveAttribute("href", "https://github.com/cedricgicquiaud/factice");
+    expect(demo).toHaveAttribute("href", "https://factice.example.test/");
+    const dl = document.querySelector("dl")!;
+    expect(dl.compareDocumentPosition(code) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(code.compareDocumentPosition(screen.getByRole("heading", { level: 2, name: "Problème" })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("omet Démo (sans URL) et garde Code", () => {
+    render(<Fiche fiche={fakeFiche({ demo: "", demoNote: "à venir" })} />);
+    expect(screen.getByRole("link", { name: "Code" })).toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Démo" })).toBeNull();
+  });
+
+  it("refuse Code et Démo pour une fiche anonyme", () => {
+    render(<Fiche fiche={fakeFiche({ visibilite: "anonyme", depot: "", depotNote: "", demo: "", demoNote: "" })} />);
+    expect(screen.queryByRole("link", { name: "Code" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Démo" })).toBeNull();
+    expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
+  });
+});
