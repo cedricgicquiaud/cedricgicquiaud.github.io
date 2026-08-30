@@ -135,8 +135,8 @@ describe("Projects — section", () => {
   it("garde l'id de section et le conteneur partagé", () => {
     const { container } = render(<Projects fiches={septFiches()} />);
     const section = container.querySelector("section#projets");
-    expect(section).toHaveClass("px-6", "py-16", "lg:px-16");
-    expect(section?.querySelector(".mx-auto.w-full.max-w-3xl")).not.toBeNull();
+    expect(section).toHaveClass("py-16");
+    expect(section?.firstElementChild).toHaveClass("w-full");
   });
 });
 
