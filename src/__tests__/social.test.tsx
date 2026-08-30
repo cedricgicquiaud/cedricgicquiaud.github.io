@@ -51,3 +51,22 @@ describe("SocialIcons : ouverture des liens (PFO-34)", () => {
     expect(mail).not.toHaveAttribute("rel");
   });
 });
+
+describe("SocialIcons : style et focus (PFO-34)", () => {
+  it("aligne les logos en ligne, les atténue au repos, les accentue au survol et montre le focus clavier", () => {
+    const { container } = render(<SocialIcons />);
+    const list = container.querySelector("ul")!;
+    expect(list.className.split(/\s+/)).toEqual(expect.arrayContaining(["flex", "items-center", "gap-5"]));
+    for (const link of screen.getAllByRole("link")) {
+      expect(link.className.split(/\s+/)).toEqual(
+        expect.arrayContaining([
+          "text-muted-foreground",
+          "hover:text-foreground",
+          "focus-visible:outline-2",
+          "focus-visible:outline-offset-2",
+          "focus-visible:outline-ring",
+        ]),
+      );
+    }
+  });
+});
