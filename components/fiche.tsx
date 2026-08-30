@@ -1,3 +1,4 @@
+import Link from "next/link";
 import type { Fiche as FicheData } from "../lib/fiches";
 import { Badge } from "./ui/badge";
 
@@ -13,9 +14,9 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
   return (
     <article className="px-6 py-16 lg:px-16">
       <div className="mx-auto w-full max-w-3xl">
-        <a href="/#projets" className={`text-sm text-muted-foreground ${LINK}`}>
+        <Link href="/#projets" className={`text-sm text-muted-foreground ${LINK}`}>
           ← Projets
-        </a>
+        </Link>
         <h1 className="mt-6 text-3xl font-semibold tracking-tight">{fiche.titre || frontmatter.nom}</h1>
         <dl className="mt-6 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-[auto_1fr]">
           <Row term="Statut">{frontmatter.statut}</Row>
