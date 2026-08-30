@@ -3,8 +3,12 @@ import { execFileSync } from "node:child_process";
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
-import { loadFiche } from "../../lib/fiches";
+import { cleanup, render, screen } from "@testing-library/react";
+import { afterEach, describe, expect, it } from "vitest";
+import { ProjectCard } from "../../components/project-card";
+import { loadFiche, type Fiche as FicheData } from "../../lib/fiches";
+
+afterEach(cleanup);
 
 const root = path.resolve(__dirname, "../..");
 
@@ -81,5 +85,55 @@ describe("branchement sur le build (PFO-35)", () => {
 
   it("les visuels générés ne sont pas versionnés", () => {
     expect(readFileSync(path.join(root, ".gitignore"), "utf8").split("\n")).toContain("public/projets/generated/");
+  });
+});
+
+/** Fiche factice minimale ; seul le visuel et le titre sont observés ici. */
+const fakeFiche = (): FicheData => ({
+  slug: "alpha",
+  titre: "Alpha — un titre",
+  frontmatter: {
+    nom: "Alpha",
+    statut: "en cours",
+    periode: "2026",
+    role: "conception",
+    stack: ["TypeScript"],
+    visibilite: "public",
+    depot: "",
+    depotNote: "",
+    demo: "",
+    demoNote: "",
+  },
+  enBref: { quoi: "Un outil.", chiffre: "120 tests.", lien: "" },
+  sections: [],
+  visuel: "/projets/generated/alpha.png",
+});
+
+/** L'unique `<img>` du rendu (alt vide : hors rôle `img`, donc introuvable par `getByRole`). */
+const onlyImg = (container: HTMLElement) => {
+  const imgs = container.querySelectorAll("img");
+  expect(imgs).toHaveLength(1);
+  return imgs[0];
+};
+
+describe("ProjectCard — visuel (PFO-36)", () => {
+  it("montre le visuel de la fiche, décoratif (alt vide), chargé à la demande, avant le texte", () => {
+    const { container } = render(<ProjectCard fiche={fakeFiche()} />);
+    const img = onlyImg(container);
+    expect(img.getAttribute("src")).toBe("/projets/generated/alpha.png");
+    expect(img.getAttribute("alt")).toBe("");
+    expect(img.getAttribute("width")).toBe("1200");
+    expect(img.getAttribute("height")).toBe("750");
+    expect(img.getAttribute("loading")).toBe("lazy");
+    const title = screen.getByRole("heading", { name: "Alpha — un titre" });
+    expect(img.compareDocumentPosition(title) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  it("place visuel et texte en deux colonnes à partir de sm (au-dessus en mobile), visuel 16:10", () => {
+    const { container } = render(<ProjectCard fiche={fakeFiche()} />);
+    const article = screen.getByRole("article");
+    expect(article.className).toMatch(/\bgrid\b/);
+    expect(article.className).toMatch(/\bsm:grid-cols-\[200px_1fr\]/);
+    expect(onlyImg(container).className).toMatch(/\baspect-\[16\/10\]/);
   });
 });
