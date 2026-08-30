@@ -1,10 +1,11 @@
+import site from "../content/site.json";
 import { loadFiches, type Fiche } from "../lib/fiches";
 import { ProjectCard } from "./project-card";
 
 /** Les cartes viennent de `loadFiches()` (déjà triées par `ordre`) ; `fiches` sert aux tests. */
 export function Projects({ fiches = loadFiches() }: { fiches?: Fiche[] }) {
   return (
-    <section id="projets" className="py-16">
+    <section id={site.sections.projects} className="py-16">
       <div className="w-full">
         <h2 className="mb-6 text-sm font-bold uppercase tracking-widest">Projets</h2>
         <ol className="group/list grid grid-cols-[minmax(0,1fr)] gap-6">
