@@ -124,3 +124,17 @@ describe("Section active dans le menu latéral (PFO-29)", () => {
     expect(src).not.toContain("matchMedia");
   });
 });
+
+describe("Layout sans menu du haut (PFO-29, PFO-30)", () => {
+  it("app/layout.tsx ne rend plus <Nav/>, garde <Footer/> et un bouton de thème fixe en mobile seulement", () => {
+    const layout = source("app/layout.tsx");
+    const body = layout.slice(layout.indexOf("<body"), layout.indexOf("</body>"));
+    expect(body).not.toContain("<Nav");
+    expect(layout).not.toMatch(/import \{ Nav \}/);
+    expect(body).toContain("<Footer />");
+    const wrapper = body.match(/<div className="([^"]*)">\s*<ThemeToggle \/>/);
+    expect(wrapper, "conteneur du bouton Thème absent").not.toBeNull();
+    expect(wrapper![1].split(/\s+/)).toEqual(["fixed", "right-4", "top-4", "z-50", "lg:hidden"]);
+    expect(body.indexOf("{children}")).toBeLessThan(body.indexOf("<Footer />"));
+  });
+});
