@@ -180,15 +180,29 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 - [x] Refus : ouvrir `/projets/ben/` (fiche `anonyme`) : ni lien « Code » ni lien « Démo » dans l'en-tête.
 - [x] Refus : dans `content/fiches/slice.md`, ajouter le mot « Nexus » dans la section « Preuves », lancer `npm run build` : `next build` réussit puis `check-output` échoue avec `projets/slice/index.html : mot interdit « Nexus »`. Annuler la modification.
 
-## Livraison 10 — Surbrillance des expériences et projets
+## Livraison 8 — Deux colonnes et menu latéral
 
-### PFO-32 — Surbrillance au survol et au focus
+### PFO-28 — Colonne gauche fixe et contenu qui défile
 
-- [ ] `npm run dev`, ouvrir `http://localhost:3000/#projets` à 1280 px de large : survoler une carte : fond léger, bordure visible, titre en couleur d'accent ; les autres cartes s'estompent (opacité réduite). Même comportement sur `#experience` en survolant une expérience.
-- [ ] Au repos (aucun survol), les cartes n'ont plus de bordure visible ; elle apparaît au survol seulement.
-- [ ] Clavier : Tab jusqu'au titre ou au lien « Code » d'une carte : la carte prend le même fond, la même bordure et le même titre accentué. Refus : les cartes voisines ne s'estompent pas au focus (lecture au clavier non gênée).
-- [ ] Refus : à 375 px (outils de développement, mode mobile, écran tactile) : survoler ou toucher une carte n'estompe aucune voisine ; aucun défilement horizontal ; le lien « Code » de la carte SLICE reste un lien à part entière et cliquable (la carte entière n'est pas un lien ; aucune fiche n'a de démo aujourd'hui).
-- [ ] Sombre (`document.documentElement.dataset.theme = "dark"`) : fond et bordure de survol lisibles, titre accentué visible.
+- [ ] `npm run sync && npm run dev`, ouvrir `http://localhost:3000/` à 1280 px : le nom, le titre court, la phrase et le menu à traits sont à gauche ; faire défiler jusqu'à « Projets » : le nom reste visible pendant tout le défilement, seule la colonne droite bouge.
+- [ ] Toujours à 1280 px : la colonne droite enchaîne portrait, À propos, Expérience, Projets, puis le pied de page ; rien de la colonne gauche n'est coupé en bas d'écran (hauteur 720 px).
+- [ ] À 375 px : le nom, le titre court, la phrase et les liens GitHub / LinkedIn / Mail forment un bloc en haut, puis le portrait et les sections s'empilent dessous ; aucun défilement horizontal (`document.documentElement.scrollWidth === window.innerWidth` dans la console).
+- [ ] Refus : à 375 px, aucun menu « À propos / Expérience / Projets » n'est affiché (`document.querySelector('nav[aria-label="Sections"]').offsetParent` renvoie `null`).
+
+### PFO-29 — Menu latéral à traits et section active
+
+- [ ] À 1280 px, sur `/` : le menu compte trois entrées en capitales, À propos, Expérience, Projets, chacune précédée d'un trait court ; pas d'entrée Contact.
+- [ ] Faire défiler jusqu'à « Expérience » : son trait s'allonge et son libellé passe en couleur pleine ; continuer jusqu'à « Projets » : l'entrée active change (`document.querySelector('nav [aria-current]').textContent` suit la section à l'écran).
+- [ ] Survoler « À propos » sans défiler : le trait s'allonge et le texte fonce le temps du survol.
+- [ ] Refus : en haut de `/`, aucun bandeau de menu horizontal, aucune bordure sous un en-tête ; le premier élément visible est le nom.
+- [ ] Ouvrir `/projets/slice/` : aucun menu de sections, le lien « ← Projets » est présent en haut et ramène sur `/#projets`.
+
+### PFO-30 — Bouton de thème et liens sociaux en bas de colonne
+
+- [ ] À 1280 px, sur `/` : le bouton « Thème » est en bas de la colonne gauche, sur la même ligne que GitHub, LinkedIn et Mail ; aucun bouton « Thème » en haut à droite.
+- [ ] À 375 px : le bouton « Thème » est en haut à droite (fixe), les liens GitHub / LinkedIn / Mail sont sous la phrase de présentation, sans second bouton « Thème » à côté d'eux.
+- [ ] Cliquer « Thème » à 1280 px, recharger, puis réduire à 375 px : le thème choisi est conservé dans les deux largeurs (`localStorage.theme` vaut `dark` ou `light`, `document.documentElement.dataset.theme` pareil).
+- [ ] Refus : sur `/projets/slice/` à 1280 px, aucun bouton « Thème » n'est visible (voir « Décisions à prendre » de la PR) ; à 375 px, il est en haut à droite.
 
 ## Livraison 9 — Halo qui suit la souris
 
@@ -199,3 +213,13 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 - [ ] Refus : avec la souris, cliquer sur le bouton « Thème », sur une entrée du menu et sur le lien « Code » d'une carte projet : chaque clic agit normalement (le halo ne capte rien ; son calque a `pointer-events: none`).
 - [ ] Refus : dans Chrome, Rendering → « Emulate CSS media feature prefers-reduced-motion: reduce », recharger : le halo est au centre de la fenêtre et ne bouge pas quand la souris bouge.
 - [ ] Refus : `npm run build` puis `grep -c radial-gradient out/index.html` affiche `0` (rien côté serveur, le halo n'apparaît qu'une fois la page montée).
+
+## Livraison 10 — Surbrillance des expériences et projets
+
+### PFO-32 — Surbrillance au survol et au focus
+
+- [ ] `npm run dev`, ouvrir `http://localhost:3000/#projets` à 1280 px de large : survoler une carte : fond léger, bordure visible, titre en couleur d'accent ; les autres cartes s'estompent (opacité réduite). Même comportement sur `#experience` en survolant une expérience.
+- [ ] Au repos (aucun survol), les cartes n'ont plus de bordure visible ; elle apparaît au survol seulement.
+- [ ] Clavier : Tab jusqu'au titre ou au lien « Code » d'une carte : la carte prend le même fond, la même bordure et le même titre accentué. Refus : les cartes voisines ne s'estompent pas au focus (lecture au clavier non gênée).
+- [ ] Refus : à 375 px (outils de développement, mode mobile, écran tactile) : survoler ou toucher une carte n'estompe aucune voisine ; aucun défilement horizontal ; le lien « Code » de la carte SLICE reste un lien à part entière et cliquable (la carte entière n'est pas un lien ; aucune fiche n'a de démo aujourd'hui).
+- [ ] Sombre (`document.documentElement.dataset.theme = "dark"`) : fond et bordure de survol lisibles, titre accentué visible.
