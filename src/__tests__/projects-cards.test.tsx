@@ -37,12 +37,13 @@ function fiche(over: Partial<Fiche["frontmatter"]> & { slug?: string; titre?: st
 }
 
 describe("ProjectCard — contenu", () => {
-  it("affiche le titre, la ligne En bref, le chiffre clé, le statut et les tags", () => {
+  // PFO-53 : le chiffre clé n'est plus rendu sur la carte (il reste sur la page de fiche).
+  it("affiche le titre, la ligne En bref, le statut et les tags, sans le chiffre clé", () => {
     render(<ProjectCard fiche={fiche({ stack: ["TypeScript", "React"] })} />);
     const card = screen.getByRole("article");
     expect(within(card).getByRole("heading", { name: "Alpha — un titre" })).toBeInTheDocument();
     expect(within(card).getByText("Un outil qui fait une chose.")).toBeInTheDocument();
-    expect(within(card).getByText("120 tests.")).toHaveClass("tabular-nums");
+    expect(within(card).queryByText("120 tests.")).not.toBeInTheDocument();
     expect(within(card).getByText("en cours")).toBeInTheDocument();
     expect(within(card).getByRole("list", { name: /stack/i })).toBeInTheDocument();
     expect(within(card).getByText("TypeScript")).toBeInTheDocument();
