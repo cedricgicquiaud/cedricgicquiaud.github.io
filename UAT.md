@@ -189,3 +189,13 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 - [ ] Clavier : Tab jusqu'au titre ou au lien « Code » d'une carte : la carte prend le même fond, la même bordure et le même titre accentué. Refus : les cartes voisines ne s'estompent pas au focus (lecture au clavier non gênée).
 - [ ] Refus : à 375 px (outils de développement, mode mobile, écran tactile) : survoler ou toucher une carte n'estompe aucune voisine ; aucun défilement horizontal ; le lien « Code » de la carte SLICE reste un lien à part entière et cliquable (la carte entière n'est pas un lien ; aucune fiche n'a de démo aujourd'hui).
 - [ ] Sombre (`document.documentElement.dataset.theme = "dark"`) : fond et bordure de survol lisibles, titre accentué visible.
+
+## Livraison 9 — Halo qui suit la souris
+
+### PFO-31 — Halo de lumière qui suit la souris
+
+- [ ] `npm run dev`, ouvrir `http://localhost:3000/` avec une souris : un cercle de lumière bleue très diffuse (environ 600 px) suit le pointeur sur toute la page, y compris par-dessus les sections et sur `/projets/slice/`. Passer en sombre (bouton « Thème ») : le halo reste visible, plus clair sur le fond sombre. Le texte reste lisible sous le halo, en clair comme en sombre.
+- [ ] Refus : dans les outils de développement de Chrome, activer l'émulation tactile (barre d'outils appareil, iPhone) puis recharger : aucun halo, et `document.querySelector('body > div[aria-hidden]')` renvoie `null` dans la console.
+- [ ] Refus : avec la souris, cliquer sur le bouton « Thème », sur une entrée du menu et sur le lien « Code » d'une carte projet : chaque clic agit normalement (le halo ne capte rien ; son calque a `pointer-events: none`).
+- [ ] Refus : dans Chrome, Rendering → « Emulate CSS media feature prefers-reduced-motion: reduce », recharger : le halo est au centre de la fenêtre et ne bouge pas quand la souris bouge.
+- [ ] Refus : `npm run build` puis `grep -c radial-gradient out/index.html` affiche `0` (rien côté serveur, le halo n'apparaît qu'une fois la page montée).
