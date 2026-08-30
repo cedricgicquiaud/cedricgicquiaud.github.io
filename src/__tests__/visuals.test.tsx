@@ -32,4 +32,11 @@ describe("loadFiche — champ visuel (PFO-35)", () => {
     const { fiches, pub } = sandbox();
     expect(loadFiche("alpha", fiches, pub).visuel).toBe("/projets/generated/alpha.png");
   });
+
+  it("avec un champ visuel qui pointe sur un fichier de public/, expose ce chemin", () => {
+    const { fiches, pub } = sandbox("visuel: /projets/alpha.png\n");
+    mkdirSync(path.join(pub, "projets"));
+    writeFileSync(path.join(pub, "projets", "alpha.png"), "png");
+    expect(loadFiche("alpha", fiches, pub).visuel).toBe("/projets/alpha.png");
+  });
 });
