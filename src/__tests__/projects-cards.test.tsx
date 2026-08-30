@@ -1,9 +1,12 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen, within } from "@testing-library/react";
+import { mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
 import { ProjectCard } from "../../components/project-card";
 import { Projects } from "../../components/projects";
-import type { Fiche } from "../../lib/fiches";
+import { loadFiches, type Fiche } from "../../lib/fiches";
 
 afterEach(cleanup);
 
@@ -132,5 +135,21 @@ describe("Projects — section", () => {
     const section = container.querySelector("section#projets");
     expect(section).toHaveClass("px-6", "py-16", "lg:px-16");
     expect(section?.querySelector(".mx-auto.w-full.max-w-3xl")).not.toBeNull();
+  });
+});
+
+describe("Projects — ordre", () => {
+  it("refus : une fiche sans « ordre » passe en dernier, jamais en premier", () => {
+    const md = (nom: string, ordre?: number) =>
+      `---\nnom: ${nom}\nstatut: en cours\nperiode: 2026\nrole: x\nstack: TS\nvisibilite: public\ndepot:\ndemo:\n${
+        ordre === undefined ? "" : `ordre: ${ordre}\n`
+      }---\n\n# ${nom} — titre\n\n**En bref.** Quoi. Chiffre.\n`;
+    const dir = mkdtempSync(path.join(tmpdir(), "fiches-"));
+    writeFileSync(path.join(dir, "aaa.md"), md("AAA"));
+    writeFileSync(path.join(dir, "zed.md"), md("ZED", 2));
+    writeFileSync(path.join(dir, "mid.md"), md("MID", 1));
+    render(<Projects fiches={loadFiches(dir)} />);
+    const titres = screen.getAllByRole("article").map((c) => within(c).getByRole("heading").textContent);
+    expect(titres).toEqual(["MID — titre", "ZED — titre", "AAA — titre"]);
   });
 });
