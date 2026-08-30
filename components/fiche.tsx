@@ -37,7 +37,7 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
             <ul className="flex flex-wrap gap-2">
               {frontmatter.stack.map((tag) => (
                 <li key={tag}>
-                  <Badge variant="outline">{tag}</Badge>
+                  <Badge variant="cyber">{tag}</Badge>
                 </li>
               ))}
             </ul>
