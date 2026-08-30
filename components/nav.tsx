@@ -73,7 +73,7 @@ export function Nav() {
         {entries.map(({ label, id }) => (
           <li key={id}>
             <a
-              href={`#${id}`}
+              href={`/#${id}`}
               className={
                 "inline-block rounded-md px-2 py-1 text-sm text-muted-foreground underline-offset-4 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring aria-[current]:text-foreground aria-[current]:underline" +
                 (active === id ? " active" : "")
