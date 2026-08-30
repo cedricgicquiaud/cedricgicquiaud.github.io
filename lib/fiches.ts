@@ -19,6 +19,8 @@ export type Frontmatter = {
   demo: string;
   demoNote: string;
   ordre?: number;
+  /** Chemin d'un visuel fourni, relatif à `public/` (ex. `/projets/slice.png`). */
+  visuel?: string;
 };
 
 export type EnBref = { quoi: string; chiffre: string; lien: string };
@@ -39,6 +41,8 @@ export type Fiche = {
   frontmatter: Frontmatter;
   enBref: EnBref;
   sections: Section[];
+  /** Chemin du visuel affiché, relatif à `public/` : le fourni s'il existe, sinon le généré. */
+  visuel: string;
 };
 
 /** Valeur de frontmatter en texte ; un nombre (ex. `periode: 2026`) est accepté, le reste devient vide. */
@@ -81,6 +85,7 @@ function toFrontmatter(data: Record<string, unknown>): Frontmatter {
     demo: masque ? "" : lien(text(data.demo)),
     demoNote: masque ? "" : text(data.demo),
     ...(Number.isInteger(data.ordre) ? { ordre: data.ordre as number } : {}),
+    ...(text(data.visuel) ? { visuel: text(data.visuel) } : {}),
   };
 }
 
@@ -103,6 +108,9 @@ function parseSections(content: string): Section[] {
   }));
 }
 
+/** Visuel généré par `scripts/project-visuals.mjs` pour une fiche sans visuel fourni. */
+const generatedVisual = (slug: string) => `/projets/generated/${slug}.png`;
+
 function parseFiche(slug: string, raw: string): Fiche {
   const { data, content } = matter(raw);
   const titre = content.match(/^# (.+)$/m)?.[1].trim() ?? "";
@@ -112,6 +120,7 @@ function parseFiche(slug: string, raw: string): Fiche {
     frontmatter: toFrontmatter(data),
     enBref: parseEnBref(content),
     sections: parseSections(content),
+    visuel: generatedVisual(slug),
   };
 }
 
@@ -124,16 +133,18 @@ function compare(a: Fiche, b: Fiche): number {
 
 /** Dossier des fiches copiées par `npm run sync`. */
 const defaultDir = () => path.join(process.cwd(), "content", "fiches");
+/** Dossier des fichiers statiques servis à la racine du site. */
+const defaultPublicDir = () => path.join(process.cwd(), "public");
 
-/** Une fiche par son slug (nom de fichier sans `.md`). */
-export function loadFiche(slug: string, dir: string = defaultDir()): Fiche {
+/** Une fiche par son slug (nom de fichier sans `.md`) ; `publicDir` sert à vérifier le visuel fourni. */
+export function loadFiche(slug: string, dir: string = defaultDir(), publicDir: string = defaultPublicDir()): Fiche {
   return parseFiche(slug, readFileSync(path.join(dir, `${slug}.md`), "utf8"));
 }
 
 /** Toutes les fiches du dossier, triées par `ordre` puis `nom`. */
-export function loadFiches(dir: string = defaultDir()): Fiche[] {
+export function loadFiches(dir: string = defaultDir(), publicDir: string = defaultPublicDir()): Fiche[] {
   return readdirSync(dir)
     .filter((name) => name.endsWith(".md"))
-    .map((name) => loadFiche(name.slice(0, -3), dir))
+    .map((name) => loadFiche(name.slice(0, -3), dir, publicDir))
     .sort(compare);
 }

@@ -32,6 +32,7 @@ function fiche(over: Partial<Fiche["frontmatter"]> & { slug?: string; titre?: st
     },
     enBref: { quoi, chiffre, lien: "" },
     sections: [],
+    visuel: `/projets/generated/${slug}.png`,
   };
 }
 

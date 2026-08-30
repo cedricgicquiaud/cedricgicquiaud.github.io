@@ -67,6 +67,7 @@ function fakeFiche(overrides: Partial<FicheData["frontmatter"]> = {}): FicheData
       { id: "appris", titre: "Ce que j'en ai appris", html: "<p>Texte des leçons.</p>" },
       { id: "artefacts", titre: "Artefacts", html: "<p>Texte des artefacts.</p>" },
     ],
+    visuel: "/projets/generated/factice.png",
   };
 }
 
