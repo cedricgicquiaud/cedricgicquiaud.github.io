@@ -358,3 +358,24 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 - [ ] Cliquer : le site passe en sombre, l'icône devient un soleil ; recliquer : retour au clair avec la lune. Inspecteur : l'`aria-label` vaut « Passer en thème sombre » en clair et « Passer en thème clair » en sombre ; le `<svg>` porte `aria-hidden="true"`.
 - [ ] Refus : système en sombre (Réglages > Apparence) sans choix mémorisé (`localStorage.removeItem('theme')` puis recharger) : le bouton affiche le soleil et annonce « Passer en thème clair ».
 - [ ] Ouvrir `/projets/slice/` à 1280 px puis à 375 px : le bouton est présent en haut à droite sur les fiches, à toutes les largeurs (décision du 30/08 mise à jour).
+
+## Tâches isolées E — Cartes : bleu cyber, typographie, sans chiffre
+
+### PFO-51 — Pastilles et titres survolés en bleu cyber
+
+- [ ] `scripts/dev-serve.sh start 3000`, ouvrir `http://localhost:3000/` en thème clair : les pastilles de compétences (Expérience) et de stack (cartes Projets) sont en teal foncé sur fond teal très pâle, en pilule ; le badge de statut d'une carte (« en cours », « livré ») reste gris neutre. Inspecteur, styles calculés sur une pastille : `color: rgb(15, 118, 110)` (`--cyber: #0f766e`).
+- [ ] Survoler une expérience puis une carte projet : le titre (`h3`) passe en teal (même couleur que les pastilles), plus en bleu ; Tab jusqu'au lien d'une carte : même couleur au focus. Le halo reste bleu ; le bouton de thème et les liens gardent leur couleur de texte habituelle.
+- [ ] Cliquer le bouton de thème (sombre forcé) puis, en thème clair mémorisé retiré (`localStorage.removeItem('theme')`) avec le système en sombre : dans les deux cas les pastilles et le titre survolé sont en teal clair `rgb(94, 234, 212)` (`--cyber: #5eead4`).
+- [ ] Refus : `grep -n "cyber" app/globals.css` montre quatre lignes (trois blocs de thème + `--color-cyber` dans `@theme inline`) et aucune autre couleur en dur ailleurs : `grep -rn "#0f766e\|#5eead4" components/` n'affiche rien.
+
+### PFO-52 — Typographie des cartes comme le modèle
+
+- [ ] Accueil à 1280 px, inspecteur sur une expérience : la période (colonne gauche) mesure `font-size: 12px`, graisse 600, capitales espacées, couleur atténuée ; le titre `16px` graisse 500 ; le secteur `14px` atténué ; la description `14px` atténuée, interligne 1.625 ; les pastilles `12px`.
+- [ ] Carte projet : le titre `16px` graisse 500 ; la phrase En bref `14px` atténuée ; le badge de statut `12px` en capitales espacées graisse 600 ; les pastilles de stack `12px`.
+- [ ] Refus : à 375 px, aucune pastille ne déborde de la carte, le badge de statut se coupe sur plusieurs lignes si besoin (`whitespace-normal`), aucun défilement horizontal.
+
+### PFO-53 — Chiffre clé retiré des cartes projets
+
+- [ ] Accueil, section Projets : chaque carte montre le visuel, le titre, la phrase En bref, le statut, la stack et les liens ; aucun chiffre clé (ex. « 44 PR », « 300 PR ») n'apparaît sur les cartes. `npm run build` puis `grep -c tabular-nums out/index.html` affiche `0`.
+- [ ] Ouvrir `/projets/slice/` : le bloc En bref de la fiche affiche toujours ses trois lignes, chiffre clé compris.
+- [ ] Refus : `grep -n "enBref.chiffre" components/project-card.tsx` n'affiche rien ; `grep -n "chiffre" components/fiche.tsx` en affiche au moins une.
