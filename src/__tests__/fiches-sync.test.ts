@@ -161,4 +161,18 @@ describe("lib/fiches — loadFiches", () => {
     });
     expect(fiches[2].frontmatter.ordre).toBeUndefined();
   });
+
+  it("découpe le bloc En bref en trois phrases : quoi, chiffre, lien", () => {
+    const dir = tempDir({
+      "alpha.md": fiche(
+        { ordre: 1 },
+        "# Alpha\n\n**En bref.** Un service web qui transforme une API\nen connecteur. 556 tests, 500 API passées. Code public, démo à venir.\n\n## Problème\n\nX.\n",
+      ),
+    });
+    expect(loadFiches(dir)[0].enBref).toEqual({
+      quoi: "Un service web qui transforme une API en connecteur.",
+      chiffre: "556 tests, 500 API passées.",
+      lien: "Code public, démo à venir.",
+    });
+  });
 });
