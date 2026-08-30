@@ -121,7 +121,8 @@
   --color-ring: var(--ring);
   --color-grid-line: var(--grid-line);
   --font-heading: var(--font-sans);
-  --font-sans: var(--font-sans);
+  /* --font-sans est posé sur <html> par next/font (Inter) ; repli système sinon. */
+  --font-sans: var(--font-sans, ui-sans-serif, system-ui, sans-serif);
   --radius-sm: calc(var(--radius) * 0.6);
   --radius-md: calc(var(--radius) * 0.8);
   --radius-lg: var(--radius);
@@ -148,5 +149,11 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-weight: 400;
+  }
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.02em;
   }
 }
