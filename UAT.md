@@ -119,3 +119,23 @@ Ne rien cocher avant d'avoir constaté.
 - [x] Mobile : `npm run dev`, largeur de fenêtre 375 px (DevTools, mode appareil) : aucun défilement horizontal (`document.documentElement.scrollWidth <= 375` dans la console), le menu reste en haut.
 - [x] Clavier : depuis le haut de la page, Tab parcourt le menu, le bouton de thème, les liens de l'Intro et du pied de page ; chaque élément reçoit un contour de focus visible, aucun n'est sauté.
 - [x] Contraste sombre : en thème sombre, tout texte visible (titre, sous-titre, liens, texte secondaire) atteint ≥ 4,5:1 sur son fond (DevTools → panneau Accessibilité, ou `npm test` pour les paires de tokens).
+
+## Livraison 5 — Fiches synchronisées
+
+### PFO-20 — Champ « ordre » dans les 7 fiches WATIDO
+
+- [x] Dans `../fiches/`, `grep -H '^ordre:' *.md` : sept lignes, une par fiche, valeurs 1 à 7 toutes différentes (SLICE 1, PILOT 2, Foreman 3, Parcours 4, Dashboard 5, GiveMe5 6, BEN 7).
+- [x] Refus : dans `../fiches/pilot.md`, remplacer `ordre: 2` par `ordre: 1`, lancer `npm run sync` : échec, code de sortie 1, message `slice.md : ordre 1 déjà pris par pilot.md` (ou l'inverse selon l'ordre de lecture). Remettre `ordre: 2`.
+
+### PFO-21 — Script sync : copie et contrôle des fiches
+
+- [x] `npm run sync` : affiche `7 fiches synchronisées` ; `ls content/fiches` liste `ben.md dashboard.md foreman.md giveme5.md parcours.md pilot.md slice.md`.
+- [x] Refus : dans `../fiches/slice.md`, retirer la ligne `statut: …`, lancer `npm run sync` : échec avec `slice.md : frontmatter incomplet, champ « statut » requis`. Remettre la ligne. Même chose attendue pour `nom` et `visibilite`.
+- [x] Refus : dans `../fiches/slice.md`, remplacer `**En bref.**` par `En bref.`, lancer `npm run sync` : échec avec `slice.md : bloc « **En bref.** » absent après le titre`. Annuler.
+- [x] Refus : `../fiches/` contient `PLAN.md`, `REPOS.md` et `AUDIT.md` ; après `npm run sync`, aucun des trois n'est dans `content/fiches/` ; `npm test` : le test « ne copie jamais PLAN.md, REPOS.md ni AUDIT.md » passe.
+
+### PFO-22 — Chargement des fiches : frontmatter, En bref, sections
+
+- [x] `node --input-type=module -e 'const { loadFiches } = await import("./lib/fiches.ts"); for (const f of loadFiches("content/fiches")) console.log(f.frontmatter.ordre, f.slug, f.titre, f.enBref.chiffre, f.sections.map((s) => s.id).join(","))'` : sept lignes numérotées 1 à 7 dans l'ordre slice, pilot, foreman, parcours, dashboard, giveme5, ben ; chaque ligne a un titre, une phrase « chiffre » et `probleme,construit,preuves,appris,artefacts`.
+- [x] Refus : même commande en affichant `f.frontmatter.depot, f.frontmatter.demo` : la ligne `ben` (visibilite anonyme) montre deux chaînes vides, même si le fichier source en contient.
+- [x] Refus : `node --input-type=module -e 'const { loadFiches } = await import("./lib/fiches.ts"); const j = JSON.stringify(loadFiches("content/fiches")); console.log(j.includes("WATIDO"), /\/Users\//.test(j))'` : affiche `false false`.
