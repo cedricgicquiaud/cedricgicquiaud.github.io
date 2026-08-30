@@ -1,0 +1,87 @@
+// Génère public/projets/generated/<slug>.png (1200×750) pour chaque fiche sans visuel fourni :
+// fond et quadrillage du thème, nom du projet en bleu, chiffre clé en dessous.
+// Usage : node scripts/project-visuals.mjs [dossier des fiches] [dossier public]
+// (défauts : content/fiches et public ; lancé par `npm run build` avant `next build`).
+import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
+import path from "node:path";
+import { createElement as h } from "react";
+import { ImageResponse } from "next/og.js";
+import matter from "gray-matter";
+import { token } from "./theme-tokens.mjs";
+
+const root = path.resolve(import.meta.dirname, "..");
+const fichesDir = path.resolve(process.argv[2] ?? path.join(root, "content", "fiches"));
+const publicDir = path.resolve(process.argv[3] ?? path.join(root, "public"));
+
+const WIDTH = 1200;
+const HEIGHT = 750;
+const STEP = 60;
+
+/** Deuxième phrase du bloc « **En bref.** » : le chiffre clé.
+ * Duplique `parseEnBref` de lib/fiches.ts (le .ts n'est pas importable ici) ; garder les deux alignés. */
+function chiffreOf(content) {
+  const bloc = content.match(/\*\*En bref\.\*\*([^]*?)(?:\n\s*\n|$)/)?.[1] ?? "";
+  return bloc.replace(/\s+/g, " ").trim().split(/(?<=\.)\s+/).filter(Boolean)[1] ?? "";
+}
+
+/** Lignes du quadrillage : une div de 1 px tous les STEP px, dans les deux sens. */
+function gridLines(color) {
+  const lines = [];
+  for (let x = STEP; x < WIDTH; x += STEP) {
+    lines.push(h("div", { style: { position: "absolute", left: x, top: 0, width: 1, height: HEIGHT, background: color } }));
+  }
+  for (let y = STEP; y < HEIGHT; y += STEP) {
+    lines.push(h("div", { style: { position: "absolute", top: y, left: 0, height: 1, width: WIDTH, background: color } }));
+  }
+  return lines;
+}
+
+function visual(nom, chiffre) {
+  return new ImageResponse(
+    h(
+      "div",
+      {
+        style: {
+          width: "100%",
+          height: "100%",
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          position: "relative",
+          padding: "80px",
+          background: token("background"),
+          fontFamily: "sans-serif",
+        },
+      },
+      ...gridLines(token("grid-line")),
+      h("div", { style: { fontSize: 96, fontWeight: 600, letterSpacing: "-0.02em", color: token("primary") } }, nom),
+      h("div", { style: { marginTop: 32, fontSize: 40, lineHeight: 1.3, color: token("foreground") } }, chiffre),
+    ),
+    { width: WIDTH, height: HEIGHT },
+  );
+}
+
+/** Fichier de `publicDir` désigné par un chemin `/…` qui n'en sort pas (même règle que lib/fiches.ts) ; `undefined` sinon. */
+function insidePublic(provided) {
+  if (!provided.startsWith("/")) return undefined;
+  const resolved = path.resolve(publicDir, "." + provided);
+  return resolved.startsWith(publicDir + path.sep) ? resolved : undefined;
+}
+
+const generatedDir = path.join(publicDir, "projets", "generated");
+mkdirSync(generatedDir, { recursive: true });
+
+for (const name of readdirSync(fichesDir).filter((n) => n.endsWith(".md"))) {
+  const slug = name.slice(0, -3);
+  const { data, content } = matter(readFileSync(path.join(fichesDir, name), "utf8"));
+  const provided = typeof data.visuel === "string" && data.visuel.trim();
+  const file = provided && insidePublic(provided);
+  if (file && existsSync(file)) {
+    console.log(`${slug} : visuel fourni ${provided}, rien à générer`);
+    continue;
+  }
+  const target = path.join(generatedDir, `${slug}.png`);
+  const image = visual(String(data.nom ?? slug), chiffreOf(content));
+  writeFileSync(target, Buffer.from(await image.arrayBuffer()));
+  console.log(`écrit ${path.relative(root, target)}`);
+}

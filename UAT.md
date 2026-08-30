@@ -242,3 +242,19 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 - [ ] Lecteur d'écran (VoiceOver, Cmd+F5) : les trois liens sont annoncés « GitHub, lien », « LinkedIn, lien », « Mail, lien ». Refus : un lien annoncé « lien » sans nom, ou une image annoncée en plus du lien.
 - [ ] À 375 px (mode mobile) : les trois logos sont visibles sous la phrase d'intro, sans bouton Thème à côté (il reste fixe en haut à droite) ; aucun défilement horizontal.
 - [ ] Sombre (`document.documentElement.dataset.theme = "dark"`) : logos lisibles au repos et au survol.
+
+## Livraison 13 — Visuel par projet
+
+### PFO-35 — Champ visuel et visuel généré par défaut
+
+- [ ] `npm run build` : la console affiche « écrit public/projets/generated/<slug>.png » sept fois, puis `ls out/projets/generated/` liste `ben dashboard foreman giveme5 parcours pilot slice` en `.png` ; ouvrir `out/projets/generated/slice.png` : fond clair quadrillé, « SLICE » en bleu, le chiffre clé de la fiche en dessous.
+- [ ] Refus : dans `content/fiches/slice.md`, ajouter `visuel: /projets/absent.png` dans le frontmatter, relancer `npm run build` : le build passe, `check-output` affiche « propre », et `/projets/slice/` montre toujours le visuel généré (repli). Retirer la ligne ensuite.
+- [ ] Refus : `git status` après le build ne montre aucun fichier sous `public/projets/generated/` (dossier ignoré par git).
+
+### PFO-36 — Visuel dans la carte et la page fiche
+
+- [ ] `npm run dev`, ouvrir `http://localhost:3000/#projets` à 1280 px : chaque carte (7) montre un visuel à gauche (environ 200 px de large, format 16:10) et le texte à droite ; au repos le visuel est bleuté ; au survol de la carte (ou Tab jusqu'à son titre) il reprend ses couleurs.
+- [ ] À 375 px (outils de développement, mode mobile) : dans chaque carte, le visuel est au-dessus du texte, pleine largeur ; aucun défilement horizontal.
+- [ ] Ouvrir `/projets/slice/` : le visuel est juste sous le titre, pleine largeur, coins arrondis, en couleur.
+- [ ] Sombre (bouton « Thème ») : sur `/#projets`, les visuels au repos restent lisibles (teinte bleue claire sur fond sombre) et reprennent leurs couleurs au survol.
+- [ ] Refus : avec un lecteur d'écran ou dans l'arbre d'accessibilité de Chrome, aucune image de carte n'est annoncée (`alt=""`, décoratives) ; le titre de la carte reste le premier élément lu.
