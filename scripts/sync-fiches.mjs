@@ -1,6 +1,6 @@
 // Copie les fiches de preuve (../fiches/*.md) dans content/fiches/ et les contrôle avant.
 
-import { copyFileSync, mkdirSync, readdirSync, readFileSync } from "node:fs";
+import { copyFileSync, mkdirSync, readdirSync, readFileSync, unlinkSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
@@ -37,7 +37,7 @@ function problemOf(name, text, seen) {
 }
 
 /**
- * Contrôle puis copie les `.md` de `srcDir` dans `destDir` ; renvoie leur nombre.
+ * Contrôle puis copie les `.md` de `srcDir` dans `destDir` (et purge les copies orphelines) ; renvoie leur nombre.
  * Lève une erreur « <fichier> : <raison> » à la première fiche non conforme.
  * @param {string} srcDir
  * @param {string} destDir
@@ -51,6 +51,10 @@ export function syncFiches(srcDir, destDir) {
     if (problem) throw new Error(`${name} : ${problem}`);
   }
   mkdirSync(destDir, { recursive: true });
+  // Purge des copies dont la source a disparu.
+  for (const name of readdirSync(destDir)) {
+    if (name.endsWith(".md") && !files.includes(name)) unlinkSync(path.join(destDir, name));
+  }
   for (const name of files) copyFileSync(path.join(srcDir, name), path.join(destDir, name));
   return files.length;
 }
