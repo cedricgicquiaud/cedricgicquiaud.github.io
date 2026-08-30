@@ -36,6 +36,15 @@ describe("halo souris (PFO-31) — monté dans le navigateur", () => {
     expect(halo!.getAttribute("aria-hidden")).toBe("true");
     expect(halo!.style.background).toContain("radial-gradient(600px at var(--x) var(--y), var(--spotlight), transparent 80%)");
   });
+
+  it("glisse en douceur (80 ms) et reste sous le bouton de thème (z-50)", () => {
+    const { container } = render(<Spotlight />);
+    const halo = container.querySelector("div")!;
+    expect(halo.className).toMatch(/\btransition-\[background\]\b/);
+    expect(halo.className).toMatch(/\bduration-\[80ms\]\b/);
+    const z = Number(halo.className.match(/\bz-(\d+)\b/)?.[1]);
+    expect(z).toBeLessThan(50);
+  });
 });
 
 describe("halo souris (PFO-31) — suivi du pointeur", () => {
