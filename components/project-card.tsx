@@ -1,6 +1,8 @@
 import type { Fiche } from "../lib/fiches";
 import { Badge } from "./ui/badge";
 
+const isUrl = (s: string) => s.startsWith("http");
+
 export function ProjectCard({ fiche }: { fiche: Fiche }) {
   const { titre, frontmatter, enBref } = fiche;
   return (
@@ -16,6 +18,18 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
           </li>
         ))}
       </ul>
+      <p className="flex gap-4 text-sm">
+        {frontmatter.depot && (
+          <a href={frontmatter.depot} className="underline underline-offset-4">
+            Code
+          </a>
+        )}
+        {isUrl(frontmatter.demo) && (
+          <a href={frontmatter.demo} className="underline underline-offset-4">
+            Démo
+          </a>
+        )}
+      </p>
     </article>
   );
 }
