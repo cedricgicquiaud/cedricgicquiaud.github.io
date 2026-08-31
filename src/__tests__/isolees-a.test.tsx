@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup, fireEvent, render, screen, within } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
 import path from "node:path";
@@ -7,12 +7,8 @@ import Home from "../../app/page";
 import { Intro } from "../../components/intro";
 import { Nav } from "../../components/nav";
 import { Portrait } from "../../components/portrait";
-import { ThemeToggle } from "../../components/theme-toggle";
 
-afterEach(() => {
-  cleanup();
-  document.documentElement.removeAttribute("data-theme");
-});
+afterEach(cleanup);
 
 const classesOf = (el: Element | null | undefined) => (el?.className ?? "").split(/\s+/).filter(Boolean);
 
@@ -55,12 +51,12 @@ describe("Quadrillage sur toute la page (PFO-38)", () => {
     expect(container.querySelector("section#intro")).not.toHaveClass("bg-grid");
   });
 
-  it("bg-grid dessine le quadrillage avec --grid-line, défini dans les trois blocs de thème", () => {
+  it("bg-grid dessine le quadrillage avec --grid-line, défini dans le seul bloc de tokens (sombre seul depuis PFO-55)", () => {
     const css = source("app/globals.css");
     const rule = css.slice(css.indexOf("@utility bg-grid"), css.indexOf("}", css.indexOf("@utility bg-grid")));
     expect(rule).toContain("var(--grid-line)");
     expect(rule).not.toMatch(/background-attachment/);
-    expect(css.match(/--grid-line:/g)).toHaveLength(3);
+    expect(css.match(/--grid-line:/g)).toHaveLength(1);
   });
 });
 
@@ -136,46 +132,5 @@ describe("Entrée active du menu au chargement (PFO-41)", () => {
       expect(screen.getByRole("link", { name: "À propos" })).toHaveAttribute("aria-current", "location");
       unmount();
     }
-  });
-});
-
-describe("Libellé du bouton de thème (PFO-18)", () => {
-  function stubStorage() {
-    vi.stubGlobal("localStorage", { getItem: () => null, setItem: () => {}, removeItem: () => {} });
-  }
-
-  it("annonce « Passer en thème sombre » en clair et « Passer en thème clair » en sombre ; aucun texte visible (icône depuis PFO-49)", () => {
-    stubStorage();
-    vi.stubGlobal("matchMedia", () => ({ matches: false }));
-    render(<ThemeToggle />);
-    const button = screen.getByRole("button");
-    expect(button).toHaveAttribute("aria-label", "Passer en thème sombre");
-    expect(button.textContent?.trim()).toBe("");
-
-    fireEvent.click(button);
-    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
-    expect(button).toHaveAttribute("aria-label", "Passer en thème clair");
-    expect(button.textContent?.trim()).toBe("");
-
-    fireEvent.click(button);
-    expect(button).toHaveAttribute("aria-label", "Passer en thème sombre");
-    expect(button.textContent?.trim()).toBe("");
-  });
-
-  it("ne porte pas aria-pressed : bouton d'action au libellé variable, pas un bouton bascule", () => {
-    stubStorage();
-    vi.stubGlobal("matchMedia", () => ({ matches: false }));
-    render(<ThemeToggle />);
-    const button = screen.getByRole("button");
-    expect(button).not.toHaveAttribute("aria-pressed");
-    fireEvent.click(button);
-    expect(button).not.toHaveAttribute("aria-pressed");
-  });
-
-  it("suit le thème système quand aucun data-theme n'est posé", () => {
-    stubStorage();
-    vi.stubGlobal("matchMedia", () => ({ matches: true }));
-    render(<ThemeToggle />);
-    expect(screen.getByRole("button")).toHaveAttribute("aria-label", "Passer en thème clair");
   });
 });

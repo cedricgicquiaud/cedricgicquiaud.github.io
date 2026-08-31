@@ -2,84 +2,22 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@custom-variant dark {
-  &:where([data-theme="dark"], [data-theme="dark"] *) {
-    @slot;
-  }
-  @media (prefers-color-scheme: dark) {
-    &:where(:root:not([data-theme="light"]), :root:not([data-theme="light"]) *) {
-      @slot;
-    }
-  }
-}
+/*
+  Thème sombre seul (PFO-55). La variante `dark:` reste définie, neutre (toujours vraie) :
+  shadcn (`@variant dark` dans shadcn/tailwind.css) et `components/ui/button.tsx` l'utilisent
+  encore ; les composants du site n'en ont plus besoin.
+*/
+@custom-variant dark (&:where(*));
 
 /*
-  Toutes les couleurs du site vivent ici.
-  Trois états : clair (:root), préférence système sombre (media, sauf si
-  data-theme="light"), sombre forcé (data-theme="dark").
+  Toutes les couleurs du site vivent ici, dans un seul bloc : le site est sombre seul
+  (PFO-55), sans bascule ni préférence système.
   Tokens de base : --background, --foreground, --muted-foreground (texte
   secondaire), --primary (accent bleu), --cyber (accent secondaire : pastilles, titres
   survolés), --spotlight (halo souris, alpha faible). Les autres tokens shadcn en dérivent.
 */
 
 :root {
-  --background: #ffffff;
-  --foreground: #101828;
-  --muted: #f2f5fa;
-  --muted-foreground: #5b6b8c;
-  --primary: #2f5bea;
-  --primary-foreground: #ffffff;
-  --card: #ffffff;
-  --card-foreground: #101828;
-  --popover: #ffffff;
-  --popover-foreground: #101828;
-  --secondary: #e8edf6;
-  --secondary-foreground: #101828;
-  --accent: #e8edf6;
-  --accent-foreground: #101828;
-  --destructive: #b42318;
-  --border: #d9e0ec;
-  --input: #d9e0ec;
-  --ring: #2f5bea;
-  --grid-line: #e4e9f2;
-  --spotlight: rgba(47, 91, 234, 0.1);
-  --cyber: #0d6b63;
-  --radius: 0.625rem;
-  color-scheme: light;
-}
-
-:root[data-theme="light"] {
-  color-scheme: light;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --background: #0b1220;
-    --foreground: #e6eaf2;
-    --muted: #161f31;
-    --muted-foreground: #a3b1cc;
-    --primary: #7c9bff;
-    --primary-foreground: #0b1220;
-    --card: #111a2b;
-    --card-foreground: #e6eaf2;
-    --popover: #111a2b;
-    --popover-foreground: #e6eaf2;
-    --secondary: #1c2740;
-    --secondary-foreground: #e6eaf2;
-    --accent: #1c2740;
-    --accent-foreground: #e6eaf2;
-    --destructive: #f97066;
-    --border: #243250;
-    --input: #243250;
-    --ring: #7c9bff;
-    --grid-line: #16213a;
-    --spotlight: rgba(124, 155, 255, 0.12);
-    --cyber: #5eead4;
-    color-scheme: dark;
-  }
-}
-
-:root[data-theme="dark"] {
   --background: #0b1220;
   --foreground: #e6eaf2;
   --muted: #161f31;
@@ -101,6 +39,7 @@
   --grid-line: #16213a;
   --spotlight: rgba(124, 155, 255, 0.12);
   --cyber: #5eead4;
+  --radius: 0.625rem;
   color-scheme: dark;
 }
 

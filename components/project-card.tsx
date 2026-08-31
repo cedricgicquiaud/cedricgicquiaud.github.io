@@ -10,7 +10,7 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
   const codePrive = frontmatter.visibilite === "vitrine" && !isUrl(frontmatter.depot);
   return (
     <article className="group/item grid min-w-0 gap-4 rounded-lg border border-transparent p-5 transition-colors hover:border-border hover:bg-accent/50 focus-within:border-border focus-within:bg-accent/50 sm:grid-cols-[200px_1fr] lg:group-hover/list:opacity-50 lg:hover:!opacity-100">
-      {/* Monochrome bleu au repos : image en niveaux de gris fondue (multiply, screen en sombre) sur le bleu
+      {/* Monochrome bleu au repos : image en niveaux de gris fondue (screen, fond sombre) sur le bleu
           du parent ; au survol ou au focus, fondu et gris retirés, l'image reprend ses couleurs. */}
       <div className="self-start overflow-hidden rounded border border-border bg-primary">
         {/* Export statique : balise native, pas d'optimisation next/image. */}
@@ -21,7 +21,7 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
           width={1200}
           height={750}
           loading="lazy"
-          className="aspect-[16/10] w-full object-cover grayscale mix-blend-multiply transition dark:mix-blend-screen group-hover/item:grayscale-0 group-hover/item:mix-blend-normal group-focus-within/item:grayscale-0 group-focus-within/item:mix-blend-normal"
+          className="aspect-[16/10] w-full object-cover grayscale mix-blend-screen transition group-hover/item:grayscale-0 group-hover/item:mix-blend-normal group-focus-within/item:grayscale-0 group-focus-within/item:mix-blend-normal"
         />
       </div>
       <div className="min-w-0 space-y-3">

@@ -379,3 +379,20 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 - [ ] Accueil, section Projets : chaque carte montre le visuel, le titre, la phrase En bref, le statut, la stack et les liens ; aucun chiffre clé (ex. « 44 PR », « 300 PR ») n'apparaît sur les cartes. `npm run build` puis `grep -c tabular-nums out/index.html` affiche `0`.
 - [ ] Ouvrir `/projets/slice/` : le bloc En bref de la fiche affiche toujours ses trois lignes, chiffre clé compris.
 - [ ] Refus : `grep -n "enBref.chiffre" components/project-card.tsx` n'affiche rien ; `grep -n "chiffre" components/fiche.tsx` en affiche au moins une.
+
+## Tâches isolées F — Pied de page retiré, thème sombre seul
+
+### PFO-54 — Pied de page retiré
+
+- [ ] `scripts/dev-serve.sh start 3000`, ouvrir `http://localhost:3000/` à 1280 px puis à 375 px : la page se termine après la section Projets ; aucun pied de page (ni « Site généré depuis mes fiches de preuve », ni lien Mail en bas de page). Le halo souris et le menu à trois entrées (À propos, Expérience, Projets) sont inchangés ; les liens GitHub, LinkedIn, Mail restent en bas de la colonne gauche.
+- [ ] Ouvrir `/projets/slice/` : la fiche se termine après la section Artefacts, sans pied de page ; le lien « ← Projets » ramène à l'accueil.
+- [ ] Refus : `ls components/footer.tsx` échoue (fichier absent) ; `grep -c contact content/site.json` affiche `0` ; `npm run build` puis `grep -c "<footer" out/index.html out/projets/slice/index.html` affiche `0` pour les deux.
+
+### PFO-55 — Thème sombre seul
+
+- [ ] Accueil à 1280 px, système en clair (Réglages > Apparence) : le site est sombre (fond `#0b1220`, texte `#e6eaf2`, pastilles teal `#5eead4`) ; aucun bouton lune/soleil en haut à droite ; même chose à 375 px et sur `/projets/slice/`.
+- [ ] Passer le système en sombre, recharger : rien ne change (le site était déjà sombre). Console : `localStorage.setItem('theme','light')` puis recharger : rien ne change non plus, le site reste sombre. Inspecteur : `<html>` ne porte ni `data-theme` ni `suppressHydrationWarning`, aucun `<script>` inline dans `<head>`.
+- [ ] Cartes Projets au repos : le visuel apparaît en monochrome bleu (image grise fondue sur le bleu du cadre) ; au survol, il reprend ses couleurs. Styles calculés sur l'`<img>` : `mix-blend-mode: screen` au repos, `normal` au survol.
+- [ ] Contraste : inspecteur sur l'À propos, paragraphes en `rgb(163, 177, 204)` (atténué), titres en `rgb(230, 234, 242)`, pastilles cyber en `rgb(94, 234, 212)`, fond `rgb(11, 18, 32)`.
+- [ ] Image de partage : ouvrir `public/opengraph-image.png`, nom et titre sur le fond sombre `#0b1220`, fine bande bleue `#7c9bff` en bas ; `npm run og` puis `git status` ne montre aucune modification.
+- [ ] Refus : `grep -c "data-theme\|prefers-color-scheme\|localStorage" app/globals.css app/layout.tsx` affiche `0` pour chaque fichier ; `ls components/theme-toggle.tsx` échoue ; `grep -c "^:root" app/globals.css` affiche `1` ; `grep -c "multiply" components/portrait.tsx components/project-card.tsx` affiche `0` pour les deux.

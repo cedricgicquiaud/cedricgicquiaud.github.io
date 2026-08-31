@@ -13,7 +13,6 @@ import { Nav } from "../../components/nav";
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
-  document.documentElement.removeAttribute("data-theme");
 });
 
 const root = path.resolve(__dirname, "../..");
@@ -148,20 +147,15 @@ describe("Section active dans le menu latéral (PFO-29)", () => {
 });
 
 describe("Layout sans menu du haut (PFO-29, PFO-30)", () => {
-  it("app/layout.tsx ne rend plus <Nav/>, garde <Footer/> et un bouton de thème fixe à toutes les largeurs (PFO-49)", () => {
+  it("app/layout.tsx ne rend plus <Nav/> (pied de page retiré par PFO-54, bouton de thème par PFO-55)", () => {
     const layout = source("app/layout.tsx");
     const body = layout.slice(layout.indexOf("<body"), layout.indexOf("</body>"));
     expect(body).not.toContain("<Nav");
     expect(layout).not.toMatch(/import \{ Nav \}/);
-    expect(body).toContain("<Footer />");
-    const wrapper = body.match(/<div className="([^"]*)">\s*<ThemeToggle \/>/);
-    expect(wrapper, "conteneur du bouton Thème absent").not.toBeNull();
-    expect(wrapper![1].split(/\s+/)).toEqual(["fixed", "right-4", "top-4", "z-50"]);
-    expect(body.indexOf("{children}")).toBeLessThan(body.indexOf("<Footer />"));
   });
 });
 
-describe("Bas de colonne : liens sociaux (PFO-30 ; bouton de thème déplacé dans le layout par PFO-49)", () => {
+describe("Bas de colonne : liens sociaux (PFO-30 ; bouton de thème retiré par PFO-55)", () => {
   it("place les liens GitHub, LinkedIn, Mail en bas de colonne, visibles en mobile ; aucun bouton de thème dans l'intro", () => {
     const { container } = render(<Intro />);
     const section = container.querySelector("section#intro")!;

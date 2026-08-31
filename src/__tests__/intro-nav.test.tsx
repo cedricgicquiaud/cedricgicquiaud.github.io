@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import { act } from "react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { readFileSync } from "node:fs";
@@ -7,24 +7,11 @@ import path from "node:path";
 import site from "../../content/site.json";
 import { Intro } from "../../components/intro";
 import { Nav } from "../../components/nav";
-import { ThemeToggle } from "../../components/theme-toggle";
-import { Footer } from "../../components/footer";
 
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
-  document.documentElement.removeAttribute("data-theme");
 });
-
-function stubStorage(initial: Record<string, string> = {}) {
-  const store = new Map(Object.entries(initial));
-  vi.stubGlobal("localStorage", {
-    getItem: (key: string) => store.get(key) ?? null,
-    setItem: (key: string, value: string) => void store.set(key, value),
-    removeItem: (key: string) => void store.delete(key),
-  });
-  return store;
-}
 
 type ObserverCallback = (entries: Partial<IntersectionObserverEntry>[]) => void;
 
@@ -168,88 +155,19 @@ describe("Nav", () => {
     expect(observer.options?.rootMargin).toMatch(/^-\d+% 0px -\d+% 0px$/);
   });
 
-  it("laisse Tab parcourir les trois liens puis le bouton de thème, focus visible", () => {
-    const { container } = render(
-      <>
-        <Nav />
-        <ThemeToggle />
-      </>,
-    );
+  it("laisse Tab parcourir les trois liens (plus de bouton de thème depuis PFO-55), focus visible", () => {
+    const { container } = render(<Nav />);
     const focusable = Array.from(
       container.querySelectorAll<HTMLElement>("a[href], button:not([disabled])"),
     ).filter((el) => el.tabIndex >= 0);
-    expect(focusable.map((el) => el.tagName)).toEqual(["A", "A", "A", "BUTTON"]);
+    expect(focusable.map((el) => el.tagName)).toEqual(["A", "A", "A"]);
     for (const el of focusable) {
       expect(el.className).toMatch(/focus-visible:/);
     }
   });
 });
 
-describe("ThemeToggle", () => {
-  it("bascule data-theme sur <html> et mémorise le choix dans localStorage.theme", () => {
-    const store = stubStorage();
-    render(<ThemeToggle />);
-    const button = screen.getByRole("button");
-    expect(document.documentElement.getAttribute("data-theme")).toBeNull();
-
-    fireEvent.click(button);
-    const first = document.documentElement.getAttribute("data-theme");
-    expect(["light", "dark"]).toContain(first);
-    expect(store.get("theme")).toBe(first);
-
-    fireEvent.click(button);
-    const second = document.documentElement.getAttribute("data-theme");
-    expect(["light", "dark"]).toContain(second);
-    expect(second).not.toBe(first);
-    expect(store.get("theme")).toBe(second);
-  });
-
-  it("ne se positionne pas lui-même : aucune classe fixed, top-, right- ou z- (le parent s'en charge)", () => {
-    stubStorage();
-    render(<ThemeToggle />);
-    const classes = screen.getByRole("button").className.split(/\s+/);
-    const positioning = classes.filter((c) => /(^|:)(fixed|top-|right-|z-)/.test(c));
-    expect(positioning).toEqual([]);
-  });
-
-  it("relit le choix mémorisé au montage", () => {
-    stubStorage({ theme: "dark" });
-    render(<ThemeToggle />);
-    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
-    expect(screen.getByRole("button")).toHaveAttribute("aria-label", "Passer en thème clair");
-  });
-
-  it("rend quand même en thème système si localStorage lève une exception", () => {
-    const failing = new Proxy(
-      {},
-      {
-        get() {
-          throw new Error("SecurityError");
-        },
-      },
-    );
-    vi.stubGlobal("localStorage", failing);
-    render(<ThemeToggle />);
-    expect(screen.getByRole("button")).toBeInTheDocument();
-    expect(document.documentElement.getAttribute("data-theme")).toBeNull();
-    fireEvent.click(screen.getByRole("button"));
-    expect(["light", "dark"]).toContain(document.documentElement.getAttribute("data-theme"));
-  });
-});
-
-describe("Footer", () => {
-  it("porte l'ancre contact, la mention des fiches et le lien du dépôt", () => {
-    render(<Footer />);
-    const footer = screen.getByRole("contentinfo");
-    expect(footer).toHaveAttribute("id", "contact");
-    expect(footer).toHaveTextContent("Site généré depuis mes fiches de preuve");
-    const repo = screen.getByRole("link", { name: /cedricgicquiaud\.github\.io/ });
-    expect(repo).toHaveAttribute("href", "https://github.com/cedricgicquiaud/cedricgicquiaud.github.io");
-    expect(screen.getByRole("link", { name: "Mail" })).toHaveAttribute("href", `mailto:${site.email}`);
-  });
-});
-
-describe("Métadonnées et anti-flash (app/layout.tsx)", () => {
+describe("Métadonnées (app/layout.tsx)", () => {
   const layout = readFileSync(path.resolve(__dirname, "../../app/layout.tsx"), "utf8");
 
   it("prend title et description dans site.json (nom et titre)", () => {
@@ -260,15 +178,5 @@ describe("Métadonnées et anti-flash (app/layout.tsx)", () => {
 
   it("refuse une description vide", () => {
     expect(site.title.trim().length).toBeGreaterThan(0);
-  });
-
-  it("relit localStorage.theme dans un script inline avant peinture", () => {
-    const head = layout.slice(layout.indexOf("<head>"), layout.indexOf("</head>"));
-    expect(head).toContain("<script");
-    expect(head).toContain("dangerouslySetInnerHTML");
-    expect(head).toMatch(/localStorage\.getItem\(['"]theme['"]\)/);
-    expect(head).toContain("data-theme");
-    expect(head).toContain("try");
-    expect(head).toContain("catch");
   });
 });
