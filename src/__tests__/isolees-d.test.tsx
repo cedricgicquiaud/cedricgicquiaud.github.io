@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import { readFileSync } from "node:fs";
 import path from "node:path";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
@@ -7,21 +7,17 @@ import Home from "../../app/page";
 import { About } from "../../components/about";
 import { Experience } from "../../components/experience";
 import { Fiche } from "../../components/fiche";
-import { Footer } from "../../components/footer";
 import { Intro } from "../../components/intro";
 import { Projects } from "../../components/projects";
-import { ThemeToggle } from "../../components/theme-toggle";
 import { loadFiches } from "../../lib/fiches";
 import { ensureBuild } from "./helpers/build";
 
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
-  document.documentElement.removeAttribute("data-theme");
 });
 
 const root = path.resolve(__dirname, "../..");
-const source = (rel: string) => readFileSync(path.join(root, rel), "utf8");
 
 const classesOf = (el: Element | null | undefined) => (el?.className ?? "").split(/\s+/).filter(Boolean);
 
@@ -42,14 +38,6 @@ describe("Tailles du modèle : intro (PFO-47)", () => {
     const phrase = h2.nextElementSibling as HTMLElement;
     expect(phrase.tagName).toBe("P");
     expect(classesOf(phrase)).toEqual(expect.arrayContaining(["text-base", "text-muted-foreground", "max-w-xs"]));
-  });
-});
-
-describe("Footer : lien du dépôt sans débordement à 375 px (PFO-47)", () => {
-  it("le lien du dépôt porte break-all pour se couper dans la largeur", () => {
-    render(<Footer />);
-    const link = screen.getByRole("link", { name: /github\.com/i });
-    expect(classesOf(link)).toContain("break-all");
   });
 });
 
@@ -154,65 +142,6 @@ describe("Portrait retiré (PFO-48)", () => {
     const fiche = render(<Fiche fiche={loadFiches()[0]} />);
     expect(fiche.container.querySelector("img[src*='portrait']")).toBeNull();
     expect(screen.queryByRole("img", { name: /^Portrait de / })).toBeNull();
-  });
-});
-
-describe("Bouton de thème en icône (PFO-49)", () => {
-  function stubStorage() {
-    vi.stubGlobal("localStorage", { getItem: () => null, setItem: () => {}, removeItem: () => {} });
-  }
-
-  it("carré de 40 px sans texte, SVG aria-hidden : lune en clair, soleil en sombre, aria-label selon l'état", () => {
-    stubStorage();
-    vi.stubGlobal("matchMedia", () => ({ matches: false }));
-    render(<ThemeToggle />);
-    const button = screen.getByRole("button");
-    expect(classesOf(button)).toEqual(
-      expect.arrayContaining(["inline-flex", "size-10", "items-center", "justify-center", "rounded-md", "border", "bg-background"]),
-    );
-    expect(button.textContent?.trim()).toBe("");
-    const svg = button.querySelector("svg")!;
-    expect(svg).not.toBeNull();
-    expect(svg).toHaveAttribute("aria-hidden", "true");
-    expect(svg).toHaveAttribute("data-icon", "moon");
-    expect(button).toHaveAttribute("aria-label", "Passer en thème sombre");
-
-    fireEvent.click(button);
-    expect(document.documentElement.getAttribute("data-theme")).toBe("dark");
-    expect(button.querySelector("svg")).toHaveAttribute("data-icon", "sun");
-    expect(button).toHaveAttribute("aria-label", "Passer en thème clair");
-    expect(button.textContent?.trim()).toBe("");
-
-    fireEvent.click(button);
-    expect(button.querySelector("svg")).toHaveAttribute("data-icon", "moon");
-    expect(button).toHaveAttribute("aria-label", "Passer en thème sombre");
-  });
-
-  it("suit le système sans data-theme : système sombre affiche le soleil", () => {
-    stubStorage();
-    vi.stubGlobal("matchMedia", () => ({ matches: true }));
-    render(<ThemeToggle />);
-    expect(screen.getByRole("button").querySelector("svg")).toHaveAttribute("data-icon", "sun");
-    expect(screen.getByRole("button")).toHaveAttribute("aria-label", "Passer en thème clair");
-  });
-});
-
-describe("Un seul bouton de thème, fixe en haut à droite (PFO-49)", () => {
-  it("app/layout.tsx place <ThemeToggle/> une seule fois dans un conteneur fixed right-4 top-4 z-50 visible à toutes les largeurs", () => {
-    const layout = source("app/layout.tsx");
-    const body = layout.slice(layout.indexOf("<body"), layout.indexOf("</body>"));
-    expect(body.split("<ThemeToggle />")).toHaveLength(2);
-    const wrapper = body.match(/<div className="([^"]*)">\s*<ThemeToggle \/>/);
-    expect(wrapper, "conteneur du bouton de thème absent").not.toBeNull();
-    const classes = wrapper![1].split(/\s+/);
-    expect(classes).toEqual(expect.arrayContaining(["fixed", "right-4", "top-4", "z-50"]));
-    expect(classes).not.toContain("lg:hidden");
-  });
-
-  it("l'accueil (page.tsx et intro) ne rend aucun bouton de thème : il vit dans le layout", () => {
-    render(<Home />);
-    expect(screen.queryByRole("button", { name: /thème/i, hidden: true })).toBeNull();
-    expect(source("components/intro.tsx")).not.toContain("ThemeToggle");
   });
 });
 

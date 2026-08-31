@@ -1,5 +1,6 @@
-// Génère public/opengraph-image.png (1200×630) : nom et titre sur le bleu du thème.
-// Usage : node scripts/og-image.mjs   (à relancer quand content/site.json ou --primary change)
+// Génère public/opengraph-image.png (1200×630) : nom et titre sur le fond sombre du thème,
+// fine bande --primary en bas pour rappeler le bleu.
+// Usage : node scripts/og-image.mjs   (à relancer quand content/site.json ou les tokens changent)
 import { existsSync, readFileSync, writeFileSync } from "node:fs";
 import path from "node:path";
 import { createElement as h } from "react";
@@ -25,13 +26,15 @@ const image = new ImageResponse(
         flexDirection: "column",
         justifyContent: "center",
         padding: "80px",
-        background: token("primary"),
-        color: token("primary-foreground"),
+        position: "relative",
+        background: token("background"),
+        color: token("foreground"),
         fontFamily: "Inter",
       },
     },
+    h("div", { style: { position: "absolute", bottom: 0, left: 0, width: "100%", height: 12, background: token("primary") } }),
     h("div", { style: { fontSize: 72, fontWeight: 600, letterSpacing: "-0.02em" } }, site.name),
-    h("div", { style: { marginTop: 32, fontSize: 36, lineHeight: 1.3, opacity: 0.92 } }, site.title),
+    h("div", { style: { marginTop: 32, fontSize: 36, lineHeight: 1.3, color: token("muted-foreground") } }, site.title),
   ),
   { width: 1200, height: 630, fonts: interFonts() },
 );
