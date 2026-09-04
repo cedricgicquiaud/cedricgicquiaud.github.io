@@ -14,22 +14,28 @@ ni d'employeur. Français seul.
 
 ## Pilot
 
-- Workspace Linear : gm5 (connexion MCP : `linear-gm5` ; clé API : `~/.config/pilot/linear-gm5.env`)
+_Configuration de ce projet. Les règles de la méthode vivent dans la skill `pilot`_
+_(`.claude/skills/pilot/`) ; ici, seulement ce qui est propre à ce dépôt._
+
+**Posé par `init`**
+
+- Workspace Linear : `gm5` (connexion MCP `linear-gm5` ; clé `~/.config/pilot/linear-gm5.env`)
 - Team : Portfolio — clé `PFO` — id `8ded5078-3208-4ef0-bff7-c69b2f87e987`
-- Feature = Project Linear (semaines) ; livraison = jalon = une PR (jours) ; tâche = issue.
-  Toute fiche suit les templates de la team (Feature / Tâche / Bug).
-- Branches : `feature/PFO-<n°-première-tâche>-<slug>`, `fix/PFO-<n°>-<slug>`,
-  `chore/PFO-<n°>-<slug>`
-- PR : une par livraison, titre `PFO-<n°> <titre de la livraison>` ; description cite ses tâches (`Closes PFO-n, …`)
-- Merge : humain
-- Agents en parallèle : 1 (nombre de livraisons produites en même temps par `run` ; monter à 2 ou 3 quand la boucle a fait ses preuves)
-- Cahier de recette : `UAT.md` à la racine (lien depuis chaque feature)
-- Lancer l'app : `scripts/dev-serve.sh start <port>` (Next.js, `http://localhost:<port>/` ; `npm run dev` pour un serveur au premier plan)
-- Testeur : navigateur piloté (Chrome, extension Claude) ; arrêt par `scripts/dev-serve.sh stop <port>` (e2e du script : `npm run test:e2e`, local seulement)
-- Capacité : `days_per_week` dans `.pilot/calibration.md` (observed, ou un nombre pour forcer)
-- Échéance : 2026-09-13
-- Barème : `.pilot/calibration.md`
-- Règle : aucun développement sans fiche Linear ; rien n'est créé dans Linear sans liste validée.
+- Agents en parallèle : `1` (livraisons produites en même temps par `run` ; monter à 2 ou 3
+  quand la boucle a fait ses preuves sur ce projet)
+- Barème et capacité : `.pilot/calibration.md`
+- Cahier de recette : `UAT.md` à la racine, lié depuis chaque feature
+
+**Selon le projet** — une ligne absente vaut « non », et ce qu'on perd est dit à côté
+
+- Lancer l'app : `scripts/dev-serve.sh start <port>` (Next.js, `http://localhost:<port>/` ;
+  `npm run dev` pour un serveur au premier plan ; arrêt par `scripts/dev-serve.sh stop <port>`).
+  Les tests e2e de ce script, `npm run test:e2e`, ne tournent qu'en local.
+- Testeur : `passe visuelle automatisée`
+- Échéance : `2026-09-13` — `sync` annonce alors la marge restante à chaque réconciliation
+
+**Le contrat de ce projet** : aucun développement sans fiche Linear ; rien n'est créé dans
+Linear sans liste validée.
 
 ## Idiomes de code
 
