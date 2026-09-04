@@ -83,6 +83,20 @@ ${entry}`;
 `;
     expect(() => load(front)).toThrow(/alpha.*captures.*entrée 1.*fichier/);
   });
+
+  it("refuse un fichier protocole-relatif (//cdn…) en nommant la fiche et le rang (aucun fichier depuis un domaine tiers)", () => {
+    const front = `captures:
+  - fichier: //cdn.example/a.png
+    legende: L'écran d'accueil
+`;
+    expect(() => load(front)).toThrow(/alpha.*captures.*entrée 1.*domaine tiers/);
+  });
+});
+
+describe("loadFiche — champ visuel (PFO-59)", () => {
+  it("refuse un visuel protocole-relatif (//cdn…) en nommant la fiche (aucun fichier depuis un domaine tiers)", () => {
+    expect(() => load("visuel: //cdn.example/alpha.png\n")).toThrow(/alpha.*visuel.*domaine tiers/);
+  });
 });
 
 describe("loadFiche — champ video (PFO-57)", () => {
@@ -108,6 +122,14 @@ describe("loadFiche — champ video (PFO-57)", () => {
       expect(() => load(front)).toThrow(/alpha.*video.*fichier/);
     },
   );
+
+  it("refuse un fichier protocole-relatif (//cdn…) en nommant la fiche (aucun fichier depuis un domaine tiers)", () => {
+    const front = `video:
+  fichier: //cdn.example/demo.mp4
+  duree: 2 min
+`;
+    expect(() => load(front)).toThrow(/alpha.*video.*domaine tiers/);
+  });
 
   it.each([
     ["absent", ""],
@@ -189,8 +211,20 @@ ${fichier}`);
     expect(readdirSync(dest)).toEqual([]);
   });
 
+  it("refuse une fiche dont la 2e capture a un fichier protocole-relatif (//cdn…), en nommant la fiche et « entrée 2 » (domaine tiers)", () => {
+    const { fiches, dest } = dirs(`captures:
+  - fichier: /projets/alpha/a.png
+    legende: L'écran d'accueil
+  - fichier: //cdn.example/b.png
+    legende: Le rapport
+`);
+    expect(() => syncFiches(fiches, dest)).toThrow(/^alpha\.md : .*captures.*entrée 2.*domaine tiers/);
+    expect(readdirSync(dest)).toEqual([]);
+  });
+
   it.each([
     ["un fichier en https://", "  fichier: https://videos.example/demo.mp4\n  duree: 2 min\n", /fichier/],
+    ["un fichier protocole-relatif (//cdn…)", "  fichier: //cdn.example/demo.mp4\n  duree: 2 min\n", /domaine tiers/],
     ["un fichier sans / initial", "  fichier: projets/alpha/demo.mp4\n  duree: 2 min\n", /fichier/],
     ["une durée « deux minutes »", "  fichier: /projets/alpha/demo.mp4\n  duree: deux minutes\n", /duree/],
     ["une durée absente", "  fichier: /projets/alpha/demo.mp4\n", /duree/],
