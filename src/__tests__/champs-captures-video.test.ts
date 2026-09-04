@@ -118,4 +118,24 @@ describe("loadFiche — champ video (PFO-57)", () => {
 `;
     expect(() => load(front)).toThrow(/alpha.*video.*fichier/);
   });
+
+  it.each([
+    ["absente", ""],
+    ["en toutes lettres (deux minutes)", "deux minutes"],
+    ["sans unité (2)", "2"],
+    ["avec une unité inconnue (2 h)", "2 h"],
+  ])("refuse une durée %s en nommant la fiche (attendu : « N min » ou « N s »)", (_, duree) => {
+    const front = `video:
+  fichier: /projets/alpha/demo.mp4
+${duree ? `  duree: "${duree}"\n` : ""}`;
+    expect(() => load(front)).toThrow(/alpha.*video.*duree/);
+  });
+
+  it("accepte une durée en secondes (« 45 s »)", () => {
+    const front = `video:
+  fichier: /projets/alpha/demo.mp4
+  duree: 45 s
+`;
+    expect(load(front).video?.duree).toBe("45 s");
+  });
 });
