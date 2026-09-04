@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { marked } from "marked";
@@ -24,6 +24,10 @@ export type Frontmatter = {
 };
 
 export type EnBref = { quoi: string; chiffre: string; lien: string };
+/** Une capture d'écran déclarée dans le frontmatter : chemin dans `public/` et légende. */
+export type Capture = { fichier: string; legende: string };
+/** La vidéo de démonstration déclarée dans le frontmatter : chemin dans `public/` et durée (« N min » ou « N s »). */
+export type Video = { fichier: string; duree: string };
 export type Section = { id: string; titre: string; html: string };
 
 // Les cinq sections du gabarit de fiche, dans l'ordre d'affichage.
@@ -41,8 +45,12 @@ export type Fiche = {
   frontmatter: Frontmatter;
   enBref: EnBref;
   sections: Section[];
-  /** Chemin du visuel affiché, relatif à `public/` : le fourni s'il existe, sinon le généré. */
+  /** Chemin du visuel affiché, relatif à `public/` : le fourni s'il est déclaré, sinon le généré. */
   visuel: string;
+  /** Captures déclarées dans le frontmatter, dans l'ordre ; absentes = liste vide. */
+  captures?: Capture[];
+  /** Vidéo déclarée dans le frontmatter ; absente = `undefined`. */
+  video?: Video;
 };
 
 /** Valeur de frontmatter en texte ; un nombre (ex. `periode: 2026`) est accepté, le reste devient vide. */
@@ -118,11 +126,61 @@ function insidePublic(provided: string, publicDir: string): string | undefined {
   return resolved.startsWith(path.resolve(publicDir) + path.sep) ? resolved : undefined;
 }
 
-/** Le visuel fourni (`frontmatter.visuel`) s'il est valide et existe dans `publicDir`, sinon le généré. */
+/**
+ * Le visuel fourni (`frontmatter.visuel`) tel quel, ou le généré si la fiche n'en déclare pas.
+ * Un chemin mal formé (hors `publicDir`, sans `/` initial) lève une erreur qui nomme la fiche ;
+ * l'existence du fichier est contrôlée au build (`scripts/check-assets.mjs`), pas ici.
+ */
 function resolveVisual(slug: string, provided: string | undefined, publicDir: string): string {
-  const file = provided && insidePublic(provided, publicDir);
-  if (file && existsSync(file)) return provided as string;
-  return generatedVisual(slug);
+  if (!provided) return generatedVisual(slug);
+  return requirePublicPath(`${slug} : visuel`, provided, publicDir);
+}
+
+/**
+ * Le chemin `fichier` s'il désigne un fichier de `publicDir` (`/…`, sans en sortir) ; sinon lève « <where> : … ».
+ * Un chemin protocole-relatif (`//cdn…`) passerait le contrôle de `publicDir` mais chargerait depuis un domaine tiers : refusé.
+ */
+function requirePublicPath(where: string, fichier: string, publicDir: string): string {
+  if (!fichier) throw new Error(`${where} : « fichier » requis`);
+  if (fichier.startsWith("//")) throw new Error(`${where} : fichier « ${fichier} » : aucun fichier depuis un domaine tiers`);
+  if (!insidePublic(fichier, publicDir)) throw new Error(`${where} : fichier « ${fichier} » doit être un chemin /… dans public/`);
+  return fichier;
+}
+
+/**
+ * Les entrées de `captures` du frontmatter, dans l'ordre déclaré ; `fichier` (chemin `/…` dans `publicDir`)
+ * et `legende` (non vide) sont requis.
+ */
+function parseCaptures(slug: string, data: Record<string, unknown>, publicDir: string): Capture[] {
+  const entries = Array.isArray(data.captures) ? (data.captures as (Record<string, unknown> | null)[]) : [];
+  return entries.map((entry, i) => {
+    const where = `${slug} : captures, entrée ${i + 1}`;
+    // Une entrée `-` vide est `null` en YAML : elle est refusée comme une entrée sans `fichier`.
+    const fichier = requirePublicPath(where, text(entry?.fichier), publicDir);
+    const legende = text(entry?.legende);
+    if (!legende) throw new Error(`${where} : « legende » requise et non vide`);
+    return { fichier, legende };
+  });
+}
+
+/** Durée d'une vidéo : « N min » ou « N s ». */
+const DUREE = /^\d+ (min|s)$/;
+
+/**
+ * Le champ `video` du frontmatter ; `undefined` s'il est absent.
+ * Un `video` vide ou scalaire (pas un objet) est refusé comme une vidéo sans `fichier`, comme dans `sync`.
+ * `fichier` est un chemin `/…` dans `publicDir` : une URL http(s) (domaine tiers) est refusée.
+ */
+function parseVideo(slug: string, data: Record<string, unknown>, publicDir: string): Video | undefined {
+  if (data.video === undefined) return undefined;
+  const video = (data.video && typeof data.video === "object" ? data.video : {}) as Record<string, unknown>;
+  const where = `${slug} : video`;
+  const declared = text(video.fichier);
+  if (/^https?:\/\//.test(declared)) throw new Error(`${where}, fichier « ${declared} » : aucune vidéo depuis un domaine tiers`);
+  const fichier = requirePublicPath(where, declared, publicDir);
+  const duree = text(video.duree);
+  if (!DUREE.test(duree)) throw new Error(`${where}, duree « ${duree} » : attendu « N min » ou « N s »`);
+  return { fichier, duree };
 }
 
 function parseFiche(slug: string, raw: string, publicDir: string): Fiche {
@@ -136,6 +194,8 @@ function parseFiche(slug: string, raw: string, publicDir: string): Fiche {
     enBref: parseEnBref(content),
     sections: parseSections(content),
     visuel: resolveVisual(slug, frontmatter.visuel, publicDir),
+    captures: parseCaptures(slug, data, publicDir),
+    video: parseVideo(slug, data, publicDir),
   };
 }
 

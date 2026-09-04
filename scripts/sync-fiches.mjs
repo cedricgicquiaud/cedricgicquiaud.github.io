@@ -33,6 +33,47 @@ function problemOf(name, text, seen) {
     if (seen.has(data.ordre)) return `ordre ${data.ordre} déjà pris par ${seen.get(data.ordre)}`;
     seen.set(data.ordre, name);
   }
+  return capturesProblem(data.captures) ?? videoProblem(data.video);
+}
+
+/** Un chemin `/…` qui ne sort pas de `public/` (même règle que `insidePublic` dans lib/fiches.ts). */
+const isPublicPath = (p) => p.startsWith("/") && !path.posix.normalize(p.slice(1)).startsWith("..");
+
+/**
+ * Raison du refus d'un `fichier` déclaré (chemin `/…` dans `public/`), ou `null`.
+ * Un chemin protocole-relatif (`//cdn…`) passerait `isPublicPath` mais chargerait depuis un domaine tiers : refusé.
+ */
+function fichierProblem(fichier) {
+  if (!isText(fichier)) return "« fichier » requis";
+  if (fichier.startsWith("//")) return `fichier « ${fichier} » : aucun fichier depuis un domaine tiers`;
+  if (!isPublicPath(fichier)) return `fichier « ${fichier} » doit être un chemin /… dans public/`;
+  return null;
+}
+
+// Durée d'une vidéo : « N min » ou « N s ».
+const DUREE = /^\d+ (min|s)$/;
+
+/** Raison du refus du champ `video` (fichier local dans `public/`, durée « N min » ou « N s »), ou `null`. */
+function videoProblem(video) {
+  if (video === undefined) return null;
+  const declared = isText(video?.fichier) ? video.fichier.trim() : "";
+  if (/^https?:\/\//.test(declared)) return `video, fichier « ${declared} » : aucune vidéo depuis un domaine tiers`;
+  const fichier = fichierProblem(declared);
+  if (fichier) return `video : ${fichier}`;
+  const duree = isText(video.duree) ? video.duree.trim() : "";
+  if (!DUREE.test(duree)) return `video, duree « ${duree} » : attendu « N min » ou « N s »`;
+  return null;
+}
+
+/** Raison du refus des entrées de `captures` (rang à partir de 1), ou `null`. */
+function capturesProblem(captures) {
+  const entries = Array.isArray(captures) ? captures : [];
+  for (const [i, entry] of entries.entries()) {
+    const where = `captures, entrée ${i + 1}`;
+    const fichier = fichierProblem(entry?.fichier);
+    if (fichier) return `${where} : ${fichier}`;
+    if (!isText(entry?.legende)) return `${where} : « legende » requise et non vide`;
+  }
   return null;
 }
 
