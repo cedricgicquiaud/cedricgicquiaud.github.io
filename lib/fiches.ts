@@ -127,12 +127,13 @@ function insidePublic(provided: string, publicDir: string): string | undefined {
 }
 
 /**
- * Le visuel fourni (`frontmatter.visuel`) tel quel s'il désigne un chemin `/…` de `publicDir`, sinon le généré.
- * L'existence du fichier est contrôlée au build (`scripts/check-assets.mjs`), pas ici.
+ * Le visuel fourni (`frontmatter.visuel`) tel quel, ou le généré si la fiche n'en déclare pas.
+ * Un chemin mal formé (hors `publicDir`, sans `/` initial) lève une erreur qui nomme la fiche ;
+ * l'existence du fichier est contrôlée au build (`scripts/check-assets.mjs`), pas ici.
  */
 function resolveVisual(slug: string, provided: string | undefined, publicDir: string): string {
-  if (provided && insidePublic(provided, publicDir)) return provided;
-  return generatedVisual(slug);
+  if (!provided) return generatedVisual(slug);
+  return requirePublicPath(`${slug} : visuel`, provided, publicDir);
 }
 
 /** Le chemin `fichier` s'il désigne un fichier de `publicDir` (`/…`, sans en sortir) ; sinon lève « <where> : … ». */
