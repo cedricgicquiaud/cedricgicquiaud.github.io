@@ -150,11 +150,13 @@ function parseCaptures(slug: string, data: Record<string, unknown>, publicDir: s
   });
 }
 
-/** Le champ `video` du frontmatter ; `undefined` s'il est absent. */
-function parseVideo(data: Record<string, unknown>): Video | undefined {
+/** Le champ `video` du frontmatter ; `undefined` s'il est absent. Un `fichier` en http(s) est refusé. */
+function parseVideo(slug: string, data: Record<string, unknown>): Video | undefined {
   if (!data.video || typeof data.video !== "object") return undefined;
   const video = data.video as Record<string, unknown>;
-  return { fichier: text(video.fichier), duree: text(video.duree) };
+  const fichier = text(video.fichier);
+  if (/^https?:\/\//.test(fichier)) throw new Error(`${slug} : video, fichier « ${fichier} » : aucune vidéo depuis un domaine tiers`);
+  return { fichier, duree: text(video.duree) };
 }
 
 function parseFiche(slug: string, raw: string, publicDir: string): Fiche {
@@ -169,7 +171,7 @@ function parseFiche(slug: string, raw: string, publicDir: string): Fiche {
     sections: parseSections(content),
     visuel: resolveVisual(slug, frontmatter.visuel, publicDir),
     captures: parseCaptures(slug, data, publicDir),
-    video: parseVideo(data),
+    video: parseVideo(slug, data),
   };
 }
 
