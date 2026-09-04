@@ -36,11 +36,24 @@ function problemOf(name, text, seen) {
   return capturesProblem(data.captures);
 }
 
+/** Un chemin `/…` qui ne sort pas de `public/` (même règle que `insidePublic` dans lib/fiches.ts). */
+const isPublicPath = (p) => p.startsWith("/") && !path.posix.normalize(p.slice(1)).startsWith("..");
+
+/** Raison du refus d'un `fichier` déclaré (chemin `/…` dans `public/`), ou `null`. */
+function fichierProblem(fichier) {
+  if (!isText(fichier)) return "« fichier » requis";
+  if (!isPublicPath(fichier)) return `fichier « ${fichier} » doit être un chemin /… dans public/`;
+  return null;
+}
+
 /** Raison du refus des entrées de `captures` (rang à partir de 1), ou `null`. */
 function capturesProblem(captures) {
   const entries = Array.isArray(captures) ? captures : [];
   for (const [i, entry] of entries.entries()) {
-    if (!isText(entry?.legende)) return `captures, entrée ${i + 1} : « legende » requise et non vide`;
+    const where = `captures, entrée ${i + 1}`;
+    const fichier = fichierProblem(entry?.fichier);
+    if (fichier) return `${where} : ${fichier}`;
+    if (!isText(entry?.legende)) return `${where} : « legende » requise et non vide`;
   }
   return null;
 }
