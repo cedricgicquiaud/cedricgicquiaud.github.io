@@ -133,6 +133,13 @@ function resolveVisual(slug: string, provided: string | undefined, publicDir: st
   return generatedVisual(slug);
 }
 
+/** Le chemin `fichier` s'il désigne un fichier de `publicDir` (`/…`, sans en sortir) ; sinon lève « <where> : … ». */
+function requirePublicPath(where: string, fichier: string, publicDir: string): string {
+  if (!fichier) throw new Error(`${where} : « fichier » requis`);
+  if (!insidePublic(fichier, publicDir)) throw new Error(`${where} : fichier « ${fichier} » doit être un chemin /… dans public/`);
+  return fichier;
+}
+
 /**
  * Les entrées de `captures` du frontmatter, dans l'ordre déclaré ; `fichier` (chemin `/…` dans `publicDir`)
  * et `legende` (non vide) sont requis.
@@ -141,9 +148,7 @@ function parseCaptures(slug: string, data: Record<string, unknown>, publicDir: s
   const entries = Array.isArray(data.captures) ? (data.captures as Record<string, unknown>[]) : [];
   return entries.map((entry, i) => {
     const where = `${slug} : captures, entrée ${i + 1}`;
-    const fichier = text(entry.fichier);
-    if (!fichier) throw new Error(`${where} : « fichier » requis`);
-    if (!insidePublic(fichier, publicDir)) throw new Error(`${where} : fichier « ${fichier} » doit être un chemin /… dans public/`);
+    const fichier = requirePublicPath(where, text(entry.fichier), publicDir);
     const legende = text(entry.legende);
     if (!legende) throw new Error(`${where} : « legende » requise et non vide`);
     return { fichier, legende };
@@ -161,10 +166,9 @@ function parseVideo(slug: string, data: Record<string, unknown>, publicDir: stri
   if (!data.video || typeof data.video !== "object") return undefined;
   const video = data.video as Record<string, unknown>;
   const where = `${slug} : video`;
-  const fichier = text(video.fichier);
-  if (!fichier) throw new Error(`${where} : « fichier » requis`);
-  if (/^https?:\/\//.test(fichier)) throw new Error(`${where}, fichier « ${fichier} » : aucune vidéo depuis un domaine tiers`);
-  if (!insidePublic(fichier, publicDir)) throw new Error(`${where}, fichier « ${fichier} » doit être un chemin /… dans public/`);
+  const declared = text(video.fichier);
+  if (/^https?:\/\//.test(declared)) throw new Error(`${where}, fichier « ${declared} » : aucune vidéo depuis un domaine tiers`);
+  const fichier = requirePublicPath(where, declared, publicDir);
   const duree = text(video.duree);
   if (!DUREE.test(duree)) throw new Error(`${where}, duree « ${duree} » : attendu « N min » ou « N s »`);
   return { fichier, duree };
