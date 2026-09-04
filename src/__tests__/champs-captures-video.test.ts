@@ -164,4 +164,14 @@ video:
     expect(syncFiches(fiches, dest)).toBe(1);
     expect(readdirSync(dest)).toEqual(["alpha.md"]);
   });
+
+  it("refuse une fiche dont la 2e capture n'a pas de légende, en nommant la fiche et « entrée 2 », sans rien copier", () => {
+    const { fiches, dest } = dirs(`captures:
+  - fichier: /projets/alpha/a.png
+    legende: L'écran d'accueil
+  - fichier: /projets/alpha/b.png
+`);
+    expect(() => syncFiches(fiches, dest)).toThrow(/^alpha\.md : .*captures.*entrée 2.*legende/);
+    expect(readdirSync(dest)).toEqual([]);
+  });
 });
