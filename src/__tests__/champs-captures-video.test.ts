@@ -71,4 +71,15 @@ describe("loadFiche — champ captures (PFO-56)", () => {
 ${entry}`;
     expect(() => load(front)).toThrow(/alpha.*captures.*entrée 2.*legende/);
   });
+
+  it.each([
+    ["qui sort de public/ (../)", "/../outside.png"],
+    ["sans / initial", "projets/alpha/a.png"],
+  ])("refuse un fichier %s en nommant la fiche et le rang de l'entrée", (_, fichier) => {
+    const front = `captures:
+  - fichier: ${fichier}
+    legende: L'écran d'accueil
+`;
+    expect(() => load(front)).toThrow(/alpha.*captures.*entrée 1.*fichier/);
+  });
 });
