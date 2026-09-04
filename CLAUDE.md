@@ -39,7 +39,7 @@ ni d'employeur. Français seul.
 - Aucune liste de mots sensibles en clair dans le dépôt : empreintes SHA-256 seulement (`content/forbidden.txt`).
 - Un test qui lance `next build` ne tourne jamais en parallèle d'un autre : `fileParallelism: false` reste en place dans `vitest.config.ts`.
 - Un composant ne se positionne pas lui-même (`fixed`, `top-*`, `right-*`) ; son parent dans `page.tsx` ou `layout.tsx` le place.
-- La variante `dark:` couvre les deux états sombres (système et forcé) ; ne pas la simplifier.
+- Thème sombre unique : un seul bloc `:root` de tokens, `color-scheme: dark` ; pas de variante `dark:` dans les composants.
 - Un champ de fiche (`depot`, `demo`, `visuel`) est une URL ou un chemin, ou rien ; la prose va dans le corps de la fiche.
 - Conflit entre livraisons : merge de `main` dans la branche, jamais de rebase ; `UAT.md` se réassemble section par section dans l'ordre des livraisons.
 - Un worktree a son propre `node_modules` (`npm ci`) ; jamais de lien symbolique (Turbopack le refuse).
@@ -51,7 +51,7 @@ ni d'employeur. Français seul.
 
 - Titre court sous le nom : « Développeur d'agents IA ».
 - Pas de photo sur le site (portrait retiré le 30/08 ; composant conservé, non rendu).
-- Pied de page pleine largeur sous les deux colonnes.
-- Bouton de thème : une icône lune/soleil fixée en haut à droite, sur toutes les pages et à toutes les largeurs.
+- Pas de pied de page (retiré le 30/08) ; les liens vivent dans la colonne gauche.
+- Pas de bouton de thème : le site est sombre seul (décision du 30/08, remplace la bascule).
 - Quadrillage `bg-grid` sur toute la page.
 - Échelle typographique du modèle : titre 48 px, titre court 20 px, corps 16 px, titres de section 14 px en capitales.
