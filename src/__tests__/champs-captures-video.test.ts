@@ -92,4 +92,8 @@ describe("loadFiche — champ video (PFO-57)", () => {
 `;
     expect(load(front).video).toEqual({ fichier: "/projets/alpha/demo.mp4", duree: "2 min" });
   });
+
+  it("expose undefined quand la fiche ne déclare pas de vidéo", () => {
+    expect(load().video).toBeUndefined();
+  });
 });
