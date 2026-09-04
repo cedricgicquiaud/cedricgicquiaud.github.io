@@ -1,7 +1,17 @@
 # Méthode pilot — version installée
 
-- Version : `a13738d` (dépôt `pilot`)
+- Version : `1ea7d60` (dépôt `pilot`)
 - Installée le : 2026-09-04
+
+Fiches d'agent posées par l'installation — cette liste sert à retirer proprement
+une fiche qui sortirait de la méthode. Ne pas la modifier à la main.
+
+- fiche: contradicteur.md
+- fiche: correcteur.md
+- fiche: decoupeur.md
+- fiche: tdd-writer.md
+- fiche: testeur.md
+- fiche: verifier.md
 
 Ce dossier est une **copie**. La version de référence vit dans le dépôt `pilot`, dans
 `implementation/`. Une amélioration de la méthode s'y fait, sur une branche, avec une PR.
