@@ -33,7 +33,7 @@ function problemOf(name, text, seen) {
     if (seen.has(data.ordre)) return `ordre ${data.ordre} déjà pris par ${seen.get(data.ordre)}`;
     seen.set(data.ordre, name);
   }
-  return capturesProblem(data.captures);
+  return capturesProblem(data.captures) ?? videoProblem(data.video);
 }
 
 /** Un chemin `/…` qui ne sort pas de `public/` (même règle que `insidePublic` dans lib/fiches.ts). */
@@ -43,6 +43,22 @@ const isPublicPath = (p) => p.startsWith("/") && !path.posix.normalize(p.slice(1
 function fichierProblem(fichier) {
   if (!isText(fichier)) return "« fichier » requis";
   if (!isPublicPath(fichier)) return `fichier « ${fichier} » doit être un chemin /… dans public/`;
+  return null;
+}
+
+// Durée d'une vidéo : « N min » ou « N s ».
+const DUREE = /^\d+ (min|s)$/;
+
+/** Raison du refus du champ `video` (fichier local dans `public/`, durée « N min » ou « N s »), ou `null`. */
+function videoProblem(video) {
+  if (video === undefined) return null;
+  if (/^https?:\/\//.test(String(video?.fichier ?? ""))) {
+    return `video, fichier « ${video.fichier} » : aucune vidéo depuis un domaine tiers`;
+  }
+  const fichier = fichierProblem(video?.fichier);
+  if (fichier) return `video : ${fichier}`;
+  const duree = isText(video.duree) ? video.duree.trim() : "";
+  if (!DUREE.test(duree)) return `video, duree « ${duree} » : attendu « N min » ou « N s »`;
   return null;
 }
 
