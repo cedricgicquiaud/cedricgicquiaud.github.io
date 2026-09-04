@@ -91,6 +91,15 @@ ${entry}`;
 `;
     expect(() => load(front)).toThrow(/alpha.*captures.*entrée 1.*domaine tiers/);
   });
+
+  it("refuse une entrée nulle (« - » sans rien) en nommant la fiche et le rang, au lieu d'un TypeError", () => {
+    const front = `captures:
+  - fichier: /projets/alpha/a.png
+    legende: L'écran d'accueil
+  -
+`;
+    expect(() => load(front)).toThrow(/alpha.*captures.*entrée 2.*fichier/);
+  });
 });
 
 describe("loadFiche — champ visuel (PFO-59)", () => {
@@ -110,6 +119,13 @@ describe("loadFiche — champ video (PFO-57)", () => {
 
   it("expose undefined quand la fiche ne déclare pas de vidéo", () => {
     expect(load().video).toBeUndefined();
+  });
+
+  it.each([
+    ["vide (« video: » sans rien)", "video:\n"],
+    ["scalaire (« video: /projets/alpha/demo.mp4 »)", "video: /projets/alpha/demo.mp4\n"],
+  ])("refuse un champ video %s en nommant la fiche, comme sync, au lieu de l'ignorer", (_, front) => {
+    expect(() => load(front)).toThrow(/alpha.*video.*fichier/);
   });
 
   it.each(["http://videos.example/demo.mp4", "https://videos.example/demo.mp4"])(
