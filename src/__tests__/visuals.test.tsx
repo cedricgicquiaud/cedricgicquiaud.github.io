@@ -49,9 +49,9 @@ describe("loadFiche — champ visuel (PFO-35)", () => {
     expect(loadFiche("alpha", fiches, pub).visuel).toBe("/projets/alpha.png");
   });
 
-  it("avec un champ visuel qui pointe sur un fichier absent, retombe sur le généré sans erreur", () => {
+  it("avec un champ visuel qui pointe sur un fichier absent, expose ce chemin tel quel (l'existence est contrôlée au build)", () => {
     const { fiches, pub } = sandbox("visuel: /projets/absent.png\n");
-    expect(loadFiche("alpha", fiches, pub).visuel).toBe("/projets/generated/alpha.png");
+    expect(loadFiche("alpha", fiches, pub).visuel).toBe("/projets/absent.png");
   });
 
   it("refuse un chemin qui sort de public/ (../../x), même si le fichier existe", () => {
