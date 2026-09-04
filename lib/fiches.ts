@@ -129,13 +129,17 @@ function resolveVisual(slug: string, provided: string | undefined, publicDir: st
   return generatedVisual(slug);
 }
 
-/** Les entrées de `captures` du frontmatter, dans l'ordre déclaré ; `fichier` et `legende` (non vide) sont requis. */
-function parseCaptures(slug: string, data: Record<string, unknown>): Capture[] {
+/**
+ * Les entrées de `captures` du frontmatter, dans l'ordre déclaré ; `fichier` (chemin `/…` dans `publicDir`)
+ * et `legende` (non vide) sont requis.
+ */
+function parseCaptures(slug: string, data: Record<string, unknown>, publicDir: string): Capture[] {
   const entries = Array.isArray(data.captures) ? (data.captures as Record<string, unknown>[]) : [];
   return entries.map((entry, i) => {
     const where = `${slug} : captures, entrée ${i + 1}`;
     const fichier = text(entry.fichier);
     if (!fichier) throw new Error(`${where} : « fichier » requis`);
+    if (!insidePublic(fichier, publicDir)) throw new Error(`${where} : fichier « ${fichier} » doit être un chemin /… dans public/`);
     const legende = text(entry.legende);
     if (!legende) throw new Error(`${where} : « legende » requise et non vide`);
     return { fichier, legende };
@@ -153,7 +157,7 @@ function parseFiche(slug: string, raw: string, publicDir: string): Fiche {
     enBref: parseEnBref(content),
     sections: parseSections(content),
     visuel: resolveVisual(slug, frontmatter.visuel, publicDir),
-    captures: parseCaptures(slug, data),
+    captures: parseCaptures(slug, data, publicDir),
   };
 }
 
