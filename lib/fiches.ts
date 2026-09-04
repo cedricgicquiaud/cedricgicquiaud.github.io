@@ -1,4 +1,4 @@
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { marked } from "marked";
@@ -45,7 +45,7 @@ export type Fiche = {
   frontmatter: Frontmatter;
   enBref: EnBref;
   sections: Section[];
-  /** Chemin du visuel affiché, relatif à `public/` : le fourni s'il existe, sinon le généré. */
+  /** Chemin du visuel affiché, relatif à `public/` : le fourni s'il est déclaré, sinon le généré. */
   visuel: string;
   /** Captures déclarées dans le frontmatter, dans l'ordre ; absentes = liste vide. */
   captures?: Capture[];
@@ -126,10 +126,12 @@ function insidePublic(provided: string, publicDir: string): string | undefined {
   return resolved.startsWith(path.resolve(publicDir) + path.sep) ? resolved : undefined;
 }
 
-/** Le visuel fourni (`frontmatter.visuel`) s'il est valide et existe dans `publicDir`, sinon le généré. */
+/**
+ * Le visuel fourni (`frontmatter.visuel`) tel quel s'il désigne un chemin `/…` de `publicDir`, sinon le généré.
+ * L'existence du fichier est contrôlée au build (`scripts/check-assets.mjs`), pas ici.
+ */
 function resolveVisual(slug: string, provided: string | undefined, publicDir: string): string {
-  const file = provided && insidePublic(provided, publicDir);
-  if (file && existsSync(file)) return provided as string;
+  if (provided && insidePublic(provided, publicDir)) return provided;
   return generatedVisual(slug);
 }
 
