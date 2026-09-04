@@ -24,6 +24,8 @@ export type Frontmatter = {
 };
 
 export type EnBref = { quoi: string; chiffre: string; lien: string };
+/** Une capture d'écran déclarée dans le frontmatter : chemin dans `public/` et légende. */
+export type Capture = { fichier: string; legende: string };
 export type Section = { id: string; titre: string; html: string };
 
 // Les cinq sections du gabarit de fiche, dans l'ordre d'affichage.
@@ -43,6 +45,8 @@ export type Fiche = {
   sections: Section[];
   /** Chemin du visuel affiché, relatif à `public/` : le fourni s'il existe, sinon le généré. */
   visuel: string;
+  /** Captures déclarées dans le frontmatter, dans l'ordre ; absentes = liste vide. */
+  captures?: Capture[];
 };
 
 /** Valeur de frontmatter en texte ; un nombre (ex. `periode: 2026`) est accepté, le reste devient vide. */
@@ -125,6 +129,12 @@ function resolveVisual(slug: string, provided: string | undefined, publicDir: st
   return generatedVisual(slug);
 }
 
+/** Les entrées de `captures` du frontmatter, dans l'ordre déclaré. */
+function parseCaptures(data: Record<string, unknown>): Capture[] {
+  const entries = Array.isArray(data.captures) ? (data.captures as Record<string, unknown>[]) : [];
+  return entries.map((entry) => ({ fichier: text(entry.fichier), legende: text(entry.legende) }));
+}
+
 function parseFiche(slug: string, raw: string, publicDir: string): Fiche {
   const { data, content } = matter(raw);
   const titre = content.match(/^# (.+)$/m)?.[1].trim() ?? "";
@@ -136,6 +146,7 @@ function parseFiche(slug: string, raw: string, publicDir: string): Fiche {
     enBref: parseEnBref(content),
     sections: parseSections(content),
     visuel: resolveVisual(slug, frontmatter.visuel, publicDir),
+    captures: parseCaptures(data),
   };
 }
 
