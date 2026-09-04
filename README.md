@@ -23,5 +23,5 @@ npm run build      # produit le dossier out/
 npm run og         # régénère public/opengraph-image.png depuis content/site.json (à commiter)
 ```
 
-Toutes les couleurs vivent dans `app/globals.css` (thème clair, système sombre, sombre forcé
-via `data-theme`). Un test refuse toute couleur en dur ailleurs et vérifie le contraste des tokens.
+Thème sombre unique (un seul bloc de tokens dans `app/globals.css`).
+
