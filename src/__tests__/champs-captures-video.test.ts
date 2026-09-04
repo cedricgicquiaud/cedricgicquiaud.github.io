@@ -188,4 +188,16 @@ ${fichier}`);
     expect(() => syncFiches(fiches, dest)).toThrow(/^alpha\.md : .*captures.*entrée 2.*fichier/);
     expect(readdirSync(dest)).toEqual([]);
   });
+
+  it.each([
+    ["un fichier en https://", "  fichier: https://videos.example/demo.mp4\n  duree: 2 min\n", /fichier/],
+    ["un fichier sans / initial", "  fichier: projets/alpha/demo.mp4\n  duree: 2 min\n", /fichier/],
+    ["une durée « deux minutes »", "  fichier: /projets/alpha/demo.mp4\n  duree: deux minutes\n", /duree/],
+    ["une durée absente", "  fichier: /projets/alpha/demo.mp4\n", /duree/],
+  ])("refuse une fiche dont la vidéo a %s, en nommant la fiche, sans rien copier", (_, video, raison) => {
+    const { fiches, dest } = dirs(`video:\n${video}`);
+    expect(() => syncFiches(fiches, dest)).toThrow(/^alpha\.md : .*video/);
+    expect(() => syncFiches(fiches, dest)).toThrow(raison);
+    expect(readdirSync(dest)).toEqual([]);
+  });
 });
