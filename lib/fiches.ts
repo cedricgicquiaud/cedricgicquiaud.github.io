@@ -150,6 +150,9 @@ function parseCaptures(slug: string, data: Record<string, unknown>, publicDir: s
   });
 }
 
+/** Durée d'une vidéo : « N min » ou « N s ». */
+const DUREE = /^\d+ (min|s)$/;
+
 /**
  * Le champ `video` du frontmatter ; `undefined` s'il est absent.
  * `fichier` est un chemin `/…` dans `publicDir` : une URL http(s) (domaine tiers) est refusée.
@@ -162,7 +165,9 @@ function parseVideo(slug: string, data: Record<string, unknown>, publicDir: stri
   if (!fichier) throw new Error(`${where} : « fichier » requis`);
   if (/^https?:\/\//.test(fichier)) throw new Error(`${where}, fichier « ${fichier} » : aucune vidéo depuis un domaine tiers`);
   if (!insidePublic(fichier, publicDir)) throw new Error(`${where}, fichier « ${fichier} » doit être un chemin /… dans public/`);
-  return { fichier, duree: text(video.duree) };
+  const duree = text(video.duree);
+  if (!DUREE.test(duree)) throw new Error(`${where}, duree « ${duree} » : attendu « N min » ou « N s »`);
+  return { fichier, duree };
 }
 
 function parseFiche(slug: string, raw: string, publicDir: string): Fiche {
