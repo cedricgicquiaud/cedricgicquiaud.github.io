@@ -396,3 +396,49 @@ _Dépend de la livraison 1 (`lib/fiches.ts`, `npm run sync`) : à jouer après s
 - [ ] Contraste : inspecteur sur l'À propos, paragraphes en `rgb(163, 177, 204)` (atténué), titres en `rgb(230, 234, 242)`, pastilles cyber en `rgb(94, 234, 212)`, fond `rgb(11, 18, 32)`.
 - [ ] Image de partage : ouvrir `public/opengraph-image.png`, nom et titre sur le fond sombre `#0b1220`, fine bande bleue `#7c9bff` en bas ; `npm run og` puis `git status` ne montre aucune modification.
 - [ ] Refus : `grep -c "data-theme\|prefers-color-scheme\|localStorage" app/globals.css app/layout.tsx` affiche `0` pour chaque fichier ; `ls components/theme-toggle.tsx` échoue ; `grep -c "^:root" app/globals.css` affiche `1` ; `grep -c "multiply" components/portrait.tsx components/project-card.tsx` affiche `0` pour les deux.
+
+<a id="f4"></a>
+## Livraison 14 — Fiche : captures et vidéo déclarées
+
+Les tests ci-dessous se jouent sur une copie d'une fiche du dossier parent `../fiches/` (ex. `slice.md`) : on ajoute des lignes dans son frontmatter (le bloc entre les deux `---` en tête de fichier), on lance `npm run sync`, puis on retire les lignes. Aucun écran n'est concerné : cette livraison ne touche que la lecture des fiches ; l'affichage des captures et de la vidéo vient dans les livraisons 3 et 4.
+
+### PFO-56 — Champ « captures » chargé
+
+- [ ] Dans `../fiches/slice.md`, ajouter au frontmatter :
+  ```yaml
+  captures:
+    - fichier: /projets/slice/accueil.png
+      legende: L'écran d'accueil
+    - fichier: /projets/slice/rapport.png
+      legende: Le rapport de tests
+  ```
+  puis `npm run sync` : la console affiche « 7 fiches synchronisées » et `grep -c legende content/fiches/slice.md` affiche `2`.
+- [ ] Sans ces lignes, `npm run sync` affiche toujours « 7 fiches synchronisées » : une fiche sans `captures` reste acceptée telle quelle (aucune des 7 fiches n'en déclare aujourd'hui).
+- [ ] Refus : retirer la ligne `legende: Le rapport de tests` (deuxième entrée), relancer `npm run sync` : la commande échoue (code 1) avec « slice.md : captures, entrée 2 : « legende » requise et non vide » ; `git status content/fiches/` ne montre aucune copie modifiée. Même refus avec `legende: ""` ou `legende: "   "`.
+- [ ] Refus : remplacer `fichier: /projets/slice/rapport.png` par `fichier: /../rapport.png`, puis par `fichier: projets/slice/rapport.png` (sans `/` initial) : chaque fois, `npm run sync` échoue avec « slice.md : captures, entrée 2 : fichier « … » doit être un chemin /… dans public/ ». Retirer la ligne `fichier:` entière : « slice.md : captures, entrée 2 : « fichier » requis ».
+
+### PFO-57 — Champ « video » chargé
+
+- [ ] Dans `../fiches/slice.md`, ajouter au frontmatter :
+  ```yaml
+  video:
+    fichier: /projets/slice/demo.mp4
+    duree: 2 min
+  ```
+  puis `npm run sync` : « 7 fiches synchronisées » et `grep -c "duree: 2 min" content/fiches/slice.md` affiche `1`. Même résultat avec `duree: 45 s`.
+- [ ] Refus : remplacer `fichier: /projets/slice/demo.mp4` par `fichier: https://www.youtube.com/watch?v=x`, relancer `npm run sync` : échec avec « slice.md : video, fichier « https://… » : aucune vidéo depuis un domaine tiers ». Même chose en `http://`.
+- [ ] Refus : `fichier: projets/slice/demo.mp4` (sans `/` initial) : échec avec « slice.md : video : fichier « … » doit être un chemin /… dans public/ ».
+- [ ] Refus : `duree: deux minutes`, puis `duree: 2`, puis la ligne `duree:` retirée : chaque fois, échec avec « slice.md : video, duree « … » : attendu « N min » ou « N s » ».
+
+### PFO-58 — Refus dans sync
+
+- [ ] Avec les blocs `captures` et `video` conformes des deux tâches précédentes ajoutés ensemble à `slice.md`, `npm run sync` copie les 7 fiches ; `diff ../fiches/slice.md content/fiches/slice.md` n'affiche rien.
+- [ ] Refus : `rm content/fiches/*.md`, retirer la légende de la deuxième capture, `npm run sync` : échec « slice.md : … entrée 2 … » et `ls content/fiches/` reste vide (rien n'est copié quand une fiche est refusée). Restaurer ensuite avec un `npm run sync` sur des fiches conformes.
+- [ ] Refus : même scénario avec `video.fichier` en `https://` ou `duree: deux minutes` : échec avec un message qui commence par « slice.md : video », rien de copié.
+
+### PFO-59 — Visuel déclaré exposé tel quel
+
+- [ ] Sans champ `visuel` dans `content/fiches/slice.md` (cas actuel) : `npm run build` passe, et `/projets/slice/` montre le visuel généré `/projets/generated/slice.png` (inchangé).
+- [ ] Ajouter `visuel: /projets/slice/absent.png` dans `content/fiches/slice.md` (fichier volontairement inexistant), puis `npx next build` (sans `npm run build`, dont le contrôle des fichiers arrive en livraison 2) : le build passe et `grep -o "/projets/slice/absent.png" out/projets/slice/index.html` affiche le chemin déclaré ; la page ne retombe plus sur le généré. Retirer la ligne ensuite.
+- [ ] Refus : `visuel: /../slice.png` puis `visuel: projets/slice.png` dans `content/fiches/slice.md`, `npx next build` : le build échoue avec « slice : visuel : fichier « … » doit être un chemin /… dans public/ » au lieu de passer en silence. Retirer la ligne ensuite.
+- [ ] `grep -n 'id="f4"' UAT.md` affiche cette section ; le lien `UAT.md#f4` de la fiche feature « Chaque projet a un visuel » y mène.
