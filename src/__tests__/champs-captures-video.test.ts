@@ -83,3 +83,13 @@ ${entry}`;
     expect(() => load(front)).toThrow(/alpha.*captures.*entrée 1.*fichier/);
   });
 });
+
+describe("loadFiche — champ video (PFO-57)", () => {
+  it("expose la vidéo déclarée avec fichier et duree", () => {
+    const front = `video:
+  fichier: /projets/alpha/demo.mp4
+  duree: 2 min
+`;
+    expect(load(front).video).toEqual({ fichier: "/projets/alpha/demo.mp4", duree: "2 min" });
+  });
+});
