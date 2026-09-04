@@ -129,13 +129,16 @@ function resolveVisual(slug: string, provided: string | undefined, publicDir: st
   return generatedVisual(slug);
 }
 
-/** Les entrées de `captures` du frontmatter, dans l'ordre déclaré ; une entrée sans `fichier` est refusée. */
+/** Les entrées de `captures` du frontmatter, dans l'ordre déclaré ; `fichier` et `legende` (non vide) sont requis. */
 function parseCaptures(slug: string, data: Record<string, unknown>): Capture[] {
   const entries = Array.isArray(data.captures) ? (data.captures as Record<string, unknown>[]) : [];
   return entries.map((entry, i) => {
+    const where = `${slug} : captures, entrée ${i + 1}`;
     const fichier = text(entry.fichier);
-    if (!fichier) throw new Error(`${slug} : captures, entrée ${i + 1} : « fichier » requis`);
-    return { fichier, legende: text(entry.legende) };
+    if (!fichier) throw new Error(`${where} : « fichier » requis`);
+    const legende = text(entry.legende);
+    if (!legende) throw new Error(`${where} : « legende » requise et non vide`);
+    return { fichier, legende };
   });
 }
 
