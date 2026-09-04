@@ -129,10 +129,14 @@ function resolveVisual(slug: string, provided: string | undefined, publicDir: st
   return generatedVisual(slug);
 }
 
-/** Les entrées de `captures` du frontmatter, dans l'ordre déclaré. */
-function parseCaptures(data: Record<string, unknown>): Capture[] {
+/** Les entrées de `captures` du frontmatter, dans l'ordre déclaré ; une entrée sans `fichier` est refusée. */
+function parseCaptures(slug: string, data: Record<string, unknown>): Capture[] {
   const entries = Array.isArray(data.captures) ? (data.captures as Record<string, unknown>[]) : [];
-  return entries.map((entry) => ({ fichier: text(entry.fichier), legende: text(entry.legende) }));
+  return entries.map((entry, i) => {
+    const fichier = text(entry.fichier);
+    if (!fichier) throw new Error(`${slug} : captures, entrée ${i + 1} : « fichier » requis`);
+    return { fichier, legende: text(entry.legende) };
+  });
 }
 
 function parseFiche(slug: string, raw: string, publicDir: string): Fiche {
@@ -146,7 +150,7 @@ function parseFiche(slug: string, raw: string, publicDir: string): Fiche {
     enBref: parseEnBref(content),
     sections: parseSections(content),
     visuel: resolveVisual(slug, frontmatter.visuel, publicDir),
-    captures: parseCaptures(data),
+    captures: parseCaptures(slug, data),
   };
 }
 
