@@ -107,4 +107,15 @@ describe("loadFiche — champ video (PFO-57)", () => {
       expect(() => load(front)).toThrow(/alpha.*video.*fichier/);
     },
   );
+
+  it.each([
+    ["absent", ""],
+    ["qui sort de public/ (../)", "/../demo.mp4"],
+    ["sans / initial", "projets/alpha/demo.mp4"],
+  ])("refuse un fichier %s en nommant la fiche", (_, fichier) => {
+    const front = `video:
+  ${fichier ? `fichier: ${fichier}\n  ` : ""}duree: 2 min
+`;
+    expect(() => load(front)).toThrow(/alpha.*video.*fichier/);
+  });
 });
