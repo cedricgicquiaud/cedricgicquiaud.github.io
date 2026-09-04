@@ -136,9 +136,13 @@ function resolveVisual(slug: string, provided: string | undefined, publicDir: st
   return requirePublicPath(`${slug} : visuel`, provided, publicDir);
 }
 
-/** Le chemin `fichier` s'il désigne un fichier de `publicDir` (`/…`, sans en sortir) ; sinon lève « <where> : … ». */
+/**
+ * Le chemin `fichier` s'il désigne un fichier de `publicDir` (`/…`, sans en sortir) ; sinon lève « <where> : … ».
+ * Un chemin protocole-relatif (`//cdn…`) passerait le contrôle de `publicDir` mais chargerait depuis un domaine tiers : refusé.
+ */
 function requirePublicPath(where: string, fichier: string, publicDir: string): string {
   if (!fichier) throw new Error(`${where} : « fichier » requis`);
+  if (fichier.startsWith("//")) throw new Error(`${where} : fichier « ${fichier} » : aucun fichier depuis un domaine tiers`);
   if (!insidePublic(fichier, publicDir)) throw new Error(`${where} : fichier « ${fichier} » doit être un chemin /… dans public/`);
   return fichier;
 }

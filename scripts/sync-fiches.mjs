@@ -39,9 +39,13 @@ function problemOf(name, text, seen) {
 /** Un chemin `/…` qui ne sort pas de `public/` (même règle que `insidePublic` dans lib/fiches.ts). */
 const isPublicPath = (p) => p.startsWith("/") && !path.posix.normalize(p.slice(1)).startsWith("..");
 
-/** Raison du refus d'un `fichier` déclaré (chemin `/…` dans `public/`), ou `null`. */
+/**
+ * Raison du refus d'un `fichier` déclaré (chemin `/…` dans `public/`), ou `null`.
+ * Un chemin protocole-relatif (`//cdn…`) passerait `isPublicPath` mais chargerait depuis un domaine tiers : refusé.
+ */
 function fichierProblem(fichier) {
   if (!isText(fichier)) return "« fichier » requis";
+  if (fichier.startsWith("//")) return `fichier « ${fichier} » : aucun fichier depuis un domaine tiers`;
   if (!isPublicPath(fichier)) return `fichier « ${fichier} » doit être un chemin /… dans public/`;
   return null;
 }
