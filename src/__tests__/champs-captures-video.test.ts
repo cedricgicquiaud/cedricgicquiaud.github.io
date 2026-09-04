@@ -174,4 +174,18 @@ video:
     expect(() => syncFiches(fiches, dest)).toThrow(/^alpha\.md : .*captures.*entrée 2.*legende/);
     expect(readdirSync(dest)).toEqual([]);
   });
+
+  it.each([
+    ["n'a pas de fichier", ""],
+    ["a un fichier qui sort de public/ (../)", "    fichier: /../outside.png\n"],
+    ["a un fichier sans / initial", "    fichier: projets/alpha/b.png\n"],
+  ])("refuse une fiche dont la 2e capture %s, en nommant la fiche et « entrée 2 »", (_, fichier) => {
+    const { fiches, dest } = dirs(`captures:
+  - fichier: /projets/alpha/a.png
+    legende: L'écran d'accueil
+  - legende: Le rapport
+${fichier}`);
+    expect(() => syncFiches(fiches, dest)).toThrow(/^alpha\.md : .*captures.*entrée 2.*fichier/);
+    expect(readdirSync(dest)).toEqual([]);
+  });
 });
