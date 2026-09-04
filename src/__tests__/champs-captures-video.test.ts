@@ -1,8 +1,9 @@
-import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { loadFiche } from "../../lib/fiches";
+import { syncFiches } from "../../scripts/sync-fiches.mjs";
 
 /** Une fiche factice minimale ; `front` : lignes YAML ajoutées au frontmatter. */
 const fiche = (front = "") => `---
@@ -137,5 +138,30 @@ ${duree ? `  duree: "${duree}"\n` : ""}`;
   duree: 45 s
 `;
     expect(load(front).video?.duree).toBe("45 s");
+  });
+});
+
+describe("sync-fiches — captures et video (PFO-58)", () => {
+  /** Un dossier de fiches avec `alpha.md` (frontmatter complété par `front`) et un dossier de destination vide. */
+  function dirs(front = "") {
+    const { fiches } = sandbox(front);
+    const dest = mkdtempSync(path.join(tmpdir(), "champs-dest-"));
+    return { fiches, dest };
+  }
+
+  const CONFORME = `captures:
+  - fichier: /projets/alpha/a.png
+    legende: L'écran d'accueil
+  - fichier: /projets/alpha/b.png
+    legende: Le rapport
+video:
+  fichier: /projets/alpha/demo.mp4
+  duree: 2 min
+`;
+
+  it("copie une fiche dont les captures et la vidéo sont conformes", () => {
+    const { fiches, dest } = dirs(CONFORME);
+    expect(syncFiches(fiches, dest)).toBe(1);
+    expect(readdirSync(dest)).toEqual(["alpha.md"]);
   });
 });
