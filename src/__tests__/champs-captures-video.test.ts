@@ -96,4 +96,15 @@ describe("loadFiche — champ video (PFO-57)", () => {
   it("expose undefined quand la fiche ne déclare pas de vidéo", () => {
     expect(load().video).toBeUndefined();
   });
+
+  it.each(["http://videos.example/demo.mp4", "https://videos.example/demo.mp4"])(
+    "refuse un fichier en %s en nommant la fiche (aucune vidéo depuis un domaine tiers)",
+    (fichier) => {
+      const front = `video:
+  fichier: ${fichier}
+  duree: 2 min
+`;
+      expect(() => load(front)).toThrow(/alpha.*video.*fichier/);
+    },
+  );
 });
