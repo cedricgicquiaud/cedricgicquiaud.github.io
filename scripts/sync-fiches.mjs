@@ -52,10 +52,9 @@ const DUREE = /^\d+ (min|s)$/;
 /** Raison du refus du champ `video` (fichier local dans `public/`, durée « N min » ou « N s »), ou `null`. */
 function videoProblem(video) {
   if (video === undefined) return null;
-  if (/^https?:\/\//.test(String(video?.fichier ?? ""))) {
-    return `video, fichier « ${video.fichier} » : aucune vidéo depuis un domaine tiers`;
-  }
-  const fichier = fichierProblem(video?.fichier);
+  const declared = isText(video?.fichier) ? video.fichier.trim() : "";
+  if (/^https?:\/\//.test(declared)) return `video, fichier « ${declared} » : aucune vidéo depuis un domaine tiers`;
+  const fichier = fichierProblem(declared);
   if (fichier) return `video : ${fichier}`;
   const duree = isText(video.duree) ? video.duree.trim() : "";
   if (!DUREE.test(duree)) return `video, duree « ${duree} » : attendu « N min » ou « N s »`;
