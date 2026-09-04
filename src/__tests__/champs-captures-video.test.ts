@@ -119,7 +119,7 @@ describe("loadFiche — champ video (PFO-57)", () => {
   fichier: ${fichier}
   duree: 2 min
 `;
-      expect(() => load(front)).toThrow(/alpha.*video.*fichier/);
+      expect(() => load(front)).toThrow(/alpha.*video.*fichier.*domaine tiers/);
     },
   );
 
@@ -223,7 +223,7 @@ ${fichier}`);
   });
 
   it.each([
-    ["un fichier en https://", "  fichier: https://videos.example/demo.mp4\n  duree: 2 min\n", /fichier/],
+    ["un fichier en https://", "  fichier: https://videos.example/demo.mp4\n  duree: 2 min\n", /domaine tiers/],
     ["un fichier protocole-relatif (//cdn…)", "  fichier: //cdn.example/demo.mp4\n  duree: 2 min\n", /domaine tiers/],
     ["un fichier sans / initial", "  fichier: projets/alpha/demo.mp4\n  duree: 2 min\n", /fichier/],
     ["une durée « deux minutes »", "  fichier: /projets/alpha/demo.mp4\n  duree: deux minutes\n", /duree/],
