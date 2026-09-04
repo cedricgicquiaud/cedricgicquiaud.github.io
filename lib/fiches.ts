@@ -26,6 +26,8 @@ export type Frontmatter = {
 export type EnBref = { quoi: string; chiffre: string; lien: string };
 /** Une capture d'écran déclarée dans le frontmatter : chemin dans `public/` et légende. */
 export type Capture = { fichier: string; legende: string };
+/** La vidéo de démonstration déclarée dans le frontmatter : chemin dans `public/` et durée (« N min » ou « N s »). */
+export type Video = { fichier: string; duree: string };
 export type Section = { id: string; titre: string; html: string };
 
 // Les cinq sections du gabarit de fiche, dans l'ordre d'affichage.
@@ -47,6 +49,8 @@ export type Fiche = {
   visuel: string;
   /** Captures déclarées dans le frontmatter, dans l'ordre ; absentes = liste vide. */
   captures?: Capture[];
+  /** Vidéo déclarée dans le frontmatter ; absente = `undefined`. */
+  video?: Video;
 };
 
 /** Valeur de frontmatter en texte ; un nombre (ex. `periode: 2026`) est accepté, le reste devient vide. */
@@ -146,6 +150,13 @@ function parseCaptures(slug: string, data: Record<string, unknown>, publicDir: s
   });
 }
 
+/** Le champ `video` du frontmatter ; `undefined` s'il est absent. */
+function parseVideo(data: Record<string, unknown>): Video | undefined {
+  if (!data.video || typeof data.video !== "object") return undefined;
+  const video = data.video as Record<string, unknown>;
+  return { fichier: text(video.fichier), duree: text(video.duree) };
+}
+
 function parseFiche(slug: string, raw: string, publicDir: string): Fiche {
   const { data, content } = matter(raw);
   const titre = content.match(/^# (.+)$/m)?.[1].trim() ?? "";
@@ -158,6 +169,7 @@ function parseFiche(slug: string, raw: string, publicDir: string): Fiche {
     sections: parseSections(content),
     visuel: resolveVisual(slug, frontmatter.visuel, publicDir),
     captures: parseCaptures(slug, data, publicDir),
+    video: parseVideo(data),
   };
 }
 
