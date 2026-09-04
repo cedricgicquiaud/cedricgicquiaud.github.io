@@ -54,17 +54,17 @@ describe("loadFiche — champ visuel (PFO-35)", () => {
     expect(loadFiche("alpha", fiches, pub).visuel).toBe("/projets/absent.png");
   });
 
-  it("refuse un chemin qui sort de public/ (../../x), même si le fichier existe", () => {
+  it("refuse un chemin qui sort de public/ (../../x) par une erreur qui nomme la fiche, même si le fichier existe", () => {
     const { fiches, pub } = sandbox("visuel: /../outside.png\n");
     writeFileSync(path.join(pub, "..", "outside.png"), "png");
-    expect(loadFiche("alpha", fiches, pub).visuel).toBe("/projets/generated/alpha.png");
+    expect(() => loadFiche("alpha", fiches, pub)).toThrow(/alpha.*visuel/);
   });
 
-  it("refuse un chemin sans / initial (projets/x.png), même si le fichier existe", () => {
+  it("refuse un chemin sans / initial (projets/x.png) par une erreur qui nomme la fiche, même si le fichier existe", () => {
     const { fiches, pub } = sandbox("visuel: projets/alpha.png\n");
     mkdirSync(path.join(pub, "projets"));
     writeFileSync(path.join(pub, "projets", "alpha.png"), "png");
-    expect(loadFiche("alpha", fiches, pub).visuel).toBe("/projets/generated/alpha.png");
+    expect(() => loadFiche("alpha", fiches, pub)).toThrow(/alpha.*visuel/);
   });
 });
 
