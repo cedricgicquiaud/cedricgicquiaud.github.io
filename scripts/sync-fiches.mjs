@@ -33,6 +33,15 @@ function problemOf(name, text, seen) {
     if (seen.has(data.ordre)) return `ordre ${data.ordre} déjà pris par ${seen.get(data.ordre)}`;
     seen.set(data.ordre, name);
   }
+  return capturesProblem(data.captures);
+}
+
+/** Raison du refus des entrées de `captures` (rang à partir de 1), ou `null`. */
+function capturesProblem(captures) {
+  const entries = Array.isArray(captures) ? captures : [];
+  for (const [i, entry] of entries.entries()) {
+    if (!isText(entry?.legende)) return `captures, entrée ${i + 1} : « legende » requise et non vide`;
+  }
   return null;
 }
 
