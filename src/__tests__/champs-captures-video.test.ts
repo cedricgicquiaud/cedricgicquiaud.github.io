@@ -50,4 +50,13 @@ describe("loadFiche — champ captures (PFO-56)", () => {
   it("expose une liste vide quand la fiche ne déclare pas de captures", () => {
     expect(load().captures).toEqual([]);
   });
+
+  it("refuse une entrée sans fichier en nommant la fiche et le rang de l'entrée", () => {
+    const front = `captures:
+  - fichier: /projets/alpha/a.png
+    legende: L'écran d'accueil
+  - legende: Le rapport
+`;
+    expect(() => load(front)).toThrow(/alpha.*captures.*entrée 2.*fichier/);
+  });
 });
