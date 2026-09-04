@@ -152,11 +152,12 @@ function requirePublicPath(where: string, fichier: string, publicDir: string): s
  * et `legende` (non vide) sont requis.
  */
 function parseCaptures(slug: string, data: Record<string, unknown>, publicDir: string): Capture[] {
-  const entries = Array.isArray(data.captures) ? (data.captures as Record<string, unknown>[]) : [];
+  const entries = Array.isArray(data.captures) ? (data.captures as (Record<string, unknown> | null)[]) : [];
   return entries.map((entry, i) => {
     const where = `${slug} : captures, entrée ${i + 1}`;
-    const fichier = requirePublicPath(where, text(entry.fichier), publicDir);
-    const legende = text(entry.legende);
+    // Une entrée `-` vide est `null` en YAML : elle est refusée comme une entrée sans `fichier`.
+    const fichier = requirePublicPath(where, text(entry?.fichier), publicDir);
+    const legende = text(entry?.legende);
     if (!legende) throw new Error(`${where} : « legende » requise et non vide`);
     return { fichier, legende };
   });
@@ -167,11 +168,12 @@ const DUREE = /^\d+ (min|s)$/;
 
 /**
  * Le champ `video` du frontmatter ; `undefined` s'il est absent.
+ * Un `video` vide ou scalaire (pas un objet) est refusé comme une vidéo sans `fichier`, comme dans `sync`.
  * `fichier` est un chemin `/…` dans `publicDir` : une URL http(s) (domaine tiers) est refusée.
  */
 function parseVideo(slug: string, data: Record<string, unknown>, publicDir: string): Video | undefined {
-  if (!data.video || typeof data.video !== "object") return undefined;
-  const video = data.video as Record<string, unknown>;
+  if (data.video === undefined) return undefined;
+  const video = (data.video && typeof data.video === "object" ? data.video : {}) as Record<string, unknown>;
   const where = `${slug} : video`;
   const declared = text(video.fichier);
   if (/^https?:\/\//.test(declared)) throw new Error(`${where}, fichier « ${declared} » : aucune vidéo depuis un domaine tiers`);
