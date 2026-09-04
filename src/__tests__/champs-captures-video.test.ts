@@ -46,4 +46,8 @@ describe("loadFiche — champ captures (PFO-56)", () => {
       { fichier: "/projets/alpha/b.png", legende: "Le rapport" },
     ]);
   });
+
+  it("expose une liste vide quand la fiche ne déclare pas de captures", () => {
+    expect(load().captures).toEqual([]);
+  });
 });
