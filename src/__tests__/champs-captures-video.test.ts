@@ -59,4 +59,16 @@ describe("loadFiche — champ captures (PFO-56)", () => {
 `;
     expect(() => load(front)).toThrow(/alpha.*captures.*entrée 2.*fichier/);
   });
+
+  it.each([
+    ["absente", "  - fichier: /projets/alpha/b.png\n"],
+    ["vide", "  - fichier: /projets/alpha/b.png\n    legende: \"\"\n"],
+    ["faite d'espaces", "  - fichier: /projets/alpha/b.png\n    legende: \"   \"\n"],
+  ])("refuse une entrée à légende %s en nommant la fiche et le rang de l'entrée", (_, entry) => {
+    const front = `captures:
+  - fichier: /projets/alpha/a.png
+    legende: L'écran d'accueil
+${entry}`;
+    expect(() => load(front)).toThrow(/alpha.*captures.*entrée 2.*legende/);
+  });
 });
