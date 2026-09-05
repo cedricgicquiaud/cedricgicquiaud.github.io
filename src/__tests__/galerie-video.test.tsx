@@ -104,3 +104,25 @@ describe("Galerie légendée sur la page (PFO-63)", () => {
     expect(container.innerHTML).not.toContain("accueil.png");
   });
 });
+
+const VIDEO = { fichier: "/projets/factice/demo.mp4", duree: "2 min" };
+
+describe("Lecteur vidéo sous l'ancre #video (PFO-64)", () => {
+  it("montre un lecteur natif avec controls, preload metadata et le visuel en poster, sous l'ancre video, entre En bref et la galerie", () => {
+    const { container } = render(<Fiche fiche={fakeFiche({ video: VIDEO, captures: CAPTURES })} />);
+    const anchor = container.querySelector("#video")!;
+    expect(anchor).not.toBeNull();
+    const video = anchor.querySelector("video")!;
+    expect(video).not.toBeNull();
+    expect(video.hasAttribute("controls")).toBe(true);
+    expect(video.getAttribute("preload")).toBe("metadata");
+    expect(video.getAttribute("poster")).toBe("/projets/generated/factice.png");
+    const source = video.querySelector("source")!;
+    expect(source.getAttribute("src")).toBe(VIDEO.fichier);
+    expect(source.getAttribute("type")).toBe("video/mp4");
+    const enBref = container.querySelector("p strong")!.closest("p")!;
+    const gallery = container.querySelector("figure")!.parentElement!;
+    expect(enBref.compareDocumentPosition(anchor) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(anchor.compareDocumentPosition(gallery) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+});
