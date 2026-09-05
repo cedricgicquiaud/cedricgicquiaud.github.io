@@ -91,6 +91,13 @@ function declaredFiles(data) {
   return files;
 }
 
+/** Fichier de `publicDir` désigné par un chemin `/…` qui n'en sort pas (même règle que lib/fiches.ts) ; `undefined` sinon. */
+function insidePublic(publicDir, declared) {
+  if (!declared.startsWith("/")) return undefined;
+  const resolved = path.resolve(publicDir, "." + declared);
+  return resolved.startsWith(publicDir + path.sep) ? resolved : undefined;
+}
+
 /**
  * Parcourt les fiches de `fichesDir` et renvoie la liste des problèmes (vide si tout est conforme).
  * @param {string} fichesDir dossier des fiches Markdown
@@ -102,8 +109,12 @@ export function checkAssets(fichesDir, publicDir) {
   for (const name of readdirSync(fichesDir).filter((n) => n.endsWith(".md"))) {
     const { data } = matter(readFileSync(path.join(fichesDir, name), "utf8"));
     for (const { where, declared, kind } of declaredFiles(data)) {
-      const file = path.resolve(publicDir, "." + declared);
       const label = `${name} : ${where} « ${declared} »`;
+      const file = insidePublic(publicDir, declared);
+      if (!file) {
+        problems.push(`${label} : doit être un chemin /… dans public/`);
+        continue;
+      }
       if (!existsSync(file)) {
         problems.push(`${label} : absent de public/`);
         continue;
