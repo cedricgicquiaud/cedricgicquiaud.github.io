@@ -4,7 +4,10 @@
 // (défauts : content/fiches et public ; lancé par `npm run build` avant `project-visuals`).
 import { existsSync, readdirSync, readFileSync } from "node:fs";
 import path from "node:path";
+import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
+
+const root = path.resolve(import.meta.dirname, "..");
 
 /** Les fichiers déclarés par une fiche : `{ where, declared }` (où dans le frontmatter, chemin déclaré). */
 function declaredFiles(data) {
@@ -34,4 +37,17 @@ export function checkAssets(fichesDir, publicDir) {
     }
   }
   return problems;
+}
+
+// Entrée en ligne de commande : `node scripts/check-assets.mjs [dossier des fiches] [dossier public]`.
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  const fichesDir = path.resolve(process.argv[2] ?? path.join(root, "content", "fiches"));
+  const publicDir = path.resolve(process.argv[3] ?? path.join(root, "public"));
+  const problems = checkAssets(fichesDir, publicDir);
+  if (problems.length > 0) {
+    console.error(`check-assets : ${problems.length} problème(s) dans ${fichesDir}`);
+    for (const p of problems) console.error(`  - ${p}`);
+    process.exit(1);
+  }
+  console.log(`check-assets : fichiers déclarés dans ${fichesDir} conformes`);
 }
