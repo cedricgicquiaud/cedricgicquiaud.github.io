@@ -1,13 +1,19 @@
 // Contrôle des fichiers déclarés dans les fiches (`visuel`, `captures[].fichier`, `video.fichier`)
-// avant `next build` : existence dans public/.
+// avant `next build` : existence dans public/ et poids (capture ≤ 300 Ko).
 // Usage : node scripts/check-assets.mjs [dossier des fiches] [dossier public]
 // (défauts : content/fiches et public ; lancé par `npm run build` avant `project-visuals`).
-import { existsSync, readdirSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
 
 const root = path.resolve(import.meta.dirname, "..");
+
+const KO = 1024;
+const MAX_CAPTURE_BYTES = 300 * KO;
+
+/** Plafond lisible : « 300 Ko (307200 octets) ». */
+const cap = (bytes) => `${bytes / KO} Ko (${bytes} octets)`;
 
 /** Les fichiers déclarés par une fiche : `{ where, declared }` (où dans le frontmatter, chemin déclaré). */
 function declaredFiles(data) {
@@ -33,7 +39,13 @@ export function checkAssets(fichesDir, publicDir) {
     const { data } = matter(readFileSync(path.join(fichesDir, name), "utf8"));
     for (const { where, declared } of declaredFiles(data)) {
       const file = path.resolve(publicDir, "." + declared);
-      if (!existsSync(file)) problems.push(`${name} : ${where} « ${declared} » : absent de public/`);
+      const label = `${name} : ${where} « ${declared} »`;
+      if (!existsSync(file)) {
+        problems.push(`${label} : absent de public/`);
+        continue;
+      }
+      const { size } = statSync(file);
+      if (size > MAX_CAPTURE_BYTES) problems.push(`${label} : ${size} octets, plafond ${cap(MAX_CAPTURE_BYTES)}`);
     }
   }
   return problems;
