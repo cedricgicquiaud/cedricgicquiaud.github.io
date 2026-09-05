@@ -176,11 +176,13 @@ describe("Mention « Vidéo (N min) » sur la carte (PFO-66)", () => {
 });
 
 describe("Image Open Graph par fiche (PFO-65)", () => {
-  it("déclare openGraph.images avec le visuel de la fiche, 1200 × 750, et son nom en alt", async () => {
+  it("déclare openGraph.images avec le visuel de la fiche (fourni ou généré), 1200 × 750, et son nom en alt", async () => {
+    // L'attendu vient de la fiche, pas d'une constante : dès que slice.md déclare un `visuel`,
+    // l'URL doit le suivre sans que ce test change.
     const slice = loadFiche("slice");
+    expect(slice.visuel).toMatch(/^\/projets\/.+\.png$/);
     const metadata = await fichePage.generateMetadata({ params: Promise.resolve({ slug: "slice" }), searchParams: Promise.resolve({}) });
     expect(metadata.openGraph?.images).toEqual([{ url: slice.visuel, width: 1200, height: 750, alt: slice.frontmatter.nom }]);
-    expect(slice.visuel).toBe("/projets/generated/slice.png");
   });
 });
 
@@ -188,11 +190,16 @@ describe("Image Open Graph dans out/ — lit out/ produit par npm run build (PFO
   const root = path.resolve(__dirname, "../..");
   const html = (rel: string) => readFileSync(path.join(root, "out", rel), "utf8");
 
-  beforeAll(() => ensureBuild(["app/projets/[slug]/page.tsx", "components/fiche.tsx", "components/project-card.tsx"]), 250_000);
+  // La fiche fait partie des dépendances : si slice.md change de `visuel`, out/ est reconstruit.
+  beforeAll(
+    () => ensureBuild(["app/projets/[slug]/page.tsx", "components/fiche.tsx", "components/project-card.tsx", "content/fiches/slice.md"]),
+    250_000,
+  );
 
-  it("out/projets/slice/index.html déclare og:image absolue vers le visuel généré, 1200 × 750", () => {
+  it("out/projets/slice/index.html déclare og:image absolue vers le visuel de la fiche (fourni ou généré), 1200 × 750", () => {
     const page = html("projets/slice/index.html");
-    expect(page).toContain('<meta property="og:image" content="https://cedricgicquiaud.github.io/projets/generated/slice.png"/>');
+    const visuel = loadFiche("slice").visuel;
+    expect(page).toContain(`<meta property="og:image" content="https://cedricgicquiaud.github.io${visuel}"/>`);
     expect(page).toContain('<meta property="og:image:width" content="1200"/>');
     expect(page).toContain('<meta property="og:image:height" content="750"/>');
     expect(page).not.toContain("/opengraph-image.png");
