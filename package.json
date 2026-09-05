@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "node scripts/project-visuals.mjs && next build && node scripts/check-output.mjs",
+    "build": "node scripts/check-assets.mjs && node scripts/project-visuals.mjs && next build && node scripts/check-output.mjs",
     "start": "next start",
     "lint": "eslint",
     "test": "vitest run",
