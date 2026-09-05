@@ -125,4 +125,17 @@ describe("Lecteur vidéo sous l'ancre #video (PFO-64)", () => {
     expect(enBref.compareDocumentPosition(anchor) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(anchor.compareDocumentPosition(gallery) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
+
+  it("refus : une fiche sans vidéo n'a ni lecteur ni ancre video ; avec vidéo, jamais autoplay ni muted, aucun script", () => {
+    const sans = render(<Fiche fiche={fakeFiche({ captures: CAPTURES })} />).container;
+    expect(sans.querySelector("video")).toBeNull();
+    expect(sans.querySelector("#video")).toBeNull();
+    cleanup();
+    const avec = render(<Fiche fiche={fakeFiche({ video: VIDEO })} />).container;
+    const video = avec.querySelector("video")!;
+    expect(video.hasAttribute("autoplay")).toBe(false);
+    expect(video.hasAttribute("muted")).toBe(false);
+    expect(avec.querySelector("script")).toBeNull();
+    expect(avec.innerHTML).not.toMatch(/autoplay|onplay|onclick/i);
+  });
 });
