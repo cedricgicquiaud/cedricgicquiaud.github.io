@@ -8,3 +8,5 @@ next-env.d.ts
 *.tsbuildinfo
 coverage/
 public/projets/generated/
+# Images et mesures de la passe visuelle du testeur (jamais commitées).
+.pilot/recette/
