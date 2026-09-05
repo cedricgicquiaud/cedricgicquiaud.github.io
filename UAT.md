@@ -442,3 +442,51 @@ Les tests ci-dessous se jouent sur une copie d'une fiche du dossier parent `../f
 - [ ] Ajouter `visuel: /projets/slice/absent.png` dans `content/fiches/slice.md` (fichier volontairement inexistant), puis `npx next build` (sans `npm run build`, dont le contrôle des fichiers arrive en livraison 2) : le build passe et `grep -o "/projets/slice/absent.png" out/projets/slice/index.html` affiche le chemin déclaré ; la page ne retombe plus sur le généré. Retirer la ligne ensuite.
 - [ ] Refus : `visuel: /../slice.png` puis `visuel: projets/slice.png` dans `content/fiches/slice.md`, `npx next build` : le build échoue avec « slice : visuel : fichier « … » doit être un chemin /… dans public/ » au lieu de passer en silence. Retirer la ligne ensuite.
 - [ ] `grep -n 'id="f4"' UAT.md` affiche cette section ; le lien `UAT.md#f4` de la fiche feature « Chaque projet a un visuel » y mène.
+
+## Livraison 16 — Page de fiche : galerie, vidéo, image OG
+
+Les écrans se jouent sur `http://localhost:3103/` (`scripts/dev-serve.sh start 3103`, puis `stop 3103`). Aucune fiche ne déclare encore de captures ni de vidéo : pour voir la galerie et le lecteur, ajouter temporairement au frontmatter de `content/fiches/slice.md` (le bloc entre les deux `---`), juste sous `ordre: 1` :
+
+```yaml
+captures:
+  - fichier: /projets/generated/pilot.png
+    legende: L'écran d'accueil (capture de démonstration)
+  - fichier: /projets/generated/ben.png
+    legende: Le rapport de tests (capture de démonstration)
+video:
+  fichier: /projets/slice/demo.mp4
+  duree: 2 min
+```
+
+Les deux PNG existent après `npm run build` (visuels générés) ; la vidéo n'existe pas, le lecteur montre seulement son poster. Retirer ces lignes à la fin (`git checkout -- content/fiches/slice.md`).
+
+### PFO-63 — Galerie légendée sur la page
+
+- [ ] Ouvrir `http://localhost:3103/projets/slice/` : entre le bloc « En bref » et le titre « PROBLÈME », deux images encadrées, la première « PILOT » puis « BEN » (ordre du frontmatter), chacune suivie de sa légende en petit gris : « L'écran d'accueil (capture de démonstration) » puis « Le rapport de tests (capture de démonstration) », mot pour mot, sans texte ajouté.
+- [ ] Fenêtre à 375 px de large : les deux images sont l'une sous l'autre, en pleine largeur. À 640 px et au-delà : côte à côte, sur une seule rangée.
+- [ ] Inverser les deux entrées `captures` et recharger : la galerie s'inverse aussi.
+- [ ] Refus : retirer tout le bloc `captures` (garder `video`), recharger : plus aucune image entre « En bref » et « PROBLÈME » ; l'espace entre les deux est celui d'avant la livraison (aucun cadre vide). Même chose avec `captures: []`.
+- [ ] Refus : dans l'inspecteur du navigateur, chaque image de la galerie porte `alt="<sa légende>"` (jamais `alt=""`) ; seul le grand visuel sous le titre a `alt=""`. Cliquer sur une image de galerie n'ouvre rien (pas de lightbox).
+- [ ] Refus : sur `http://localhost:3103/#projets`, la carte SLICE montre un seul visuel (le généré « SLICE »), jamais les captures PILOT ou BEN.
+
+### PFO-64 — Lecteur vidéo sous l'ancre #video
+
+- [ ] Sur `/projets/slice/`, juste sous « En bref » et au-dessus de la galerie : un lecteur vidéo avec l'image « SLICE » (le visuel de la fiche) en couverture et les contrôles natifs du navigateur (lecture, volume, plein écran).
+- [ ] Ouvrir `http://localhost:3103/projets/slice/#video` : la page défile directement sur le lecteur.
+- [ ] Au clavier seul : Tab jusqu'au lecteur, Espace ou Entrée tente la lecture (la vidéo de démonstration n'existe pas, le navigateur affiche une erreur de lecture, c'est attendu) ; les contrôles reçoivent le focus.
+- [ ] Refus : à l'arrivée sur la page, rien ne se lance seul, aucun son. Dans l'inspecteur, la balise `<video>` porte `controls` et `preload="metadata"`, ni `autoplay` ni `muted`.
+- [ ] Refus : retirer le bloc `video` du frontmatter, recharger : plus de lecteur, et `/projets/slice/#video` ne défile nulle part (l'ancre n'existe plus).
+
+### PFO-65 — Image Open Graph par fiche
+
+- [ ] Sans aucune ligne ajoutée à `slice.md`, `npm run build` puis `grep -o '<meta property="og:image[^>]*>' out/projets/slice/index.html` affiche trois balises : `og:image` = `https://cedricgicquiaud.github.io/projets/generated/slice.png`, `og:image:width` = `1200`, `og:image:height` = `750`.
+- [ ] Même commande sur `out/projets/pilot/index.html` : l'image est `…/projets/generated/pilot.png` (chaque fiche pointe vers son propre visuel).
+- [ ] Refus : `grep -o '<meta property="og:image" [^>]*>' out/index.html` affiche une seule balise, vers `https://cedricgicquiaud.github.io/opengraph-image.png` : l'accueil garde l'image du site.
+
+### PFO-66 — Mention « Vidéo (N min) » sur la carte
+
+- [ ] Avec le bloc `video` (`duree: 2 min`) dans `slice.md`, ouvrir `http://localhost:3103/#projets` : la carte SLICE affiche, sur la ligne des liens, « Code » puis « Vidéo (2 min) ». Cliquer « Vidéo (2 min) » ouvre `/projets/slice/#video` et la page arrive sur le lecteur.
+- [ ] Remplacer `duree: 2 min` par `duree: 45 s`, recharger : la carte affiche « Vidéo (45 s) », tel quel.
+- [ ] Fenêtre à 375 px : « Code  Vidéo (2 min) » tient sur la ligne des liens sans sortir de la carte ; si la ligne est trop étroite, la mention passe à la ligne, elle ne déborde pas.
+- [ ] Carte anonyme : mettre `visibilite: anonyme` dans `slice.md` (avec le bloc `video`), recharger : la carte garde « Projet anonymisé : code et client non publiés », montre « Vidéo (2 min) », et aucun lien « Code » ni « Démo ». Remettre `visibilite: public`.
+- [ ] Refus : retirer le bloc `video`, recharger : le mot « Vidéo » n'apparaît sur aucune carte de l'accueil ; la carte SLICE garde son visuel « SLICE ».
