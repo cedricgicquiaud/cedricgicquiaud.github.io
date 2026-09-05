@@ -218,6 +218,17 @@ describe("checkAssets — dimensions de la capture principale (PFO-61)", () => {
     ]);
   });
 
+  it.each([
+    ["un PNG tronqué avant IHDR", png(1200, 750).subarray(0, 10)],
+    ["un WebP dont le premier chunk est inconnu", webp(1200, 750, 64, "ALPH" as WebpChunk)],
+  ])("signale des dimensions illisibles pour %s au lieu de planter", (_, content) => {
+    const { fiches, pub, file } = sandbox("visuel: /projets/alpha/visuel.png\n");
+    file("/projets/alpha/visuel.png", Buffer.from(content));
+    expect(checkAssets(fiches, pub)).toEqual([
+      "alpha.md : visuel « /projets/alpha/visuel.png » : dimensions illisibles dans l'en-tête, attendu 1200×750",
+    ]);
+  });
+
   it("accepte une capture de galerie de dimensions quelconques (800×500)", () => {
     const front = `captures:
   - fichier: /projets/alpha/a.png
