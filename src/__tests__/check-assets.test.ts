@@ -165,6 +165,21 @@ describe("checkAssets — type reconnu par le contenu (PFO-61)", () => {
       "alpha.md : captures, entrée 3 « /projets/alpha/c.png » : ni PNG ni WebP d'après son contenu",
     ]);
   });
+
+  it("accepte un MP4 comme vidéo et refuse un fichier sans « ftyp » en nommant la fiche et le chemin", () => {
+    const front = `video:
+  fichier: /projets/alpha/demo.mp4
+  duree: 2 min
+`;
+    const ok = sandbox(front);
+    ok.file("/projets/alpha/demo.mp4", mp4());
+    expect(checkAssets(ok.fiches, ok.pub)).toEqual([]);
+    const fake = sandbox(front);
+    fake.file("/projets/alpha/demo.mp4", png(1200, 750));
+    expect(checkAssets(fake.fiches, fake.pub)).toEqual([
+      "alpha.md : video « /projets/alpha/demo.mp4 » : pas un MP4 d'après son contenu (« ftyp » absent)",
+    ]);
+  });
 });
 
 describe("scripts/check-assets.mjs en ligne de commande (PFO-60)", () => {
