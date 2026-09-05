@@ -1,4 +1,4 @@
-import { execFileSync } from "node:child_process";
+import { execFileSync, spawnSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, truncateSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -288,5 +288,16 @@ describe("checkOutput — plafond sur le poids total de out/ (PFO-62)", () => {
 
   it("sans seuil explicite (150 Mo), reste propre : les images ne sont pas lues par les autres règles", () => {
     expect(checkOutput(outDir(), [])).toEqual([]);
+  });
+});
+
+describe("fichiers de public/projets/ et git (PFO-62)", () => {
+  /** `git check-ignore` sort 0 quand le chemin est ignoré, 1 sinon. */
+  const ignored = (rel: string) => spawnSync("git", ["check-ignore", "-q", rel], { cwd: root }).status === 0;
+
+  it("ignore public/projets/generated/ et versionne public/projets/<slug>/", () => {
+    expect(ignored("public/projets/generated/slice.png")).toBe(true);
+    expect(ignored("public/projets/slice/visuel.png")).toBe(false);
+    expect(ignored("public/projets/slice/demo.mp4")).toBe(false);
   });
 });
