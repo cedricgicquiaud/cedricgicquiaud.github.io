@@ -61,4 +61,23 @@ describe("checkAssets — existence des fichiers déclarés (PFO-60)", () => {
     expect(problems).toHaveLength(1);
     expect(problems[0]).toMatch(/^alpha\.md : visuel « \/projets\/alpha\/absent\.png » : absent de public\//);
   });
+
+  it("signale une capture et une vidéo absentes en nommant la fiche, le champ et le chemin", () => {
+    const front = `captures:
+  - fichier: /projets/alpha/a.png
+    legende: L'écran d'accueil
+  - fichier: /projets/alpha/b.png
+    legende: Le rapport
+video:
+  fichier: /projets/alpha/demo.mp4
+  duree: 2 min
+`;
+    const { fiches, pub, file } = sandbox(front);
+    file("/projets/alpha/a.png", png(800, 500));
+    const problems = checkAssets(fiches, pub);
+    expect(problems).toEqual([
+      "alpha.md : captures, entrée 2 « /projets/alpha/b.png » : absent de public/",
+      "alpha.md : video « /projets/alpha/demo.mp4 » : absent de public/",
+    ]);
+  });
 });
