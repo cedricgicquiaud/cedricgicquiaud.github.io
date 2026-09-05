@@ -62,3 +62,6 @@ Ce que la boucle attrape par feature : 0 bloquant depuis F2 ; 3–4 importants p
 | Tâches isolées A–D (PFO-37..49, 4 PR) | — | 4 PR de 3 à 5 tâches | 15 | 2026-08-30 09:20 | 09:38 / 09:41 / 11:57 / 11:57 | ≈ 2,5 h au total (production, audits, recettes, corrections, merges) | mergées 30/08 |
 
 Tâches isolées groupées par fichiers disjoints : 3 à 5 tâches par PR, ≈ 0,6 h par PR tout compris. La boucle a attrapé 1 fuite de noms en clair (test + UAT), 3 défauts réels à la recette (focus invisible, colonne coupée à 720 px, débordement du pied de page à 375 px).
+| Chaque projet a un visuel — livraison 1/4 « Fiche : captures et vidéo déclarées » (PFO-56..59) | M (feature M, 4 livraisons M, M, M, S, 13 tâches) | 1 sur 4 | 4 | 2026-09-04 21:02 | 21:14 | 0,4 h de session (21:02 → 21:27 : production 12 min, audit + recette + correction 13 min) ; agents : 0,6 h, 327 échanges, 1,9 M jetons écrits / 16 M relus | mergée 04/09 22:01 ; attente de merge 0,6 h (21:27 → 22:01) |
+
+Cadrage de la feature (contradicteur ×2, découpeur, 13 fiches créées) : 20:15 → 20:55, 0,7 h. La boucle a attrapé sur L1 : 1 important (chemin `//hôte` non refusé), 2 mineurs corrigés ; recette : 0 défaut (aucun écran livré). Testeur au-dessus des seuils (65 échanges, 3 M relus) : passe de non-régression sur deux dossiers (avant/après) et installation des dépendances de l'outil dans le worktree.
