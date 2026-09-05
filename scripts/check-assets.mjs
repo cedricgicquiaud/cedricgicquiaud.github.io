@@ -1,7 +1,7 @@
 // Contrôle des fichiers déclarés dans les fiches (`visuel`, `captures[].fichier`, `video.fichier`)
 // avant `next build` : existence dans public/, poids (capture ≤ 300 Ko, vidéo ≤ 15 Mo) et type reconnu
 // par le contenu, jamais par l'extension (capture : PNG ou WebP ; vidéo : MP4). La capture principale
-// (`visuel`) mesure 1200×750, dimensions lues dans l'en-tête (IHDR pour PNG).
+// (`visuel`) mesure 1200×750, dimensions lues dans l'en-tête (IHDR pour PNG ; VP8X, VP8 ou VP8L pour WebP).
 // Usage : node scripts/check-assets.mjs [dossier des fiches] [dossier public]
 // (défauts : content/fiches et public ; lancé par `npm run build` avant `project-visuals`).
 import { closeSync, existsSync, openSync, readdirSync, readFileSync, readSync, statSync } from "node:fs";
@@ -36,10 +36,28 @@ const isPng = (head) => head.subarray(0, 4).equals(PNG_SIGNATURE);
 const isWebp = (head) => head.subarray(0, 4).toString("ascii") === "RIFF" && head.subarray(8, 12).toString("ascii") === "WEBP";
 const isMp4 = (head) => head.subarray(4, 8).toString("ascii") === "ftyp";
 
-/** Largeur et hauteur lues dans l'en-tête d'une image : PNG, chunk IHDR (octets 16-23, big-endian). */
+/** Largeur et hauteur d'un WebP d'après son premier chunk (octets 12-15) : VP8X (étendu, largeur - 1 et
+ * hauteur - 1 sur 3 octets), VP8 (avec perte, 14 bits après le code de début) ou VP8L (sans perte, 14 bits
+ * chacun après l'octet 2F). `undefined` si le chunk est inconnu. */
+function webpDimensions(head) {
+  switch (head.subarray(12, 16).toString("ascii")) {
+    case "VP8X":
+      return { width: head.readUIntLE(24, 3) + 1, height: head.readUIntLE(27, 3) + 1 };
+    case "VP8 ":
+      return { width: head.readUInt16LE(26) & 0x3fff, height: head.readUInt16LE(28) & 0x3fff };
+    case "VP8L": {
+      const bits = head.readUInt32LE(21);
+      return { width: (bits & 0x3fff) + 1, height: ((bits >> 14) & 0x3fff) + 1 };
+    }
+    default:
+      return undefined;
+  }
+}
+
+/** Largeur et hauteur lues dans l'en-tête d'une image : PNG (chunk IHDR, octets 16-23, big-endian) ou WebP. */
 function dimensions(head) {
   if (isPng(head)) return { width: head.readUInt32BE(16), height: head.readUInt32BE(20) };
-  return undefined;
+  return webpDimensions(head);
 }
 
 const VISUEL_WIDTH = 1200;
