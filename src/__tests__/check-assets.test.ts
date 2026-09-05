@@ -182,6 +182,29 @@ describe("checkAssets — type reconnu par le contenu (PFO-61)", () => {
   });
 });
 
+describe("checkAssets — dimensions de la capture principale (PFO-61)", () => {
+  it.each([
+    [1200, 630],
+    [800, 500],
+  ])("refuse un visuel PNG de %i×%i en donnant les dimensions lues", (width, height) => {
+    const { fiches, pub, file } = sandbox("visuel: /projets/alpha/visuel.png\n");
+    file("/projets/alpha/visuel.png", png(width, height));
+    expect(checkAssets(fiches, pub)).toEqual([
+      `alpha.md : visuel « /projets/alpha/visuel.png » : ${width}×${height}, attendu 1200×750`,
+    ]);
+  });
+
+  it("accepte une capture de galerie de dimensions quelconques (800×500)", () => {
+    const front = `captures:
+  - fichier: /projets/alpha/a.png
+    legende: L'écran d'accueil
+`;
+    const { fiches, pub, file } = sandbox(front);
+    file("/projets/alpha/a.png", png(800, 500));
+    expect(checkAssets(fiches, pub)).toEqual([]);
+  });
+});
+
 describe("scripts/check-assets.mjs en ligne de commande (PFO-60)", () => {
   it("sort en erreur avec la liste des problèmes quand un fichier déclaré manque, en succès sinon", () => {
     const bad = sandbox("visuel: /projets/alpha/absent.png\n");
