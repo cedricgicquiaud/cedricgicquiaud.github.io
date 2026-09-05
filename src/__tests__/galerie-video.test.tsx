@@ -3,6 +3,8 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { Fiche } from "../../components/fiche";
 import { ProjectCard } from "../../components/project-card";
+import * as fichePage from "../../app/projets/[slug]/page";
+import { loadFiche } from "../../lib/fiches";
 import type { Fiche as FicheData } from "../../lib/fiches";
 
 afterEach(cleanup);
@@ -167,5 +169,14 @@ describe("Mention « Vidéo (N min) » sur la carte (PFO-66)", () => {
     expect(container.textContent).not.toMatch(/Vidéo/);
     expect(container.querySelector("a[href$='#video']")).toBeNull();
     expect(container.querySelector("img")!.getAttribute("src")).toBe("/projets/generated/factice.png");
+  });
+});
+
+describe("Image Open Graph par fiche (PFO-65)", () => {
+  it("déclare openGraph.images avec le visuel de la fiche, 1200 × 750, et son nom en alt", async () => {
+    const slice = loadFiche("slice");
+    const metadata = await fichePage.generateMetadata({ params: Promise.resolve({ slug: "slice" }), searchParams: Promise.resolve({}) });
+    expect(metadata.openGraph?.images).toEqual([{ url: slice.visuel, width: 1200, height: 750, alt: slice.frontmatter.nom }]);
+    expect(slice.visuel).toBe("/projets/generated/slice.png");
   });
 });
