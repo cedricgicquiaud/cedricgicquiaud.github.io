@@ -41,7 +41,7 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
             </li>
           ))}
         </ul>
-        <p className="flex gap-4 text-sm">
+        <p className="flex flex-wrap gap-4 text-sm">
           {anonyme ? (
             <span className="text-muted-foreground">Projet anonymisé : code et client non publiés</span>
           ) : (
@@ -58,6 +58,12 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
               )}
               {codePrive && <span className="text-muted-foreground">code privé, démo à venir</span>}
             </>
+          )}
+          {/* Lien interne vers le lecteur de la page de fiche : permis aussi sur une carte anonyme. */}
+          {fiche.video && (
+            <a href={`/projets/${fiche.slug}/#video`} className="underline underline-offset-4">
+              Vidéo ({fiche.video.duree})
+            </a>
           )}
         </p>
       </div>
