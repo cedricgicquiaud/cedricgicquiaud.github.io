@@ -68,4 +68,21 @@ describe("Galerie légendée sur la page (PFO-63)", () => {
       expect(img.compareDocumentPosition(caption) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     }
   });
+
+  it("se place entre « En bref » et « Problème », en une colonne puis deux dès sm, images à leur ratio, sans script ni lightbox", () => {
+    const { container } = render(<Fiche fiche={fakeFiche({ captures: CAPTURES })} />);
+    const gallery = container.querySelector("figure")!.parentElement!;
+    expect(gallery.querySelectorAll("figure")).toHaveLength(2);
+    expect(gallery).toHaveClass("grid", "grid-cols-1", "sm:grid-cols-2");
+    const enBref = container.querySelector("p strong")!.closest("p")!;
+    expect(enBref.textContent).toContain("En bref.");
+    expect(enBref.compareDocumentPosition(gallery) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(gallery.compareDocumentPosition(container.querySelector("section#probleme")!) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    for (const img of Array.from(gallery.querySelectorAll("img"))) {
+      expect(img.className).not.toMatch(/aspect-|object-cover/);
+      expect(img.className).toMatch(/\bw-full\b/);
+      expect(img.className).toMatch(/\bh-auto\b/);
+    }
+    expect(container.querySelector("script, button, dialog, a[href$='.png']")).toBeNull();
+  });
 });
