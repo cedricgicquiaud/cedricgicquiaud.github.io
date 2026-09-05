@@ -98,6 +98,20 @@ function insidePublic(publicDir, declared) {
   return resolved.startsWith(publicDir + path.sep) ? resolved : undefined;
 }
 
+/** Le premier problème d'un fichier existant de `publicDir` (poids, type, dimensions) ; `undefined` s'il est conforme. */
+function problemWith(file, kind) {
+  const { size } = statSync(file);
+  if (size > kind.maxBytes) return `${size} octets, plafond ${cap(kind.maxBytes)}`;
+  const bytes = head(file);
+  if (!kind.isType(bytes)) return kind.typeLabel;
+  if (kind.width === undefined) return undefined;
+  const expected = `attendu ${kind.width}×${kind.height}`;
+  const read = dimensions(bytes);
+  if (!read) return `dimensions illisibles dans l'en-tête, ${expected}`;
+  if (read.width !== kind.width || read.height !== kind.height) return `${read.width}×${read.height}, ${expected}`;
+  return undefined;
+}
+
 /**
  * Parcourt les fiches de `fichesDir` et renvoie la liste des problèmes (vide si tout est conforme).
  * @param {string} fichesDir dossier des fiches Markdown
@@ -105,37 +119,14 @@ function insidePublic(publicDir, declared) {
  * @returns {string[]}
  */
 export function checkAssets(fichesDir, publicDir) {
+  const pub = path.resolve(publicDir);
   const problems = [];
   for (const name of readdirSync(fichesDir).filter((n) => n.endsWith(".md"))) {
     const { data } = matter(readFileSync(path.join(fichesDir, name), "utf8"));
     for (const { where, declared, kind } of declaredFiles(data)) {
-      const label = `${name} : ${where} « ${declared} »`;
-      const file = insidePublic(publicDir, declared);
-      if (!file) {
-        problems.push(`${label} : doit être un chemin /… dans public/`);
-        continue;
-      }
-      if (!existsSync(file)) {
-        problems.push(`${label} : absent de public/`);
-        continue;
-      }
-      const { size } = statSync(file);
-      if (size > kind.maxBytes) {
-        problems.push(`${label} : ${size} octets, plafond ${cap(kind.maxBytes)}`);
-        continue;
-      }
-      const bytes = head(file);
-      if (!kind.isType(bytes)) {
-        problems.push(`${label} : ${kind.typeLabel}`);
-        continue;
-      }
-      if (kind.width === undefined) continue;
-      const expected = `attendu ${kind.width}×${kind.height}`;
-      const read = dimensions(bytes);
-      if (!read) problems.push(`${label} : dimensions illisibles dans l'en-tête, ${expected}`);
-      else if (read.width !== kind.width || read.height !== kind.height) {
-        problems.push(`${label} : ${read.width}×${read.height}, ${expected}`);
-      }
+      const file = insidePublic(pub, declared);
+      const problem = !file ? "doit être un chemin /… dans public/" : !existsSync(file) ? "absent de public/" : problemWith(file, kind);
+      if (problem) problems.push(`${name} : ${where} « ${declared} » : ${problem}`);
     }
   }
   return problems;
