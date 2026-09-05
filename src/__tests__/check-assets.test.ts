@@ -88,6 +88,22 @@ video:
   });
 });
 
+/** Un WebP minimal : « RIFF » + taille + « WEBP », puis un chunk VP8X portant largeur - 1 et hauteur - 1 sur 3 octets. */
+function webp(width: number, height: number, size = 64) {
+  const buf = Buffer.alloc(size);
+  buf.write("RIFF", 0, "ascii");
+  buf.writeUInt32LE(size - 8, 4);
+  buf.write("WEBP", 8, "ascii");
+  buf.write("VP8X", 12, "ascii");
+  buf.writeUInt32LE(10, 16);
+  buf.writeUIntLE(width - 1, 24, 3);
+  buf.writeUIntLE(height - 1, 27, 3);
+  return buf;
+}
+
+/** Les trois premiers octets d'un JPEG, complétés d'octets nuls. */
+const jpeg = (size = 64) => Buffer.concat([Buffer.from([0xff, 0xd8, 0xff]), Buffer.alloc(size - 3)]);
+
 /** Un MP4 minimal : taille de boîte puis « ftyp » à l'offset 4. */
 function mp4(size = 32) {
   const buf = Buffer.alloc(size);
@@ -127,6 +143,26 @@ describe("checkAssets — poids des fichiers déclarés (PFO-60)", () => {
     heavy.file("/projets/alpha/demo.mp4", mp4(), 15 * MO + 1);
     expect(checkAssets(heavy.fiches, heavy.pub)).toEqual([
       "alpha.md : video « /projets/alpha/demo.mp4 » : 15728641 octets, plafond 15 Mo (15728640 octets)",
+    ]);
+  });
+});
+
+describe("checkAssets — type reconnu par le contenu (PFO-61)", () => {
+  it("accepte un PNG et un WebP comme captures et refuse un JPEG renommé .png en nommant la fiche et le chemin", () => {
+    const front = `captures:
+  - fichier: /projets/alpha/a.png
+    legende: L'écran d'accueil
+  - fichier: /projets/alpha/b.webp
+    legende: Le rapport
+  - fichier: /projets/alpha/c.png
+    legende: Une photo
+`;
+    const { fiches, pub, file } = sandbox(front);
+    file("/projets/alpha/a.png", png(800, 500));
+    file("/projets/alpha/b.webp", webp(800, 500));
+    file("/projets/alpha/c.png", jpeg());
+    expect(checkAssets(fiches, pub)).toEqual([
+      "alpha.md : captures, entrée 3 « /projets/alpha/c.png » : ni PNG ni WebP d'après son contenu",
     ]);
   });
 });
