@@ -66,6 +66,14 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
         <p className="mt-8 border-l-2 border-primary pl-4 text-base leading-relaxed">
           <strong>En bref.</strong> {[fiche.enBref.quoi, fiche.enBref.chiffre, fiche.enBref.lien].filter(Boolean).join(" ")}
         </p>
+        {fiche.video && (
+          <div id="video" className="mt-8">
+            {/* Lecteur natif, contrôles au clavier ; jamais d'autoplay. Le poster est le visuel principal de la fiche. */}
+            <video controls preload="metadata" poster={fiche.visuel} className="w-full rounded-lg border border-border">
+              <source src={fiche.video.fichier} type="video/mp4" />
+            </video>
+          </div>
+        )}
         {fiche.captures?.length ? (
           <div className="mt-8 grid grid-cols-1 gap-6 sm:grid-cols-2">
             {fiche.captures.map(({ fichier, legende }) => (
