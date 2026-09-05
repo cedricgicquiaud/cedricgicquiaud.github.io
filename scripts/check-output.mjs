@@ -11,7 +11,7 @@ import { fileURLToPath } from "node:url";
 const KO = 1024;
 const MO = 1024 * KO;
 /** Poids total de out/ au-delà duquel le build est refusé. */
-export const MAX_OUTPUT_BYTES = 150 * MO;
+const MAX_OUTPUT_BYTES = 150 * MO;
 
 // Les .html passent toutes les règles ; les .js et .txt (chunks et données RSC) seulement « domaine tiers ».
 const CHECKED = [".html", ".js", ".txt"];
