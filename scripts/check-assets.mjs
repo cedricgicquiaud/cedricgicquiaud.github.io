@@ -19,12 +19,15 @@ const MAX_VIDEO_BYTES = 15 * MO;
 /** Plafond lisible : « 300 Ko (307200 octets) », « 15 Mo (15728640 octets) ». */
 const cap = (bytes) => `${bytes >= MO ? `${bytes / MO} Mo` : `${bytes / KO} Ko`} (${bytes} octets)`;
 
-/** Les premiers octets d'un fichier (assez pour la signature et l'en-tête). */
-function head(file, length = 32) {
-  const buf = Buffer.alloc(length);
+/** Octets lus en tête de fichier : assez pour la signature et les dimensions (WebP VP8X : jusqu'à l'octet 29). */
+const HEAD_LENGTH = 32;
+
+/** Les premiers octets d'un fichier (moins de HEAD_LENGTH s'il est plus court). */
+function head(file) {
+  const buf = Buffer.alloc(HEAD_LENGTH);
   const fd = openSync(file, "r");
   try {
-    const read = readSync(fd, buf, 0, length, 0);
+    const read = readSync(fd, buf, 0, HEAD_LENGTH, 0);
     return buf.subarray(0, read);
   } finally {
     closeSync(fd);
@@ -54,8 +57,10 @@ function webpDimensions(head) {
   }
 }
 
-/** Largeur et hauteur lues dans l'en-tête d'une image : PNG (chunk IHDR, octets 16-23, big-endian) ou WebP. */
+/** Largeur et hauteur lues dans l'en-tête d'une image : PNG (chunk IHDR, octets 16-23, big-endian) ou WebP ;
+ * `undefined` si l'en-tête est tronqué ou le chunk inconnu. */
 function dimensions(head) {
+  if (head.length < HEAD_LENGTH) return undefined;
   if (isPng(head)) return { width: head.readUInt32BE(16), height: head.readUInt32BE(20) };
   return webpDimensions(head);
 }
@@ -114,9 +119,11 @@ export function checkAssets(fichesDir, publicDir) {
         continue;
       }
       if (kind.width === undefined) continue;
-      const { width, height } = dimensions(bytes);
-      if (width !== kind.width || height !== kind.height) {
-        problems.push(`${label} : ${width}×${height}, attendu ${kind.width}×${kind.height}`);
+      const expected = `attendu ${kind.width}×${kind.height}`;
+      const read = dimensions(bytes);
+      if (!read) problems.push(`${label} : dimensions illisibles dans l'en-tête, ${expected}`);
+      else if (read.width !== kind.width || read.height !== kind.height) {
+        problems.push(`${label} : ${read.width}×${read.height}, ${expected}`);
       }
     }
   }
