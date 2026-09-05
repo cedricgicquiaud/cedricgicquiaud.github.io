@@ -152,4 +152,20 @@ describe("Mention « Vidéo (N min) » sur la carte (PFO-66)", () => {
     expect(ligne).toContainElement(lien);
     expect(ligne.className).toMatch(/\bflex-wrap\b/);
   });
+
+  it("une carte anonyme avec vidéo garde sa mention, montre « Vidéo (45 s) » et toujours aucun lien Code ni Démo", () => {
+    const anonyme = { ...fakeFiche().frontmatter, visibilite: "anonyme" as const, depot: "", depotNote: "", demo: "", demoNote: "" };
+    render(<ProjectCard fiche={fakeFiche({ frontmatter: anonyme, video: { fichier: "/projets/factice/demo.mp4", duree: "45 s" } })} />);
+    expect(screen.getByText("Projet anonymisé : code et client non publiés")).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Vidéo (45 s)" })).toHaveAttribute("href", "/projets/factice/#video");
+    expect(screen.queryByRole("link", { name: "Code" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Démo" })).toBeNull();
+  });
+
+  it("refus : une carte sans vidéo ne contient pas le mot « Vidéo » et garde son visuel principal", () => {
+    const { container } = render(<ProjectCard fiche={fakeFiche({ captures: CAPTURES })} />);
+    expect(container.textContent).not.toMatch(/Vidéo/);
+    expect(container.querySelector("a[href$='#video']")).toBeNull();
+    expect(container.querySelector("img")!.getAttribute("src")).toBe("/projets/generated/factice.png");
+  });
 });
