@@ -1,8 +1,12 @@
+import { execFileSync } from "node:child_process";
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { checkAssets } from "../../scripts/check-assets.mjs";
+
+const root = path.resolve(__dirname, "../..");
+const script = path.join(root, "scripts", "check-assets.mjs");
 
 /** Une fiche factice minimale ; `front` : lignes YAML ajoutées au frontmatter. */
 const fiche = (front = "") => `---
@@ -79,5 +83,18 @@ video:
       "alpha.md : captures, entrée 2 « /projets/alpha/b.png » : absent de public/",
       "alpha.md : video « /projets/alpha/demo.mp4 » : absent de public/",
     ]);
+  });
+});
+
+describe("scripts/check-assets.mjs en ligne de commande (PFO-60)", () => {
+  it("sort en erreur avec la liste des problèmes quand un fichier déclaré manque, en succès sinon", () => {
+    const bad = sandbox("visuel: /projets/alpha/absent.png\n");
+    expect(() => execFileSync("node", [script, bad.fiches, bad.pub], { cwd: root, stdio: "pipe" })).toThrow(
+      /alpha\.md : visuel « \/projets\/alpha\/absent\.png » : absent de public\//,
+    );
+    const good = sandbox("visuel: /projets/alpha/visuel.png\n");
+    good.file("/projets/alpha/visuel.png", png(1200, 750));
+    const stdout = execFileSync("node", [script, good.fiches, good.pub], { cwd: root, stdio: "pipe" });
+    expect(String(stdout)).toContain("check-assets : ");
   });
 });
