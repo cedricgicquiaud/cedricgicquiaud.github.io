@@ -88,16 +88,29 @@ video:
   });
 });
 
-/** Un WebP minimal : « RIFF » + taille + « WEBP », puis un chunk VP8X portant largeur - 1 et hauteur - 1 sur 3 octets. */
-function webp(width: number, height: number, size = 64) {
+type WebpChunk = "VP8X" | "VP8 " | "VP8L";
+
+/** Un WebP minimal : « RIFF » + taille + « WEBP », puis le premier chunk qui porte les dimensions :
+ * VP8X (étendu : largeur - 1 et hauteur - 1 sur 3 octets), VP8 (avec perte : code de début 9D 01 2A puis
+ * largeur et hauteur sur 14 bits) ou VP8L (sans perte : octet 2F puis largeur - 1 et hauteur - 1 sur 14 bits). */
+function webp(width: number, height: number, size = 64, chunk: WebpChunk = "VP8X") {
   const buf = Buffer.alloc(size);
   buf.write("RIFF", 0, "ascii");
   buf.writeUInt32LE(size - 8, 4);
   buf.write("WEBP", 8, "ascii");
-  buf.write("VP8X", 12, "ascii");
-  buf.writeUInt32LE(10, 16);
-  buf.writeUIntLE(width - 1, 24, 3);
-  buf.writeUIntLE(height - 1, 27, 3);
+  buf.write(chunk, 12, "ascii");
+  buf.writeUInt32LE(size - 20, 16);
+  if (chunk === "VP8X") {
+    buf.writeUIntLE(width - 1, 24, 3);
+    buf.writeUIntLE(height - 1, 27, 3);
+  } else if (chunk === "VP8 ") {
+    Buffer.from([0x9d, 0x01, 0x2a]).copy(buf, 23);
+    buf.writeUInt16LE(width, 26);
+    buf.writeUInt16LE(height, 28);
+  } else {
+    buf[20] = 0x2f;
+    buf.writeUInt32LE((width - 1) | ((height - 1) << 14), 21);
+  }
   return buf;
 }
 
@@ -191,6 +204,17 @@ describe("checkAssets — dimensions de la capture principale (PFO-61)", () => {
     file("/projets/alpha/visuel.png", png(width, height));
     expect(checkAssets(fiches, pub)).toEqual([
       `alpha.md : visuel « /projets/alpha/visuel.png » : ${width}×${height}, attendu 1200×750`,
+    ]);
+  });
+
+  it.each<WebpChunk>(["VP8X", "VP8 ", "VP8L"])("lit les dimensions d'un visuel WebP dans le chunk %s : 1200×750 passe, 1200×630 est refusé", (chunk) => {
+    const ok = sandbox("visuel: /projets/alpha/visuel.webp\n");
+    ok.file("/projets/alpha/visuel.webp", webp(1200, 750, 64, chunk));
+    expect(checkAssets(ok.fiches, ok.pub)).toEqual([]);
+    const wrong = sandbox("visuel: /projets/alpha/visuel.webp\n");
+    wrong.file("/projets/alpha/visuel.webp", webp(1200, 630, 64, chunk));
+    expect(checkAssets(wrong.fiches, wrong.pub)).toEqual([
+      "alpha.md : visuel « /projets/alpha/visuel.webp » : 1200×630, attendu 1200×750",
     ]);
   });
 
