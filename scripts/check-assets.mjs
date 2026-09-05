@@ -1,5 +1,5 @@
 // Contrôle des fichiers déclarés dans les fiches (`visuel`, `captures[].fichier`, `video.fichier`)
-// avant `next build` : existence dans public/ et poids (capture ≤ 300 Ko).
+// avant `next build` : existence dans public/ et poids (capture ≤ 300 Ko, vidéo ≤ 15 Mo).
 // Usage : node scripts/check-assets.mjs [dossier des fiches] [dossier public]
 // (défauts : content/fiches et public ; lancé par `npm run build` avant `project-visuals`).
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
@@ -10,20 +10,28 @@ import matter from "gray-matter";
 const root = path.resolve(import.meta.dirname, "..");
 
 const KO = 1024;
+const MO = 1024 * KO;
 const MAX_CAPTURE_BYTES = 300 * KO;
+const MAX_VIDEO_BYTES = 15 * MO;
 
-/** Plafond lisible : « 300 Ko (307200 octets) ». */
-const cap = (bytes) => `${bytes / KO} Ko (${bytes} octets)`;
+/** Plafond lisible : « 300 Ko (307200 octets) », « 15 Mo (15728640 octets) ». */
+const cap = (bytes) => `${bytes >= MO ? `${bytes / MO} Mo` : `${bytes / KO} Ko`} (${bytes} octets)`;
 
-/** Les fichiers déclarés par une fiche : `{ where, declared }` (où dans le frontmatter, chemin déclaré). */
+/** Ce qu'on attend d'un fichier déclaré, selon le champ qui le déclare. */
+const CAPTURE = { maxBytes: MAX_CAPTURE_BYTES };
+const VIDEO = { maxBytes: MAX_VIDEO_BYTES };
+
+/** Les fichiers déclarés par une fiche : `{ where, declared, kind }` (où dans le frontmatter, chemin déclaré, attendu). */
 function declaredFiles(data) {
   const files = [];
-  if (typeof data.visuel === "string") files.push({ where: "visuel", declared: data.visuel });
+  if (typeof data.visuel === "string") files.push({ where: "visuel", declared: data.visuel, kind: CAPTURE });
   const captures = Array.isArray(data.captures) ? data.captures : [];
   captures.forEach((capture, i) => {
-    if (typeof capture?.fichier === "string") files.push({ where: `captures, entrée ${i + 1}`, declared: capture.fichier });
+    if (typeof capture?.fichier === "string") {
+      files.push({ where: `captures, entrée ${i + 1}`, declared: capture.fichier, kind: CAPTURE });
+    }
   });
-  if (typeof data.video?.fichier === "string") files.push({ where: "video", declared: data.video.fichier });
+  if (typeof data.video?.fichier === "string") files.push({ where: "video", declared: data.video.fichier, kind: VIDEO });
   return files;
 }
 
@@ -37,7 +45,7 @@ export function checkAssets(fichesDir, publicDir) {
   const problems = [];
   for (const name of readdirSync(fichesDir).filter((n) => n.endsWith(".md"))) {
     const { data } = matter(readFileSync(path.join(fichesDir, name), "utf8"));
-    for (const { where, declared } of declaredFiles(data)) {
+    for (const { where, declared, kind } of declaredFiles(data)) {
       const file = path.resolve(publicDir, "." + declared);
       const label = `${name} : ${where} « ${declared} »`;
       if (!existsSync(file)) {
@@ -45,7 +53,7 @@ export function checkAssets(fichesDir, publicDir) {
         continue;
       }
       const { size } = statSync(file);
-      if (size > MAX_CAPTURE_BYTES) problems.push(`${label} : ${size} octets, plafond ${cap(MAX_CAPTURE_BYTES)}`);
+      if (size > kind.maxBytes) problems.push(`${label} : ${size} octets, plafond ${cap(kind.maxBytes)}`);
     }
   }
   return problems;
