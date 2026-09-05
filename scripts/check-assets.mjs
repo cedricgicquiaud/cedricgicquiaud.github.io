@@ -1,8 +1,9 @@
 // Contrôle des fichiers déclarés dans les fiches (`visuel`, `captures[].fichier`, `video.fichier`)
-// avant `next build` : existence dans public/ et poids (capture ≤ 300 Ko, vidéo ≤ 15 Mo).
+// avant `next build` : existence dans public/, poids (capture ≤ 300 Ko, vidéo ≤ 15 Mo) et type reconnu
+// par le contenu, jamais par l'extension (capture : PNG ou WebP).
 // Usage : node scripts/check-assets.mjs [dossier des fiches] [dossier public]
 // (défauts : content/fiches et public ; lancé par `npm run build` avant `project-visuals`).
-import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
+import { closeSync, existsSync, openSync, readdirSync, readFileSync, readSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import matter from "gray-matter";
@@ -17,9 +18,29 @@ const MAX_VIDEO_BYTES = 15 * MO;
 /** Plafond lisible : « 300 Ko (307200 octets) », « 15 Mo (15728640 octets) ». */
 const cap = (bytes) => `${bytes >= MO ? `${bytes / MO} Mo` : `${bytes / KO} Ko`} (${bytes} octets)`;
 
+/** Les premiers octets d'un fichier (assez pour la signature et l'en-tête). */
+function head(file, length = 32) {
+  const buf = Buffer.alloc(length);
+  const fd = openSync(file, "r");
+  try {
+    const read = readSync(fd, buf, 0, length, 0);
+    return buf.subarray(0, read);
+  } finally {
+    closeSync(fd);
+  }
+}
+
+const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47]);
+const isPng = (head) => head.subarray(0, 4).equals(PNG_SIGNATURE);
+const isWebp = (head) => head.subarray(0, 4).toString("ascii") === "RIFF" && head.subarray(8, 12).toString("ascii") === "WEBP";
+
 /** Ce qu'on attend d'un fichier déclaré, selon le champ qui le déclare. */
-const CAPTURE = { maxBytes: MAX_CAPTURE_BYTES };
-const VIDEO = { maxBytes: MAX_VIDEO_BYTES };
+const CAPTURE = {
+  maxBytes: MAX_CAPTURE_BYTES,
+  isType: (head) => isPng(head) || isWebp(head),
+  typeLabel: "ni PNG ni WebP d'après son contenu",
+};
+const VIDEO = { maxBytes: MAX_VIDEO_BYTES, isType: () => true, typeLabel: "" };
 
 /** Les fichiers déclarés par une fiche : `{ where, declared, kind }` (où dans le frontmatter, chemin déclaré, attendu). */
 function declaredFiles(data) {
@@ -53,7 +74,11 @@ export function checkAssets(fichesDir, publicDir) {
         continue;
       }
       const { size } = statSync(file);
-      if (size > kind.maxBytes) problems.push(`${label} : ${size} octets, plafond ${cap(kind.maxBytes)}`);
+      if (size > kind.maxBytes) {
+        problems.push(`${label} : ${size} octets, plafond ${cap(kind.maxBytes)}`);
+        continue;
+      }
+      if (!kind.isType(head(file))) problems.push(`${label} : ${kind.typeLabel}`);
     }
   }
   return problems;
