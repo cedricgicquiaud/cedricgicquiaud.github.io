@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup, render } from "@testing-library/react";
+import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { Fiche } from "../../components/fiche";
 import { ProjectCard } from "../../components/project-card";
@@ -137,5 +137,19 @@ describe("Lecteur vidéo sous l'ancre #video (PFO-64)", () => {
     expect(video.hasAttribute("muted")).toBe(false);
     expect(avec.querySelector("script")).toBeNull();
     expect(avec.innerHTML).not.toMatch(/autoplay|onplay|onclick/i);
+  });
+});
+
+describe("Mention « Vidéo (N min) » sur la carte (PFO-66)", () => {
+  it("lie « Vidéo (2 min) » vers /projets/<slug>/#video, à côté de Code et Démo, sans déborder", () => {
+    render(
+      <ProjectCard fiche={fakeFiche({ video: VIDEO, frontmatter: { ...fakeFiche().frontmatter, demo: "https://factice.example.test/" } })} />,
+    );
+    const lien = screen.getByRole("link", { name: "Vidéo (2 min)" });
+    expect(lien).toHaveAttribute("href", "/projets/factice/#video");
+    const ligne = screen.getByRole("link", { name: "Code" }).parentElement!;
+    expect(ligne).toContainElement(screen.getByRole("link", { name: "Démo" }));
+    expect(ligne).toContainElement(lien);
+    expect(ligne.className).toMatch(/\bflex-wrap\b/);
   });
 });
