@@ -2,6 +2,7 @@ import "@testing-library/jest-dom/vitest";
 import { cleanup, render } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 import { Fiche } from "../../components/fiche";
+import { ProjectCard } from "../../components/project-card";
 import type { Fiche as FicheData } from "../../lib/fiches";
 
 afterEach(cleanup);
@@ -84,5 +85,22 @@ describe("Galerie légendée sur la page (PFO-63)", () => {
       expect(img.className).toMatch(/\bh-auto\b/);
     }
     expect(container.querySelector("script, button, dialog, a[href$='.png']")).toBeNull();
+  });
+
+  it("refus : une liste de captures vide ne rend ni galerie ni conteneur, le corps est identique à une fiche sans captures", () => {
+    const sans = render(<Fiche fiche={fakeFiche()} />).container.innerHTML;
+    cleanup();
+    const vide = render(<Fiche fiche={fakeFiche({ captures: [] })} />).container;
+    expect(vide.querySelector("figure")).toBeNull();
+    expect(vide.innerHTML).toBe(sans);
+  });
+
+  it("refus : la carte de l'accueil garde le seul visuel principal et ne montre aucune capture de galerie", () => {
+    const { container } = render(<ProjectCard fiche={fakeFiche({ captures: CAPTURES })} />);
+    const imgs = Array.from(container.querySelectorAll("img"));
+    expect(imgs).toHaveLength(1);
+    expect(imgs[0].getAttribute("src")).toBe("/projets/generated/factice.png");
+    expect(container.querySelector("figure")).toBeNull();
+    expect(container.innerHTML).not.toContain("accueil.png");
   });
 });
