@@ -1,6 +1,7 @@
 // Contrôle des fichiers déclarés dans les fiches (`visuel`, `captures[].fichier`, `video.fichier`)
 // avant `next build` : existence dans public/, poids (capture ≤ 300 Ko, vidéo ≤ 15 Mo) et type reconnu
-// par le contenu, jamais par l'extension (capture : PNG ou WebP ; vidéo : MP4).
+// par le contenu, jamais par l'extension (capture : PNG ou WebP ; vidéo : MP4). La capture principale
+// (`visuel`) mesure 1200×750, dimensions lues dans l'en-tête (IHDR pour PNG).
 // Usage : node scripts/check-assets.mjs [dossier des fiches] [dossier public]
 // (défauts : content/fiches et public ; lancé par `npm run build` avant `project-visuals`).
 import { closeSync, existsSync, openSync, readdirSync, readFileSync, readSync, statSync } from "node:fs";
@@ -35,18 +36,28 @@ const isPng = (head) => head.subarray(0, 4).equals(PNG_SIGNATURE);
 const isWebp = (head) => head.subarray(0, 4).toString("ascii") === "RIFF" && head.subarray(8, 12).toString("ascii") === "WEBP";
 const isMp4 = (head) => head.subarray(4, 8).toString("ascii") === "ftyp";
 
+/** Largeur et hauteur lues dans l'en-tête d'une image : PNG, chunk IHDR (octets 16-23, big-endian). */
+function dimensions(head) {
+  if (isPng(head)) return { width: head.readUInt32BE(16), height: head.readUInt32BE(20) };
+  return undefined;
+}
+
+const VISUEL_WIDTH = 1200;
+const VISUEL_HEIGHT = 750;
+
 /** Ce qu'on attend d'un fichier déclaré, selon le champ qui le déclare. */
 const CAPTURE = {
   maxBytes: MAX_CAPTURE_BYTES,
   isType: (head) => isPng(head) || isWebp(head),
   typeLabel: "ni PNG ni WebP d'après son contenu",
 };
+const VISUEL = { ...CAPTURE, width: VISUEL_WIDTH, height: VISUEL_HEIGHT };
 const VIDEO = { maxBytes: MAX_VIDEO_BYTES, isType: isMp4, typeLabel: "pas un MP4 d'après son contenu (« ftyp » absent)" };
 
 /** Les fichiers déclarés par une fiche : `{ where, declared, kind }` (où dans le frontmatter, chemin déclaré, attendu). */
 function declaredFiles(data) {
   const files = [];
-  if (typeof data.visuel === "string") files.push({ where: "visuel", declared: data.visuel, kind: CAPTURE });
+  if (typeof data.visuel === "string") files.push({ where: "visuel", declared: data.visuel, kind: VISUEL });
   const captures = Array.isArray(data.captures) ? data.captures : [];
   captures.forEach((capture, i) => {
     if (typeof capture?.fichier === "string") {
@@ -79,7 +90,16 @@ export function checkAssets(fichesDir, publicDir) {
         problems.push(`${label} : ${size} octets, plafond ${cap(kind.maxBytes)}`);
         continue;
       }
-      if (!kind.isType(head(file))) problems.push(`${label} : ${kind.typeLabel}`);
+      const bytes = head(file);
+      if (!kind.isType(bytes)) {
+        problems.push(`${label} : ${kind.typeLabel}`);
+        continue;
+      }
+      if (kind.width === undefined) continue;
+      const { width, height } = dimensions(bytes);
+      if (width !== kind.width || height !== kind.height) {
+        problems.push(`${label} : ${width}×${height}, attendu ${kind.width}×${kind.height}`);
+      }
     }
   }
   return problems;
