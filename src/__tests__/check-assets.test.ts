@@ -1,5 +1,5 @@
 import { execFileSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, truncateSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
@@ -20,7 +20,8 @@ ${front}---
 **En bref.** Un outil. 120 tests. Code public.
 `;
 
-/** Un dossier temporaire avec `fiches/alpha.md` et un `public/` vide ; `file` y écrit un fichier sous public/. */
+/** Un dossier temporaire avec `fiches/alpha.md` et un `public/` vide ; `file` y écrit un fichier sous public/
+ * (`size` : taille finale, complétée d'octets nuls par `truncate` pour ne pas allouer un gros tampon). */
 function sandbox(front = "") {
   const dir = mkdtempSync(path.join(tmpdir(), "assets-"));
   const fiches = path.join(dir, "fiches");
@@ -28,10 +29,11 @@ function sandbox(front = "") {
   mkdirSync(fiches);
   mkdirSync(pub);
   writeFileSync(path.join(fiches, "alpha.md"), fiche(front));
-  const file = (rel: string, content: Buffer) => {
+  const file = (rel: string, content: Buffer, size?: number) => {
     const full = path.join(pub, "." + rel);
     mkdirSync(path.dirname(full), { recursive: true });
     writeFileSync(full, content);
+    if (size !== undefined) truncateSync(full, size);
   };
   return { fiches, pub, file };
 }
@@ -86,7 +88,16 @@ video:
   });
 });
 
+/** Un MP4 minimal : taille de boîte puis « ftyp » à l'offset 4. */
+function mp4(size = 32) {
+  const buf = Buffer.alloc(size);
+  buf.writeUInt32BE(size, 0);
+  buf.write("ftyp", 4, "ascii");
+  return buf;
+}
+
 const KO = 1024;
+const MO = 1024 * KO;
 
 describe("checkAssets — poids des fichiers déclarés (PFO-60)", () => {
   it("accepte une capture de 300 Ko juste et refuse une capture de 300 Ko + 1 octet en donnant le poids", () => {
@@ -101,6 +112,21 @@ describe("checkAssets — poids des fichiers déclarés (PFO-60)", () => {
     file("/projets/alpha/b.png", png(800, 500, 300 * KO + 1));
     expect(checkAssets(fiches, pub)).toEqual([
       "alpha.md : captures, entrée 2 « /projets/alpha/b.png » : 307201 octets, plafond 300 Ko (307200 octets)",
+    ]);
+  });
+
+  it("accepte une vidéo de 15 Mo juste et refuse une vidéo de 15 Mo + 1 octet en donnant le poids", () => {
+    const front = `video:
+  fichier: /projets/alpha/demo.mp4
+  duree: 2 min
+`;
+    const ok = sandbox(front);
+    ok.file("/projets/alpha/demo.mp4", mp4(), 15 * MO);
+    expect(checkAssets(ok.fiches, ok.pub)).toEqual([]);
+    const heavy = sandbox(front);
+    heavy.file("/projets/alpha/demo.mp4", mp4(), 15 * MO + 1);
+    expect(checkAssets(heavy.fiches, heavy.pub)).toEqual([
+      "alpha.md : video « /projets/alpha/demo.mp4 » : 15728641 octets, plafond 15 Mo (15728640 octets)",
     ]);
   });
 });
