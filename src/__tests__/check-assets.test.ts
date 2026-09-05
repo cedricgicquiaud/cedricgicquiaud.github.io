@@ -128,6 +128,18 @@ function mp4(size = 32) {
 const KO = 1024;
 const MO = 1024 * KO;
 
+describe("checkAssets — chemin mal formé (PFO-60)", () => {
+  it.each([
+    ["qui sort de public/ (../)", "/../outside.png"],
+    ["sans / initial", "projets/alpha/visuel.png"],
+  ])("signale un visuel %s comme un problème, même si le fichier existe", (_, declared) => {
+    const { fiches, pub, file } = sandbox(`visuel: ${declared}\n`);
+    file("/projets/alpha/visuel.png", png(1200, 750));
+    writeFileSync(path.join(pub, "..", "outside.png"), png(1200, 750));
+    expect(checkAssets(fiches, pub)).toEqual([`alpha.md : visuel « ${declared} » : doit être un chemin /… dans public/`]);
+  });
+});
+
 describe("checkAssets — poids des fichiers déclarés (PFO-60)", () => {
   it("accepte une capture de 300 Ko juste et refuse une capture de 300 Ko + 1 octet en donnant le poids", () => {
     const front = `captures:
