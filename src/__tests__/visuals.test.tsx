@@ -108,9 +108,9 @@ describe("scripts/project-visuals.mjs (PFO-35)", () => {
 });
 
 describe("branchement sur le build (PFO-35)", () => {
-  it("npm run build génère les visuels avant next build, puis contrôle la sortie", () => {
+  it("npm run build contrôle les fichiers déclarés, génère les visuels, lance next build, puis contrôle la sortie", () => {
     const { scripts } = JSON.parse(readFileSync(path.join(root, "package.json"), "utf8"));
-    expect(scripts.build).toBe("node scripts/project-visuals.mjs && next build && node scripts/check-output.mjs");
+    expect(scripts.build).toBe("node scripts/check-assets.mjs && node scripts/project-visuals.mjs && next build && node scripts/check-output.mjs");
   });
 
   it("les visuels générés ne sont pas versionnés", () => {
