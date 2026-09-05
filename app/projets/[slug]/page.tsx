@@ -16,11 +16,18 @@ export async function generateMetadata({ params }: PageProps<"/projets/[slug]">)
   const title = `${fiche.frontmatter.nom} — ${site.name}`;
   // openGraph explicite : sinon la page hérite la carte générique du layout
   // (og:title = nom du site) et un lien partagé sur LinkedIn ne nomme pas le projet.
-  // L'image OG reste celle du site, résolue via metadataBase.
+  // Next remplace l'objet openGraph du layout sans le fusionner : sans `images` ici, la fiche
+  // n'aurait aucune og:image. Le visuel de la fiche, rendu absolu via metadataBase.
   return {
     title,
     description: fiche.enBref.quoi,
-    openGraph: { title, description: fiche.enBref.quoi, type: "article", url: `/projets/${slug}/` },
+    openGraph: {
+      title,
+      description: fiche.enBref.quoi,
+      type: "article",
+      url: `/projets/${slug}/`,
+      images: [{ url: fiche.visuel, width: 1200, height: 750, alt: fiche.frontmatter.nom }],
+    },
   };
 }
 
