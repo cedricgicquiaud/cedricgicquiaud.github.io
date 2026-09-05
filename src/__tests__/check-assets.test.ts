@@ -267,14 +267,17 @@ describe("scripts/check-assets.mjs en ligne de commande (PFO-60)", () => {
 });
 
 describe("checkOutput — plafond sur le poids total de out/ (PFO-62)", () => {
-  /** Un out/ factice : une page propre de 1 Ko et une image de 1 Ko dont les octets contiennent un emoji. */
+  /** Un out/ factice de 2 Ko : une page propre de 1 Ko et une image de 1 Ko dont les octets contiennent
+   * un emoji et un numéro de téléphone (refusés dans un .html, ignorés dans une image). */
   function outDir() {
     const dir = mkdtempSync(path.join(tmpdir(), "out-"));
-    const body = "<p>Projet livré.</p>";
-    writeFileSync(path.join(dir, "index.html"), `<!doctype html><html><body>${body}</body></html>`.padEnd(KO, " "));
-    mkdirSync(path.join(dir, "projets"));
-    writeFileSync(path.join(dir, "projets", "a.png"), Buffer.concat([png(800, 500), Buffer.from("☀ +33 6 12 34 56 78")]), { flag: "w" });
-    truncateSync(path.join(dir, "projets", "a.png"), KO);
+    const html = path.join(dir, "index.html");
+    writeFileSync(html, "<!doctype html><html><body><p>Projet livré.</p></body></html>");
+    truncateSync(html, KO);
+    const image = path.join(dir, "projets", "a.png");
+    mkdirSync(path.dirname(image));
+    writeFileSync(image, Buffer.concat([png(800, 500), Buffer.from("☀ +33 6 12 34 56 78")]));
+    truncateSync(image, KO);
     return dir;
   }
 
