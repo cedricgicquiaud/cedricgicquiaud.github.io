@@ -86,6 +86,25 @@ video:
   });
 });
 
+const KO = 1024;
+
+describe("checkAssets — poids des fichiers déclarés (PFO-60)", () => {
+  it("accepte une capture de 300 Ko juste et refuse une capture de 300 Ko + 1 octet en donnant le poids", () => {
+    const front = `captures:
+  - fichier: /projets/alpha/a.png
+    legende: L'écran d'accueil
+  - fichier: /projets/alpha/b.png
+    legende: Le rapport
+`;
+    const { fiches, pub, file } = sandbox(front);
+    file("/projets/alpha/a.png", png(800, 500, 300 * KO));
+    file("/projets/alpha/b.png", png(800, 500, 300 * KO + 1));
+    expect(checkAssets(fiches, pub)).toEqual([
+      "alpha.md : captures, entrée 2 « /projets/alpha/b.png » : 307201 octets, plafond 300 Ko (307200 octets)",
+    ]);
+  });
+});
+
 describe("scripts/check-assets.mjs en ligne de commande (PFO-60)", () => {
   it("sort en erreur avec la liste des problèmes quand un fichier déclaré manque, en succès sinon", () => {
     const bad = sandbox("visuel: /projets/alpha/absent.png\n");
