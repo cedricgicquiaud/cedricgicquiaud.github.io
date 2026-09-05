@@ -4,6 +4,7 @@ import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { checkAssets } from "../../scripts/check-assets.mjs";
+import { checkOutput } from "../../scripts/check-output.mjs";
 
 const root = path.resolve(__dirname, "../..");
 const script = path.join(root, "scripts", "check-assets.mjs");
@@ -262,5 +263,27 @@ describe("scripts/check-assets.mjs en ligne de commande (PFO-60)", () => {
     good.file("/projets/alpha/visuel.png", png(1200, 750));
     const stdout = execFileSync("node", [script, good.fiches, good.pub], { cwd: root, stdio: "pipe" });
     expect(String(stdout)).toContain("check-assets : ");
+  });
+});
+
+describe("checkOutput — plafond sur le poids total de out/ (PFO-62)", () => {
+  /** Un out/ factice : une page propre de 1 Ko et une image de 1 Ko dont les octets contiennent un emoji. */
+  function outDir() {
+    const dir = mkdtempSync(path.join(tmpdir(), "out-"));
+    const body = "<p>Projet livré.</p>";
+    writeFileSync(path.join(dir, "index.html"), `<!doctype html><html><body>${body}</body></html>`.padEnd(KO, " "));
+    mkdirSync(path.join(dir, "projets"));
+    writeFileSync(path.join(dir, "projets", "a.png"), Buffer.concat([png(800, 500), Buffer.from("☀ +33 6 12 34 56 78")]), { flag: "w" });
+    truncateSync(path.join(dir, "projets", "a.png"), KO);
+    return dir;
+  }
+
+  it("avec un seuil de 1 Ko sur un dossier de 2 Ko, rend un problème qui donne le poids et le plafond", () => {
+    const problems = checkOutput(outDir(), [], KO);
+    expect(problems).toEqual(["poids total : 2048 octets, plafond 1 Ko (1024 octets)"]);
+  });
+
+  it("sans seuil explicite (150 Mo), reste propre : les images ne sont pas lues par les autres règles", () => {
+    expect(checkOutput(outDir(), [])).toEqual([]);
   });
 });
