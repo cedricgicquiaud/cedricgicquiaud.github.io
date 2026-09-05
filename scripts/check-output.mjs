@@ -1,22 +1,36 @@
 // Contrôle du HTML généré dans out/ après `next build`.
 // Refuse : mots interdits (content/forbidden.txt : une empreinte SHA-256 par ligne, jamais le mot
-// en clair), emoji, domaines tiers hors liste blanche, numéros de téléphone.
+// en clair), emoji, domaines tiers hors liste blanche, numéros de téléphone, et un out/ de plus de
+// 150 Mo au total (images et vidéos comptées dans le poids, jamais lues par les autres règles).
 
 import { createHash } from "node:crypto";
 import { readdirSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+const KO = 1024;
+const MO = 1024 * KO;
+/** Poids total de out/ au-delà duquel le build est refusé. */
+export const MAX_OUTPUT_BYTES = 150 * MO;
+
 // Les .html passent toutes les règles ; les .js et .txt (chunks et données RSC) seulement « domaine tiers ».
 const CHECKED = [".html", ".js", ".txt"];
 
-function outputFiles(dir) {
+/** Tous les fichiers de `dir`, récursivement. */
+function allFiles(dir) {
   return readdirSync(dir).flatMap((name) => {
     const full = path.join(dir, name);
-    if (statSync(full).isDirectory()) return outputFiles(full);
-    return CHECKED.includes(path.extname(name)) ? [full] : [];
+    return statSync(full).isDirectory() ? allFiles(full) : [full];
   });
 }
+
+const outputFiles = (dir) => allFiles(dir).filter((file) => CHECKED.includes(path.extname(file)));
+
+/** Somme des tailles de tous les fichiers de `dir`, images et vidéos comprises. */
+const totalBytes = (dir) => allFiles(dir).reduce((sum, file) => sum + statSync(file).size, 0);
+
+/** Plafond lisible : « 1 Ko (1024 octets) », « 150 Mo (157286400 octets) ». */
+const cap = (bytes) => `${bytes >= MO ? `${bytes / MO} Mo` : `${bytes / KO} Ko`} (${bytes} octets)`;
 
 /** Empreinte d'un mot : SHA-256 hexadécimal du mot en minuscules, accents retirés. */
 export const fingerprint = (word) =>
@@ -78,11 +92,14 @@ function readText(file) {
  * Parcourt `dir` et renvoie la liste des problèmes (vide si tout est propre).
  * @param {string} dir dossier de sortie du build
  * @param {string[]} forbiddenFingerprints empreintes (voir `fingerprint`) des mots interdits
+ * @param {number} maxBytes plafond du poids total de `dir` (150 Mo par défaut ; petit seuil pour se tester)
  * @returns {string[]}
  */
-export function checkOutput(dir, forbiddenFingerprints) {
+export function checkOutput(dir, forbiddenFingerprints, maxBytes = MAX_OUTPUT_BYTES) {
   const fingerprints = new Set(forbiddenFingerprints);
   const problems = new Set();
+  const total = totalBytes(dir);
+  if (total > maxBytes) problems.add(`poids total : ${total} octets, plafond ${cap(maxBytes)}`);
   for (const file of outputFiles(dir)) {
     const text = readText(file);
     const rel = path.relative(dir, file);
