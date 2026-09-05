@@ -1,6 +1,9 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { readFileSync } from "node:fs";
+import path from "node:path";
+import { afterEach, beforeAll, describe, expect, it } from "vitest";
+import { ensureBuild } from "./helpers/build";
 import { Fiche } from "../../components/fiche";
 import { ProjectCard } from "../../components/project-card";
 import * as fichePage from "../../app/projets/[slug]/page";
@@ -178,5 +181,28 @@ describe("Image Open Graph par fiche (PFO-65)", () => {
     const metadata = await fichePage.generateMetadata({ params: Promise.resolve({ slug: "slice" }), searchParams: Promise.resolve({}) });
     expect(metadata.openGraph?.images).toEqual([{ url: slice.visuel, width: 1200, height: 750, alt: slice.frontmatter.nom }]);
     expect(slice.visuel).toBe("/projets/generated/slice.png");
+  });
+});
+
+describe("Image Open Graph dans out/ — lit out/ produit par npm run build (PFO-65)", () => {
+  const root = path.resolve(__dirname, "../..");
+  const html = (rel: string) => readFileSync(path.join(root, "out", rel), "utf8");
+
+  beforeAll(() => ensureBuild(["app/projets/[slug]/page.tsx", "components/fiche.tsx", "components/project-card.tsx"]), 250_000);
+
+  it("out/projets/slice/index.html déclare og:image absolue vers le visuel généré, 1200 × 750", () => {
+    const page = html("projets/slice/index.html");
+    expect(page).toContain('<meta property="og:image" content="https://cedricgicquiaud.github.io/projets/generated/slice.png"/>');
+    expect(page).toContain('<meta property="og:image:width" content="1200"/>');
+    expect(page).toContain('<meta property="og:image:height" content="750"/>');
+    expect(page).not.toContain("/opengraph-image.png");
+  });
+
+  it("refus : out/index.html garde l'image OG du site, pas celle d'une fiche", () => {
+    const home = html("index.html");
+    expect(home).toContain('<meta property="og:image" content="https://cedricgicquiaud.github.io/opengraph-image.png"/>');
+    // Les cartes de l'accueil affichent les visuels générés : seule la balise og:image est contrôlée.
+    expect(home.match(/<meta property="og:image" content="[^"]*"/g)).toHaveLength(1);
+    expect(home).not.toMatch(/og:image" content="[^"]*\/projets\/generated\//);
   });
 });
