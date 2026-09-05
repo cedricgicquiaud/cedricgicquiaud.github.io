@@ -1,6 +1,6 @@
 // Contrôle des fichiers déclarés dans les fiches (`visuel`, `captures[].fichier`, `video.fichier`)
 // avant `next build` : existence dans public/, poids (capture ≤ 300 Ko, vidéo ≤ 15 Mo) et type reconnu
-// par le contenu, jamais par l'extension (capture : PNG ou WebP).
+// par le contenu, jamais par l'extension (capture : PNG ou WebP ; vidéo : MP4).
 // Usage : node scripts/check-assets.mjs [dossier des fiches] [dossier public]
 // (défauts : content/fiches et public ; lancé par `npm run build` avant `project-visuals`).
 import { closeSync, existsSync, openSync, readdirSync, readFileSync, readSync, statSync } from "node:fs";
@@ -33,6 +33,7 @@ function head(file, length = 32) {
 const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47]);
 const isPng = (head) => head.subarray(0, 4).equals(PNG_SIGNATURE);
 const isWebp = (head) => head.subarray(0, 4).toString("ascii") === "RIFF" && head.subarray(8, 12).toString("ascii") === "WEBP";
+const isMp4 = (head) => head.subarray(4, 8).toString("ascii") === "ftyp";
 
 /** Ce qu'on attend d'un fichier déclaré, selon le champ qui le déclare. */
 const CAPTURE = {
@@ -40,7 +41,7 @@ const CAPTURE = {
   isType: (head) => isPng(head) || isWebp(head),
   typeLabel: "ni PNG ni WebP d'après son contenu",
 };
-const VIDEO = { maxBytes: MAX_VIDEO_BYTES, isType: () => true, typeLabel: "" };
+const VIDEO = { maxBytes: MAX_VIDEO_BYTES, isType: isMp4, typeLabel: "pas un MP4 d'après son contenu (« ftyp » absent)" };
 
 /** Les fichiers déclarés par une fiche : `{ where, declared, kind }` (où dans le frontmatter, chemin déclaré, attendu). */
 function declaredFiles(data) {
