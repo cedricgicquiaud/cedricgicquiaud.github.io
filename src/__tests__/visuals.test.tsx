@@ -205,10 +205,10 @@ describe("visuels dans out/ — lit out/ produit par npm run build (PFO-35)", ()
     250_000,
   );
 
-  it("contient un PNG généré par fiche (7) dont out/projets/generated/slice.png", () => {
+  it("contient un PNG généré par fiche (8) dont out/projets/generated/slice.png", () => {
     expect(existsSync(slicePng)).toBe(true);
     const slugs = readdirSync(path.join(root, "content", "fiches")).filter((n) => n.endsWith(".md"));
-    expect(slugs).toHaveLength(7);
+    expect(slugs).toHaveLength(8);
     for (const name of slugs) expect(existsSync(path.join(outGenerated, name.replace(/\.md$/, ".png"))), name).toBe(true);
   });
 
