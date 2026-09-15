@@ -525,4 +525,5 @@ Les deux PNG existent après `npm run build` (visuels générés) ; la vidéo n'
 - [ ] Page `/projets/app-sante/` : aucun nom du client, de ses dirigeants ni de ses partenaires ; les mots « production » et « publiée » n'y figurent pas.
 - [ ] « À propos » commence par « Mon métier : product builder IA » ; le bloc 2026 d'« Expérience » porte le rôle « Product builder IA ».
 - [ ] Aucune accroche « En bref » (page de chaque fiche) ne cite un nombre de tests ; les chiffres restent dans Preuves.
+- [ ] « À propos » et la page `/projets/pilot/` nomment la méthode « agentic engineering » ; la fiche PILOT décrit six agents, leurs outils limités et un modèle par poste, et ne dit plus « un seul modèle partout ».
 - [ ] Refus : ajouter le nom de marque du client dans `content/about.md`, lancer `npm run build` : `check-output` échoue sur « mot interdit ». Annuler la modification.
