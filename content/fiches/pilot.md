@@ -7,14 +7,14 @@ stack: Linear, GitHub, Claude Code, skills et agents en Markdown, git worktrees,
 visibilite: public
 depot: à venir (nouveau dépôt public à historique neuf, sans `.workflow/sessions/`)
 demo: bac à sable `pilotage-sandbox` (CRM léger « Carnet »), à rendre public après audit
-ordre: 2
+ordre: 3
 ---
 
 # PILOT — faire produire des agents de code sans leur laisser le jugement
 
 **En bref.** Une méthode, pas un logiciel : Linear pour piloter, GitHub pour le code, Claude Code
 pour produire, avec une boucle où celui qui écrit le code n'est jamais celui qui le vérifie.
-Éprouvée sur un bac à sable puis sur ce site : 7 features livrées, 8 défauts attrapés par l'audit
+Éprouvée sur un bac à sable, sur ce site et sur deux projets réels : 8 défauts attrapés par l'audit
 derrière des tests verts, 0,66 h de session là où le barème en prévoyait 2,44. Méthode publique à
 venir ; remplace FORGE, ma première version (avril 2026).
 

@@ -7,14 +7,14 @@ stack: Next.js 16, TypeScript strict, Tailwind v4, shadcn/ui, Supabase (Postgres
 visibilite: vitrine
 depot:
 demo: à venir (Vercel)
-ordre: 5
+ordre: 6
 ---
 
 # Dashboard — un tableau de bord branché sur ses vraies données
 
 **En bref.** Parti comme un template de dashboard e-commerce (16 widgets), devenu une
 application où l'on connecte une source (Supabase, Stripe, Airtable) et où l'on demande
-un widget en langage courant. 436 tests verts, build propre. Code privé, démo en ligne à venir.
+un widget en langage courant. Trois sources actives, premier appel mesuré sous 700 ms. Code privé, démo en ligne à venir.
 
 ## Problème
 

@@ -7,14 +7,14 @@ stack: TypeScript, Node/Express, React/Vite, Vitest, MCP SDK, Docker, GitHub Act
 visibilite: public
 depot: https://github.com/cedricgicquiaud/SLICE
 demo: à venir (mise en ligne prévue)
-ordre: 1
+ordre: 2
 ---
 
 # SLICE — n'importe quelle API, dans n'importe quel agent, en trois clics
 
 **En bref.** Un service web qui transforme la description d'une API en connecteur pour agent IA
-(MCP), en ne donnant à l'agent que les appels cochés. 556 tests, 500 vraies API passées sans
-plantage, deux failles trouvées en revue et corrigées. Code public, démo en ligne à venir.
+(MCP), en ne donnant à l'agent que les appels cochés. 500 vraies API passées sans
+plantage, et deux failles trouvées en revue puis corrigées. Code public, démo en ligne à venir.
 
 ## Problème
 
