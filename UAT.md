@@ -517,3 +517,12 @@ Les deux PNG existent après `npm run build` (visuels générés) ; la vidéo n'
 - [ ] Fenêtre à 375 px : « Code  Vidéo (2 min) » tient sur la ligne des liens sans sortir de la carte ; si la ligne est trop étroite, la mention passe à la ligne, elle ne déborde pas.
 - [ ] Carte anonyme : mettre `visibilite: anonyme` dans `slice.md` (avec le bloc `video`), recharger : la carte garde « Projet anonymisé : code et client non publiés », montre « Vidéo (2 min) », et aucun lien « Code » ni « Démo ». Remettre `visibilite: public`.
 - [ ] Refus : retirer le bloc `video`, recharger : le mot « Vidéo » n'apparaît sur aucune carte de l'accueil ; la carte SLICE garde son visuel « SLICE ».
+
+## Tâche isolée PFO-69 — Positionnement « product builder IA »
+
+- [ ] `scripts/dev-serve.sh start 3005`, ouvrir http://localhost:3005/ : sous le nom, « Product builder IA », puis la phrase « Je transforme un besoin métier en application qui tourne, en faisant coder des agents IA sous contrôle. »
+- [ ] Section Projets : 8 cartes, la première est « App santé », avec la mention « projet anonymisé ».
+- [ ] Page `/projets/app-sante/` : aucun nom du client, de ses dirigeants ni de ses partenaires ; les mots « production » et « publiée » n'y figurent pas.
+- [ ] « À propos » commence par « Mon métier : product builder IA » ; le bloc 2026 d'« Expérience » porte le rôle « Product builder IA ».
+- [ ] Aucune accroche « En bref » (page de chaque fiche) ne cite un nombre de tests ; les chiffres restent dans Preuves.
+- [ ] Refus : ajouter le nom de marque du client dans `content/about.md`, lancer `npm run build` : `check-output` échoue sur « mot interdit ». Annuler la modification.
