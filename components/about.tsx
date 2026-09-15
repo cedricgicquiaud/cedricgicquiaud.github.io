@@ -8,7 +8,7 @@ export function About() {
       <div className="w-full">
         <h2 className="mb-6 text-sm font-bold uppercase tracking-widest">{about.titre}</h2>
         <div
-          className="space-y-4 text-base leading-relaxed text-muted-foreground"
+          className="space-y-4 text-base leading-relaxed text-muted-foreground [&_strong]:font-semibold [&_strong]:text-foreground"
           dangerouslySetInnerHTML={{ __html: about.html }}
         />
       </div>
