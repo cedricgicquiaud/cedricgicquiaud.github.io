@@ -527,3 +527,9 @@ Les deux PNG existent après `npm run build` (visuels générés) ; la vidéo n'
 - [ ] Aucune accroche « En bref » (page de chaque fiche) ne cite un nombre de tests ; les chiffres restent dans Preuves.
 - [ ] « À propos » et la page `/projets/pilot/` nomment la méthode « agentic engineering » ; la fiche PILOT décrit six agents, leurs outils limités et un modèle par poste, et ne dit plus « un seul modèle partout ».
 - [ ] Refus : ajouter le nom de marque du client dans `content/about.md`, lancer `npm run build` : `check-output` échoue sur « mot interdit ». Annuler la modification.
+
+## Tâche isolée PFO-70 — « À propos » condensé
+
+- [ ] `scripts/dev-serve.sh start 3005`, section « À propos » : cinq paragraphes courts ; « Product builder IA », « des agents IA écrivent le code », « seul côté technique », « application mobile de santé », « agentic engineering », « treize ans en ESN » et « chef de projet » ressortent en gras, en blanc sur le gris du texte.
+- [ ] À 375 px de large, le texte reste lisible, sans défilement horizontal.
+- [ ] Refus : passer un paragraphe entier en gras dans `content/about.md`, lancer `npm test` : le test « met en gras de 4 à 8 segments courts » échoue. Annuler la modification.
