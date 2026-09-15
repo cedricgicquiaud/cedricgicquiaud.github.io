@@ -533,3 +533,10 @@ Les deux PNG existent après `npm run build` (visuels générés) ; la vidéo n'
 - [ ] `scripts/dev-serve.sh start 3005`, section « À propos » : cinq paragraphes courts ; « Product builder IA », « des agents IA écrivent le code », « seul côté technique », « application mobile de santé », « agentic engineering », « treize ans en ESN » et « chef de projet » ressortent en gras, en blanc sur le gris du texte.
 - [ ] À 375 px de large, le texte reste lisible, sans défilement horizontal.
 - [ ] Refus : passer un paragraphe entier en gras dans `content/about.md`, lancer `npm test` : le test « met en gras de 4 à 8 segments courts » échoue. Annuler la modification.
+
+## Tâche isolée PFO-71 — « À propos » plus dense
+
+- [ ] `scripts/dev-serve.sh start 3005`, section « À propos » à 1280 px : quatre paragraphes pleins ; « product builder IA », « agentic engineering », « treize ans en ESN », « chef de projet » et « dix ans de conseil immobilier » ressortent en blanc, graisse moyenne, comme dans le modèle.
+- [ ] Les liens « application mobile de santé », « PILOT » et « GiveMe5 » sont blancs, passent en cyan au survol et ouvrent la fiche correspondante ; au clavier (Tab), chaque lien montre un contour.
+- [ ] À 375 px de large, pas de défilement horizontal.
+- [ ] Refus : remplacer `/projets/pilot/` par `/projets/inconnu/` dans `content/about.md`, lancer `npm test` : le test « chaque lien /projets/<slug>/ désigne une fiche existante » échoue. Annuler la modification.
