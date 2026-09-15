@@ -10,6 +10,6 @@ Avant l'IA, treize ans en ESN, d'abord concepteur-développeur, puis chef de pro
 
 Puis dix ans de conseil immobilier en indépendant. Un métier de terrain : trouver des clients, négocier, tenir ses engagements sans filet. Cette période m'a appris à vendre un résultat, pas un effort, et à mesurer chaque semaine ce qui a vraiment avancé.
 
-Depuis 2023, je construis avec l'IA. Le premier produit est né avec ChatGPT, en vibe coding : rapide, brouillon, sans test. Il a fonctionné, puis il a cassé. J'ai gardé la vitesse et ajouté une méthode : tests écrits avant le code, vérification par un agent qui n'a pas écrit ce code, merge décidé par un humain.
+Depuis 2023, je construis avec l'IA. Le premier produit est né avec ChatGPT, en vibe coding : rapide, brouillon, sans test. Il a fonctionné, puis il a cassé. J'ai gardé la vitesse et ajouté une méthode d'agentic engineering : des agents spécialisés, chacun avec ses outils et son modèle, des tests écrits avant le code, une vérification par un agent qui n'a pas écrit ce code, et un merge décidé par un humain.
 
 Pas de chichis, juste ce qui marche. Chaque projet présenté ici dit ce qui fonctionne et ce qui reste à faire.
