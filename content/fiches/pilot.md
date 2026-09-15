@@ -12,8 +12,9 @@ ordre: 3
 
 # PILOT — faire produire des agents de code sans leur laisser le jugement
 
-**En bref.** Une méthode, pas un logiciel : Linear pour piloter, GitHub pour le code, Claude Code
-pour produire, avec une boucle où celui qui écrit le code n'est jamais celui qui le vérifie.
+**En bref.** Une méthode d'agentic engineering, pas un logiciel : six agents IA spécialisés
+cadrent, produisent, vérifient et corrigent le code, pilotés par Linear et GitHub, et celui qui
+écrit le code n'est jamais celui qui le vérifie.
 Éprouvée sur un bac à sable, sur ce site et sur deux projets réels : 8 défauts attrapés par l'audit
 derrière des tests verts, 0,66 h de session là où le barème en prévoyait 2,44. Méthode publique à
 venir ; remplace FORGE, ma première version (avril 2026).
@@ -68,9 +69,23 @@ La boucle de production, étape 3 :
 - Le nombre d'agents en parallèle n'est pas un objectif : il se déduit du nombre de livraisons
   réellement disjointes. Défaut : 1.
 
-Le tout tient dans du Markdown : une skill `pilot` (8 commandes : `init`, `roadmap`, `feature`,
-`run`, `next`, `fix`, `sync`, `benchmark`), trois fiches de poste d'agents, un gabarit de
-mission, une allowlist de commandes versionnée. `next` déduit l'étape suivante des statuts
+Le système d'agents :
+- **Six agents, un rôle chacun.** Au cadrage, le `decoupeur` propose les livraisons et le
+  `contradicteur` cherche ce qui manque. En production : producteur, vérificateur, testeur,
+  correcteur.
+- **Des outils limités par agent.** Vérificateur, testeur, découpeur et contradicteur sont en
+  lecture seule. Seuls le producteur et le correcteur modifient le code ; seul le producteur
+  écrit dans Linear.
+- **Un modèle par poste, choisi sur épreuve.** Opus produit et corrige, Fable audite et juge le
+  cadrage, Sonnet exécute la passe visuelle.
+- **Un contexte borné.** Un ordre de mission par livraison, une liste de commandes autorisées
+  versionnée, le `CLAUDE.md` du dépôt et rien d'autre.
+- **Des outils maison.** Mesure du coût par agent, verrou git entre agents parallèles, passe
+  visuelle outillée pour le testeur.
+
+Le tout tient dans du Markdown et quelques scripts : une skill `pilot` (8 commandes : `init`,
+`roadmap`, `feature`, `run`, `next`, `fix`, `sync`, `benchmark`), six fiches de poste d'agents,
+un gabarit de mission, une allowlist de commandes versionnée. `next` déduit l'étape suivante des statuts
 Linear : aucun fichier d'état à entretenir. Le code de la tâche Linear voyage dans le nom de
 la branche et le titre de la PR : c'est ce qui fait avancer le tableau de bord sans personne.
 
@@ -98,6 +113,11 @@ uniquement par cette méthode.
   (production, audit, corrections, PR) prend 18 à 25 minutes par livraison ; ~0,5 h quand le
   testeur joue la recette dans le navigateur. Sur la feature agenda : 27 phrases de contrat,
   4 livraisons, 1 case de recette refusée, reformulée puis rejouée.
+- **Un modèle par poste, choisi sur épreuve** (bancs des 09 et 10/09/2026). Vérificateur : la
+  même livraison auditée par Sonnet et par Fable ; Fable relève deux défauts réels de plus,
+  vérifiés, pour le même temps. Producteur : la même livraison produite par Opus et par Fable,
+  contrat couvert à 10 sur 10 des deux côtés, Opus avec 40 % de jetons en moins. Correcteur :
+  5 pièges sur 6 déjoués sur un banc dédié ; le raté a corrigé sa fiche le jour même.
 - Le chiffre du goulot : la première feature (4 livraisons, 12 tâches) a pris **0,66 h de
   session** là où mon barème, calibré sur 344 PR de deux projets antérieurs, prévoyait
   **2,44 h**. Le temps de session compte les intervalles entre ouverture de PR et merge dans
@@ -107,7 +127,8 @@ uniquement par cette méthode.
 
 État honnête : le « test des deux heures » (deux chantiers lancés, écran fermé) n'a pas été
 fait ; toutes les boucles ont tourné écran ouvert. Pas de disjoncteur de budget par agent.
-Un seul modèle partout : rien ne prouve qu'un autre ferait mieux ou moins cher à tel poste. Le
+Le choix du modèle par poste repose sur une épreuve par agent, sur des livraisons inventées : à
+confirmer en run réel. Le
 testeur n'a pas encore attrapé de défaut réel dans la boucle, seulement à froid sur une
 livraison déjà saine. Le dépôt public de la méthode n'est pas ouvert ; le bac à sable est privé.
 
@@ -132,6 +153,9 @@ livraison déjà saine. Le dépôt public de la méthode n'est pas ouvert ; le b
 - **Une règle écrite n'est pas une preuve.** Après gravure des idiomes dans le `CLAUDE.md`, les
   fautes exactes n'ont pas réapparu, mais une variante est passée. Je ne peux pas dire si c'est
   la règle ou l'imitation du code corrigé qui a joué.
+- **Le modèle le plus fort n'est pas le meilleur à chaque poste.** Là où l'agent juge (audit,
+  cadrage), le modèle le plus capable voit des défauts que l'autre manque. Là où il exécute
+  (produire sous contrat, recopier une mesure), un modèle moins cher fait le même travail.
 - **FORGE → PILOT.** FORGE adaptait la profondeur du rituel à la taille de la tâche, mais
   laissait le même agent produire, relire et livrer, et prévoyait un mode autonome. PILOT
   garde ses pauses de validation (cadrage, découpage), remplace sa production par la boucle
