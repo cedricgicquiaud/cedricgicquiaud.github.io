@@ -7,14 +7,14 @@ stack: TypeScript, Node/Hono, SQLite (better-sqlite3), React/Vite, Vitest, markd
 visibilite: vitrine
 depot:
 demo: à venir (déploiement Coolify, base jetable)
-ordre: 4
+ordre: 5
 ---
 
 # Parcours — écrire une formation en Markdown, la lire comme un site de cours
 
 **En bref.** Un lecteur de formations : on dépose un dossier de fichiers Markdown, Parcours
 l'affiche comme un site de cours avec sommaire, progression cochable et « reprendre où j'en
-étais ». 639 tests verts, deux formations complètes hébergées (10 h 45 de contenu). Code privé
+étais ». Deux formations complètes écrites et lues dedans, 10 h 45 de contenu. Code privé
 pour l'instant, démo en ligne à venir.
 
 ## Problème

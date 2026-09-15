@@ -7,14 +7,14 @@ stack: TypeScript, Node/Hono, SQLite (better-sqlite3), SSE, React/Vite, Vitest, 
 visibilite: vitrine
 depot:
 demo: à venir (déploiement Coolify, mode démo à construire)
-ordre: 3
+ordre: 4
 ---
 
 # Foreman — une tour de contrôle locale pour une flotte d'agents Claude Code
 
 **En bref.** Une application locale qui affiche, sur une seule page, l'état de tous les
 agents Claude Code qui tournent sur ma machine, et qui centralise les questions qu'ils
-me posent. 565 tests verts et une garantie prouvée par test : Foreman ne modifie jamais
+me posent. Une garantie prouvée par test : Foreman ne modifie jamais
 un dépôt et n'envoie rien sur le réseau. Code privé, démo à venir.
 
 ## Problème
