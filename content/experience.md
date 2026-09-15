@@ -2,13 +2,14 @@
 titre: Expérience
 blocs:
   - periode: "2026"
-    role: Constructeur d'agents IA
+    role: Product builder IA
     secteur: Logiciel, indépendant
     description: >-
-      Agents branchés sur les outils réels d'une équipe et livrés en production.
-      Projets SLICE, Foreman et Parcours ; méthode de pilotage où les agents
-      produisent, testent et vérifient, et où un humain décide du merge.
-    tags: [TypeScript, Next.js, MCP, Claude Code, Linear]
+      Une application mobile de santé menée seul côté technique, du cadrage avec
+      les dirigeants à la recette sur iPhone, avec un coach IA et une dizaine de
+      services branchés. En parallèle, SLICE, Foreman et Parcours. Le code est
+      écrit par des agents, sous une méthode où un humain décide du merge.
+    tags: [React Native, FastAPI, TypeScript, MCP, Claude Code]
   - periode: "2023–2025"
     role: Développeur de side project et d'automatisations
     secteur: TPE et services

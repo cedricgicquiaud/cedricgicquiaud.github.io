@@ -159,7 +159,7 @@ describe("Bas de colonne : liens sociaux (PFO-30 ; bouton de thème retiré par 
   it("place les liens GitHub, LinkedIn, Mail en bas de colonne, visibles en mobile ; aucun bouton de thème dans l'intro", () => {
     const { container } = render(<Intro />);
     const section = container.querySelector("section#intro")!;
-    expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("Développeur d'agents IA");
+    expect(screen.getByRole("heading", { level: 2 })).toHaveTextContent("Product builder IA");
 
     expect(screen.queryByRole("button", { name: /thème/i, hidden: true })).toBeNull();
 

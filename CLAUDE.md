@@ -55,7 +55,7 @@ Linear sans liste validée.
 
 ## Décisions produit (30/08)
 
-- Titre court sous le nom : « Développeur d'agents IA ».
+- Titre court sous le nom : « Product builder IA » (révisé le 15/09, PFO-69 ; remplace « Développeur d'agents IA »).
 - Pas de photo sur le site (portrait retiré le 30/08 ; composant conservé, non rendu).
 - Pas de pied de page (retiré le 30/08) ; les liens vivent dans la colonne gauche.
 - Pas de bouton de thème : le site est sombre seul (décision du 30/08, remplace la bascule).

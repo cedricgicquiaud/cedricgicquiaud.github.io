@@ -2,8 +2,8 @@ import site from "../content/site.json";
 import { Nav } from "./nav";
 import { SocialIcons } from "./social-icons";
 
-// Titre court sous le nom (texte à confirmer : décision produit ouverte).
-const SHORT_TITLE = "Développeur d'agents IA";
+// Titre court sous le nom (décision produit du 15/09, PFO-69).
+const SHORT_TITLE = "Product builder IA";
 
 export function Intro() {
   return (

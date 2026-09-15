@@ -7,7 +7,7 @@ stack: Python/Django 5.2, MySQL, Google Drive API, Google Places API, n8n, Make,
 visibilite: vitrine
 depot: https://github.com/cedricgicquiaud/GM5_landing
 demo: à confirmer (le README donne hello.giveme5xxxxx.fr, domaine à vérifier)
-ordre: 6
+ordre: 7
 ---
 
 # GiveMe5 — une plaque sur le comptoir, un avis Google en trente secondes
