@@ -161,12 +161,9 @@ describe("Projects — ordre", () => {
 describe("Projects — largeur 375 px (classes seulement, jsdom ne mesure pas)", () => {
   const LONG = "en cours (méthode rodée sur un bac à sable et branchée sur deux projets réels ; dépôt public pas encore ouvert)";
 
-  it("le badge statut peut passer à la ligne : whitespace-normal, jamais whitespace-nowrap ni h-5", () => {
+  it("un statut long n'est pas rendu : le statut est masqué (PFO-73)", () => {
     render(<ProjectCard fiche={fiche({ statut: LONG })} />);
-    const badge = screen.getByText(LONG);
-    expect(badge).toHaveClass("whitespace-normal", "h-auto");
-    expect(badge).not.toHaveClass("whitespace-nowrap");
-    expect(badge).not.toHaveClass("h-5");
+    expect(screen.queryByText(LONG)).toBeNull();
   });
 
   it("le titre coupe les mots longs (break-words)", () => {
