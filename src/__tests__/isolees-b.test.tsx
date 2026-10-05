@@ -57,7 +57,7 @@ describe("PFO-39 — mention « projet anonymisé » sur la carte", () => {
   it("n'affiche aucun lien Code ni Démo avec la mention, même si la fiche porte des URL", () => {
     render(<ProjectCard fiche={fiche({ visibilite: "anonyme" })} />);
     expect(screen.getByText(MENTION)).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Code" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Code sur GitHub" })).toBeNull();
     expect(screen.queryByRole("link", { name: "Démo" })).toBeNull();
   });
 });
@@ -66,7 +66,7 @@ describe("PFO-39 — mention « projet anonymisé » sur la page fiche", () => {
   it("affiche la mention en text-muted-foreground pour une fiche anonyme, sans lien Code ni Démo", () => {
     render(<Fiche fiche={fiche({ visibilite: "anonyme" })} />);
     expect(screen.getByText(MENTION)).toHaveClass("text-muted-foreground");
-    expect(screen.queryByRole("link", { name: "Code" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Code sur GitHub" })).toBeNull();
     expect(screen.queryByRole("link", { name: "Démo" })).toBeNull();
   });
 
@@ -74,7 +74,7 @@ describe("PFO-39 — mention « projet anonymisé » sur la page fiche", () => {
     render(<Fiche fiche={fiche({ visibilite: "public" })} />);
     render(<Fiche fiche={fiche({ visibilite: "vitrine" })} />);
     expect(screen.queryByText(MENTION)).toBeNull();
-    expect(screen.getAllByRole("link", { name: "Code" })).toHaveLength(2);
+    expect(screen.getAllByRole("link", { name: "Code sur GitHub" })).toHaveLength(2);
   });
 });
 

@@ -99,9 +99,8 @@ describe("ProjectCard : pastilles et titre en bleu cyber (PFO-51)", () => {
     for (const tag of ["TypeScript", "React"]) {
       expect(within(card).getByText(tag)).toHaveClass("bg-cyber/10", "text-cyber");
     }
-    const statut = within(card).getByText("en cours");
-    expect(statut).toHaveClass("bg-secondary", "text-secondary-foreground");
-    expect(statut).not.toHaveClass("text-cyber");
+    // PFO-73 : le statut n'est plus affiché sur la carte.
+    expect(within(card).queryByText("en cours")).toBeNull();
     const title = within(card).getByRole("heading", { level: 3 });
     expect(title).toHaveClass("group-hover/item:text-cyber", "group-focus-within/item:text-cyber");
     expect(title.className).not.toMatch(/text-primary/);
@@ -137,8 +136,6 @@ describe("ProjectCard : typographie du modèle (PFO-52)", () => {
   it("statut en petites capitales, titre 16 px medium, phrase En bref 14 px atténuée", () => {
     render(<ProjectCard fiche={fiche()} />);
     const card = screen.getByRole("article");
-    const statut = within(card).getByText("en cours");
-    expect(statut).toHaveClass("text-xs", "font-semibold", "uppercase", "tracking-wide");
 
     const title = within(card).getByRole("heading", { level: 3 });
     expect(title).toHaveClass("text-base", "font-medium");
@@ -159,7 +156,6 @@ describe("ProjectCard : sans chiffre clé (PFO-53)", () => {
 
     expect(card).toHaveClass("min-w-0");
     expect(within(card).getByRole("heading", { level: 3 }).parentElement).toHaveClass("min-w-0");
-    expect(within(card).getByText("en cours")).toHaveClass("whitespace-normal");
   });
 });
 
