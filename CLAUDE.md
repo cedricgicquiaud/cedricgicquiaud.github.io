@@ -52,6 +52,7 @@ Linear sans liste validée.
 - Une section ne se marge ni ne se centre elle-même ; le conteneur de page (`app/page.tsx`) le fait.
 - Badges et puces : `whitespace-normal`, conteneur `min-w-0` ; vérification à 375 px avant d'ouvrir la PR.
 - `CLAUDE.md` n'est jamais commité depuis un worktree de livraison (`next dev` y réécrit un bloc) : `git checkout -- CLAUDE.md` avant de commiter.
+- Avant d'ouvrir une PR, les tests tournent sur un build propre (`out/` et `public/projets/generated/` vidés) : la CI ne tourne qu'au déploiement, et un fichier généré resté en local masque un échec (PFO-67, 05/10).
 
 ## Décisions produit (30/08)
 
