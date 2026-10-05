@@ -166,10 +166,9 @@ describe("Rendu de la fiche : en-tête (PFO-27)", () => {
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Factice — un titre de fiche");
 
     const terms = Array.from(document.querySelectorAll("dl dt")).map((dt) => dt.textContent);
-    expect(terms).toEqual(["Statut", "Période", "Rôle", "Stack", "Visibilité"]);
+    expect(terms).toEqual(["Période", "Rôle", "Stack", "Visibilité"]);
     const definition = (term: string) =>
       Array.from(document.querySelectorAll("dl dt")).find((dt) => dt.textContent === term)!.nextElementSibling!;
-    expect(definition("Statut")).toHaveTextContent("en cours");
     expect(definition("Période")).toHaveTextContent("mai 2026 → aujourd'hui");
     expect(definition("Rôle")).toHaveTextContent("conception et tests");
     expect(definition("Visibilité")).toHaveTextContent("public");
@@ -199,7 +198,7 @@ describe("Rendu de la fiche : En bref et cinq sections (PFO-27)", () => {
 describe("Rendu de la fiche : liens Code et Démo (PFO-27)", () => {
   it("rend Code et Démo en fin d'en-tête quand la fiche a une URL de dépôt et de démo", () => {
     render(<Fiche fiche={fakeFiche()} />);
-    const code = screen.getByRole("link", { name: "Code" });
+    const code = screen.getByRole("link", { name: "Code sur GitHub" });
     const demo = screen.getByRole("link", { name: "Démo" });
     expect(code).toHaveAttribute("href", "https://github.com/cedricgicquiaud/factice");
     expect(demo).toHaveAttribute("href", "https://factice.example.test/");
@@ -210,13 +209,13 @@ describe("Rendu de la fiche : liens Code et Démo (PFO-27)", () => {
 
   it("omet Démo (sans URL) et garde Code", () => {
     render(<Fiche fiche={fakeFiche({ demo: "", demoNote: "à venir" })} />);
-    expect(screen.getByRole("link", { name: "Code" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Code sur GitHub" })).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Démo" })).toBeNull();
   });
 
   it("refuse Code et Démo pour une fiche anonyme", () => {
     render(<Fiche fiche={fakeFiche({ visibilite: "anonyme", depot: "", depotNote: "", demo: "", demoNote: "" })} />);
-    expect(screen.queryByRole("link", { name: "Code" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Code sur GitHub" })).toBeNull();
     expect(screen.queryByRole("link", { name: "Démo" })).toBeNull();
     expect(screen.getByRole("heading", { level: 1 })).toBeInTheDocument();
   });
