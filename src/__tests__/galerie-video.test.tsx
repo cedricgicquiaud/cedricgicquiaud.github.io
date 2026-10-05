@@ -152,7 +152,7 @@ describe("Mention « Vidéo (N min) » sur la carte (PFO-66)", () => {
     );
     const lien = screen.getByRole("link", { name: "Vidéo (2 min)" });
     expect(lien).toHaveAttribute("href", "/projets/factice/#video");
-    const ligne = screen.getByRole("link", { name: "Code" }).parentElement!;
+    const ligne = screen.getByRole("link", { name: "Code sur GitHub" }).parentElement!;
     expect(ligne).toContainElement(screen.getByRole("link", { name: "Démo" }));
     expect(ligne).toContainElement(lien);
     expect(ligne.className).toMatch(/\bflex-wrap\b/);
@@ -163,7 +163,7 @@ describe("Mention « Vidéo (N min) » sur la carte (PFO-66)", () => {
     render(<ProjectCard fiche={fakeFiche({ frontmatter: anonyme, video: { fichier: "/projets/factice/demo.mp4", duree: "45 s" } })} />);
     expect(screen.getByText("Projet anonymisé : code et client non publiés")).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Vidéo (45 s)" })).toHaveAttribute("href", "/projets/factice/#video");
-    expect(screen.queryByRole("link", { name: "Code" })).toBeNull();
+    expect(screen.queryByRole("link", { name: "Code sur GitHub" })).toBeNull();
     expect(screen.queryByRole("link", { name: "Démo" })).toBeNull();
   });
 
