@@ -18,8 +18,8 @@ captures:
 
 # SLICE — connecteurs MCP sur mesure
 
-**En bref.** On coche les appels d'API qu'un agent IA a le droit de faire, SLICE génère le
-connecteur : le reste n'existe pas pour lui. Éprouvé sur 500 vraies API, sans plantage. Code
+**En bref.** N'importe quelle API en MCP, en trois clics : on coche les appels d'API qu'un agent
+IA a le droit de voir, SLICE génère le connecteur, le reste n'existe pas pour lui. Éprouvé sur 500 vraies API, sans plantage. Code
 public, démo en ligne à venir.
 
 ## Problème
