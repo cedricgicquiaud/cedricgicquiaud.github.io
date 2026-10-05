@@ -197,19 +197,25 @@ describe("page fiche — visuel (PFO-36)", () => {
 
 describe("visuels dans out/ — lit out/ produit par npm run build (PFO-35)", () => {
   const outGenerated = path.join(root, "out", "projets", "generated");
-  const slicePng = path.join(outGenerated, "slice.png");
+  const fichesDir = path.join(root, "content", "fiches");
+  // Une fiche qui déclare `visuel` (SLICE depuis PFO-67) n'a pas de visuel généré : le marqueur est PILOT, sans visuel fourni.
+  const provides = (name: string) => /^visuel:\s*\S/m.test(readFileSync(path.join(fichesDir, name), "utf8"));
 
-  // `out/` est périmé s'il est plus vieux que le script ou la fiche, ou si slice.png manque (helpers/build.ts).
+  // `out/` est périmé s'il est plus vieux que le script ou la fiche, ou si pilot.png manque (helpers/build.ts).
   beforeAll(
-    () => ensureBuild(["scripts/project-visuals.mjs", "content/fiches/slice.md"], { marker: "out/projets/generated/slice.png" }),
+    () => ensureBuild(["scripts/project-visuals.mjs", "content/fiches/pilot.md"], { marker: "out/projets/generated/pilot.png" }),
     250_000,
   );
 
-  it("contient un PNG généré par fiche (8) dont out/projets/generated/slice.png", () => {
-    expect(existsSync(slicePng)).toBe(true);
-    const slugs = readdirSync(path.join(root, "content", "fiches")).filter((n) => n.endsWith(".md"));
+  it("contient un PNG généré pour chaque fiche sans visuel fourni, et aucun pour une fiche qui en déclare un", () => {
+    const slugs = readdirSync(fichesDir).filter((n) => n.endsWith(".md"));
     expect(slugs).toHaveLength(8);
-    for (const name of slugs) expect(existsSync(path.join(outGenerated, name.replace(/\.md$/, ".png"))), name).toBe(true);
+    const generated = slugs.filter((n) => !provides(n));
+    expect(generated.length).toBeGreaterThan(0);
+    for (const name of slugs) {
+      const png = path.join(outGenerated, name.replace(/\.md$/, ".png"));
+      expect(existsSync(png), name).toBe(!provides(name));
+    }
   });
 
   it("check-output reste propre (les images ne sont pas lues)", () => {
