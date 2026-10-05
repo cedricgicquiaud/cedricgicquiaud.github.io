@@ -3,18 +3,24 @@ nom: SLICE
 statut: en cours
 periode: mai 2026 → aujourd'hui
 role: conception, développement, tests, positionnement — seul, avec des agents de code
-stack: TypeScript, Node/Express, React/Vite, Vitest, MCP SDK, Docker, GitHub Actions
+stack: TypeScript, React, Node.js/Express, MCP SDK, Zod, Vitest
 visibilite: public
-depot: https://github.com/cedricgicquiaud/SLICE
+depot: https://github.com/cedricgicquiaud/slice
 demo: à venir (mise en ligne prévue)
 ordre: 2
+visuel: /projets/slice/selection.png
+captures:
+  - fichier: /projets/slice/accueil.webp
+    legende: On dépose la description d'une API (OpenAPI, Swagger ou Postman), en fichier ou par son adresse.
+  - fichier: /projets/slice/configuration.webp
+    legende: Nom, authentification et hébergement ; à droite, le périmètre de l'agent et le contexte économisé.
 ---
 
 # SLICE — n'importe quelle API, dans n'importe quel agent, en trois clics
 
 **En bref.** Un service web qui transforme la description d'une API en connecteur pour agent IA
-(MCP), en ne donnant à l'agent que les appels cochés. 500 vraies API passées sans
-plantage, et deux failles trouvées en revue puis corrigées. Code public, démo en ligne à venir.
+(MCP), en ne donnant à l'agent que les appels cochés. Éprouvé sur 500 vraies API, sans
+plantage. Code public, démo en ligne à venir.
 
 ## Problème
 
@@ -38,6 +44,8 @@ connecteur à télécharger, soit une URL hébergée à coller dans son agent.
 Décisions qui ont compté :
 - **Le moindre privilège côté serveur.** Ce qui n'est pas coché n'existe pas pour l'agent.
   La sécurité est le produit, pas la génération de code, que tout le monde fait.
+- **Rien n'est cru sur parole.** Le serveur relit lui-même la description d'API au lieu de
+  faire confiance au navigateur, et chaque donnée entrante est contrôlée (Zod) avant usage.
 - **Pivot vers l'hébergement.** Le plan initial était un binaire à double-cliquer ; macOS le
   bloque (Gatekeeper). J'ai remplacé par un mode hébergé : le serveur relaie le jeton d'API
   de l'utilisateur sans jamais le stocker, et sert plusieurs sessions d'agents en parallèle.
@@ -52,23 +60,27 @@ Décisions qui ont compté :
 
 ## Preuves
 
-État au 30/08/2026 : Fonctionnel, pas encore mis en ligne.
+État au 05/10/2026 : Fonctionnel, pas encore mis en ligne.
 
-
-- 556 tests automatisés verts, typage strict, CI sur chaque PR (vérifié le 29/08/2026 sur
-  un clone propre : installation et démarrage en moins d'une minute, sans aucune clé).
+- Plus de 560 tests automatisés verts, typage strict, CI sur chaque PR (vérifié sur un clone
+  propre : installation et démarrage en moins d'une minute, sans aucune clé).
 - Passage de **500 vraies descriptions d'API** publiques dans le pipeline : 412 converties,
   83 rejetées proprement (authentification non supportée à l'époque), 5 trop grosses,
   **0 plantage**. Ce test a fait remonter deux bugs et un risque mémoire critique, tous corrigés.
 - Une revue de sécurité a trouvé **deux injections de code** possibles dans le code généré
   (via l'URL de jeton et les scopes OAuth). Corrigées, et la règle « toute donnée externe
   est encodée en JSON dans le code généré » est devenue une convention du projet.
+- Le 05/10/2026, un audit indépendant a montré que la règle n'était appliquée qu'à l'OAuth :
+  une description d'API piégée pouvait encore faire exécuter du code chez l'utilisateur, par
+  six voies (description, chemin, en-tête, `package.json`, `Dockerfile`, README du kit).
+  Toutes fermées, avec un test qui découpe le code généré pour vérifier qu'aucune valeur de
+  la spec n'y devient du code.
 - Validé de bout en bout dans Claude Desktop contre la vraie API Notion (recherche et
   création de pages).
 
-État honnête : le service n'est pas encore en ligne (mise en ligne sur VPS prévue). Le
-README public est en retard sur le code. Pas de facturation tant que la demande n'est pas
-confirmée par de vrais utilisateurs.
+État honnête : le service n'est pas encore en ligne (mise en ligne sur VPS prévue). Pas de
+facturation tant que la demande n'est pas confirmée par de vrais utilisateurs. Code sous
+licence FSL : lisible et réutilisable, sauf pour en faire un service concurrent.
 
 ## Ce que j'en ai appris
 
@@ -80,11 +92,14 @@ confirmée par de vrais utilisateurs.
   unitaires ne voyaient pas.
 - **Faire relire par un agent indépendant du producteur** trouve des failles que celui qui
   a écrit le code ne voit pas (les deux injections).
+- **Une règle de sécurité appliquée au cas par cas ne protège pas.** Encoder les valeurs
+  OAuth sans encoder le reste laissait six portes ouvertes. La bonne règle porte sur toute
+  donnée externe, et elle se vérifie par un test, pas par une relecture.
 - **Livrer un binaire à des utilisateurs Mac sans signature** ne marche pas ; il vaut mieux
   le savoir avant de construire l'écran de téléchargement.
 
 ## Artefacts
 
-- Dépôt public : https://github.com/cedricgicquiaud/SLICE
-- Exemple de connecteur généré (API JSONPlaceholder) : à publier
+- Dépôt public : https://github.com/cedricgicquiaud/slice
+- Documentation de l'API et du serveur généré : https://github.com/cedricgicquiaud/slice/tree/main/docs
 - Démo en ligne : à venir
