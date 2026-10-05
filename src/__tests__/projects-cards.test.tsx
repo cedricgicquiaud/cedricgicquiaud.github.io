@@ -38,13 +38,13 @@ function fiche(over: Partial<Fiche["frontmatter"]> & { slug?: string; titre?: st
 
 describe("ProjectCard — contenu", () => {
   // PFO-53 : le chiffre clé n'est plus rendu sur la carte (il reste sur la page de fiche).
-  it("affiche le titre, la ligne En bref, le statut et les tags, sans le chiffre clé", () => {
+  it("affiche le titre, la ligne En bref et les tags, sans le chiffre clé ni le statut (PFO-73)", () => {
     render(<ProjectCard fiche={fiche({ stack: ["TypeScript", "React"] })} />);
     const card = screen.getByRole("article");
     expect(within(card).getByRole("heading", { name: "Alpha — un titre" })).toBeInTheDocument();
     expect(within(card).getByText("Un outil qui fait une chose.")).toBeInTheDocument();
     expect(within(card).queryByText("120 tests.")).not.toBeInTheDocument();
-    expect(within(card).getByText("en cours")).toBeInTheDocument();
+    expect(within(card).queryByText("en cours")).toBeNull();
     expect(within(card).getByRole("list", { name: /stack/i })).toBeInTheDocument();
     expect(within(card).getByText("TypeScript")).toBeInTheDocument();
     expect(within(card).getByText("React")).toBeInTheDocument();
@@ -62,19 +62,19 @@ describe("ProjectCard — tags", () => {
 describe("ProjectCard — liens externes", () => {
   it("lie « Code » vers depot et « Démo » vers demo quand ce sont des URL", () => {
     render(<ProjectCard fiche={fiche({ depot: "https://github.com/x/alpha", demo: "https://alpha.example" })} />);
-    expect(screen.getByRole("link", { name: "Code" })).toHaveAttribute("href", "https://github.com/x/alpha");
+    expect(screen.getByRole("link", { name: "Code sur GitHub" })).toHaveAttribute("href", "https://github.com/x/alpha");
     expect(screen.getByRole("link", { name: "Démo" })).toHaveAttribute("href", "https://alpha.example");
   });
 
   it("refus : depot vide, aucun lien « Code »", () => {
     render(<ProjectCard fiche={fiche({ depot: "", demo: "https://alpha.example" })} />);
-    expect(screen.queryByRole("link", { name: "Code" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Code sur GitHub" })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Démo" })).toBeInTheDocument();
   });
 
   it("refus : depot qui n'est pas une URL (« à venir »), aucun lien « Code »", () => {
     render(<ProjectCard fiche={fiche({ depot: "à venir (nouveau dépôt public)" })} />);
-    expect(screen.queryByRole("link", { name: "Code" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Code sur GitHub" })).not.toBeInTheDocument();
   });
 
   it("refus : demo qui n'est pas une URL (« à venir »), aucun lien « Démo »", () => {
@@ -88,19 +88,19 @@ describe("ProjectCard — vitrine", () => {
   it("refus : vitrine sans dépôt, mention « code privé, démo à venir » et aucun lien externe", () => {
     render(<ProjectCard fiche={fiche({ visibilite: "vitrine", depot: "", demo: "à venir (Vercel)" })} />);
     expect(screen.getByText("code privé, démo à venir")).toBeInTheDocument();
-    expect(screen.queryByRole("link", { name: "Code" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Code sur GitHub" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Démo" })).not.toBeInTheDocument();
   });
 
   it("vitrine avec dépôt : lien « Code », pas de mention « code privé »", () => {
     render(<ProjectCard fiche={fiche({ visibilite: "vitrine", depot: "https://github.com/x/landing" })} />);
-    expect(screen.getByRole("link", { name: "Code" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Code sur GitHub" })).toBeInTheDocument();
     expect(screen.queryByText(/code privé/)).not.toBeInTheDocument();
   });
 
   it("anonyme sans dépôt : ni lien ni mention « code privé »", () => {
     render(<ProjectCard fiche={fiche({ visibilite: "anonyme", depot: "", demo: "" })} />);
-    expect(screen.queryByRole("link", { name: "Code" })).not.toBeInTheDocument();
+    expect(screen.queryByRole("link", { name: "Code sur GitHub" })).not.toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Démo" })).not.toBeInTheDocument();
     expect(screen.queryByText(/code privé/)).not.toBeInTheDocument();
   });
@@ -161,12 +161,9 @@ describe("Projects — ordre", () => {
 describe("Projects — largeur 375 px (classes seulement, jsdom ne mesure pas)", () => {
   const LONG = "en cours (méthode rodée sur un bac à sable et branchée sur deux projets réels ; dépôt public pas encore ouvert)";
 
-  it("le badge statut peut passer à la ligne : whitespace-normal, jamais whitespace-nowrap ni h-5", () => {
+  it("un statut long n'est pas rendu : le statut est masqué (PFO-73)", () => {
     render(<ProjectCard fiche={fiche({ statut: LONG })} />);
-    const badge = screen.getByText(LONG);
-    expect(badge).toHaveClass("whitespace-normal", "h-auto");
-    expect(badge).not.toHaveClass("whitespace-nowrap");
-    expect(badge).not.toHaveClass("h-5");
+    expect(screen.queryByText(LONG)).toBeNull();
   });
 
   it("le titre coupe les mots longs (break-words)", () => {

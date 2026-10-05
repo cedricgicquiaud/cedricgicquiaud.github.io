@@ -1,4 +1,6 @@
 import type { Fiche } from "../lib/fiches";
+import { AFFICHER_STATUT } from "../lib/affichage";
+import { GitHubLink } from "./github-link";
 import { Badge } from "./ui/badge";
 
 const isUrl = (s: string) => s.startsWith("http");
@@ -31,9 +33,11 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
           </a>
         </h3>
         <p className="text-sm leading-relaxed text-muted-foreground">{enBref.quoi}</p>
-        <Badge variant="secondary" className="h-auto whitespace-normal font-semibold uppercase tracking-wide">
-          {frontmatter.statut}
-        </Badge>
+        {AFFICHER_STATUT && (
+          <Badge variant="secondary" className="h-auto whitespace-normal font-semibold uppercase tracking-wide">
+            {frontmatter.statut}
+          </Badge>
+        )}
         <ul aria-label="Stack" className="flex flex-wrap gap-2">
           {frontmatter.stack.slice(0, 5).map((tag) => (
             <li key={tag}>
@@ -41,16 +45,12 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
             </li>
           ))}
         </ul>
-        <p className="flex flex-wrap gap-4 text-sm">
+        <p className="flex flex-wrap items-center gap-4 text-sm">
           {anonyme ? (
             <span className="text-muted-foreground">Projet anonymisé : code et client non publiés</span>
           ) : (
             <>
-              {isUrl(frontmatter.depot) && (
-                <a href={frontmatter.depot} className="underline underline-offset-4">
-                  Code
-                </a>
-              )}
+              {isUrl(frontmatter.depot) && <GitHubLink href={frontmatter.depot} />}
               {isUrl(frontmatter.demo) && (
                 <a href={frontmatter.demo} className="underline underline-offset-4">
                   Démo

@@ -3,6 +3,8 @@ import type { ReactNode } from "react";
 import site from "../content/site.json";
 import type { Fiche as FicheData } from "../lib/fiches";
 import { Badge } from "./ui/badge";
+import { AFFICHER_STATUT } from "../lib/affichage";
+import { GitHubLink } from "./github-link";
 
 // Mise en forme du HTML Markdown (Tailwind retire les puces et le soulignement par défaut).
 const MARKDOWN =
@@ -30,7 +32,7 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
           className="mt-6 aspect-[16/10] w-full rounded-lg border border-border object-cover"
         />
         <dl className="mt-6 grid gap-x-6 gap-y-2 text-sm sm:grid-cols-[auto_1fr]">
-          <Row term="Statut">{frontmatter.statut}</Row>
+          {AFFICHER_STATUT && <Row term="Statut">{frontmatter.statut}</Row>}
           <Row term="Période">{frontmatter.periode}</Row>
           <Row term="Rôle">{frontmatter.role}</Row>
           <Row term="Stack">
@@ -49,12 +51,8 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
           <p className="mt-4 text-sm text-muted-foreground">Projet anonymisé : code et client non publiés</p>
         ) : (
           (frontmatter.depot || frontmatter.demo) && (
-            <p className="mt-4 flex gap-4 text-sm">
-              {frontmatter.depot && (
-                <a href={frontmatter.depot} className={LINK}>
-                  Code
-                </a>
-              )}
+            <p className="mt-4 flex items-center gap-4 text-sm">
+              {frontmatter.depot && <GitHubLink href={frontmatter.depot} />}
               {frontmatter.demo && (
                 <a href={frontmatter.demo} className={LINK}>
                   Démo

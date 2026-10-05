@@ -97,7 +97,7 @@ describe("ProjectCard — liens et mobile", () => {
     render(<ProjectCard fiche={fiche()} />);
     const card = screen.getByRole("article");
     expect(card.closest("a")).toBeNull();
-    expect(screen.getByRole("link", { name: "Code" })).toHaveAttribute("href", "https://github.com/x/alpha");
+    expect(screen.getByRole("link", { name: "Code sur GitHub" })).toHaveAttribute("href", "https://github.com/x/alpha");
     expect(screen.getByRole("link", { name: "Démo" })).toHaveAttribute("href", "https://alpha.example");
   });
 
