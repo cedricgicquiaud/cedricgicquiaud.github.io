@@ -16,11 +16,11 @@ captures:
     legende: Nom, authentification et hébergement ; à droite, le périmètre de l'agent et le contexte économisé.
 ---
 
-# SLICE — n'importe quelle API, dans n'importe quel agent, en trois clics
+# SLICE — connecteurs MCP sur mesure
 
-**En bref.** Un service web qui transforme la description d'une API en connecteur pour agent IA
-(MCP), en ne donnant à l'agent que les appels cochés. Éprouvé sur 500 vraies API, sans
-plantage. Code public, démo en ligne à venir.
+**En bref.** On coche les appels d'API qu'un agent IA a le droit de faire, SLICE génère le
+connecteur : le reste n'existe pas pour lui. Éprouvé sur 500 vraies API, sans plantage. Code
+public, démo en ligne à venir.
 
 ## Problème
 
