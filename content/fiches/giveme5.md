@@ -21,6 +21,8 @@ chiffres:
     libelle: commerces équipés
   - valeur: "1"
     libelle: scan du comptoir au formulaire d'avis Google
+  - valeur: "3 ans"
+    libelle: de plaques en service, depuis 2023
 ---
 
 # GiveMe5 — avis Google en un scan
