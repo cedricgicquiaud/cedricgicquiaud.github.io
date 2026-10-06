@@ -9,6 +9,13 @@ depot: https://github.com/cedricgicquiaud/slice
 demo: à venir (mise en ligne prévue)
 ordre: 2
 visuel: /projets/slice/selection.png
+chiffres:
+  - valeur: "500"
+    libelle: vraies API passées dans le pipeline
+  - valeur: "0"
+    libelle: plantage sur ces 500 API
+  - valeur: "3"
+    libelle: formats acceptés (OpenAPI, Swagger, Postman)
 captures:
   - fichier: /projets/slice/accueil.webp
     legende: On dépose la description d'une API (OpenAPI, Swagger ou Postman), en fichier ou par son adresse.
