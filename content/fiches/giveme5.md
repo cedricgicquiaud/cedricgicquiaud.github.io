@@ -1,22 +1,33 @@
 ---
 nom: GiveMe5
 statut: livré
-periode: août 2023 → juillet 2026
+periode: août 2023 → aujourd'hui
 role: idée, produit physique, développement, automatisations, déploiement, vente — seul ; 2023 avec ChatGPT, 2025 en n8n/Make, 2026 avec Claude Code
-stack: Python/Django 5.2, MySQL, Google Drive API, Google Places API, n8n, Make, Airtable, Pipedrive, Qonto, OpenAI (GPT-4o-mini), HTML/CSS/JS sans build, Stripe Payment Link, GitHub Actions, PythonAnywhere, Coolify/nginx
-visibilite: vitrine
-depot: https://github.com/cedricgicquiaud/GM5_landing
-demo: à confirmer (le README donne hello.giveme5xxxxx.fr, domaine à vérifier)
+stack: Python/Django, MySQL, Google Places API, HTML/CSS/JS, Stripe, n8n/Make
+visibilite: public
+depot: https://github.com/cedricgicquiaud/giveme5
+demo: https://hello.giveme5xxxxx.fr
 ordre: 7
+visuel: /projets/giveme5/accueil.png
+captures:
+  - fichier: /projets/giveme5/mobile.webp
+    legende: La page de vente sur téléphone, là où arrivent la plupart des commerçants.
+  - fichier: /projets/giveme5/commande.webp
+    legende: La page de commande courte, envoyée par SMS après un appel.
+  - fichier: /projets/giveme5/simulateur.webp
+    legende: Le simulateur estime les avis à attendre selon le rythme de la boutique.
+chiffres:
+  - valeur: "200+"
+    libelle: commerces équipés
+  - valeur: "1"
+    libelle: scan du comptoir au formulaire d'avis Google
 ---
 
-# GiveMe5 — une plaque sur le comptoir, un avis Google en trente secondes
+# GiveMe5 — avis Google en un scan
 
-**En bref.** Des plaques et cartes NFC / QR code vendues aux commerçants : le client approche
-son téléphone et arrive directement sur le formulaire d'avis Google de la boutique. Mon premier
-produit, vendu 49 € pièce, avec un backoffice Django, trois automatisations n8n/Make et une
-landing Stripe — écrit en 2023, outillé en 2025, remis à jour en 2026. Landing publique ;
-backoffice privé.
+**En bref.** Une plaque sur le comptoir, un avis Google en un scan : le client approche son
+téléphone et arrive directement sur le formulaire d'avis de la boutique. Plus de 200 commerces
+équipés, à 49 € sans abonnement. Site de vente public, backoffice privé.
 
 ## Problème
 
@@ -33,103 +44,88 @@ après fabrication, sans intervention technique. On fabrique en série, on assoc
 
 ## Ce que j'ai construit
 
-Trois temps, un produit physique.
+Un produit physique et trois briques logicielles : un backoffice qui fabrique et redirige les
+plaques, des automatisations autour de la vente, un site de vente.
 
-**2023 — le backoffice (privé, Django).** Trois applications : les données (`GM5_BDD`), la
-génération de produits (`GM5_PRODUCTS`), la page vue par le client (`GM5_IHM`).
-- Chaque plaque reçoit une URL unique construite sur un horodatage à la microseconde.
-  Un formulaire dans l'admin génère N plaques d'un type donné en une fois ; le QR code est
-  produit en SVG et déposé sur Google Drive pour l'impression.
-- **Première activation par le commerçant lui-même.** Au premier scan, la plaque affiche un
-  champ de recherche Google Places : le commerçant tape le nom de sa boutique, choisit, et
-  l'adresse de son formulaire d'avis Google est enregistrée. À partir de là, tout scan
-  redirige vers cette page. Aucune configuration à faire côté vendeur.
-- Django parce que l'admin est fourni : gérer les plaques, voir celles qui sont activées,
-  sans écrire d'écran.
+**Le trajet d'une plaque.**
+- **Fabrication.** Dans l'admin, on choisit un type (plaque ou carte) et une quantité. Chaque
+  plaque reçoit une adresse unique ; son QR code part sur Google Drive pour l'impression, et
+  la même adresse est écrite dans la puce NFC.
+- **Premier scan, par le commerçant.** La plaque n'est liée à aucune boutique : elle affiche
+  une recherche Google Places. Le commerçant tape le nom de sa boutique, Google renvoie
+  l'identifiant de l'établissement, et l'adresse du formulaire d'avis est enregistrée.
+- **Tous les scans suivants.** Le serveur redirige directement vers le formulaire d'avis
+  Google de la boutique, sans page intermédiaire.
 
-**2025 — les automatisations autour du produit (n8n / Make).** Le but : vendre et servir
-sans y passer mes soirées.
-- **Service client** : un chatbot (« Aline ») qui répond aux questions des commerçants.
-  Il cherche la réponse dans une base de connaissances stockée sur Google Drive
-  (recherche vectorielle, c'est-à-dire par sens et non par mot exact) et la formule avec
-  GPT-4o-mini.
-- **Facturation** : une nouvelle vente dans Pipedrive (le CRM) déclenche une vérification,
-  la création du client et de la facture dans Qonto (la banque), puis l'envoi par Gmail.
-  Plus de facture faite à la main.
-- **Communication** : des posts Facebook générés depuis un tableau Airtable, par un scénario
-  Make et ChatGPT.
+**Les automatisations (2025, n8n et Make).** Le but : vendre et servir sans y passer mes
+soirées.
+- **Facturation** : une vente dans le CRM déclenche la création du client et de la facture
+  à la banque, puis l'envoi par e-mail. Plus de facture faite à la main.
+- **Service client** : un chatbot qui répond aux questions des commerçants à partir d'une
+  base de connaissances, en cherchant par le sens et non par le mot exact.
+- **Communication** : des posts Facebook générés depuis un tableau Airtable.
 
-**2026 — la landing (publique) et la remise à niveau.** Trois pages : la présentation
-complète (vidéo, arguments, simulateur du nombre d'avis, témoignages, FAQ), un tunnel court
-`/commande/` envoyé par SMS après un appel téléphonique, les mentions légales.
-- **Statique, sans build.** HTML/CSS/JS à la main, images et vidéos hébergées avec le site.
-  Une seule dépendance externe hors polices : Stripe. Rien à compiler, rien à casser.
-- **Stripe Payment Link** plutôt qu'un tunnel maison : un lien, un paiement unique,
+**Le site de vente (2026).** La présentation complète avec un simulateur d'avis, une page de
+commande courte envoyée par SMS après un appel, et un suivi des parrains : un lien
+`?ref=marie` rattache la vente à Marie dans Stripe.
+
+Décisions qui ont compté :
+- **Lier la plaque après fabrication.** La plaque porte une adresse, pas une boutique. On
+  imprime en série, on vend à n'importe qui, et c'est le commerçant qui l'active.
+- **Rediriger sur le serveur, pas dans la plaque.** La puce et le QR code ne contiennent que
+  l'adresse de la plaque. Une plaque activée est verrouillée : sa destination ne peut plus
+  être changée, et seul un formulaire d'avis Google est accepté.
+- **Django pour l'admin fourni** : gérer les plaques et voir celles qui sont activées, sans
+  écrire d'écran.
+- **Un site statique et un lien de paiement.** HTML écrit à la main, images et vidéos
+  hébergées avec le site, Stripe Payment Link plutôt qu'un tunnel maison. Rien à compiler,
   pas de code de paiement à maintenir.
-- Déploiement par push sur `main` (Coolify, nginx). Côté backoffice, déploiement automatique
-  sur PythonAnywhere à chaque push (GitHub Actions, `git pull --ff-only` : le déploiement
-  échoue plutôt que d'écraser une modification faite sur le serveur).
-
-**La plaque.** Objet physique NFC + QR code (plaque ou carte), imprimé à partir des SVG
-générés, vendu 49 € sans abonnement.
+- **Automatiser ce que je refaisais à chaque vente**, la facturation d'abord, sans code.
 
 ## Preuves
 
-État au 30/08/2026 : Produit vendu, en maintenance.
+État au 06/10/2026 : En production, maintenu.
 
-
-- Produit vendu à de vraies boutiques, plaques en service (pas de chiffres de vente ici).
-- Backoffice : 3 applications Django, 2 tables métier (`ProductType`, `Product`),
-  3 routes utiles (génération, activation, redirection), Django 5.2 LTS / Python 3.12
-  après mise à niveau depuis 4.2 en juillet 2026 ; `manage.py check` sans erreur
-  (vérifié le 29/08/2026 sur un clone propre).
-- Landing : 3 pages, 944 lignes de HTML au total, 6 boutons vers le même lien de paiement
-  Stripe, un simulateur d'avis à deux curseurs (avis par jour × mois × 20 jours d'ouverture),
-  4 questions de FAQ, 3 témoignages. Aucun fichier JavaScript externe.
-- Automatisations : 3 workflows (service client, facturation, posts). Ils vivent dans
-  n8n et Make, pas dans un dépôt : pas de chiffre vérifiable ici tant qu'ils ne sont pas
-  exportés.
+- **Plus de 200 commerces équipés**, plaques en service.
+- Backoffice : Django 5.2 LTS et Python 3.12 depuis juillet 2026, déploiement automatique à
+  chaque merge. Depuis le 06/10/2026, 14 tests automatisés (activation, verrou, accès à la
+  génération) et une CI qui installe les dépendances et génère un QR code sur chaque PR.
+- Toutes les alertes de sécurité des dépendances sont fermées (50 depuis 2025).
+- Site de vente : trois pages statiques, un seul lien de paiement Stripe, un suivi des
+  parrains vérifié en ligne.
 
 État honnête :
-- **Zéro test automatisé** dans le backoffice : les trois `tests.py` sont vides
-  (`manage.py test` : « Ran 0 tests »). Le code 2023 a été vérifié à la main.
-- **Le dépôt backoffice ne peut pas devenir public** : une base SQLite de développement est
-  commitée, le `settings.py` est suivi malgré le `.gitignore` (clé secrète Django en clair),
-  et une clé d'API Google Maps est écrite en dur dans un gabarit. À nettoyer avant toute
-  ouverture, avec rotation des clés.
-- Des fichiers en double (`views1.py`, `qrcode_generator1.py`) traînent depuis 2023.
-- L'adresse de mise à jour du lien d'avis ne vérifie pas qui l'appelle.
-- Le chatbot n'est pas intégré à la landing publiée en juillet 2026 : le code ne contient
-  aucun widget. Il tourne à côté.
+- **Une faille corrigée tard.** Jusqu'au 06/10/2026, l'adresse d'activation acceptait toute
+  demande : quiconque scannait une plaque pouvait la rediriger vers un autre site. Trouvée en
+  relisant le code pour le présenter, corrigée et vérifiée en production le jour même, avec
+  la page de génération des plaques réservée à l'admin.
+- **Le backoffice reste privé** : une base de développement et des clés ont été commitées
+  en 2023. À nettoyer, avec changement des clés, avant toute ouverture.
+- Les tests ne couvrent que l'activation et l'accès : la génération et l'envoi sur Google
+  Drive sont vérifiés par un essai de fumée, pas par des tests.
+- Le chatbot n'est pas intégré au site de vente : il tourne à côté.
 
 ## Ce que j'en ai appris
 
 - **2023 : ça marche, mais je ne sais pas pourquoi.** Le premier code est sorti de
-  conversations avec ChatGPT, collé et ajusté jusqu'à ce que ça tourne. L'historique le
-  montre : deux semaines de commits « test », « retour arrière », « ddd », puis trois ans où
-  presque chaque commit ne touche que `requirements.txt`. Le produit vivait, le code ne
-  bougeait plus, parce que je n'osais pas y toucher.
+  conversations avec ChatGPT, collé et ajusté jusqu'à ce que ça tourne. Puis trois ans où
+  presque chaque commit ne touche que les dépendances. Le produit vivait, le code ne bougeait
+  plus, parce que je n'osais pas y toucher.
 - **2025 : automatiser ce qui coûte du temps, pas ce qui est joli.** Les trois workflows
-  ont été choisis sur un critère : la tâche que je refaisais à chaque vente. La facturation
-  d'abord, le service client ensuite. Sans code, en quelques soirées.
-- **2026 : on rouvre avec une méthode.** Avec Claude Code, en un jour : Dependabot activé,
-  dépendances vulnérables remontées, migration Django 4.2 → 5.2 et Python 3.12, déploiement
-  automatique, le tout en branches et pull requests. Le code métier n'a pas changé ; c'est
-  l'outillage autour qui manquait.
+  ont été choisis sur un critère : la tâche que je refaisais à chaque vente.
+- **2026 : on rouvre avec une méthode.** Avec Claude Code : Dependabot, migration vers
+  Django 5.2, déploiement automatique, tests, le tout en branches et pull requests.
+- **Expliquer son code, c'est le relire.** La faille de l'activation est restée trois ans
+  invisible. Elle est apparue en écrivant comment fonctionne une plaque.
+- **Un voyant vert ne voit que ce qu'il teste.** Une mise à jour de Django passait tous les
+  tests, mais aurait empêché le site de démarrer en production : les tests tournent sur une
+  autre base. Je l'ai refusée, et Dependabot ne la propose plus.
 - **Vendre avant d'industrialiser.** Un lien Stripe et trois pages HTML suffisent pour
-  encaisser. Le tunnel `/commande/` est né d'un besoin concret : après un appel, envoyer
-  par SMS une page qui tient sur un écran de téléphone.
-- **Ce que je ferais autrement** : ne jamais commiter une base ni une clé, même sur un dépôt
-  privé ; écrire les trois tests qui protègent le cœur (génération, activation, redirection)
-  avant la prochaine évolution ; exporter les workflows n8n/Make dans un dépôt pour qu'ils
-  soient montrables.
+  encaisser.
 
 ## Artefacts
 
-- Landing publique (code) : https://github.com/cedricgicquiaud/GM5_landing
-- Site en ligne : à confirmer (domaine à vérifier)
-- Photo de la plaque : `1_Plaque.jpg` (dans le dépôt privé, à publier ici)
-- Backoffice : dépôt privé, non montrable en l'état (voir « État honnête »)
+- Site de vente (code) : https://github.com/cedricgicquiaud/giveme5
+- Site en ligne : https://hello.giveme5xxxxx.fr
+- Backoffice : dépôt privé (voir « État honnête »)
 - Workflows n8n/Make : à exporter (JSON anonymisé) et à publier
-- Manque : une courte vidéo du scan jusqu'à la page d'avis, une capture de l'écran
-  d'activation, une capture du chatbot
