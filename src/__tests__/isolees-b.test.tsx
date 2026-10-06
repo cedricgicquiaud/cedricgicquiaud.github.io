@@ -107,6 +107,16 @@ describe("PFO-76 — check-output accepte le domaine de la démo GiveMe5", () =>
     expect(check("https://hello.giveme5xxxxx.fr")).toEqual([]);
   });
 
+  it("lit le domaine d'une adresse sans chemin dans du texte échappé (données RSC)", () => {
+    const dir = mkdtempSync(path.join(tmpdir(), "check-demo-"));
+    try {
+      writeFileSync(path.join(dir, "page.txt"), String.raw`{"demo":"https://hello.giveme5xxxxx.fr\"} <a href=\"https://hello.giveme5xxxxx.fr<`);
+      expect(checkOutput(dir, [])).toEqual([]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
   it("refuse toujours un domaine qui ne fait que lui ressembler", () => {
     expect(check("https://giveme5xxxxx.fr.example.com")[0]).toContain("domaine tiers");
   });
