@@ -63,9 +63,8 @@ plaques, des automatisations autour de la vente, un site de vente.
 soirées.
 - **Facturation** : une vente dans le CRM déclenche la création du client et de la facture
   à la banque, puis l'envoi par e-mail. Plus de facture faite à la main.
-- **Service client** : un chatbot qui répond aux questions des commerçants à partir d'une
+- **Service client** : un chatbot qui répondait aux questions des commerçants à partir d'une
   base de connaissances, en cherchant par le sens et non par le mot exact.
-- **Communication** : des posts Facebook générés depuis un tableau Airtable.
 
 **Le site de vente (2026).** La présentation complète avec un simulateur d'avis, une page de
 commande courte envoyée par SMS après un appel, et un suivi des parrains : un lien
@@ -101,7 +100,7 @@ Décisions qui ont compté :
   toute ouverture.
 - Les tests ne couvrent que l'activation et l'accès : la génération et l'envoi sur Google
   Drive sont vérifiés par un essai de fumée, pas par des tests.
-- Le chatbot n'est pas intégré au site de vente : il tourne à côté.
+- Le chatbot de service client n'est plus en service.
 
 ## Ce que j'en ai appris
 
@@ -109,7 +108,7 @@ Décisions qui ont compté :
   conversations avec ChatGPT, collé et ajusté jusqu'à ce que ça tourne. Puis trois ans où
   presque chaque commit ne touche que les dépendances. Le produit vivait, le code ne bougeait
   plus, parce que je n'osais pas y toucher.
-- **2025 : automatiser ce qui coûte du temps, pas ce qui est joli.** Les trois workflows
+- **2025 : automatiser ce qui coûte du temps, pas ce qui est joli.** Les workflows
   ont été choisis sur un critère : la tâche que je refaisais à chaque vente.
 - **2026 : on rouvre avec une méthode.** Avec Claude Code : Dependabot, migration vers
   Django 5.2, déploiement automatique, tests, le tout en branches et pull requests.
