@@ -26,6 +26,8 @@ export type Frontmatter = {
 export type EnBref = { quoi: string; chiffre: string; lien: string };
 /** Une capture d'écran déclarée dans le frontmatter : chemin dans `public/` et légende. */
 export type Capture = { fichier: string; legende: string };
+/** Un chiffre clé déclaré dans le frontmatter (PFO-75) : la valeur en gros, le libellé dessous. */
+export type Chiffre = { valeur: string; libelle: string };
 /** La vidéo de démonstration déclarée dans le frontmatter : chemin dans `public/` et durée (« N min » ou « N s »). */
 export type Video = { fichier: string; duree: string };
 export type Section = { id: string; titre: string; html: string };
@@ -49,6 +51,8 @@ export type Fiche = {
   visuel: string;
   /** Captures déclarées dans le frontmatter, dans l'ordre ; absentes = liste vide. */
   captures?: Capture[];
+  /** Bandeau de chiffres clés de la page détail (1 à 3), absent sans champ `chiffres`. */
+  chiffres?: Chiffre[];
   /** Vidéo déclarée dans le frontmatter ; absente = `undefined`. */
   video?: Video;
 };
@@ -163,6 +167,25 @@ function parseCaptures(slug: string, data: Record<string, unknown>, publicDir: s
   });
 }
 
+/** Au plus trois chiffres clés par fiche (PFO-75). */
+export const MAX_CHIFFRES = 3;
+
+/** Les entrées de `chiffres` du frontmatter, dans l'ordre déclaré ; `undefined` sans champ. */
+function parseChiffres(slug: string, data: Record<string, unknown>): Chiffre[] | undefined {
+  if (data.chiffres === undefined) return undefined;
+  const entries = Array.isArray(data.chiffres) ? (data.chiffres as (Record<string, unknown> | null)[]) : [];
+  if (entries.length > MAX_CHIFFRES) throw new Error(`${slug} : chiffres, ${MAX_CHIFFRES} au plus (${entries.length} déclarés)`);
+  return entries.map((entry, i) => {
+    const where = `${slug} : chiffres, entrée ${i + 1}`;
+    // Une valeur écrite sans guillemets (`valeur: 500`) arrive en nombre : elle est acceptée telle quelle.
+    const valeur = typeof entry?.valeur === "number" ? String(entry.valeur) : text(entry?.valeur);
+    const libelle = text(entry?.libelle);
+    if (!valeur) throw new Error(`${where} : « valeur » requise et non vide`);
+    if (!libelle) throw new Error(`${where} : « libelle » requis et non vide`);
+    return { valeur, libelle };
+  });
+}
+
 /** Durée d'une vidéo : « N min » ou « N s ». */
 const DUREE = /^\d+ (min|s)$/;
 
@@ -196,6 +219,7 @@ function parseFiche(slug: string, raw: string, publicDir: string): Fiche {
     visuel: resolveVisual(slug, frontmatter.visuel, publicDir),
     captures: parseCaptures(slug, data, publicDir),
     video: parseVideo(slug, data, publicDir),
+    ...(data.chiffres !== undefined ? { chiffres: parseChiffres(slug, data) } : {}),
   };
 }
 
