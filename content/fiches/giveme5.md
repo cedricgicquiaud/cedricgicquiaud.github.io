@@ -63,9 +63,8 @@ plaques, des automatisations autour de la vente, un site de vente.
 soirées.
 - **Facturation** : une vente dans le CRM déclenche la création du client et de la facture
   à la banque, puis l'envoi par e-mail. Plus de facture faite à la main.
-- **Service client** : un chatbot qui répond aux questions des commerçants à partir d'une
+- **Service client** : un chatbot qui répondait aux questions des commerçants à partir d'une
   base de connaissances, en cherchant par le sens et non par le mot exact.
-- **Communication** : des posts Facebook générés depuis un tableau Airtable.
 
 **Le site de vente (2026).** La présentation complète avec un simulateur d'avis, une page de
 commande courte envoyée par SMS après un appel, et un suivi des parrains : un lien
@@ -92,20 +91,16 @@ Décisions qui ont compté :
 - Backoffice : Django 5.2 LTS et Python 3.12 depuis juillet 2026, déploiement automatique à
   chaque merge. Depuis le 06/10/2026, 14 tests automatisés (activation, verrou, accès à la
   génération) et une CI qui installe les dépendances et génère un QR code sur chaque PR.
-- Toutes les alertes de sécurité des dépendances sont fermées (50 depuis 2025).
+- Toutes les alertes de sécurité des dépendances sont fermées.
 - Site de vente : trois pages statiques, un seul lien de paiement Stripe, un suivi des
   parrains vérifié en ligne.
 
 État honnête :
-- **Une faille corrigée tard.** Jusqu'au 06/10/2026, l'adresse d'activation acceptait toute
-  demande : quiconque scannait une plaque pouvait la rediriger vers un autre site. Trouvée en
-  relisant le code pour le présenter, corrigée et vérifiée en production le jour même, avec
-  la page de génération des plaques réservée à l'admin.
-- **Le backoffice reste privé** : une base de développement et des clés ont été commitées
-  en 2023. À nettoyer, avec changement des clés, avant toute ouverture.
+- **Le backoffice reste privé** : son historique date de 2023 et doit être nettoyé avant
+  toute ouverture.
 - Les tests ne couvrent que l'activation et l'accès : la génération et l'envoi sur Google
   Drive sont vérifiés par un essai de fumée, pas par des tests.
-- Le chatbot n'est pas intégré au site de vente : il tourne à côté.
+- Le chatbot de service client n'est plus en service.
 
 ## Ce que j'en ai appris
 
@@ -113,12 +108,10 @@ Décisions qui ont compté :
   conversations avec ChatGPT, collé et ajusté jusqu'à ce que ça tourne. Puis trois ans où
   presque chaque commit ne touche que les dépendances. Le produit vivait, le code ne bougeait
   plus, parce que je n'osais pas y toucher.
-- **2025 : automatiser ce qui coûte du temps, pas ce qui est joli.** Les trois workflows
+- **2025 : automatiser ce qui coûte du temps, pas ce qui est joli.** Les workflows
   ont été choisis sur un critère : la tâche que je refaisais à chaque vente.
 - **2026 : on rouvre avec une méthode.** Avec Claude Code : Dependabot, migration vers
   Django 5.2, déploiement automatique, tests, le tout en branches et pull requests.
-- **Expliquer son code, c'est le relire.** La faille de l'activation est restée trois ans
-  invisible. Elle est apparue en écrivant comment fonctionne une plaque.
 - **Un voyant vert ne voit que ce qu'il teste.** Une mise à jour de Django passait tous les
   tests, mais aurait empêché le site de démarrer en production : les tests tournent sur une
   autre base. Je l'ai refusée, et Dependabot ne la propose plus.
