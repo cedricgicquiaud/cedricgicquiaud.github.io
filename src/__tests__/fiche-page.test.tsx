@@ -129,13 +129,13 @@ describe("Route statique /projets/[slug]/ (PFO-26)", () => {
     expect(fichePage.dynamicParams).toBe(false);
   });
 
-  it("la page rend la fiche du slug dans un <main> : titre h1 et cinq sections", async () => {
+  it("la page rend la fiche du slug dans un <main> : titre h1 et six sections (PFO-75)", async () => {
     const slice = loadFiches().find((f) => f.slug === "slice")!;
     const page = await fichePage.default({ params: Promise.resolve({ slug: "slice" }), searchParams: Promise.resolve({}) });
     render(page);
     expect(screen.getByRole("main")).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(slice.titre);
-    expect(screen.getAllByRole("heading", { level: 2 })).toHaveLength(5);
+    expect(screen.getAllByRole("heading", { level: 2 })).toHaveLength(6);
     expect(screen.getByRole("link", { name: "← Projets" })).toBeInTheDocument();
   });
 
@@ -160,34 +160,28 @@ describe("Route statique /projets/[slug]/ (PFO-26)", () => {
 });
 
 describe("Rendu de la fiche : en-tête (PFO-27)", () => {
-  it("rend le lien « ← Projets » vers /#projets, le titre en h1 et l'en-tête en liste de définitions", () => {
+  it("rend le lien « ← Projets » vers /#projets, le titre en h1, puis période et rôle sur la ligne des liens (PFO-75)", () => {
     render(<Fiche fiche={fakeFiche()} />);
     expect(screen.getByRole("link", { name: "← Projets" })).toHaveAttribute("href", "/#projets");
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Factice — un titre de fiche");
-
-    const terms = Array.from(document.querySelectorAll("dl dt")).map((dt) => dt.textContent);
-    expect(terms).toEqual(["Période", "Rôle", "Stack", "Visibilité"]);
-    const definition = (term: string) =>
-      Array.from(document.querySelectorAll("dl dt")).find((dt) => dt.textContent === term)!.nextElementSibling!;
-    expect(definition("Période")).toHaveTextContent("mai 2026 → aujourd'hui");
-    expect(definition("Rôle")).toHaveTextContent("conception et tests");
-    expect(definition("Visibilité")).toHaveTextContent("public");
-    const badges = Array.from(definition("Stack").querySelectorAll("li")).map((li) => li.textContent);
+    expect(document.querySelector("dl")).toBeNull();
+    expect(screen.getByText(/mai 2026 → aujourd'hui · conception et tests/)).toBeInTheDocument();
+    const badges = Array.from(screen.getByRole("list", { name: "Stack" }).querySelectorAll("li")).map((li) => li.textContent);
     expect(badges).toEqual(["TypeScript", "Vitest"]);
   });
 });
 
 describe("Rendu de la fiche : En bref et cinq sections (PFO-27)", () => {
-  it("rend le bloc En bref puis les cinq sections h2 dans l'ordre, avec le Markdown (liste, gras, lien) rendu", () => {
+  it("rend l'accroche puis les sections h2 dans l'ordre du README, avec le Markdown (liste, gras, lien) rendu (PFO-75)", () => {
     render(<Fiche fiche={fakeFiche()} />);
     const enBref = screen.getByText(/Un service factice\./);
     expect(enBref).toHaveTextContent("Un service factice. 12 tests verts. Code public.");
 
     const h2 = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
-    expect(h2).toEqual(["Problème", "Ce que j'ai construit", "Preuves", "Ce que j'en ai appris", "Artefacts"]);
-    expect(document.body.textContent!.indexOf("Un service factice.")).toBeLessThan(document.body.textContent!.indexOf("Problème"));
+    expect(h2).toEqual(["Contexte", "Le produit", "Architecture", "Où en est le projet", "Ce que j'en retiens", "Liens"]);
+    expect(document.body.textContent!.indexOf("Un service factice.")).toBeLessThan(document.body.textContent!.indexOf("Contexte"));
 
-    const construit = screen.getByRole("heading", { level: 2, name: "Ce que j'ai construit" }).parentElement!;
+    const construit = screen.getByRole("heading", { level: 2, name: "Le produit" }).parentElement!;
     expect(construit.querySelectorAll("ul li")).toHaveLength(2);
     expect(construit.querySelector("strong")).toHaveTextContent("point fort");
     expect(screen.getByRole("link", { name: "lien" })).toHaveAttribute("href", "https://github.com/cedricgicquiaud/factice");
@@ -196,15 +190,15 @@ describe("Rendu de la fiche : En bref et cinq sections (PFO-27)", () => {
 });
 
 describe("Rendu de la fiche : liens Code et Démo (PFO-27)", () => {
-  it("rend Code et Démo en fin d'en-tête quand la fiche a une URL de dépôt et de démo", () => {
+  it("rend Code et Démo sous l'accroche, avant la capture et les sections (PFO-75)", () => {
     render(<Fiche fiche={fakeFiche()} />);
     const code = screen.getByRole("link", { name: "Code sur GitHub" });
     const demo = screen.getByRole("link", { name: "Démo" });
     expect(code).toHaveAttribute("href", "https://github.com/cedricgicquiaud/factice");
     expect(demo).toHaveAttribute("href", "https://factice.example.test/");
-    const dl = document.querySelector("dl")!;
-    expect(dl.compareDocumentPosition(code) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
-    expect(code.compareDocumentPosition(screen.getByRole("heading", { level: 2, name: "Problème" })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    const image = document.querySelector("article img")!;
+    expect(code.compareDocumentPosition(image) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    expect(code.compareDocumentPosition(screen.getByRole("heading", { level: 2, name: "Contexte" })) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it("omet Démo (sans URL) et garde Code", () => {
