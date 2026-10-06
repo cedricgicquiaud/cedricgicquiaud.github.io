@@ -95,13 +95,6 @@ Décisions qui ont compté :
 - Site de vente : trois pages statiques, un seul lien de paiement Stripe, un suivi des
   parrains vérifié en ligne.
 
-État honnête :
-- **Le backoffice reste privé** : son historique date de 2023 et doit être nettoyé avant
-  toute ouverture.
-- Les tests ne couvrent que l'activation et l'accès : la génération et l'envoi sur Google
-  Drive sont vérifiés par un essai de fumée, pas par des tests.
-- Le chatbot de service client n'est plus en service.
-
 ## Ce que j'en ai appris
 
 - **2023 : ça marche, mais je ne sais pas pourquoi.** Le premier code est sorti de
@@ -122,5 +115,5 @@ Décisions qui ont compté :
 
 - Site de vente (code) : https://github.com/cedricgicquiaud/giveme5
 - Site en ligne : https://hello.giveme5xxxxx.fr
-- Backoffice : dépôt privé (voir « État honnête »)
+- Backoffice : dépôt privé
 - Workflows n8n/Make : à exporter (JSON anonymisé) et à publier
