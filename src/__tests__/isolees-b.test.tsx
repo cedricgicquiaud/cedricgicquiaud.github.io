@@ -92,6 +92,36 @@ describe("PFO-42 — check-output refuse Google Fonts", () => {
   });
 });
 
+describe("PFO-76 — check-output accepte le domaine de la démo GiveMe5", () => {
+  const check = (href: string) => {
+    const dir = mkdtempSync(path.join(tmpdir(), "check-demo-"));
+    try {
+      writeFileSync(path.join(dir, "index.html"), `<a href="${href}">Démo</a>`);
+      return checkOutput(dir, []);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  };
+
+  it("accepte le site de vente, lien de démo de la fiche", () => {
+    expect(check("https://hello.giveme5xxxxx.fr")).toEqual([]);
+  });
+
+  it("lit le domaine d'une adresse sans chemin dans du texte échappé (données RSC)", () => {
+    const dir = mkdtempSync(path.join(tmpdir(), "check-demo-"));
+    try {
+      writeFileSync(path.join(dir, "page.txt"), String.raw`{"demo":"https://hello.giveme5xxxxx.fr\"} <a href=\"https://hello.giveme5xxxxx.fr<`);
+      expect(checkOutput(dir, [])).toEqual([]);
+    } finally {
+      rmSync(dir, { recursive: true, force: true });
+    }
+  });
+
+  it("refuse toujours un domaine qui ne fait que lui ressembler", () => {
+    expect(check("https://giveme5xxxxx.fr.example.com")[0]).toContain("domaine tiers");
+  });
+});
+
 const root = path.resolve(__dirname, "../..");
 
 describe("PFO-19 — script npm og", () => {
