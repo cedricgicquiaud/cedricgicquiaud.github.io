@@ -177,7 +177,7 @@ describe("ProjectCard — visuel (PFO-36)", () => {
 });
 
 describe("page fiche — visuel (PFO-36)", () => {
-  it("montre le même visuel juste sous le titre, pleine largeur et arrondi", () => {
+  it("montre le même visuel sous l'en-tête (titre, accroche, liens), avant les sections, pleine largeur et arrondi (PFO-75)", () => {
     const { container } = render(<Fiche fiche={fakeFiche()} />);
     const img = onlyImg(container);
     expect(img.getAttribute("src")).toBe("/projets/generated/alpha.png");
@@ -185,8 +185,9 @@ describe("page fiche — visuel (PFO-36)", () => {
     expect(img.className).toMatch(/\bw-full\b/);
     expect(img.className).toMatch(/\brounded-lg\b/);
     const h1 = screen.getByRole("heading", { level: 1 });
-    // L'image est l'élément qui suit immédiatement le h1.
-    expect(h1.nextElementSibling?.contains(img) || h1.nextElementSibling === img).toBe(true);
+    expect(h1.compareDocumentPosition(img) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+    const first = container.querySelector("section");
+    if (first) expect(img.compareDocumentPosition(first) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
   });
 
   it("ne diffère pas le chargement du visuel (au-dessus du pli : pas de loading=lazy)", () => {

@@ -33,7 +33,7 @@ function problemOf(name, text, seen) {
     if (seen.has(data.ordre)) return `ordre ${data.ordre} déjà pris par ${seen.get(data.ordre)}`;
     seen.set(data.ordre, name);
   }
-  return capturesProblem(data.captures) ?? videoProblem(data.video);
+  return capturesProblem(data.captures) ?? videoProblem(data.video) ?? chiffresProblem(data.chiffres);
 }
 
 /** Un chemin `/…` qui ne sort pas de `public/` (même règle que `insidePublic` dans lib/fiches.ts). */
@@ -62,6 +62,19 @@ function videoProblem(video) {
   if (fichier) return `video : ${fichier}`;
   const duree = isText(video.duree) ? video.duree.trim() : "";
   if (!DUREE.test(duree)) return `video, duree « ${duree} » : attendu « N min » ou « N s »`;
+  return null;
+}
+
+/** Raison du refus du champ `chiffres` (1 à 3 entrées `valeur` + `libelle`, PFO-75), ou `null`. */
+function chiffresProblem(chiffres) {
+  if (chiffres === undefined) return null;
+  const entries = Array.isArray(chiffres) ? chiffres : [];
+  if (entries.length > 3) return `chiffres, 3 au plus (${entries.length} déclarés)`;
+  for (const [i, entry] of entries.entries()) {
+    const where = `chiffres, entrée ${i + 1}`;
+    if (!isText(entry?.valeur) && typeof entry?.valeur !== "number") return `${where} : « valeur » requise et non vide`;
+    if (!isText(entry?.libelle)) return `${where} : « libelle » requis et non vide`;
+  }
   return null;
 }
 
