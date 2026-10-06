@@ -92,17 +92,13 @@ Décisions qui ont compté :
 - Backoffice : Django 5.2 LTS et Python 3.12 depuis juillet 2026, déploiement automatique à
   chaque merge. Depuis le 06/10/2026, 14 tests automatisés (activation, verrou, accès à la
   génération) et une CI qui installe les dépendances et génère un QR code sur chaque PR.
-- Toutes les alertes de sécurité des dépendances sont fermées (50 depuis 2025).
+- Toutes les alertes de sécurité des dépendances sont fermées.
 - Site de vente : trois pages statiques, un seul lien de paiement Stripe, un suivi des
   parrains vérifié en ligne.
 
 État honnête :
-- **Une faille corrigée tard.** Jusqu'au 06/10/2026, l'adresse d'activation acceptait toute
-  demande : quiconque scannait une plaque pouvait la rediriger vers un autre site. Trouvée en
-  relisant le code pour le présenter, corrigée et vérifiée en production le jour même, avec
-  la page de génération des plaques réservée à l'admin.
-- **Le backoffice reste privé** : une base de développement et des clés ont été commitées
-  en 2023. À nettoyer, avec changement des clés, avant toute ouverture.
+- **Le backoffice reste privé** : son historique date de 2023 et doit être nettoyé avant
+  toute ouverture.
 - Les tests ne couvrent que l'activation et l'accès : la génération et l'envoi sur Google
   Drive sont vérifiés par un essai de fumée, pas par des tests.
 - Le chatbot n'est pas intégré au site de vente : il tourne à côté.
@@ -117,8 +113,6 @@ Décisions qui ont compté :
   ont été choisis sur un critère : la tâche que je refaisais à chaque vente.
 - **2026 : on rouvre avec une méthode.** Avec Claude Code : Dependabot, migration vers
   Django 5.2, déploiement automatique, tests, le tout en branches et pull requests.
-- **Expliquer son code, c'est le relire.** La faille de l'activation est restée trois ans
-  invisible. Elle est apparue en écrivant comment fonctionne une plaque.
 - **Un voyant vert ne voit que ce qu'il teste.** Une mise à jour de Django passait tous les
   tests, mais aurait empêché le site de démarrer en production : les tests tournent sur une
   autre base. Je l'ai refusée, et Dependabot ne la propose plus.
