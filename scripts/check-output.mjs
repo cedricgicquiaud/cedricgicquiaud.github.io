@@ -61,7 +61,8 @@ const ALLOWED_HOSTS = [
   "nextjs.org",
   "w3.org",
 ];
-const URL_HOST = /https?:\/\/([^/"'\s<>)]+)/g;
+// L'anti-slash arrête l'hôte : dans les données RSC, une adresse sans chemin est suivie de `\"` ou `<`.
+const URL_HOST = /https?:\/\/([^/"'\s<>)\\]+)/g;
 
 // Un hôte sans point (`http://a`, `https://a@b`) est un fragment de code, pas un domaine.
 const isAllowedHost = (host) =>
