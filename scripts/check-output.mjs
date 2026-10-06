@@ -54,6 +54,8 @@ const ALLOWED_HOSTS = [
   "github.com",
   "linkedin.com",
   "cedricgicquiaud.github.io",
+  // Démos citées par les fiches (champ `demo`).
+  "giveme5xxxxx.fr",
   // Liens de documentation et espaces de noms cités dans les chunks Next/React (aucune requête réseau).
   "react.dev",
   "nextjs.org",
