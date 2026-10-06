@@ -62,3 +62,4 @@ Linear sans liste validée.
 - Pas de bouton de thème : le site est sombre seul (décision du 30/08, remplace la bascule).
 - Quadrillage `bg-grid` sur toute la page.
 - Échelle typographique du modèle : titre 48 px, titre court 20 px, corps 16 px, titres de section 14 px en capitales.
+- Page détail d'un projet (PFO-75, 05/10) : ordre du README GitHub — accroche, liens, capture, chiffres clés, puis Contexte, Le produit, Architecture, Où en est le projet, Ce que j'en retiens, Liens ; ses titres de section sont en 20 px casse normale (amende la ligne précédente pour cette page seulement).
