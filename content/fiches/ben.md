@@ -7,7 +7,7 @@ stack: Python, PyTorch, DINOv2, YOLOv8, NumPy, FastAPI, APScheduler, SQLite/SQLM
 visibilite: anonyme
 depot:
 demo:
-ordre: 8
+ordre: 7
 ---
 
 # BEN — repérer une pièce précise dans un flux d'annonces, à partir de sa photo

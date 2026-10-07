@@ -210,7 +210,7 @@ describe("visuels dans out/ — lit out/ produit par npm run build (PFO-35)", ()
 
   it("contient un PNG généré pour chaque fiche sans visuel fourni, et aucun pour une fiche qui en déclare un", () => {
     const slugs = readdirSync(fichesDir).filter((n) => n.endsWith(".md"));
-    expect(slugs).toHaveLength(8);
+    expect(slugs).toHaveLength(7);
     const generated = slugs.filter((n) => !provides(n));
     expect(generated.length).toBeGreaterThan(0);
     for (const name of slugs) {
