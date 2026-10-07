@@ -7,7 +7,7 @@ stack: Next.js 16, TypeScript strict, Tailwind v4, shadcn/ui, Supabase (Postgres
 visibilite: vitrine
 depot:
 demo: à venir (Vercel)
-ordre: 6
+ordre: 5
 ---
 
 # Dashboard — un tableau de bord branché sur ses vraies données
