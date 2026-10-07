@@ -4,6 +4,7 @@ import site from "../content/site.json";
 import type { Fiche as FicheData } from "../lib/fiches";
 import { Badge } from "./ui/badge";
 import { AFFICHER_STATUT } from "../lib/affichage";
+import { DemoLink } from "./demo-link";
 import { GitHubLink } from "./github-link";
 
 // Mise en forme du HTML Markdown (Tailwind retire les puces et le soulignement par défaut).
@@ -68,11 +69,7 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
           ) : (
             <>
               {frontmatter.depot && <GitHubLink href={frontmatter.depot} />}
-              {frontmatter.demo && (
-                <a href={frontmatter.demo} className={LINK}>
-                  Démo
-                </a>
-              )}
+              {frontmatter.demo && <DemoLink href={frontmatter.demo} />}
             </>
           )}
           {meta.length > 0 && <span className="min-w-0 text-muted-foreground">{meta.join(" · ")}</span>}

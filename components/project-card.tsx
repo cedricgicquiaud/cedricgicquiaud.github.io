@@ -1,5 +1,6 @@
 import type { Fiche } from "../lib/fiches";
 import { AFFICHER_STATUT } from "../lib/affichage";
+import { DemoLink } from "./demo-link";
 import { GitHubLink } from "./github-link";
 import { Badge } from "./ui/badge";
 
@@ -51,11 +52,7 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
           ) : (
             <>
               {isUrl(frontmatter.depot) && <GitHubLink href={frontmatter.depot} />}
-              {isUrl(frontmatter.demo) && (
-                <a href={frontmatter.demo} className="underline underline-offset-4">
-                  Démo
-                </a>
-              )}
+              {isUrl(frontmatter.demo) && <DemoLink href={frontmatter.demo} />}
               {codePrive && <span className="text-muted-foreground">code privé, démo à venir</span>}
             </>
           )}
