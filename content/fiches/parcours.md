@@ -7,7 +7,7 @@ stack: TypeScript, Node/Hono, SQLite (better-sqlite3), React/Vite, Vitest, markd
 visibilite: vitrine
 depot:
 demo: à venir (déploiement Coolify, base jetable)
-ordre: 5
+ordre: 4
 ---
 
 # Parcours — écrire une formation en Markdown, la lire comme un site de cours

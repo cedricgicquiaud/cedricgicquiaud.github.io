@@ -7,7 +7,7 @@ blocs:
     description: >-
       Une application mobile de santé menée seul côté technique, du cadrage avec
       les dirigeants à la recette sur iPhone, avec un coach IA et une dizaine de
-      services branchés. En parallèle, SLICE, Foreman et Parcours. Le code est
+      services branchés. En parallèle, SLICE et Parcours. Le code est
       écrit par des agents, sous une méthode où un humain décide du merge.
     tags: [React Native, FastAPI, TypeScript, MCP, Claude Code]
   - periode: "2023–2025"
