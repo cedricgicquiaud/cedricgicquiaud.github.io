@@ -58,3 +58,26 @@ describe.each([
     expect(screen.queryByRole("link", { name: "Code sur GitHub" })).toBeNull();
   });
 });
+
+// PFO-77 (07/10) : le lien texte « Démo » devient une icône de site internet, à côté du logo GitHub.
+describe.each([
+  ["carte", (f: FicheData) => <ProjectCard fiche={f} />],
+  ["page de fiche", (f: FicheData) => <Fiche fiche={f} />],
+])("%s — icône de démo (PFO-77)", (_, view) => {
+  it("la démo est une icône, sans le mot « Démo » visible", () => {
+    render(view(fiche({ demo: "https://demo.example.test/" })));
+    const link = screen.getByRole("link", { name: "Démo" });
+    expect(link).toHaveAttribute("href", "https://demo.example.test/");
+    expect(link).toHaveAttribute("title", "Démo en ligne");
+    expect(link.querySelector("svg")).not.toBeNull();
+    expect(link).not.toHaveTextContent(/\S/);
+  });
+
+  it("refus : aucune icône de démo sans URL, ni sur une fiche anonyme", () => {
+    render(view(fiche({ demo: "" })));
+    expect(screen.queryByRole("link", { name: "Démo" })).toBeNull();
+    cleanup();
+    render(view(fiche({ visibilite: "anonyme", depot: "", demo: "" })));
+    expect(screen.queryByRole("link", { name: "Démo" })).toBeNull();
+  });
+});
