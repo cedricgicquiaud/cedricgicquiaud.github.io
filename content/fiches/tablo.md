@@ -25,9 +25,9 @@ chiffres:
     libelle: plafond de dépense par question
 ---
 
-# Tablo — dashboards en langage courant
+# Tablo — dashboards IA
 
-**En bref.** Un constructeur de dashboards : on branche une source (Supabase, Stripe ou Airtable) et on demande
+**En bref.** Des dashboards IA : on branche une source (Supabase, Stripe ou Airtable) et on demande
 un widget en une phrase. Trois sources réelles, huit types de widgets, une dizaine de secondes de la question au
 widget. Code public sous licence MIT.
 
