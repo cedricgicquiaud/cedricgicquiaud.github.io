@@ -25,9 +25,9 @@ chiffres:
     libelle: critères de réussite à cocher
 ---
 
-# Parcours — écrire une formation en Markdown, la lire comme un site de cours
+# Parcours — gestionnaire de formation
 
-**En bref.** Un lecteur de formations : on écrit un cours en fichiers Markdown, à la main ou
+**En bref.** Un gestionnaire de formation : on écrit un cours en fichiers Markdown, à la main ou
 avec Claude Code, et Parcours l'affiche comme un site de cours, avec une progression qui se
 souvient où on en était. Deux formations complètes, 10 h 45 de contenu. Code public sous
 licence MIT.
