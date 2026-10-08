@@ -251,10 +251,23 @@ describe("Sortie du build : une page par fiche (PFO-26)", () => {
     }
   });
 
+  // Anciennes adresses gardées pour les liens déjà partagés : une simple redirection, pas une fiche.
+  const ANCIENNES_ADRESSES = ["dashboard"]; // PFO-81 : renommé Tablo le 08/10
+
   it("refuse un slug inconnu : aucun dossier hors des 7 fiches (et `generated/`, les visuels de PFO-35)", () => {
     const dirs = readdirSync(path.join(out, "projets")).filter(
-      (n) => n !== "generated" && statSync(path.join(out, "projets", n)).isDirectory(),
+      (n) =>
+        n !== "generated" &&
+        !ANCIENNES_ADRESSES.includes(n) &&
+        statSync(path.join(out, "projets", n)).isDirectory(),
     );
     expect(dirs.sort()).toEqual(loadFiches().map((f) => f.slug).sort());
+  });
+
+  it("une ancienne adresse ne contient qu'une redirection", () => {
+    for (const nom of ANCIENNES_ADRESSES) {
+      expect(readdirSync(path.join(out, "projets", nom))).toEqual(["index.html"]);
+      expect(readFileSync(path.join(out, "projets", nom, "index.html"), "utf8")).toContain('http-equiv="refresh"');
+    }
   });
 });
