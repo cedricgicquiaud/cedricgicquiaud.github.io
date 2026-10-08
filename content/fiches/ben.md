@@ -25,9 +25,9 @@ chiffres:
     libelle: annonces réelles passées de bout en bout, 0 doublon
 ---
 
-# BEN — repérer une pièce précise dans un flux d'annonces, à partir de sa photo
+# BEN — chasseur de design
 
-**En bref.** Un outil de veille qui collecte des annonces de meubles à intervalles réguliers et
+**En bref.** Un chasseur de design : il collecte des annonces de meubles à intervalles réguliers et
 compare leurs photos à une liste d'images de référence, pour repérer des pièces de designers
 avant les autres. 183 annonces réelles passées dans le pipeline, et un benchmark qui a fait
 changer de modèle en cours de route. Code privé : la collecte dépend des conditions du site source.
