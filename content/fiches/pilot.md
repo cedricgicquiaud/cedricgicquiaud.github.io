@@ -10,12 +10,12 @@ demo:
 ordre: 3
 ---
 
-# PILOT — faire produire des agents de code sans leur laisser le jugement
+# PILOT — workflow agentique
 
-**En bref.** Une méthode d'agentic engineering, pas un logiciel : six agents IA spécialisés
+**En bref.** Un workflow agentique, ma méthode d'agentic engineering : six agents IA spécialisés
 cadrent, produisent, vérifient et corrigent le code, pilotés par Linear et GitHub, et celui qui
 écrit le code n'est jamais celui qui le vérifie.
-Éprouvée sur un bac à sable, sur ce site et sur deux projets réels : 8 défauts attrapés par l'audit
+Éprouvé sur un bac à sable, sur ce site et sur deux projets réels : 8 défauts attrapés par l'audit
 derrière des tests verts, 0,66 h de session là où le barème en prévoyait 2,44. Méthode publique,
 sous licence libre ; remplace FORGE, ma première version (avril 2026).
 
