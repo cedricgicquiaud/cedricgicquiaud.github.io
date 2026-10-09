@@ -1,5 +1,5 @@
 ---
-nom: App santé
+nom: Coach
 statut: en cours
 periode: janvier 2026 → aujourd'hui
 role: produit et développement, seul côté technique, avec des agents de code ; cadrage avec les dirigeants, échanges avec les partenaires
@@ -10,9 +10,9 @@ demo:
 ordre: 1
 ---
 
-# App santé — un coach IA branché sur les montres, les analyses et la boutique
+# Coach — santé et longévité IA
 
-**En bref.** Une application mobile de santé et de longévité qui relie montres connectées, analyses sanguines à domicile, entraînement et boutique, avec un coach IA qui s'appuie sur les vraies données de l'utilisateur. Menée seule côté technique depuis janvier 2026 : une dizaine de services externes branchés, un orchestrateur et quatre agents IA spécialisés, une version de test distribuée sur iPhone. Projet client, code privé, pas encore sortie sur les stores.
+**En bref.** Une application mobile de santé et de longévité qui relie montres connectées, analyses sanguines à domicile, entraînement et boutique, avec un coach IA qui s'appuie sur les vraies données de l'utilisateur. Menée seule côté technique depuis janvier 2026 : une dizaine de services externes branchés, un orchestrateur et quatre agents IA spécialisés, une version de test distribuée sur iPhone. Projet client présenté sous un nom de code, code privé, pas encore sorti sur les stores.
 
 ## Problème
 
