@@ -252,7 +252,7 @@ describe("Sortie du build : une page par fiche (PFO-26)", () => {
   });
 
   // Anciennes adresses gardées pour les liens déjà partagés : une simple redirection, pas une fiche.
-  const ANCIENNES_ADRESSES = ["dashboard"]; // PFO-81 : renommé Tablo le 08/10
+  const ANCIENNES_ADRESSES = ["dashboard", "app-sante"]; // PFO-81 : Tablo le 08/10 ; PFO-89 : Coach le 09/10
 
   it("refuse un slug inconnu : aucun dossier hors des 7 fiches (et `generated/`, les visuels de PFO-35)", () => {
     const dirs = readdirSync(path.join(out, "projets")).filter(
