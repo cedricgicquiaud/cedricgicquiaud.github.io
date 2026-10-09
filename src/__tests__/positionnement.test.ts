@@ -22,7 +22,7 @@ describe("Positionnement « product builder IA » (PFO-69)", () => {
 
   it("la fiche app santé est la première carte, en visibilité anonyme", () => {
     const [first] = loadFiches(contentDir);
-    expect(first.slug).toBe("app-sante");
+    expect(first.slug).toBe("coach");
     expect(first.frontmatter.visibilite).toBe("anonyme");
   });
 

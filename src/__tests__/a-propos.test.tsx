@@ -49,7 +49,7 @@ describe("« À propos » dense, à la manière du modèle (PFO-71)", () => {
   it("les projets cités sont des liens vers leur fiche, visibles au survol et au clavier", () => {
     const prose = proseClass();
     const hrefs = [...prose.querySelectorAll("a")].map((a) => a.getAttribute("href"));
-    expect(hrefs).toEqual(expect.arrayContaining(["/projets/app-sante/", "/projets/pilot/", "/projets/giveme5/"]));
+    expect(hrefs).toEqual(expect.arrayContaining(["/projets/coach/", "/projets/pilot/", "/projets/giveme5/"]));
     for (const c of ["[&_a]:hover:text-cyber", "[&_a]:focus-visible:outline-2", "[&_a]:focus-visible:outline-ring"]) expect(prose.className).toContain(c);
   });
 
