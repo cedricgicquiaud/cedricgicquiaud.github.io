@@ -5,8 +5,8 @@ periode: avril 2026 (FORGE) → aujourd'hui ; PILOT depuis le 22 août 2026
 role: conception de la méthode, écriture des documents, de la skill et des fiches de poste des agents, expérimentation — seul
 stack: Linear, GitHub, Claude Code, skills et agents en Markdown, git worktrees, Python (API Linear)
 visibilite: public
-depot: à venir (nouveau dépôt public à historique neuf, sans `.workflow/sessions/`)
-demo: bac à sable `pilotage-sandbox` (CRM léger « Carnet »), à rendre public après audit
+depot: https://github.com/cedricgicquiaud/pilot-method
+demo:
 ordre: 3
 ---
 
@@ -16,8 +16,8 @@ ordre: 3
 cadrent, produisent, vérifient et corrigent le code, pilotés par Linear et GitHub, et celui qui
 écrit le code n'est jamais celui qui le vérifie.
 Éprouvée sur un bac à sable, sur ce site et sur deux projets réels : 8 défauts attrapés par l'audit
-derrière des tests verts, 0,66 h de session là où le barème en prévoyait 2,44. Méthode publique à
-venir ; remplace FORGE, ma première version (avril 2026).
+derrière des tests verts, 0,66 h de session là où le barème en prévoyait 2,44. Méthode publique,
+sous licence libre ; remplace FORGE, ma première version (avril 2026).
 
 ## Problème
 
@@ -91,7 +91,7 @@ la branche et le titre de la PR : c'est ce qui fait avancer le tableau de bord s
 
 ## Preuves
 
-État au 30/08/2026 : Méthode rodée sur un bac à sable et branchée sur deux projets réels ; dépôt public pas encore ouvert.
+État au 09/10/2026 : Méthode rodée sur un bac à sable et branchée sur deux projets réels ; méthode publiée le 09/10/2026.
 
 
 Bac à sable : « Carnet », un CRM léger en HTML/JS sans dépendance, produit du 22 au 28 août 2026
@@ -130,7 +130,7 @@ fait ; toutes les boucles ont tourné écran ouvert. Pas de disjoncteur de budge
 Le choix du modèle par poste repose sur une épreuve par agent, sur des livraisons inventées : à
 confirmer en run réel. Le
 testeur n'a pas encore attrapé de défaut réel dans la boucle, seulement à froid sur une
-livraison déjà saine. Le dépôt public de la méthode n'est pas ouvert ; le bac à sable est privé.
+livraison déjà saine. Le bac à sable reste privé.
 
 ## Ce que j'en ai appris
 
@@ -166,9 +166,7 @@ livraison déjà saine. Le dépôt public de la méthode n'est pas ouvert ; le b
 ## Artefacts
 
 - Méthode v1, archivée : https://github.com/cedricgicquiaud/FORGE
-- Méthode PILOT (deux documents : le circuit, la boucle agents ; skill et agents) : dépôt public
-  à ouvrir, historique neuf
-- Bac à sable `pilotage-sandbox` (code, cahier de recette, calibration) : privé, à rendre public
-  après audit
-- Schéma du circuit (page HTML) : à publier avec le dépôt
-- Démonstration vidéo d'un `run` : à faire
+- Méthode PILOT (le circuit, la boucle agents, la skill et les six agents, prêts à installer) :
+  https://github.com/cedricgicquiaud/pilot-method
+- Schéma du circuit (page HTML) :
+  https://github.com/cedricgicquiaud/pilot-method/blob/main/circuit-linear-github-claude.html
