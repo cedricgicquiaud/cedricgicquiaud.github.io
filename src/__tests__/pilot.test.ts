@@ -20,7 +20,7 @@ describe("Fiche PILOT (PFO-87)", () => {
 
   it("s'intitule « workflow agentique » (PFO-88)", () => {
     expect(content).toMatch(/^# PILOT — workflow agentique$/m);
-    expect(content).toMatch(/\*\*En bref\.\*\* Un workflow agentique : /);
+    expect(content).toMatch(/\*\*En bref\.\*\* Un workflow agentique, /);
   });
 
   it("ne promet plus rien « à venir », « à ouvrir » ni « à faire »", () => {
