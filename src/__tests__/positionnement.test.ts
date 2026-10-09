@@ -34,7 +34,7 @@ describe("Positionnement « product builder IA » (PFO-69)", () => {
   });
 
   it("refus : la fiche app santé ne dit ni « production » ni « publiée » (l'app n'est pas sortie)", () => {
-    expect(read("content/fiches/app-sante.md")).not.toMatch(/production|publiée/i);
+    expect(read("content/fiches/coach.md")).not.toMatch(/production|publiée/i);
   });
   it("« À propos » et la fiche PILOT nomment l'agentic engineering ; la fiche ne dit plus « un seul modèle partout »", () => {
     expect(read("content/about.md")).toMatch(/agentic engineering/i);
