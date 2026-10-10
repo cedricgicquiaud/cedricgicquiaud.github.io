@@ -7,7 +7,7 @@ stack: Linear, GitHub, Claude Code, skills et agents en Markdown, git worktrees,
 visibilite: public
 depot: https://github.com/cedricgicquiaud/pilot-method
 demo:
-ordre: 3
+ordre: 4
 ---
 
 # PILOT — workflow agentique

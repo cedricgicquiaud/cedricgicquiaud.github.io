@@ -7,7 +7,7 @@ stack: Next.js 16, TypeScript strict, Tailwind v4, shadcn/ui, Supabase (Postgres
 visibilite: public
 depot: https://github.com/cedricgicquiaud/tablo
 demo:
-ordre: 5
+ordre: 6
 visuel: /projets/tablo/accueil.png
 captures:
   - fichier: /projets/tablo/tableau.webp

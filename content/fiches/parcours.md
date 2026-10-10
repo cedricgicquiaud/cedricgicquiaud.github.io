@@ -7,7 +7,7 @@ stack: TypeScript, Node/Hono, SQLite, React/Vite, Vitest, markdown-it, Shiki, Me
 visibilite: public
 depot: https://github.com/cedricgicquiaud/parcours
 demo:
-ordre: 4
+ordre: 5
 visuel: /projets/parcours/accueil.png
 captures:
   - fichier: /projets/parcours/formation.webp

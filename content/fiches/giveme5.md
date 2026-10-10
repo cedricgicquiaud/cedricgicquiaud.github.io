@@ -7,7 +7,7 @@ stack: Python/Django, MySQL, Google Places API, HTML/CSS/JS, Stripe, n8n/Make
 visibilite: public
 depot: https://github.com/cedricgicquiaud/giveme5
 demo: https://hello.giveme5xxxxx.fr
-ordre: 6
+ordre: 7
 visuel: /projets/giveme5/accueil.png
 captures:
   - fichier: /projets/giveme5/mobile.webp
