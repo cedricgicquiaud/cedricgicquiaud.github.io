@@ -7,6 +7,14 @@ stack: Python/FastAPI, React, TypeScript, Vite, Supabase (Postgres, Auth), Neo4j
 visibilite: prive
 depot:
 demo:
+visuel: /projets/nexus/accueil.webp
+captures:
+  - fichier: /projets/nexus/audit.webp
+    legende: "Maquette, données fictives : l'audit du CRM, noté par des règles écrites en code et expliqué par l'IA."
+  - fichier: /projets/nexus/confirmer.webp
+    legende: "Maquette, données fictives : l'assistant propose une action, rien n'est écrit dans le CRM sans confirmation."
+  - fichier: /projets/nexus/rapport.webp
+    legende: "Maquette, données fictives : un rapport d'audit figé à sa date, exportable en PDF."
 ordre: 2
 ---
 
@@ -76,4 +84,5 @@ Prochaine porte : un premier déploiement chez un hébergeur européen, puis des
 
 ## Artefacts
 
+- Maquettes de trois écrans, redessinées sur données fictives : les vrais écrans restent privés.
 - Code privé (projet cofondé) : démonstration de l'application en entretien.
