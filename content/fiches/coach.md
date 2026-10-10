@@ -12,7 +12,7 @@ ordre: 1
 
 # Coach — santé et longévité IA
 
-**En bref.** Une application mobile de santé et de longévité qui relie montres connectées, analyses sanguines à domicile, entraînement et boutique, avec un coach IA qui s'appuie sur les vraies données de l'utilisateur. Menée seule côté technique depuis janvier 2026 : une dizaine de services externes branchés, un orchestrateur et quatre agents IA spécialisés, une version de test distribuée sur iPhone. Projet client présenté sous un nom de code, code privé, pas encore sorti sur les stores.
+**En bref.** Une application mobile de santé et de longévité qui relie montres connectées, analyses sanguines à domicile, entraînement et boutique, avec un coach IA qui s'appuie sur les vraies données de l'utilisateur. Je la mène seul côté technique depuis janvier 2026 : une dizaine de services externes branchés, un orchestrateur et quatre agents IA spécialisés, une version de test distribuée sur iPhone. Projet client présenté sous un nom de code, code privé, pas encore sorti sur les stores.
 
 ## Problème
 
@@ -23,7 +23,7 @@ centre propose.
 
 Le besoin : une application qui rassemble ces données en un profil, les fait interpréter par
 une IA, et en tire des actions concrètes (une séance, un complément, un test). Le projet
-partait de zéro, avec une seule personne côté technique.
+partait de zéro, et j'étais seul côté technique.
 
 ## Ce que j'ai construit
 
@@ -31,58 +31,52 @@ Une application iOS et Android et son serveur. L'utilisateur connecte sa montre,
 kit d'analyse, suit un programme d'entraînement et discute avec un coach IA qui connaît ses
 mesures.
 
-Décisions qui ont compté :
+Les décisions qui ont compté :
 - **Un adaptateur par partenaire.** Le code métier ne connaît aucun service externe : chaque
   partenaire (montres, analyses, compléments, paiement) passe par un adaptateur
-  interchangeable. Quand il a fallu changer d'agrégateur de montres connectées, le code métier
+  interchangeable. Quand j'ai changé d'agrégateur de montres connectées, le code métier
   n'a pas bougé.
-- **Un orchestrateur et quatre agents.** Chaque demande est classée dans l'un des huit parcours
-  prévus, puis confiée au bon spécialiste : analyse des données, expertise médicale, coaching,
-  recommandation de produits. Les agents lisent les données par des serveurs MCP, pas par un
-  accès direct à la base.
-- **Qui a le droit de voir quoi, d'abord.** L'identité de l'utilisateur voyage dans un jeton
-  signé, jamais dans un paramètre libre, et aucun journal n'affiche un jeton. Un accès trop
-  permissif via les outils IA a été trouvé et corrigé avant la bascule vers les agents.
+- **Un orchestrateur et quatre agents.** Chaque demande est aiguillée vers le bon spécialiste :
+  analyse des données, expertise médicale, coaching, recommandation de produits. Les agents
+  lisent les données par des serveurs MCP, jamais par un accès direct à la base.
+- **Les droits d'abord.** Chaque accès aux données de santé est vérifié côté serveur, y compris
+  quand c'est un agent IA qui le demande.
 - **L'IA propose, l'utilisateur valide.** Une action qui écrit (planifier une séance) demande
-  une confirmation. Aucun modèle n'est appelé sans le consentement IA enregistré de l'utilisateur.
+  une confirmation. Aucun modèle n'est appelé sans le consentement IA de l'utilisateur.
 - **Une roadmap par portes de lancement.** Distribution restreinte, publication publique, puis
-  après lancement : chaque demande nouvelle se range dans une porte, ce qui garde la date lisible
-  pour les dirigeants.
-- **Les sujets réglementaires écrits noir sur blanc.** Transparence exigée par l'AI Act mise en
-  place ; études d'impact sur l'hébergement de données de santé rédigées pour que les dirigeants
-  tranchent.
+  après lancement : chaque nouvelle demande se range dans une porte, ce qui garde la date
+  lisible pour les dirigeants.
+- **Les sujets réglementaires écrits noir sur blanc.** J'ai mis en place la transparence exigée
+  par l'AI Act et rédigé les études d'impact sur l'hébergement des données de santé, pour que
+  les dirigeants tranchent.
 
 ## Preuves
 
-État au 15/09/2026 : en développement ; version de test distribuée, pas encore sortie sur les stores.
+État au 10/10/2026 : en développement ; version de test distribuée, sortie sur les stores en préparation.
 
 - **Ça marche ?** Version de test envoyée aux testeurs sur iPhone le 24/07/2026. Connexion des
   montres depuis l'application validée sur un iPhone réel ; notifications reçues sur un iPhone
   réel.
-- **C'est solide ?** Intégration continue verte le 15/09/2026 : 1 529 tests serveur et 643 tests
-  mobile. Chaque changement depuis fin août part d'un test écrit avant le code, vérifié par un
-  agent qui ne l'a pas écrit.
-- **C'est utilisable ?** Mesure du hors-sujet sur le coach : 15 questions hors périmètre sur 15
-  déclinées en une phrase après la réécriture du prompt de l'orchestrateur.
+- **C'est solide ?** Intégration continue verte le 15/09/2026 sur le serveur et le mobile.
+  Chaque changement depuis fin août part d'un test écrit avant le code, vérifié par un agent
+  qui ne l'a pas écrit.
+- **C'est utilisable ?** Sur 15 questions hors périmètre posées au coach, 15 déclinées
+  poliment en une phrase.
 
-État honnête : l'application n'est pas sortie sur les stores. Avant une sortie publique, la
-roadmap du 13/08 listait les achats réels, la recette Android, l'environnement final et un avis
-juridique sur l'hébergement des données de santé. Plusieurs livrables dépendent de partenaires :
-leur retard est subi, pas pilotable.
+Prochaine porte : la publication sur les stores — achats réels, recette Android, environnement
+final et validation juridique de l'hébergement des données de santé.
 
 ## Ce que j'en ai appris
 
-- **Isoler chaque partenaire paie tôt.** Le changement d'agrégateur de montres aurait été une
-  réécriture sans les adaptateurs.
-- **Un agent branché sur des données de santé commence par les droits.** La faille d'accès est
-  venue des outils IA, pas de l'application : c'est là qu'il faut regarder en premier.
-- **Les demandes ne s'arrêtent jamais.** Sans roadmap par portes, chaque nouvelle idée des
-  dirigeants repoussait la date. Rangée dans une porte, elle devient une décision.
+- **Isoler chaque partenaire paie tôt.** Sans les adaptateurs, le changement d'agrégateur de
+  montres aurait été une réécriture.
+- **Un agent branché sur des données de santé commence par les droits.** Je les pose avant
+  de lui donner le moindre outil.
+- **Les demandes ne s'arrêtent jamais.** Sans roadmap par portes, chaque nouvelle idée
+  repousse la date. Rangée dans une porte, elle devient une décision.
 - **Le juridique n'est pas mon métier, mais je le rends visible.** Une étude d'impact courte
-  permet aux dirigeants de trancher au lieu de découvrir le sujet à la revue d'Apple.
+  permet aux dirigeants de trancher, au lieu de découvrir le sujet à la revue d'Apple.
 
 ## Artefacts
 
-- Vidéo de démonstration de 95 s, générée par code : à anonymiser avant publication
-- Captures de l'application sur données fictives : à produire
-- Schéma de l'orchestrateur et des quatre agents : à produire
+- Code privé (projet client) : démonstration de l'application sur iPhone en entretien.
