@@ -7,6 +7,14 @@ stack: React Native, Expo, TypeScript, Python/FastAPI, Supabase (Postgres, Auth)
 visibilite: anonyme
 depot:
 demo:
+visuel: /projets/coach/accueil.webp
+captures:
+  - fichier: /projets/coach/forme.webp
+    legende: "Maquette, données fictives : la forme du jour, calculée à partir de la montre et du sommeil."
+  - fichier: /projets/coach/coach-ia.webp
+    legende: "Maquette, données fictives : le coach IA propose une séance, l'utilisateur confirme."
+  - fichier: /projets/coach/resultats.webp
+    legende: "Maquette, données fictives : un bilan sanguin classé et interprété."
 ordre: 1
 ---
 
@@ -79,4 +87,5 @@ final et validation juridique de l'hébergement des données de santé.
 
 ## Artefacts
 
+- Maquettes des trois écrans principaux, redessinées sur données fictives : les vrais écrans restent privés.
 - Code privé (projet client) : démonstration de l'application sur iPhone en entretien.
