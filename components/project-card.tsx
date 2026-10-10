@@ -10,6 +10,8 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
   const { titre, frontmatter, enBref } = fiche;
   // Fiche anonyme : aucun lien, une mention à la place (lib/fiches vide déjà depot et demo).
   const anonyme = frontmatter.visibilite === "anonyme";
+  // Fiche privée : le nom est cité, le code reste privé (lib/fiches vide aussi depot et demo).
+  const prive = frontmatter.visibilite === "prive";
   const codePrive = frontmatter.visibilite === "vitrine" && !isUrl(frontmatter.depot);
   return (
     <article className="group/item grid min-w-0 gap-4 rounded-lg border border-transparent p-5 transition-colors hover:border-border hover:bg-accent/50 focus-within:border-border focus-within:bg-accent/50 sm:grid-cols-[200px_1fr] lg:group-hover/list:opacity-50 lg:hover:!opacity-100">
@@ -49,6 +51,8 @@ export function ProjectCard({ fiche }: { fiche: Fiche }) {
         <p className="flex flex-wrap items-center gap-4 text-sm">
           {anonyme ? (
             <span className="text-muted-foreground">Projet anonymisé : code et client non publiés</span>
+          ) : prive ? (
+            <span className="text-muted-foreground">Code privé</span>
           ) : (
             <>
               {isUrl(frontmatter.depot) && <GitHubLink href={frontmatter.depot} />}

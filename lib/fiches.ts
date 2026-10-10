@@ -3,7 +3,7 @@ import path from "node:path";
 import matter from "gray-matter";
 import { marked } from "marked";
 
-export type Visibilite = "public" | "vitrine" | "anonyme";
+export type Visibilite = "public" | "vitrine" | "anonyme" | "prive";
 
 export type Frontmatter = {
   nom: string;
@@ -83,8 +83,8 @@ const lien = (v: string): string => (/^https?:\/\//.test(v) ? v : "");
 
 function toFrontmatter(data: Record<string, unknown>): Frontmatter {
   const visibilite = text(data.visibilite) as Visibilite;
-  // Une fiche anonyme ne pointe vers rien, même si le fichier source contient des liens.
-  const masque = visibilite === "anonyme";
+  // Une fiche anonyme ou privée ne pointe vers rien, même si le fichier source contient des liens.
+  const masque = visibilite === "anonyme" || visibilite === "prive";
   return {
     nom: text(data.nom),
     statut: text(data.statut),
