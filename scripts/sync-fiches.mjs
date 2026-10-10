@@ -8,7 +8,7 @@ import matter from "gray-matter";
 // Fichiers du dossier parent qui ne quittent jamais la machine.
 const EXCLUDED = ["PLAN.md", "REPOS.md", "AUDIT.md"];
 const REQUIRED = ["nom", "statut", "visibilite"];
-const VISIBILITES = ["public", "vitrine", "anonyme"];
+const VISIBILITES = ["public", "vitrine", "anonyme", "prive"];
 
 const isText = (v) => typeof v === "string" && v.trim() !== "";
 

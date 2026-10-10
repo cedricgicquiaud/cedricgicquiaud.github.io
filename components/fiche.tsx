@@ -66,6 +66,8 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
         <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
           {frontmatter.visibilite === "anonyme" ? (
             <span className="text-muted-foreground">Projet anonymisé : code et client non publiés</span>
+          ) : frontmatter.visibilite === "prive" ? (
+            <span className="text-muted-foreground">Code privé</span>
           ) : (
             <>
               {frontmatter.depot && <GitHubLink href={frontmatter.depot} />}
