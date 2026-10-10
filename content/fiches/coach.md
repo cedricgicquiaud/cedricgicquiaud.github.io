@@ -24,14 +24,18 @@ ordre: 1
 
 ## Problème
 
-Un centre de santé et de longévité vend des bilans sanguins, des compléments alimentaires et
-des séances. Ses clients mesurent déjà beaucoup de choses : montre connectée, analyses, applis
-de sport. Ces données restent dans des silos, sans interprétation, et sans lien avec ce que le
-centre propose.
+Une marque de santé préventive haut de gamme accueille ses clients en centre. Chacun y suit un
+protocole selon son objectif : performance, récupération, qualité de la peau, longévité. La
+méthode : mesurer par un bilan complet, personnaliser par un plan sur mesure, puis ajuster en
+continu.
 
-Le besoin : une application qui rassemble ces données en un profil, les fait interpréter par
-une IA, et en tire des actions concrètes (une séance, un complément, un test). Le projet
-partait de zéro, et j'étais seul côté technique.
+Entre deux séances, ce suivi n'avait pas de support. Les mesures du quotidien (montre, sommeil,
+entraînement) et les résultats d'analyse restaient séparés, sans interprétation et sans lien
+avec le protocole du client.
+
+Le besoin : une application qui prolonge le centre au quotidien. Elle rassemble ces données en
+un profil, les fait interpréter par une IA et en tire des actions concrètes : une séance, un
+complément, un nouveau test. Le projet partait de zéro, et j'étais seul côté technique.
 
 ## Ce que j'ai construit
 
