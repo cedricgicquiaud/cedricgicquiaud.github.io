@@ -44,11 +44,19 @@ describe("Fiche Coach (PFO-89)", () => {
   });
 
   // PFO-91 (10/10) : maquettes neutres aux couleurs du portfolio, jamais les vrais écrans du client.
-  it("montre trois maquettes annoncées comme telles", () => {
+  it("montre six maquettes annoncées comme telles (PFO-93)", () => {
     const { data } = matter(readFileSync(path.join(CONTENT, "fiches", "coach.md"), "utf8"));
     expect(data.visuel).toBe("/projets/coach/accueil.webp");
     const fichiers = (data.captures ?? []).map((c: { fichier: string }) => c.fichier);
-    expect(fichiers).toEqual(["/projets/coach/forme.webp", "/projets/coach/coach-ia.webp", "/projets/coach/resultats.webp"]);
+    // PFO-93 : six écrans dans l'ordre d'un parcours.
+    expect(fichiers).toEqual([
+      "/projets/coach/forme.webp",
+      "/projets/coach/coach-ia.webp",
+      "/projets/coach/programme.webp",
+      "/projets/coach/resultats.webp",
+      "/projets/coach/boutique.webp",
+      "/projets/coach/profil.webp",
+    ]);
     for (const c of data.captures) expect(c.legende).toMatch(/[Mm]aquette/);
     for (const f of [data.visuel, ...fichiers]) expect(existsSync(path.join(PUBLIC, f))).toBe(true);
   });
