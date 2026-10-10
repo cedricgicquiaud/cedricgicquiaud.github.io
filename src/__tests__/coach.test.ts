@@ -43,6 +43,16 @@ describe("Fiche Coach (PFO-89)", () => {
     expect(content).not.toMatch(/volt|epigenetic/i);
   });
 
+  // PFO-91 (10/10) : maquettes neutres aux couleurs du portfolio, jamais les vrais écrans du client.
+  it("montre trois maquettes annoncées comme telles", () => {
+    const { data } = matter(readFileSync(path.join(CONTENT, "fiches", "coach.md"), "utf8"));
+    expect(data.visuel).toBe("/projets/coach/accueil.webp");
+    const fichiers = (data.captures ?? []).map((c: { fichier: string }) => c.fichier);
+    expect(fichiers).toEqual(["/projets/coach/forme.webp", "/projets/coach/coach-ia.webp", "/projets/coach/resultats.webp"]);
+    for (const c of data.captures) expect(c.legende).toMatch(/[Mm]aquette/);
+    for (const f of [data.visuel, ...fichiers]) expect(existsSync(path.join(PUBLIC, f))).toBe(true);
+  });
+
   it("« À propos » pointe vers la nouvelle adresse", () => {
     const about = readFileSync(path.join(CONTENT, "about.md"), "utf8");
     expect(about).toContain("/projets/coach/");
