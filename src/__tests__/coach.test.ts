@@ -53,6 +53,16 @@ describe("Fiche Coach (PFO-89)", () => {
     for (const f of [data.visuel, ...fichiers]) expect(existsSync(path.join(PUBLIC, f))).toBe(true);
   });
 
+  // PFO-92 (10/10) : le contexte décrit l'activité réelle du client sans le rendre identifiable.
+  it("le contexte parle de santé préventive et de protocoles par objectif, sans indice sur le client", () => {
+    const { content } = matter(readFileSync(path.join(CONTENT, "fiches", "coach.md"), "utf8"));
+    const probleme = content.split("## Problème")[1].split("\n## ")[0];
+    expect(probleme).toMatch(/santé préventive haut de gamme/);
+    expect(probleme).toMatch(/performance, récupération, qualité de la peau, longévité/);
+    expect(probleme).toMatch(/prolonge le centre au quotidien/);
+    expect(content).not.toMatch(/épigén|epigen|Paris|Cannes|Miami|juin/i);
+  });
+
   it("« À propos » pointe vers la nouvelle adresse", () => {
     const about = readFileSync(path.join(CONTENT, "about.md"), "utf8");
     expect(about).toContain("/projets/coach/");
