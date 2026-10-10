@@ -7,7 +7,7 @@ stack: TypeScript, React, Node.js/Express, MCP SDK, Zod, Vitest
 visibilite: public
 depot: https://github.com/cedricgicquiaud/slice
 demo: à venir (mise en ligne prévue)
-ordre: 2
+ordre: 3
 visuel: /projets/slice/selection.png
 chiffres:
   - valeur: "500"

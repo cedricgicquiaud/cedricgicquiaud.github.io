@@ -7,7 +7,7 @@ stack: Python, PyTorch, DINOv2, YOLOv8, NumPy, FastAPI, APScheduler, SQLite/SQLM
 visibilite: anonyme
 depot:
 demo:
-ordre: 7
+ordre: 8
 visuel: /projets/ben/accueil.png
 captures:
   - fichier: /projets/ben/marche.webp
