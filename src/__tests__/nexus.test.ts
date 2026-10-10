@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync, statSync } from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import { describe, expect, it } from "vitest";
@@ -6,6 +6,7 @@ import { fingerprint } from "../../scripts/check-output.mjs";
 
 // PFO-96 (10/10) : Nexus cité par son nom, avec l'accord de l'associé ; code privé.
 const CONTENT = path.join(__dirname, "../../content");
+const PUBLIC = path.join(__dirname, "../../public");
 const read = (f: string) => readFileSync(path.join(CONTENT, f), "utf8");
 const forbidden = () => new Set(read("forbidden.txt").split("\n").map((l) => l.trim()).filter(Boolean));
 
@@ -48,5 +49,18 @@ describe("Fiche Nexus (PFO-96)", () => {
     expect(content).not.toMatch(/faille|corrigé|finalisé/i);
     expect(content).not.toMatch(/\d+\s+tests?\b/i);
     expect(content).not.toMatch(/fusion|tablo|M€|millions/i);
+  });
+
+  // PFO-97 (10/10) : maquettes neutres sur données fictives, jamais les vrais écrans.
+  it("montre trois maquettes annoncées comme telles, plus un visuel de couverture", () => {
+    const { data } = matter(read("fiches/nexus.md"));
+    expect(data.visuel).toBe("/projets/nexus/accueil.webp");
+    const fichiers = (data.captures ?? []).map((c: { fichier: string }) => c.fichier);
+    expect(fichiers).toEqual(["/projets/nexus/audit.webp", "/projets/nexus/confirmer.webp", "/projets/nexus/rapport.webp"]);
+    for (const c of data.captures) expect(c.legende).toMatch(/^Maquette, données fictives : /);
+    for (const f of [data.visuel, ...fichiers]) {
+      expect(existsSync(path.join(PUBLIC, f)), f).toBe(true);
+      expect(statSync(path.join(PUBLIC, f)).size).toBeLessThanOrEqual(300 * 1024);
+    }
   });
 });
