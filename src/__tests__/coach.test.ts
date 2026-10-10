@@ -31,6 +31,18 @@ describe("Fiche Coach (PFO-89)", () => {
     expect(html).toMatch(/<link rel="canonical" href="https:\/\/cedricgicquiaud\.github\.io\/projets\/coach\/">/);
   });
 
+  // PFO-90 (10/10) : corps à la première personne, sans faille racontée ni détail de sécurité.
+  it("le corps ne raconte ni faille, ni mécanisme de sécurité, ni travail restant", () => {
+    const { content } = matter(readFileSync(path.join(CONTENT, "fiches", "coach.md"), "utf8"));
+    expect(content).not.toMatch(/humain/i);
+    expect(content).not.toMatch(/État honnête/);
+    expect(content).not.toMatch(/faille|trop permissif|corrigé/i);
+    expect(content).not.toMatch(/jeton|journal|huit parcours/i);
+    expect(content).not.toMatch(/à produire|à anonymiser/);
+    expect(content).toMatch(/^État au 10\/10\/2026/m);
+    expect(content).not.toMatch(/volt|epigenetic/i);
+  });
+
   it("« À propos » pointe vers la nouvelle adresse", () => {
     const about = readFileSync(path.join(CONTENT, "about.md"), "utf8");
     expect(about).toContain("/projets/coach/");
