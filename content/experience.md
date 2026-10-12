@@ -1,35 +1,65 @@
 ---
 titre: Expérience
 blocs:
-  - periode: "2026"
+  - periode: "janv. 2026 → aujourd'hui"
     role: Product builder IA
-    secteur: Logiciel, indépendant
+    secteur: Maison Epigenetic · CDD · Île-de-France
     description: >-
-      Une application mobile de santé menée seul côté technique, du cadrage avec
-      les dirigeants à la recette sur iPhone, avec un coach IA et une dizaine de
-      services branchés. En parallèle, SLICE et Parcours. Le code est
-      écrit par des agents, sous une méthode où un humain décide du merge.
-    tags: [React Native, FastAPI, TypeScript, MCP, Claude Code]
-  - periode: "2023–2025"
-    role: Développeur de side project et d'automatisations
-    secteur: TPE et services
+      Je mène seul côté technique une application mobile de santé et de
+      longévité. Un coach IA fait d'un orchestrateur et de quatre agents
+      spécialisés, qui s'appuie sur les vraies données de l'utilisateur. Une
+      dizaine de services externes branchés, des montres connectées aux
+      analyses sanguines. Version de test distribuée sur iPhone. Travail direct
+      avec les dirigeants, du cadrage aux sujets réglementaires.
+    tags: [Agentic engineering, React Native, FastAPI, Claude Code]
+  - periode: "oct. 2026 → aujourd'hui"
+    role: Product builder IA
+    secteur: Indépendant · Freelance · Île-de-France
     description: >-
-      GiveMe5, un produit web construit d'abord en vibe coding avec ChatGPT,
-      puis repris avec des tests. Automatisations no-code pour des très petites
-      entreprises : prise de rendez-vous, relances, synchronisation de données.
-    tags: [Django, n8n, Make, Airtable, Supabase]
-  - periode: "2013–2023"
-    role: Conseiller immobilier indépendant
-    secteur: Immobilier résidentiel
+      Petites réalisations au forfait pour des TPE. En cours : un assistant
+      téléphonique pour un diagnostiqueur immobilier, qui décroche, répond aux
+      questions et prend les rendez-vous dans l'agenda.
+    tags: [Agentic engineering]
+  - periode: "août 2023 → aujourd'hui"
+    role: Créateur (projet personnel)
+    secteur: GiveMe5 · Indépendant
     description: >-
-      Prospection, estimation, négociation et suivi des ventes jusqu'à l'acte.
-      Dix ans à tenir un chiffre d'affaires seul, sans structure derrière.
-    tags: [Négociation, Prospection, Relation client]
-  - periode: "2000–2013"
-    role: Concepteur-développeur, puis chef de projet
-    secteur: ESN, banque et assurance
+      Mon premier produit : des plaques et cartes NFC / QR code qui mènent le
+      client d'un commerçant vers son formulaire d'avis Google. Vendu 49 €
+      pièce, avec un backoffice Django, trois automatisations n8n / Make et une
+      page de vente Stripe. En parallèle, mes projets d'agentic engineering :
+      PILOT (méthode à six agents), SLICE (connecteur MCP, code public),
+      Parcours, Tablo.
+    tags: [Django, n8n, Make, Stripe]
+  - periode: "oct. 2023 → déc. 2025"
+    role: Consultant digital freelance
+    secteur: EXEDIGIT · Freelance · Paris et périphérie
     description: >-
-      Conception et développement d'applications métier, puis pilotage de
-      projets : planning, budget, comités, coordination des équipes MOA et MOE.
-    tags: [Java, SQL, Pilotage MOA/MOE]
+      Missions pour EXEDIGIT : sites web et formation des clients aux outils
+      livrés, pour qu'ils deviennent autonomes. Automatisations et agents IA
+      intégrés chez leurs clients.
+    tags: [Automation, Intelligence artificielle]
+  - periode: "févr. 2013 → sept. 2023"
+    role: Conseiller immobilier et manager réseau
+    secteur: I@D France · Indépendant
+    description: >-
+      Plus de 150 clients vendeurs et acquéreurs accompagnés, de la première
+      visite à la signature. J'ai animé et coaché une équipe de dix conseillers.
+    tags: [Négociation, Management, Automation]
+  - periode: "juil. 2007 → déc. 2012"
+    role: Chef de projets, banque et assurance
+    secteur: Sopra Steria · CDI · Paris et périphérie
+    description: >-
+      Pilotage de projets sur le progiciel bancaire Evolan Capital Market pour
+      des banques grands comptes. Encadrement d'une équipe de quinze personnes :
+      développement, qualification, support.
+    tags: [Gestion de projet, Planification de projets]
+  - periode: "févr. 2000 → juil. 2007"
+    role: Concepteur-développeur, banque
+    secteur: VIVEO Banking & Finance Consulting · CDI · Paris et périphérie
+    description: >-
+      Progiciels de front et back office pour des banques grands comptes :
+      recueil du besoin, spécifications fonctionnelles, développement,
+      qualification, mise en production, support.
+    tags: [SQL, COBOL, VBA]
 ---
