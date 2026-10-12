@@ -67,7 +67,7 @@ describe("« À propos » dense, à la manière du modèle (PFO-71)", () => {
 
 // PFO-102 (12/10) : le texte reprend le « À propos » LinkedIn.
 describe("« À propos » aligné sur LinkedIn (PFO-102)", () => {
-  it("cite les employeurs, les chiffres et le poste recherché du profil LinkedIn", () => {
+  it("cite les employeurs et les chiffres du profil LinkedIn", () => {
     const text = body().replace(/\s+/g, " ");
     for (const key of [
       /VIVEO/,
@@ -78,11 +78,13 @@ describe("« À propos » aligné sur LinkedIn (PFO-102)", () => {
       /8 défauts cachés derrière des tests verts/,
       /freelance/,
       /TPE/,
-      /applications et des agents IA/,
-      /intégrateur, un éditeur ou une équipe interne/,
-      /Suisse/,
     ])
       expect(text).toMatch(key);
+  });
+
+  // PFO-104 (12/10) : pas de phrase de recherche de poste.
+  it("refus : le texte ne dit pas que je cherche un poste", () => {
+    expect(body()).not.toMatch(/je cherche|Suisse|télétravail/i);
   });
 
   it("refus : ni le nom interne de l'application, ni « ESN »", () => {
