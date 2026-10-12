@@ -15,6 +15,12 @@ describe("Positionnement « product builder IA » (PFO-69)", () => {
     expect(site.title).not.toMatch(/Je branche/);
   });
 
+  // PFO-103 (12/10) : même formule que le titre LinkedIn.
+  it("l'accroche dit « application opérationnelle », plus « qui tourne »", () => {
+    expect(site.title).toBe("Je transforme un besoin métier en application opérationnelle, en faisant coder des agents IA sous contrôle.");
+    for (const f of ["content/site.json", "content/about.md", "content/experience.md"]) expect(read(f), f).not.toMatch(/qui tourne/);
+  });
+
   it("« À propos » nomme le métier, et le bloc 2026 d'« Expérience » porte le rôle « Product builder IA »", () => {
     expect(read("content/about.md")).toMatch(/product builder IA/i);
     expect(read("content/experience.md")).toMatch(/role: Product builder IA/);
