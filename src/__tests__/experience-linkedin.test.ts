@@ -5,6 +5,7 @@ import { contentDir, loadExperience } from "../../lib/content";
 import { fingerprint } from "../../scripts/check-output.mjs";
 
 // PFO-100 (12/10) : la section Expérience reprend les postes du profil LinkedIn, entreprises nommées.
+// PFO-101 (12/10) : le CDD Maison Epigenetic affiche sa fin, janv. 2027.
 const forbidden = () =>
   new Set(readFileSync(path.join(contentDir, "forbidden.txt"), "utf8").split("\n").map((l) => l.trim()).filter(Boolean));
 
@@ -26,7 +27,7 @@ describe("Expérience alignée sur LinkedIn (PFO-100)", () => {
   it("les dates et les chiffres sont ceux de LinkedIn", () => {
     const { blocs } = loadExperience(contentDir);
     expect(blocs.map((b) => b.periode)).toEqual([
-      "janv. 2026 → aujourd'hui",
+      "janv. 2026 → janv. 2027",
       "oct. 2026 → aujourd'hui",
       "août 2023 → aujourd'hui",
       "oct. 2023 → déc. 2025",
