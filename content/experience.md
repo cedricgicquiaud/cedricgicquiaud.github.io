@@ -5,7 +5,7 @@ blocs:
     role: Product builder IA
     secteur: Maison Epigenetic · CDD · Île-de-France
     description: >-
-      Je mène seul côté technique une application mobile de santé et de
+      Je développe et implémente une application mobile de santé et de
       longévité. Un coach IA fait d'un orchestrateur et de quatre agents
       spécialisés, qui s'appuie sur les vraies données de l'utilisateur. Une
       dizaine de services externes branchés, des montres connectées aux
