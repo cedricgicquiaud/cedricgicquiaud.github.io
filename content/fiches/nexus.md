@@ -7,18 +7,20 @@ stack: Python/FastAPI, React, TypeScript, Vite, Supabase (Postgres, Auth), Neo4j
 visibilite: prive
 depot:
 demo:
-visuel: /projets/nexus/accueil.webp
+visuel: /projets/nexus/chat.webp
 captures:
-  - fichier: /projets/nexus/audit.webp
-    legende: "Maquette, données fictives : l'audit du CRM, noté par des règles écrites en code et expliqué par l'IA."
-  - fichier: /projets/nexus/confirmer.webp
-    legende: "Maquette, données fictives : l'assistant propose une action, rien n'est écrit dans le CRM sans confirmation."
+  - fichier: /projets/nexus/connexions.webp
+    legende: "Capture de l'application, données anonymisées : les outils de l'entreprise, branchés par un seul mécanisme de connexion."
+  - fichier: /projets/nexus/accueil.webp
+    legende: "Capture de l'application, données anonymisées : ce qui demande une action aujourd'hui, relances en retard et affaires qui stagnent."
+  - fichier: /projets/nexus/dashboards.webp
+    legende: "Capture de l'application, données anonymisées : un tableau de bord du pipeline commercial, calculé sur les données du CRM."
   - fichier: /projets/nexus/rapport.webp
-    legende: "Maquette, données fictives : un rapport d'audit figé à sa date, exportable en PDF."
+    legende: "Capture de l'application, données anonymisées : un rapport d'audit du CRM, noté par des règles écrites en code et figé à sa date."
 ordre: 2
 ---
 
-# Nexus — assistant IA pour PME, chaîne européenne
+# Nexus — assistant IA pour PME
 
 **En bref.** Un assistant IA pour PME, branché sur une quinzaine d'outils du quotidien, qui repère les signaux de revenus et audite le CRM. Le code détecte et décide, l'IA explique : 21 règles métier écrites en code, une chaîne de modèles 100 % européenne. Projet cofondé, code privé, démonstration en entretien.
 
@@ -84,5 +86,5 @@ Prochaine porte : un premier déploiement chez un hébergeur européen, puis des
 
 ## Artefacts
 
-- Maquettes de trois écrans, redessinées sur données fictives : les vrais écrans restent privés.
+- Captures de l'application sur données anonymisées : noms et montants remplacés.
 - Code privé (projet cofondé) : démonstration de l'application en entretien.
