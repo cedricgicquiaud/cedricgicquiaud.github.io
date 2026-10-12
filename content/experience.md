@@ -21,7 +21,7 @@ blocs:
       questions et prend les rendez-vous dans l'agenda.
     tags: [Agentic engineering]
   - periode: "août 2023 → aujourd'hui"
-    role: Créateur (projet personnel)
+    role: Fondateur
     secteur: GiveMe5 · Indépendant
     description: >-
       Mon premier produit : des plaques et cartes NFC / QR code qui mènent le
