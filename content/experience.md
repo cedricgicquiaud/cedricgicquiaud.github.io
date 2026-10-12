@@ -1,7 +1,7 @@
 ---
 titre: Expérience
 blocs:
-  - periode: "janv. 2026 → aujourd'hui"
+  - periode: "janv. 2026 → janv. 2027"
     role: Product builder IA
     secteur: Maison Epigenetic · CDD · Île-de-France
     description: >-
