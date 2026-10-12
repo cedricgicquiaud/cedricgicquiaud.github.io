@@ -46,6 +46,11 @@ describe("Expérience alignée sur LinkedIn (PFO-100)", () => {
     expect(premier.description).not.toMatch(/mène seul côté technique/);
   });
 
+  it("le poste indépendant dit « Réalisations au forfait », sans « petites » (PFO-101)", () => {
+    const independant = loadExperience(contentDir).blocs[1];
+    expect(independant.description).toMatch(/^Réalisations au forfait pour des TPE\./);
+  });
+
   it("les deux employeurs publics sur LinkedIn ne sont plus interdits ; le nom de l'application l'est toujours", () => {
     const set = forbidden();
     expect(set.has(fingerprint("epigenetic"))).toBe(false);
