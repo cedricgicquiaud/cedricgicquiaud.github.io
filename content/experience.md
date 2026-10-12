@@ -50,9 +50,9 @@ blocs:
     role: Chef de projets, banque et assurance
     secteur: Sopra Steria · CDI · Paris et périphérie
     description: >-
-      Pilotage de projets sur le progiciel bancaire Evolan Capital Market pour
-      des banques grands comptes. Encadrement d'une équipe de quinze personnes :
-      développement, qualification, support.
+      Pilotage de projets en TMA chez le client ou sur le progiciel bancaire
+      Evolan Capital Market pour des banques grands comptes. Encadrement
+      d'équipe jusqu'à quinze personnes.
     tags: [Gestion de projet, Planification de projets]
   - periode: "févr. 2000 → juil. 2007"
     role: Concepteur-développeur, banque
