@@ -51,6 +51,13 @@ describe("Expérience alignée sur LinkedIn (PFO-100)", () => {
     expect(independant.description).toMatch(/^Réalisations au forfait pour des TPE\./);
   });
 
+  it("le poste Sopra Steria dit la TMA et l'encadrement jusqu'à quinze personnes (PFO-101)", () => {
+    const sopra = loadExperience(contentDir).blocs[5];
+    expect(sopra.description).toBe(
+      "Pilotage de projets en TMA chez le client ou sur le progiciel bancaire Evolan Capital Market pour des banques grands comptes. Encadrement d'équipe jusqu'à quinze personnes.",
+    );
+  });
+
   it("les deux employeurs publics sur LinkedIn ne sont plus interdits ; le nom de l'application l'est toujours", () => {
     const set = forbidden();
     expect(set.has(fingerprint("epigenetic"))).toBe(false);
