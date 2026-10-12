@@ -54,7 +54,7 @@ describe("Expérience alignée sur LinkedIn (PFO-100)", () => {
   it("le poste Sopra Steria dit la TMA et l'encadrement jusqu'à quinze personnes (PFO-101)", () => {
     const sopra = loadExperience(contentDir).blocs[5];
     expect(sopra.description).toBe(
-      "Pilotage de projets en TMA chez le client ou sur le progiciel bancaire Evolan Capital Market pour des banques grands comptes. Encadrement d'équipe jusqu'à quinze personnes.",
+      "Pilotage de projets en TMA pour des clients grands comptes du secteur bancaire. Pilotage du progiciel interne Evolan Capital Market. Encadrement d'équipe jusqu'à quinze personnes : recueil du besoin, spécifications fonctionnelles, développement, qualification, mise en production, support.",
     );
   });
 
