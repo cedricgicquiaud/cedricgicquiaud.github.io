@@ -26,9 +26,9 @@ describe("« À propos » dense, à la manière du modèle (PFO-71)", () => {
     expect(words(body()).length).toBeLessThanOrEqual(250);
   });
 
-  it("garde le métier, l'app santé, la méthode, l'ESN, le chef de projet, l'indépendant et le principe des preuves", () => {
+  it("garde le métier, l'app santé, la méthode, la banque, le chef de projets, l'indépendant et le principe des preuves", () => {
     const text = body();
-    for (const key of [/product builder IA/i, /application mobile de santé/, /seul côté technique/, /agentic engineering/, /ESN/, /chef de projet/, /indépendant/, /ce qui fonctionne et ce qui reste à faire/]) {
+    for (const key of [/product builder IA/i, /application mobile de santé/, /seul côté technique/, /agentic engineering/, /informatique bancaire/, /chef de projets/, /indépendant/, /ce qui fonctionne et ce qui reste à faire/]) {
       expect(text).toMatch(key);
     }
   });
@@ -62,5 +62,31 @@ describe("« À propos » dense, à la manière du modèle (PFO-71)", () => {
 
   it("refus : jamais « production » dans « À propos »", () => {
     expect(body()).not.toMatch(/production/i);
+  });
+});
+
+// PFO-102 (12/10) : le texte reprend le « À propos » LinkedIn.
+describe("« À propos » aligné sur LinkedIn (PFO-102)", () => {
+  it("cite les employeurs, les chiffres et le poste recherché du profil LinkedIn", () => {
+    const text = body().replace(/\s+/g, " ");
+    for (const key of [
+      /VIVEO/,
+      /Sopra Steria/,
+      /quinze personnes/,
+      /150 clients/,
+      /dix conseillers/,
+      /8 défauts cachés derrière des tests verts/,
+      /freelance/,
+      /TPE/,
+      /applications et des agents IA/,
+      /intégrateur, un éditeur ou une équipe interne/,
+      /Suisse/,
+    ])
+      expect(text).toMatch(key);
+  });
+
+  it("refus : ni le nom interne de l'application, ni « ESN »", () => {
+    expect(body()).not.toMatch(/volt/i);
+    expect(body()).not.toMatch(/\bESN\b/);
   });
 });
