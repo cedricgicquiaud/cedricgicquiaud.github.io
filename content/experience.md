@@ -1,11 +1,11 @@
 ---
 titre: Expérience
 blocs:
-  - periode: "janv. 2026 → aujourd'hui"
+  - periode: "janv. 2026 → janv. 2027"
     role: Product builder IA
     secteur: Maison Epigenetic · CDD · Île-de-France
     description: >-
-      Je mène seul côté technique une application mobile de santé et de
+      Je développe et implémente une application mobile de santé et de
       longévité. Un coach IA fait d'un orchestrateur et de quatre agents
       spécialisés, qui s'appuie sur les vraies données de l'utilisateur. Une
       dizaine de services externes branchés, des montres connectées aux
@@ -16,12 +16,12 @@ blocs:
     role: Product builder IA
     secteur: Indépendant · Freelance · Île-de-France
     description: >-
-      Petites réalisations au forfait pour des TPE. En cours : un assistant
+      Réalisations au forfait pour des TPE. En cours : un assistant
       téléphonique pour un diagnostiqueur immobilier, qui décroche, répond aux
       questions et prend les rendez-vous dans l'agenda.
     tags: [Agentic engineering]
   - periode: "août 2023 → aujourd'hui"
-    role: Créateur (projet personnel)
+    role: Fondateur
     secteur: GiveMe5 · Indépendant
     description: >-
       Mon premier produit : des plaques et cartes NFC / QR code qui mènent le
@@ -50,9 +50,10 @@ blocs:
     role: Chef de projets, banque et assurance
     secteur: Sopra Steria · CDI · Paris et périphérie
     description: >-
-      Pilotage de projets sur le progiciel bancaire Evolan Capital Market pour
-      des banques grands comptes. Encadrement d'une équipe de quinze personnes :
-      développement, qualification, support.
+      Pilotage de projets en TMA pour des clients grands comptes du secteur
+      bancaire. Pilotage du progiciel interne Evolan Capital Market. Encadrement
+      d'équipe jusqu'à quinze personnes : recueil du besoin, spécifications
+      fonctionnelles, développement, qualification, mise en production, support.
     tags: [Gestion de projet, Planification de projets]
   - periode: "févr. 2000 → juil. 2007"
     role: Concepteur-développeur, banque
