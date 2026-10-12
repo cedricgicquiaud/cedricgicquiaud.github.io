@@ -15,7 +15,7 @@ describe("Expérience alignée sur LinkedIn (PFO-100)", () => {
     expect(blocs.map((b) => [b.role, b.secteur.split(" · ")[0]])).toEqual([
       ["Product builder IA", "Maison Epigenetic"],
       ["Product builder IA", "Indépendant"],
-      ["Créateur (projet personnel)", "GiveMe5"],
+      ["Fondateur", "GiveMe5"],
       ["Consultant digital freelance", "EXEDIGIT"],
       ["Conseiller immobilier et manager réseau", "I@D France"],
       ["Chef de projets, banque et assurance", "Sopra Steria"],
