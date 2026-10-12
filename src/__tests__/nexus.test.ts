@@ -51,16 +51,32 @@ describe("Fiche Nexus (PFO-96)", () => {
     expect(content).not.toMatch(/fusion|tablo|M€|millions/i);
   });
 
-  // PFO-97 (10/10) : maquettes neutres sur données fictives, jamais les vrais écrans.
-  it("montre trois maquettes annoncées comme telles, plus un visuel de couverture", () => {
-    const { data } = matter(read("fiches/nexus.md"));
-    expect(data.visuel).toBe("/projets/nexus/accueil.webp");
+  // PFO-98 (12/10) : titre sans « chaîne européenne ».
+  it("le titre dit ce que c'est, sans plus", () => {
+    const { content } = matter(read("fiches/nexus.md"));
+    expect(content).toMatch(/^# Nexus — assistant IA pour PME$/m);
+  });
+
+  // PFO-99 (12/10) : les vrais écrans, données anonymisées, à la place des maquettes.
+  it("montre quatre captures de l'application, plus le chat en couverture", () => {
+    const { data, content } = matter(read("fiches/nexus.md"));
+    expect(data.visuel).toBe("/projets/nexus/chat.webp");
     const fichiers = (data.captures ?? []).map((c: { fichier: string }) => c.fichier);
-    expect(fichiers).toEqual(["/projets/nexus/audit.webp", "/projets/nexus/confirmer.webp", "/projets/nexus/rapport.webp"]);
-    for (const c of data.captures) expect(c.legende).toMatch(/^Maquette, données fictives : /);
+    expect(fichiers).toEqual([
+      "/projets/nexus/connexions.webp",
+      "/projets/nexus/accueil.webp",
+      "/projets/nexus/dashboards.webp",
+      "/projets/nexus/rapport.webp",
+    ]);
+    for (const c of data.captures) expect(c.legende).toMatch(/^Capture de l'application, données anonymisées : /);
+    expect(content).not.toMatch(/maquette/i);
     for (const f of [data.visuel, ...fichiers]) {
       expect(existsSync(path.join(PUBLIC, f)), f).toBe(true);
       expect(statSync(path.join(PUBLIC, f)).size).toBeLessThanOrEqual(300 * 1024);
     }
+  });
+
+  it("les maquettes sont retirées", () => {
+    for (const f of ["audit.webp", "confirmer.webp"]) expect(existsSync(path.join(PUBLIC, "projets/nexus", f)), f).toBe(false);
   });
 });
