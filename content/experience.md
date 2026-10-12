@@ -16,7 +16,7 @@ blocs:
     role: Product builder IA
     secteur: Indépendant · Freelance · Île-de-France
     description: >-
-      Petites réalisations au forfait pour des TPE. En cours : un assistant
+      Réalisations au forfait pour des TPE. En cours : un assistant
       téléphonique pour un diagnostiqueur immobilier, qui décroche, répond aux
       questions et prend les rendez-vous dans l'agenda.
     tags: [Agentic engineering]
