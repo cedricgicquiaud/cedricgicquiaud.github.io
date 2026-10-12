@@ -40,6 +40,12 @@ describe("Expérience alignée sur LinkedIn (PFO-100)", () => {
       expect(text).toMatch(s);
   });
 
+  it("le poste Maison Epigenetic dit « je développe et implémente » (PFO-101)", () => {
+    const [premier] = loadExperience(contentDir).blocs;
+    expect(premier.description).toMatch(/^Je développe et implémente une application mobile de santé/);
+    expect(premier.description).not.toMatch(/mène seul côté technique/);
+  });
+
   it("les deux employeurs publics sur LinkedIn ne sont plus interdits ; le nom de l'application l'est toujours", () => {
     const set = forbidden();
     expect(set.has(fingerprint("epigenetic"))).toBe(false);
