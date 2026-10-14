@@ -11,7 +11,7 @@ ordre: 4
 visuel: /projets/pilot/circuit.png
 captures:
   - fichier: /projets/pilot/agents.png
-    legende: "Les six agents de PILOT : leur rôle, et ce que chacun a le droit de faire. Seuls deux d'entre eux modifient le code."
+    legende: "Le chef d'orchestre et les six agents de PILOT : leur rôle, et ce que chacun a le droit de faire. Seuls deux agents modifient le code."
   - fichier: /projets/pilot/linear.png
     legende: "Une tâche réelle de ce site dans Linear : le problème, ce qu'on fait, et la liste « Terminé quand », refus compris, que les agents doivent tenir."
   - fichier: /projets/pilot/pr.png
@@ -21,8 +21,8 @@ captures:
 # PILOT — workflow agentique
 
 **En bref.** Un workflow agentique, ma méthode d'agentic engineering : je décide quoi construire,
-une équipe de six agents IA écrit le code, le relit et le corrige, et je valide chaque livraison
-avant qu'elle parte. Je l'utilise sur mes projets réels, dont ce site (67 livraisons depuis fin août). Méthode
+Claude, en chef d'orchestre, cadre avec moi et dirige six agents IA qui écrivent le code, le
+relisent et le corrigent, et je valide chaque livraison avant qu'elle parte. Je l'utilise sur mes projets réels, dont ce site (67 livraisons depuis fin août). Méthode
 publique, sous licence libre.
 
 ## Problème
@@ -47,24 +47,34 @@ PILOT répond aux deux problèmes : un tableau de bord pour savoir où en est le
   seul écran que je regarde au quotidien.
 - **GitHub**, l'atelier : le code, et une demande de modification (une « PR ») par livraison,
   que je relis avant de l'accepter.
-- **Claude Code**, l'équipe : six agents IA, chacun avec un poste précis.
+- **Claude Code**, l'équipe : un chef d'orchestre et six agents IA, chacun avec un poste précis.
 
 Le numéro de la tâche Linear figure dans le nom de chaque PR. Quand j'accepte une PR, Linear
 coche la tâche tout seul : personne ne met le tableau à jour à la main.
 
 **Le déroulé d'une fonctionnalité, en cinq étapes.**
-1. **Cadrer.** Je décris ce que je veux. Avec les agents, j'écris la liste de ce qui devra être
-   vrai à la fin, en 10 à 30 phrases vérifiables. Exemple : « une facture émise ne peut plus
+1. **Cadrer.** Je décris ce que je veux. Le chef d'orchestre me pose ses questions, puis écrit
+   la liste de ce qui devra être vrai à la fin, en 10 à 30 phrases vérifiables. Exemple : « une facture émise ne peut plus
    être modifiée ». Je valide.
 2. **Découper.** La fonctionnalité est coupée en livraisons qui ne touchent pas les mêmes
    fichiers, pour pouvoir avancer en parallèle. Je valide.
-3. **Produire.** Les agents écrivent, vérifient et corrigent, sans moi.
-4. **Accepter.** Je lis le rapport des agents, je tranche les questions qu'ils me posent, et
-   j'accepte la livraison.
+3. **Produire.** Le chef d'orchestre lance les agents : ils écrivent, vérifient et corrigent,
+   sans moi.
+4. **Accepter.** Je lis le rapport que le chef d'orchestre a rassemblé, je tranche les
+   questions remontées, et j'accepte la livraison.
 5. **Apprendre.** Chaque erreur trouvée devient une règle écrite que les agents liront la fois
    suivante.
 
-**Les six agents et leur rôle.**
+**Le chef d'orchestre.** C'est Claude, dans la conversation que j'ai avec lui. Au cadrage, il
+se renseigne sur ce qui existe déjà, me pose ses questions par séries avec une réponse
+recommandée pour chacune, puis rédige le cadrage et la liste des fonctionnalités. En production,
+il prépare la mission de chaque agent, les lance dans l'ordre, rassemble leurs rapports et ouvre
+la PR. Il n'est pas un agent comme les autres pour deux raisons : il est le seul à pouvoir
+dialoguer avec moi, et le seul à pouvoir lancer les autres agents. Sa fiche de poste est la
+procédure `pilot` elle-même : ses commandes, ses arrêts pour que je valide, ses règles.
+
+**Les six agents et leur rôle.** Chacun démarre à vide, avec sa seule mission écrite : il ne voit
+que ce dont il a besoin.
 - **Le contradicteur** relit le cadrage avant que je le valide. Il cherche ce qui manque : un
   cas oublié, une phrase impossible à vérifier, deux règles qui se contredisent. Il pose des
   questions, il ne répond pas à ma place. Il ne fait que lire.
