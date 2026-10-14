@@ -5,7 +5,7 @@ blocs:
     role: Product builder IA
     secteur: Maison Epigenetic · CDD · Paris
     description: >-
-      Je développe et implémente une application mobile de santé et de
+      Je développe et implémente seul une application mobile de santé et de
       longévité. Un coach IA fait d'un orchestrateur et de quatre agents
       spécialisés, qui s'appuie sur les vraies données de l'utilisateur. Une
       dizaine de services externes branchés, des montres connectées aux
@@ -32,9 +32,10 @@ blocs:
     role: Consultant digital freelance
     secteur: EXEDIGIT · Freelance · Paris
     description: >-
-      Missions pour EXEDIGIT : sites web et formation des clients aux outils
-      livrés, pour qu'ils deviennent autonomes. Automatisations et agents IA
-      intégrés chez leurs clients.
+      Missions pour EXEDIGIT : plus de 30 sites web livrés, et des clients
+      formés à leurs outils pour qu'ils deviennent autonomes. Agents IA de
+      gestion des réseaux sociaux, migrations de bases de données de boutiques
+      en ligne.
     tags: [Automation, Intelligence artificielle]
   - periode: "févr. 2013 → sept. 2023"
     role: Conseiller immobilier et manager réseau
@@ -47,16 +48,19 @@ blocs:
     role: Chef de projets, banque et assurance
     secteur: Sopra Steria · CDI · Paris
     description: >-
-      Pilotage de projets en TMA pour des clients grands comptes du secteur
-      bancaire. Pilotage du progiciel interne Evolan Capital Market. Encadrement
-      d'équipe jusqu'à quinze personnes : recueil du besoin, spécifications
-      fonctionnelles, développement, qualification, mise en production, support.
+      Pilotage de la TMA Gestion d'actifs d'un grand assureur bancaire :
+      40 applications, délais de correction et dates de livraison respectés.
+      Sur une autre mission, pilotage du progiciel interne Evolan Capital
+      Market. Encadrement d'équipe jusqu'à quinze personnes : recueil du
+      besoin, spécifications fonctionnelles, développement, qualification, mise
+      en production, support.
     tags: [Gestion de projet, Planification de projets]
   - periode: "févr. 2000 → juil. 2007"
     role: Concepteur-développeur, banque
     secteur: VIVEO Banking & Finance Consulting · CDI · Paris
     description: >-
-      Progiciels de front et back office pour des banques grands comptes :
+      Progiciels de front et back office Gestion d'actifs pour des banques
+      grands comptes :
       recueil du besoin, spécifications fonctionnelles, développement,
       qualification, mise en production, support.
     tags: [SQL, COBOL, VBA]

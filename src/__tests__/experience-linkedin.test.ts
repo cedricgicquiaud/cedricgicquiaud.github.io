@@ -39,9 +39,9 @@ describe("Expérience alignée sur LinkedIn (PFO-100)", () => {
       expect(text).toMatch(s);
   });
 
-  it("le poste Maison Epigenetic dit « je développe et implémente » (PFO-101)", () => {
+  it("le poste Maison Epigenetic dit « je développe et implémente seul » (PFO-101, PFO-105)", () => {
     const [premier] = loadExperience(contentDir).blocs;
-    expect(premier.description).toMatch(/^Je développe et implémente une application mobile de santé/);
+    expect(premier.description).toMatch(/^Je développe et implémente seul une application mobile de santé/);
     expect(premier.description).not.toMatch(/mène seul côté technique/);
   });
 
@@ -53,11 +53,12 @@ describe("Expérience alignée sur LinkedIn (PFO-100)", () => {
     expect(giveme5.description).not.toMatch(/petites/);
   });
 
-  it("le poste Sopra Steria dit la TMA et l'encadrement jusqu'à quinze personnes (PFO-101)", () => {
+  it("le poste Sopra Steria dit la TMA de 40 applications et l'encadrement jusqu'à quinze personnes, sans nom de client (PFO-101, PFO-105)", () => {
     const sopra = loadExperience(contentDir).blocs[4];
     expect(sopra.description).toBe(
-      "Pilotage de projets en TMA pour des clients grands comptes du secteur bancaire. Pilotage du progiciel interne Evolan Capital Market. Encadrement d'équipe jusqu'à quinze personnes : recueil du besoin, spécifications fonctionnelles, développement, qualification, mise en production, support.",
+      "Pilotage de la TMA Gestion d'actifs d'un grand assureur bancaire : 40 applications, délais de correction et dates de livraison respectés. Sur une autre mission, pilotage du progiciel interne Evolan Capital Market. Encadrement d'équipe jusqu'à quinze personnes : recueil du besoin, spécifications fonctionnelles, développement, qualification, mise en production, support.",
     );
+    expect(sopra.description).not.toMatch(/BNP/);
   });
 
   it("les deux employeurs publics sur LinkedIn ne sont plus interdits ; le nom de l'application l'est toujours", () => {
