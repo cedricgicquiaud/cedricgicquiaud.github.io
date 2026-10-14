@@ -12,6 +12,10 @@ visuel: /projets/pilot/circuit.png
 captures:
   - fichier: /projets/pilot/agents.png
     legende: "Les six agents de PILOT : leur rôle, et ce que chacun a le droit de faire. Seuls deux d'entre eux modifient le code."
+  - fichier: /projets/pilot/linear.png
+    legende: "Une tâche réelle de ce site dans Linear : le problème, ce qu'on fait, et la liste « Terminé quand », refus compris, que les agents doivent tenir."
+  - fichier: /projets/pilot/pr.png
+    legende: "La PR qui livre cette tâche, écrite par l'agent : le code de la tâche dans le titre, ce qui change expliqué en clair, acceptée par moi."
 ---
 
 # PILOT — workflow agentique
