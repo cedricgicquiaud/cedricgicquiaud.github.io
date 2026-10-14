@@ -6,29 +6,28 @@ import { fingerprint } from "../../scripts/check-output.mjs";
 
 // PFO-100 (12/10) : la section Expérience reprend les postes du profil LinkedIn, entreprises nommées.
 // PFO-101 (12/10) : le CDD Maison Epigenetic affiche sa fin, janv. 2027.
+// PFO-105 (14/10) : le poste Freelance est fusionné dans GiveMe5, même micro-entreprise ; six postes.
 const forbidden = () =>
   new Set(readFileSync(path.join(contentDir, "forbidden.txt"), "utf8").split("\n").map((l) => l.trim()).filter(Boolean));
 
 describe("Expérience alignée sur LinkedIn (PFO-100)", () => {
-  it("sept postes, du plus récent au plus ancien, chacun avec son entreprise", () => {
+  it("six postes, du plus récent au plus ancien, chacun avec son entreprise", () => {
     const { blocs } = loadExperience(contentDir);
     expect(blocs.map((b) => [b.role, b.secteur.split(" · ")[0]])).toEqual([
       ["Product builder IA", "Maison Epigenetic"],
-      ["Product builder IA", "Indépendant"],
-      ["Fondateur", "GiveMe5"],
+      ["Fondateur · Product builder IA", "GiveMe5"],
       ["Consultant digital freelance", "EXEDIGIT"],
       ["Conseiller immobilier et manager réseau", "I@D France"],
       ["Chef de projets, banque et assurance", "Sopra Steria"],
       ["Concepteur-développeur, banque", "VIVEO Banking & Finance Consulting"],
     ]);
-    expect(new Set(blocs.map((b) => b.periode)).size).toBe(7);
+    expect(new Set(blocs.map((b) => b.periode)).size).toBe(6);
   });
 
   it("les dates et les chiffres sont ceux de LinkedIn", () => {
     const { blocs } = loadExperience(contentDir);
     expect(blocs.map((b) => b.periode)).toEqual([
       "janv. 2026 → janv. 2027",
-      "oct. 2026 → aujourd'hui",
       "août 2023 → aujourd'hui",
       "oct. 2023 → déc. 2025",
       "févr. 2013 → sept. 2023",
@@ -36,26 +35,30 @@ describe("Expérience alignée sur LinkedIn (PFO-100)", () => {
       "févr. 2000 → juil. 2007",
     ]);
     const text = blocs.map((b) => b.description).join("\n");
-    for (const s of [/150 clients/, /dix conseillers/, /quinze personnes/, /Evolan Capital Market/, /49 €/, /diagnostiqueur immobilier/])
+    for (const s of [/150 clients/, /dix conseillers/, /quinze personnes/, /Evolan Capital Market/, /49 €/, /diagnostiqueur immobilier/, /200 commerces/])
       expect(text).toMatch(s);
   });
 
-  it("le poste Maison Epigenetic dit « je développe et implémente » (PFO-101)", () => {
+  it("le poste Maison Epigenetic dit « je développe et implémente seul » (PFO-101, PFO-105)", () => {
     const [premier] = loadExperience(contentDir).blocs;
-    expect(premier.description).toMatch(/^Je développe et implémente une application mobile de santé/);
+    expect(premier.description).toMatch(/^Je développe et implémente seul une application mobile de santé/);
     expect(premier.description).not.toMatch(/mène seul côté technique/);
   });
 
-  it("le poste indépendant dit « Réalisations au forfait », sans « petites » (PFO-101)", () => {
-    const independant = loadExperience(contentDir).blocs[1];
-    expect(independant.description).toMatch(/^Réalisations au forfait pour des TPE\./);
+  it("le poste GiveMe5 porte les plaques et les réalisations IA au forfait (PFO-105)", () => {
+    const giveme5 = loadExperience(contentDir).blocs[1];
+    expect(giveme5.secteur).toBe("GiveMe5 · Freelance · Paris");
+    expect(giveme5.description).toMatch(/plaques avis Google/);
+    expect(giveme5.description).toMatch(/réalisations IA au forfait pour des TPE et PME : assistants\s+téléphoniques, gestion des réseaux sociaux/);
+    expect(giveme5.description).not.toMatch(/petites/);
   });
 
-  it("le poste Sopra Steria dit la TMA et l'encadrement jusqu'à quinze personnes (PFO-101)", () => {
-    const sopra = loadExperience(contentDir).blocs[5];
+  it("le poste Sopra Steria dit la TMA de 40 applications et l'encadrement jusqu'à quinze personnes, sans nom de client (PFO-101, PFO-105)", () => {
+    const sopra = loadExperience(contentDir).blocs[4];
     expect(sopra.description).toBe(
-      "Pilotage de projets en TMA pour des clients grands comptes du secteur bancaire. Pilotage du progiciel interne Evolan Capital Market. Encadrement d'équipe jusqu'à quinze personnes : recueil du besoin, spécifications fonctionnelles, développement, qualification, mise en production, support.",
+      "Pilotage de la TMA Gestion d'actifs d'un grand assureur bancaire : 40 applications, délais de correction et dates de livraison respectés. Sur une autre mission, pilotage du progiciel interne Evolan Capital Market. Encadrement d'équipe jusqu'à quinze personnes : recueil du besoin, spécifications fonctionnelles, développement, qualification, mise en production, support.",
     );
+    expect(sopra.description).not.toMatch(/BNP/);
   });
 
   it("les deux employeurs publics sur LinkedIn ne sont plus interdits ; le nom de l'application l'est toujours", () => {
