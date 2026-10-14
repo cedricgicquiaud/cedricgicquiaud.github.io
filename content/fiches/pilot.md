@@ -8,6 +8,12 @@ visibilite: public
 depot: https://github.com/cedricgicquiaud/pilot-method
 demo:
 ordre: 4
+visuel: /projets/pilot/circuit.png
+captures:
+  - fichier: /projets/pilot/rapport-audit.png
+    legende: "Rapport d'audit posté par la boucle dans une PR du bac à sable, avant mon merge : ce qui est prouvé, ce que je dois juger, les décisions à trancher."
+  - fichier: /projets/pilot/historique.png
+    legende: "Historique git d'une livraison du bac à sable : un commit de test rouge, puis le code qui le fait passer."
 ---
 
 # PILOT — workflow agentique
@@ -16,157 +22,106 @@ ordre: 4
 cadrent, produisent, vérifient et corrigent le code, pilotés par Linear et GitHub, et celui qui
 écrit le code n'est jamais celui qui le vérifie.
 Éprouvé sur un bac à sable, sur ce site et sur deux projets réels : 8 défauts attrapés par l'audit
-derrière des tests verts, 0,66 h de session là où le barème en prévoyait 2,44. Méthode publique,
+derrière des tests verts, 0,66 h de session là où mon barème en prévoyait 2,44. Méthode publique,
 sous licence libre ; remplace FORGE, ma première version (avril 2026).
 
 ## Problème
 
-Avec des agents de code, écrire n'est plus le goulot. Vérifier l'est. Mesuré sur mon bac à sable :
-une feature estimée à 2,44 h de travail avec mon barème d'avant est sortie en 0,66 h de session.
-Le temps restant, c'est l'humain qui lit, valide, merge.
+Avec des agents de code, écrire n'est plus le goulot. Vérifier l'est. Sur mon bac à sable, une
+feature estimée à 2,44 h avec mon barème d'avant est sortie en 0,66 h de session. Le temps
+restant, c'est le mien : lire, valider, merger.
 
-Trois dérives concrètes quand on laisse un agent tourner seul :
-- Il tranche en chemin des décisions de fond (une règle de sécurité, un choix d'architecture)
-  qui ne lui appartiennent pas. Bonne décision ou pas, elle n'a pas été posée à l'humain.
-- Il écrit les tests après le code. Des tests écrits après confirment ce qu'on a fait ; ils
-  n'attrapent pas de bugs.
-- Il se relit lui-même. Deux producteurs consciencieux, 32 tests verts, et deux failles
-  (texte utilisateur non échappé, contrôle de permissions absent) que seul un relecteur
-  extérieur a vues.
+Un agent laissé seul a trois travers :
+- il tranche en chemin des décisions de fond (une règle de sécurité, un choix d'architecture)
+  qui me reviennent ;
+- il écrit les tests après le code, et des tests écrits après confirment au lieu de chercher ;
+- il se relit lui-même, et ne voit pas ce qu'un relecteur extérieur voit.
 
-Ma première réponse, FORGE (avril 2026), était un rituel de documents (PRD, SPEC, PLAN par
-phase) que Claude exécutait ensuite seul, en produisant, relisant et livrant lui-même. Il
-manquait le tableau de bord, le relecteur indépendant et la preuve que le test précède le code.
+Ma première réponse, FORGE (avril 2026), était un rituel de documents que Claude exécutait seul,
+en produisant, relisant et livrant lui-même. Il manquait un tableau de bord, un relecteur
+indépendant et la preuve que le test précède le code.
 
 ## Ce que j'ai construit
 
-Un circuit en cinq étapes, où l'humain intervient à des moments fixes et jamais entre :
-1. **Cadrer** : décisions produit et un contrat de validation, 10 à 30 phrases « ce qui devra être
-   vrai », dont des refus. L'humain valide.
+Un circuit en cinq étapes. J'interviens à des moments fixes, et jamais entre :
+1. **Cadrer** : les décisions produit et un contrat de 10 à 30 phrases « ce qui devra être vrai »,
+   dont des refus. Je valide.
 2. **Découper** : des livraisons qui ne touchent pas les mêmes fichiers, chaque phrase du contrat
-   affectée à une livraison, chaque tâche avec un « Terminé quand » qui contient au moins un
-   refus. L'humain valide la liste avant toute création dans Linear.
-3. **Produire** : la boucle agents, sans l'humain (voir plus bas).
-4. **Merger** : l'humain lit le rapport d'audit, merge, tranche les décisions remontées.
+   affectée à l'une d'elles. Je valide la liste avant toute création dans Linear.
+3. **Produire** : la boucle d'agents tourne sans moi.
+4. **Merger** : je lis le rapport d'audit, je merge, je tranche les décisions remontées.
 5. **Apprendre** : chaque défaut trouvé à l'audit devient une règle dans le `CLAUDE.md` du dépôt.
 
-Trois invariants, non négociables :
-- **Le merge reste humain**, à chaque livraison.
-- **Les décisions de fond remontent**, elles ne se prennent pas en chemin. L'agent prend l'option
-  la plus réversible et la signale dans la PR.
-- **Pas de code sans test préalable**, prouvé par l'historique git : un commit pour le test
-  rouge, un pour le code qui le passe.
+Trois règles ne se négocient pas : je merge chaque livraison moi-même ; les décisions de fond me
+remontent, l'agent prend l'option la plus réversible et la signale dans la PR ; pas de code sans
+test préalable, prouvé par l'historique git (un commit pour le test rouge, un pour le code).
 
-La boucle de production, étape 3 :
-- Un agent **producteur** (`tdd-writer`) par livraison, dans sa propre copie du dépôt (git
-  worktree), avec un ordre de mission `MISSION.md` : périmètre strict, commande de tests, « tu
-  ne tranches pas », stop après la PR.
-- Deux contrôleurs qui n'ont pas écrit le code, en lecture seule : `verifier` lit le diff
-  (sécurité, idiomes du projet, couverture du contrat, ordre test → code) ; `testeur` ouvre
-  l'application dans un navigateur et joue le cahier de recette, case par case.
-- Un **correcteur** avec une liste fermée. Un aller-retour, pas plus. Une case encore refusée :
-  la PR s'ouvre quand même, marquée non mergeable.
-- Le nombre d'agents en parallèle n'est pas un objectif : il se déduit du nombre de livraisons
-  réellement disjointes. Défaut : 1.
+La boucle de production :
+- un **producteur** (`tdd-writer`) par livraison, seul dans sa copie du dépôt (git worktree),
+  avec un ordre de mission : périmètre strict, « tu ne tranches pas », arrêt après la PR ;
+- deux **contrôleurs** qui n'ont pas écrit le code, en lecture seule : `verifier` lit le diff
+  (sécurité, idiomes du projet, couverture du contrat, ordre test → code), `testeur` ouvre
+  l'application et joue le cahier de recette ;
+- un **correcteur** avec une liste fermée, en un seul aller-retour.
 
-Le système d'agents :
-- **Six agents, un rôle chacun.** Au cadrage, le `decoupeur` propose les livraisons et le
-  `contradicteur` cherche ce qui manque. En production : producteur, vérificateur, testeur,
-  correcteur.
-- **Des outils limités par agent.** Vérificateur, testeur, découpeur et contradicteur sont en
-  lecture seule. Seuls le producteur et le correcteur modifient le code ; seul le producteur
-  écrit dans Linear.
-- **Un modèle par poste, choisi sur épreuve.** Opus produit et corrige, Fable audite et juge le
-  cadrage, Sonnet exécute la passe visuelle.
-- **Un contexte borné.** Un ordre de mission par livraison, une liste de commandes autorisées
-  versionnée, le `CLAUDE.md` du dépôt et rien d'autre.
-- **Des outils maison.** Mesure du coût par agent, verrou git entre agents parallèles, passe
-  visuelle outillée pour le testeur.
+Au cadrage, deux agents de plus : le `decoupeur` propose les livraisons, le `contradicteur`
+cherche ce qui manque. Chaque agent a ses outils limités et le modèle qui fait le mieux son poste,
+choisi sur épreuve : Opus produit et corrige, Fable audite et juge le cadrage, Sonnet fait la
+passe visuelle.
 
-Le tout tient dans du Markdown et quelques scripts : une skill `pilot` (8 commandes : `init`,
-`roadmap`, `feature`, `run`, `next`, `fix`, `sync`, `benchmark`), six fiches de poste d'agents,
-un gabarit de mission, une allowlist de commandes versionnée. `next` déduit l'étape suivante des statuts
-Linear : aucun fichier d'état à entretenir. Le code de la tâche Linear voyage dans le nom de
-la branche et le titre de la PR : c'est ce qui fait avancer le tableau de bord sans personne.
+Le tout tient dans du Markdown et quelques scripts : une skill `pilot` à 8 commandes, six fiches
+de poste, un gabarit de mission, une liste de commandes autorisées. Le code de la tâche Linear
+voyage dans le nom de la branche et le titre de la PR : c'est ce qui fait avancer le tableau de
+bord tout seul. `next` lit Linear et dit quoi faire ensuite, sans fichier d'état à entretenir.
 
 ## Preuves
 
-État au 09/10/2026 : Méthode rodée sur un bac à sable et branchée sur deux projets réels ; méthode publiée le 09/10/2026.
+État au 14/10/2026 : méthode rodée sur un bac à sable, branchée sur deux projets réels et sur ce
+site ; publiée le 09/10/2026.
 
+Bac à sable : « Carnet », un CRM léger en HTML/JS, produit du 22 au 28 août 2026 uniquement par
+cette méthode.
 
-Bac à sable : « Carnet », un CRM léger en HTML/JS sans dépendance, produit du 22 au 28 août 2026
-uniquement par cette méthode.
+- **Ça marche ?** 6 features livrées et « Terminées » dans Linear, soit 23 livraisons et
+  67 tâches ; 269 tests verts sur `main` (vérifié le 29/08/2026 sur un clone propre). Les statuts
+  automatiques (PR mergée → tâche terminée) tournent aussi sur deux projets réels depuis le
+  24 août.
+- **C'est solide ?** L'agent d'audit, qui n'a pas écrit le code, a attrapé 8 défauts bloquants
+  ou importants derrière des tests verts (échappement HTML, permissions, injection dans un
+  export CSV…), tous corrigés avant la PR. Trois producteurs en parallèle, sans conflit.
+- **C'est utilisable ?** Une feature de 5 livraisons et 13 tâches produite en une seule
+  instruction `run` : ~1,4 h de session, 0 bloquant. Une itération complète (production, audit,
+  corrections, PR) prend 18 à 25 minutes par livraison.
+- **Le goulot, mesuré** : 0,66 h de session pour la première feature, là où mon barème, calibré
+  sur 344 PR de deux projets antérieurs, prévoyait 2,44 h. Le barème vient de projets réels, la
+  mesure d'un bac à sable : l'écart dit surtout que mon temps de lecture domine.
+- **Un modèle par poste** (bancs des 09 et 10/09/2026) : en audit, Fable relève deux défauts
+  réels de plus que Sonnet pour le même temps ; en production, Opus couvre le contrat aussi bien
+  que Fable avec 40 % de jetons en moins.
 
-- **Ça marche ?** 6 features livrées et « Terminées » dans Linear (socle et comptes, contacts,
-  devis, facturation, interface, agenda), soit 23 livraisons et 67 tâches. 269 tests verts sur
-  `main` (vérifié le 29/08/2026 sur un clone propre, `node --test`). Le circuit de statuts
-  automatiques (PR mergée → tâche terminée) est aussi prouvé sur deux projets réels, un projet
-  client et une application santé, où la méthode est branchée depuis le 24 août.
-- **C'est solide ?** L'audit par un agent qui n'a pas écrit le code a trouvé, derrière des tests
-  verts, 8 défauts classés bloquants ou importants : 2 le 26/08 (échappement HTML, permissions),
-  2 le 27/08 (fichier d'interface cassé par un commit intermédiaire, injection de formule dans un
-  export CSV), 4 le 28/08 (dont une fuite de fiche contact par une action publique). Tous
-  corrigés avant PR. Trois producteurs en parallèle le 26/08 sans conflit ni chevauchement.
-- **C'est utilisable ?** Une feature de 5 livraisons et 13 tâches (facturation) produite en une
-  seule instruction `run` : cadrage de 10 décisions et 24 phrases de contrat, puis ~1,4 h de
-  session, 0 bloquant, 2 corrections d'audit, 0 conflit. Une itération complète de la boucle
-  (production, audit, corrections, PR) prend 18 à 25 minutes par livraison ; ~0,5 h quand le
-  testeur joue la recette dans le navigateur. Sur la feature agenda : 27 phrases de contrat,
-  4 livraisons, 1 case de recette refusée, reformulée puis rejouée.
-- **Un modèle par poste, choisi sur épreuve** (bancs des 09 et 10/09/2026). Vérificateur : la
-  même livraison auditée par Sonnet et par Fable ; Fable relève deux défauts réels de plus,
-  vérifiés, pour le même temps. Producteur : la même livraison produite par Opus et par Fable,
-  contrat couvert à 10 sur 10 des deux côtés, Opus avec 40 % de jetons en moins. Correcteur :
-  5 pièges sur 6 déjoués sur un banc dédié ; le raté a corrigé sa fiche le jour même.
-- Le chiffre du goulot : la première feature (4 livraisons, 12 tâches) a pris **0,66 h de
-  session** là où mon barème, calibré sur 344 PR de deux projets antérieurs, prévoyait
-  **2,44 h**. Le temps de session compte les intervalles entre ouverture de PR et merge dans
-  une même session ; une attente de merge de 2 h n'y est pas. Nuance : le barème vient de
-  projets réels, la mesure vient d'un bac à sable sans dépendance. L'écart dit surtout que
-  le temps humain de lecture domine, pas que le code est gratuit.
-
-État honnête : le « test des deux heures » (deux chantiers lancés, écran fermé) n'a pas été
-fait ; toutes les boucles ont tourné écran ouvert. Pas de disjoncteur de budget par agent.
-Le choix du modèle par poste repose sur une épreuve par agent, sur des livraisons inventées : à
-confirmer en run réel. Le
-testeur n'a pas encore attrapé de défaut réel dans la boucle, seulement à froid sur une
-livraison déjà saine. Le bac à sable reste privé.
+Ce qui reste à prouver : toutes les boucles ont tourné écran ouvert, pas encore deux chantiers
+lancés écran fermé ; le choix du modèle par poste est à confirmer en run réel. Le bac à sable
+reste privé.
 
 ## Ce que j'en ai appris
 
-- **Tests verts ≠ sûr.** La découverte n° 1 de l'essai. La plomberie (worktrees, allowlist)
-  n'était que mécanique ; la valeur est dans le relecteur indépendant.
+- **Des tests verts ne disent pas que c'est sûr.** La valeur est dans le relecteur indépendant,
+  pas dans la plomberie.
 - **Ce qui n'est pas dans la fiche n'existe pas.** L'interface du bac à sable était laide parce
-  qu'aucune fiche n'avait demandé du beau. Preuve que les fiches pilotent vraiment, et
-  qu'une boucle sans regard sur l'écran vérifie la sécurité, pas l'œil. D'où le `testeur`.
-- **Chaque « Terminé quand » doit contenir un refus.** Les décisions remontées et les défauts
-  d'audit avaient un motif commun : des cas négatifs que la fiche ne disait pas.
-- **Parallèle seulement si la disjonction est décidée au découpage.** Trois producteurs en
-  parallèle ont marché parce qu'un humain avait découpé des livraisons disjointes. Un système
-  qui découpe seul se marche dessus.
-- **Un raté de plomberie** : au premier `run` réel, chaque copie de travail partait de la branche
-  précédente ; les PR se sont empilées et ont été mergées dans leur base, pas dans `main`. Il a
-  fallu une PR d'intégration. Règle depuis : tout worktree part de `main`, les PR se mergent
-  dans n'importe quel ordre.
-- **Une proposition n'est pas une validation.** Un texte collé d'une autre session a été
-  appliqué sans accord, puis entièrement annulé. Leçon gravée : ça s'ouvre en discussion.
-- **Une règle écrite n'est pas une preuve.** Après gravure des idiomes dans le `CLAUDE.md`, les
-  fautes exactes n'ont pas réapparu, mais une variante est passée. Je ne peux pas dire si c'est
-  la règle ou l'imitation du code corrigé qui a joué.
-- **Le modèle le plus fort n'est pas le meilleur à chaque poste.** Là où l'agent juge (audit,
-  cadrage), le modèle le plus capable voit des défauts que l'autre manque. Là où il exécute
-  (produire sous contrat, recopier une mesure), un modèle moins cher fait le même travail.
-- **FORGE → PILOT.** FORGE adaptait la profondeur du rituel à la taille de la tâche, mais
-  laissait le même agent produire, relire et livrer, et prévoyait un mode autonome. PILOT
-  garde ses pauses de validation (cadrage, découpage), remplace sa production par la boucle
-  producteur ≠ vérificateur, supprime le mode autonome et les fichiers de phase : un producteur
-  ne lit que sa mission et le `CLAUDE.md`. FORGE est archivé, en lecture seule, depuis le
-  27/08/2026.
+  qu'aucune fiche n'avait demandé du beau. D'où le `testeur`, qui regarde l'écran.
+- **Chaque « Terminé quand » contient un refus.** Les décisions remontées et les défauts d'audit
+  avaient un point commun : des cas négatifs que la fiche ne disait pas.
+- **Le parallèle se décide au découpage.** Trois producteurs ont tourné ensemble parce que
+  j'avais découpé des livraisons disjointes ; un système qui découpe seul se marche dessus.
+- **Le modèle le plus fort n'est pas le meilleur partout.** Là où l'agent juge, il voit plus ;
+  là où il exécute un contrat, un modèle moins cher fait le même travail.
+- **FORGE → PILOT.** J'ai gardé les pauses de validation de FORGE et remplacé sa production par
+  la boucle producteur ≠ vérificateur, sans mode autonome. FORGE est archivé depuis le 27/08/2026.
 
 ## Artefacts
 
-- Méthode v1, archivée : https://github.com/cedricgicquiaud/FORGE
 - Méthode PILOT (le circuit, la boucle agents, la skill et les six agents, prêts à installer) :
   https://github.com/cedricgicquiaud/pilot-method
 - Schéma du circuit (page HTML) :
   https://github.com/cedricgicquiaud/pilot-method/blob/main/circuit-linear-github-claude.html
+- Méthode v1, archivée : https://github.com/cedricgicquiaud/FORGE
