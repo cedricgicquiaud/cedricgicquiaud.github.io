@@ -12,25 +12,22 @@ blocs:
       analyses sanguines. Version de test distribuée sur iPhone. Travail direct
       avec les dirigeants, du cadrage aux sujets réglementaires.
     tags: [Agentic engineering, React Native, FastAPI, Claude Code]
-  - periode: "oct. 2026 → aujourd'hui"
-    role: Product builder IA
-    secteur: Indépendant · Freelance · Île-de-France
-    description: >-
-      Réalisations au forfait pour des TPE. En cours : un assistant
-      téléphonique pour un diagnostiqueur immobilier, qui décroche, répond aux
-      questions et prend les rendez-vous dans l'agenda.
-    tags: [Agentic engineering]
   - periode: "août 2023 → aujourd'hui"
-    role: Fondateur
-    secteur: GiveMe5 · Indépendant
+    role: Fondateur · Product builder IA
+    secteur: GiveMe5 · Freelance · Île-de-France
     description: >-
-      Mon premier produit : des plaques et cartes NFC / QR code qui mènent le
-      client d'un commerçant vers son formulaire d'avis Google. Vendu 49 €
-      pièce, avec un backoffice Django, trois automatisations n8n / Make et une
-      page de vente Stripe. En parallèle, mes projets d'agentic engineering :
-      PILOT (méthode à six agents), SLICE (connecteur MCP, code public),
-      Parcours, Tablo.
-    tags: [Django, n8n, Make, Stripe]
+      Ma structure d'indépendant, avec deux activités. Les plaques avis Google,
+      mon premier produit : des plaques et cartes NFC / QR code qui mènent le
+      client d'un commerçant vers son formulaire d'avis Google. Plus de 200
+      commerces équipés, à 49 € sans abonnement, avec un backoffice Django,
+      des automatisations n8n / Make et une page de vente Stripe. Les
+      réalisations IA au forfait pour des TPE et PME : assistants
+      téléphoniques, gestion des réseaux sociaux. En cours : un assistant
+      téléphonique pour un diagnostiqueur immobilier, qui décroche, répond aux
+      questions et prend les rendez-vous dans l'agenda. En parallèle, mes
+      projets d'agentic engineering : PILOT (méthode à six agents), SLICE
+      (connecteur MCP, code public), Parcours, Tablo.
+    tags: [Agentic engineering, Django, n8n, Make, Stripe]
   - periode: "oct. 2023 → déc. 2025"
     role: Consultant digital freelance
     secteur: EXEDIGIT · Freelance · Paris et périphérie
