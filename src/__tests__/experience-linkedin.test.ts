@@ -47,7 +47,7 @@ describe("Expérience alignée sur LinkedIn (PFO-100)", () => {
 
   it("le poste GiveMe5 porte les plaques et les réalisations IA au forfait (PFO-105)", () => {
     const giveme5 = loadExperience(contentDir).blocs[1];
-    expect(giveme5.secteur).toBe("GiveMe5 · Freelance · Île-de-France");
+    expect(giveme5.secteur).toBe("GiveMe5 · Freelance · Paris");
     expect(giveme5.description).toMatch(/plaques avis Google/);
     expect(giveme5.description).toMatch(/réalisations IA au forfait pour des TPE et PME : assistants\s+téléphoniques, gestion des réseaux sociaux/);
     expect(giveme5.description).not.toMatch(/petites/);

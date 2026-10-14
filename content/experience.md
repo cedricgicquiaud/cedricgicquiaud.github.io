@@ -3,7 +3,7 @@ titre: Expérience
 blocs:
   - periode: "janv. 2026 → janv. 2027"
     role: Product builder IA
-    secteur: Maison Epigenetic · CDD · Île-de-France
+    secteur: Maison Epigenetic · CDD · Paris
     description: >-
       Je développe et implémente une application mobile de santé et de
       longévité. Un coach IA fait d'un orchestrateur et de quatre agents
@@ -14,7 +14,7 @@ blocs:
     tags: [Agentic engineering, React Native, FastAPI, Claude Code]
   - periode: "août 2023 → aujourd'hui"
     role: Fondateur · Product builder IA
-    secteur: GiveMe5 · Freelance · Île-de-France
+    secteur: GiveMe5 · Freelance · Paris
     description: >-
       Ma structure d'indépendant, avec deux activités. Les plaques avis Google,
       mon premier produit : des plaques et cartes NFC / QR code qui mènent le
@@ -30,7 +30,7 @@ blocs:
     tags: [Agentic engineering, Django, n8n, Make, Stripe]
   - periode: "oct. 2023 → déc. 2025"
     role: Consultant digital freelance
-    secteur: EXEDIGIT · Freelance · Paris et périphérie
+    secteur: EXEDIGIT · Freelance · Paris
     description: >-
       Missions pour EXEDIGIT : sites web et formation des clients aux outils
       livrés, pour qu'ils deviennent autonomes. Automatisations et agents IA
@@ -45,7 +45,7 @@ blocs:
     tags: [Négociation, Management, Automation]
   - periode: "juil. 2007 → déc. 2012"
     role: Chef de projets, banque et assurance
-    secteur: Sopra Steria · CDI · Paris et périphérie
+    secteur: Sopra Steria · CDI · Paris
     description: >-
       Pilotage de projets en TMA pour des clients grands comptes du secteur
       bancaire. Pilotage du progiciel interne Evolan Capital Market. Encadrement
@@ -54,7 +54,7 @@ blocs:
     tags: [Gestion de projet, Planification de projets]
   - periode: "févr. 2000 → juil. 2007"
     role: Concepteur-développeur, banque
-    secteur: VIVEO Banking & Finance Consulting · CDI · Paris et périphérie
+    secteur: VIVEO Banking & Finance Consulting · CDI · Paris
     description: >-
       Progiciels de front et back office pour des banques grands comptes :
       recueil du besoin, spécifications fonctionnelles, développement,
