@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
 import site from "../content/site.json";
-import { contentDir as defaultContentDir } from "./content";
+import { contentDir as defaultContentDir, loadExperience } from "./content";
 import { buildProofs } from "./proofs";
 import { texteBrut } from "./texte-brut";
 
@@ -19,9 +19,16 @@ function projets(fichesDir?: string): string {
     .join("\n");
 }
 
+/** Un poste par ligne, dans l'ordre de la section Expérience. */
+function parcours(contentDir: string): string {
+  return loadExperience(contentDir)
+    .blocs.map(({ periode, role, secteur }) => `- ${periode} — ${role}, ${secteur}`)
+    .join("\n");
+}
+
 /**
  * Le contenu de `/llms.txt` : le sommaire du site au format llmstxt.org, pour un agent IA (PFO-116).
  */
 export function buildLlms({ contentDir = defaultContentDir, fichesDir }: { contentDir?: string; fichesDir?: string } = {}): string {
-  return [`# ${site.name}`, `> ${site.title}`, premierParagraphe(contentDir), "## Projets", projets(fichesDir)].join("\n\n");
+  return [`# ${site.name}`, `> ${site.title}`, premierParagraphe(contentDir), "## Projets", projets(fichesDir), "## Parcours", parcours(contentDir)].join("\n\n");
 }
