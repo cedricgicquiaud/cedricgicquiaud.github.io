@@ -69,6 +69,10 @@ describe("texteBrut (PFO-111)", () => {
     expect(texteBrut("On tape `/pilot <commande>` dans `SKILL.md`.", SITE)).toBe("On tape /pilot «commande» dans SKILL.md.");
   });
 
+  it("garde le texte d'un bloc de code, sans les clôtures", () => {
+    expect(texteBrut("Installer :\n\n```bash\n./install.sh projet\n```", SITE)).toBe("Installer :\n\n./install.sh projet");
+  });
+
   it("sépare deux paragraphes par une ligne vide", () => {
     expect(texteBrut("Premier.\n\nSecond.", SITE)).toBe("Premier.\n\nSecond.");
   });
