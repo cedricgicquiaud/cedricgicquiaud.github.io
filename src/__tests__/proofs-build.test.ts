@@ -16,3 +16,14 @@ describe("proofs.json dans out/ (PFO-114)", () => {
     expect(proofs.fiches.length).toBeGreaterThan(0);
   });
 });
+
+describe("L'accueil annonce proofs.json (PFO-114)", () => {
+  beforeAll(() => ensureBuild(SOURCES, { marker: "out/proofs.json" }), 300_000);
+  const accueil = () => readFileSync(out("index.html"), "utf8");
+
+  it("porte un lien alternate application/json vers /proofs.json dans l'en-tête", () => {
+    const head = accueil().split("</head>")[0];
+    const liens = head.match(/<link[^>]*rel="alternate"[^>]*>/g) ?? [];
+    expect(liens.filter((l) => l.includes('type="application/json"') && /href="[^"]*\/proofs\.json"/.test(l))).toHaveLength(1);
+  });
+});
