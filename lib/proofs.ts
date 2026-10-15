@@ -1,7 +1,7 @@
 import site from "../content/site.json";
 import { loadFiches } from "./fiches";
 
-export type ProofFiche = { slug: string; url: string };
+export type ProofFiche = { slug: string; url: string; enBref: string };
 export type Proofs = { fiches: ProofFiche[] };
 
 /**
@@ -13,6 +13,8 @@ export function buildProofs({ fichesDir }: { fichesDir?: string } = {}): Proofs 
     fiches: loadFiches(fichesDir).map((fiche) => ({
       slug: fiche.slug,
       url: `${site.url}/projets/${fiche.slug}/`,
+      // Même accroche que la page de la fiche (components/fiche.tsx) : les trois phrases bout à bout.
+      enBref: [fiche.enBref.quoi, fiche.enBref.chiffre, fiche.enBref.lien].filter(Boolean).join(" "),
     })),
   };
 }
