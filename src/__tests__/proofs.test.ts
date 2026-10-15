@@ -205,6 +205,18 @@ describe("Le schéma public /proofs.schema.json (PFO-113)", () => {
     expect(valide(proofs)).toBe(false);
   });
 
+  it.each([
+    ["l'en-tête", (p: any) => p],
+    ["un poste du parcours", (p: any) => p.parcours[0]],
+    ["un chiffre clé", (p: any) => p.fiches.find((f: any) => f.chiffres.length).chiffres[0]],
+    ["une capture", (p: any) => p.fiches.find((f: any) => f.captures.length).captures[0]],
+    ["une section", (p: any) => p.fiches[0].sections[0]],
+  ])("refuse une clé inconnue dans %s", (_, cible) => {
+    const proofs = copie();
+    cible(proofs).inconnue = "x";
+    expect(valide(proofs)).toBe(false);
+  });
+
   it("refuse une clé `statut` ajoutée à une fiche", () => {
     const proofs = copie();
     proofs.fiches[0].statut = "en cours";
