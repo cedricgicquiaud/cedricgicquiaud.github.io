@@ -15,6 +15,9 @@ const MAX_OUTPUT_BYTES = 150 * MO;
 
 // Les .html passent toutes les règles ; les .js et .txt (chunks et données RSC) seulement « domaine tiers ».
 const CHECKED = [".html", ".js", ".txt"];
+// Fichiers lus par des agents IA, à la racine de out/ : toutes les règles, comme les .html (PFO-115).
+// Les autres .json ne sont pas lus.
+const FOR_AGENTS = ["proofs.json", "llms.txt"];
 
 /** Tous les fichiers de `dir`, récursivement. */
 function allFiles(dir) {
@@ -24,7 +27,8 @@ function allFiles(dir) {
   });
 }
 
-const outputFiles = (dir) => allFiles(dir).filter((file) => CHECKED.includes(path.extname(file)));
+const outputFiles = (dir) =>
+  allFiles(dir).filter((file) => CHECKED.includes(path.extname(file)) || FOR_AGENTS.includes(path.relative(dir, file)));
 
 /** Somme des tailles de tous les fichiers de `dir`, images et vidéos comprises. */
 const totalBytes = (dir) => allFiles(dir).reduce((sum, file) => sum + statSync(file).size, 0);
@@ -106,9 +110,9 @@ export function checkOutput(dir, forbiddenFingerprints, maxBytes = MAX_OUTPUT_BY
   for (const file of outputFiles(dir)) {
     const text = readText(file);
     const rel = path.relative(dir, file);
-    const isHtml = file.endsWith(".html");
+    const allRules = file.endsWith(".html") || FOR_AGENTS.includes(rel);
     for (const { label, find, all } of rules(fingerprints)) {
-      if (!isHtml && !all) continue;
+      if (!allRules && !all) continue;
       for (const hit of find(text)) problems.add(`${rel} : ${label} « ${hit} »`);
     }
   }
