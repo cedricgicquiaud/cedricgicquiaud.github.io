@@ -4,7 +4,9 @@ import path from "node:path";
 import { cleanup, render } from "@testing-library/react";
 import { createElement } from "react";
 import { afterEach, describe, expect, it } from "vitest";
+import { Fiche } from "../../components/fiche";
 import { Projects } from "../../components/projects";
+import { loadFiche } from "../../lib/fiches";
 import { buildProofs } from "../../lib/proofs";
 
 afterEach(cleanup);
@@ -43,5 +45,15 @@ describe("buildProofs — les fiches (PFO-112)", () => {
     const cartes = Array.from(container.querySelectorAll("h3 a")).map((a) => `https://cedricgicquiaud.github.io${a.getAttribute("href")}`);
     expect(cartes).toHaveLength(8);
     expect(buildProofs().fiches.map((f) => f.url)).toEqual(cartes);
+  });
+
+  it("reprend mot pour mot l'accroche En bref de la page de chaque fiche", () => {
+    for (const { slug, enBref } of buildProofs().fiches) {
+      const { container, unmount } = render(createElement(Fiche, { fiche: loadFiche(slug) }));
+      const accroche = container.querySelector("h1 + p")?.textContent;
+      unmount();
+      expect(accroche, slug).toBeTruthy();
+      expect(enBref, slug).toBe(accroche);
+    }
   });
 });
