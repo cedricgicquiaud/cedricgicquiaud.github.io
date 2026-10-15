@@ -8,4 +8,10 @@ describe("texteBrut (PFO-111)", () => {
   it("retire le gras et garde les mots", () => {
     expect(texteBrut("Un **outil** qui marche.", SITE)).toBe("Un outil qui marche.");
   });
+
+  it("écrit un lien relatif en « texte (URL absolue) »", () => {
+    expect(texteBrut("Voir [l'app santé](/projets/coach/).", SITE)).toBe(
+      "Voir l'app santé (https://cedricgicquiaud.github.io/projets/coach/).",
+    );
+  });
 });
