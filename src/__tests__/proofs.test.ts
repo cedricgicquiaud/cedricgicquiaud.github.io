@@ -47,6 +47,27 @@ describe("buildProofs — les fiches (PFO-112)", () => {
     expect(buildProofs().fiches.map((f) => f.url)).toEqual(cartes);
   });
 
+  it("donne nom, période, rôle, stack, visibilité, dépôt et démo de la fiche", () => {
+    const dir = fichesDir({
+      "alpha.md": ficheMd("Alpha", {
+        periode: "mai 2026 → aujourd'hui",
+        role: "conception — seul",
+        stack: "TypeScript, React (Next, Vite), Vitest",
+        depot: "https://github.com/x/alpha",
+        demo: "https://alpha.giveme5xxxxx.fr",
+      }),
+    });
+    expect(buildProofs({ fichesDir: dir }).fiches[0]).toMatchObject({
+      nom: "Alpha",
+      periode: "mai 2026 → aujourd'hui",
+      role: "conception — seul",
+      stack: ["TypeScript", "React (Next, Vite)", "Vitest"],
+      visibilite: "public",
+      depot: "https://github.com/x/alpha",
+      demo: "https://alpha.giveme5xxxxx.fr",
+    });
+  });
+
   it("reprend mot pour mot l'accroche En bref de la page de chaque fiche", () => {
     for (const { slug, enBref } of buildProofs().fiches) {
       const { container, unmount } = render(createElement(Fiche, { fiche: loadFiche(slug) }));
