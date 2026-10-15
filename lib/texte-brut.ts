@@ -35,7 +35,9 @@ function block(t: Token, site: string): string {
     return list.items
       .map((item, i) => {
         const puce = list.ordered ? `${debut + i}.` : "-";
-        return `${puce} ${item.tokens.map((b) => block(b, site)).filter(Boolean).join("\n")}`;
+        const [premier = "", ...suite] = item.tokens.map((b) => block(b, site)).filter(Boolean);
+        // Ce qui suit la première ligne de l'élément (sous-liste, paragraphe) est décalé de deux espaces.
+        return [`${puce} ${premier}`, ...suite.map((s) => s.replace(/^/gm, "  "))].join("\n");
       })
       .join("\n");
   }
