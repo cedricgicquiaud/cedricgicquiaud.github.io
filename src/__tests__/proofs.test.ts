@@ -198,4 +198,10 @@ describe("Le schéma public /proofs.schema.json (PFO-113)", () => {
     delete proofs.fiches[0].url;
     expect(valide(proofs)).toBe(false);
   });
+
+  it("refuse une clé `statut` ajoutée à une fiche", () => {
+    const proofs = copie();
+    proofs.fiches[0].statut = "en cours";
+    expect(valide(proofs)).toBe(false);
+  });
 });
