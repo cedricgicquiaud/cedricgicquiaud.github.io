@@ -570,6 +570,26 @@ printf '{"texte":"zorglub \xf0\x9f\x9a\x80 06 12 34 56 78 https://cdn.example.co
 - [ ] Refus : renommer `/tmp/essai-out/llms.txt` en `index.txt` (et supprimer `proofs.json`), relancer la commande : un seul problème, « index.txt : domaine tiers « cdn.example.com » » ; le téléphone n'est pas relevé.
 - [ ] Refus : renommer ce fichier en `autre.json`, relancer : « check-output : /tmp/essai-out propre » (un autre `.json` n'est pas lu).
 
+## Livraison 18 — llms.txt à la racine du site
+
+Toutes les commandes se lancent à la racine du site, après `npm run build`. Le fichier se lit aussi sur `http://localhost:3118/llms.txt` (`scripts/dev-serve.sh start 3118`, puis `stop 3118`). Une fiche modifiée dans `content/fiches/` pour un essai se remet en place par `npm run sync`.
+
+### PFO-116 — llms.txt assemblé au format llmstxt.org
+
+- [ ] `head -3 out/llms.txt` affiche `# Cédric Gicquiaud`, une ligne vide, puis `> Je transforme un besoin métier en application opérationnelle, en faisant coder des agents IA sous contrôle.`
+- [ ] Sous `## Projets`, une ligne par projet, dans l'ordre exact des cartes de l'accueil (`http://localhost:3118/#projets`), chacune de la forme `- [Nom](https://cedricgicquiaud.github.io/projets/<slug>/) : …`. Sur `http://localhost:3118/projets/slice/`, la phrase sous le titre est identique, mot pour mot, au texte après « : » de la ligne SLICE.
+- [ ] Sous `## Parcours`, les mêmes postes, dans le même ordre, que la section Expérience de l'accueil, chacun en `- période — rôle, secteur` ; le premier nomme Maison Epigenetic, comme sur le site. Sous `## Données`, la ligne `- [proofs.json](https://cedricgicquiaud.github.io/proofs.json) : …`.
+- [ ] Refus : copier `content/fiches/tablo.md` en `content/fiches/archives/essai.md` et y mettre `nom: Essai`, puis `npm run build` : `grep -c Essai out/llms.txt` affiche `0`. Supprimer le dossier `archives/`.
+- [ ] Refus : le paragraphe sous la citation commence par « Je suis product builder IA » ; `sed -n 5p out/llms.txt | grep -cE '\*\*|\]\(/projets/|<'` affiche `0` (ni gras, ni lien Markdown relatif, ni balise).
+
+### PFO-117 — llms.txt sort du build à la racine, sans lien visible
+
+- [ ] `npm run build` liste `○ /llms.txt` parmi les routes, se termine par « check-output : … out propre », et `out/llms.txt` existe. `npx vitest run src/__tests__/llms.test.ts` affiche, parmi les tests passés, « est le texte de lib/llms.ts, au caractère près ».
+- [ ] Recette à la source : dans `WATIDO/fiches/tablo.md`, changer un mot de la phrase En bref, puis `npm run sync && npm run build` : la ligne Tablo de `out/llms.txt` porte le nouveau mot, sans autre geste. Annuler la modification dans `WATIDO/fiches`, refaire `npm run sync`.
+- [ ] En ligne, après merge et déploiement : `curl -sI https://cedricgicquiaud.github.io/llms.txt` répond `200` avec `content-type: text/plain; charset=utf-8`.
+- [ ] Refus : `ls public/llms.txt` répond que le fichier n'existe pas. Mettre `out/llms.txt` à la corbeille, `npm run build` : il est recréé.
+- [ ] Refus : `grep -c 'href="[^"]*llms\.txt"' out/index.html` affiche `0` ; sur `http://localhost:3118/`, la recherche du navigateur (Cmd+F) ne trouve pas « llms ».
+
 ## Tâche isolée PFO-69 — Positionnement « product builder IA »
 
 - [ ] `scripts/dev-serve.sh start 3005`, ouvrir http://localhost:3005/ : sous le nom, « Product builder IA », puis la phrase « Je transforme un besoin métier en application qui tourne, en faisant coder des agents IA sous contrôle. »
