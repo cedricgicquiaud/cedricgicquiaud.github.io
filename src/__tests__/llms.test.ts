@@ -82,4 +82,21 @@ describe("buildLlms — les projets (PFO-116)", () => {
     expect(cartes).toHaveLength(8);
     expect(liens).toEqual(cartes);
   });
+
+  it("refuse une fiche rangée dans archives/", () => {
+    const dir = fichesDir({
+      "alpha.md": ficheMd("Alpha", 1, "Un outil de suivi. 3 clients. Code public."),
+      "archives/omega.md": ficheMd("Omega", 2, "Un projet arrêté. 0 client. Rien en ligne."),
+    });
+    const texte = buildLlms({ fichesDir: dir });
+    expect(texte).toContain("- [Alpha](");
+    expect(texte).not.toContain("Omega");
+  });
+
+  it("suit une fiche modifiée sans autre geste", () => {
+    const dir = fichesDir({ "alpha.md": ficheMd("Alpha", 1, "Un outil de suivi. 3 clients. Code public.") });
+    expect(buildLlms({ fichesDir: dir })).toContain(" : Un outil de suivi. 3 clients. Code public.");
+    writeFileSync(path.join(dir, "alpha.md"), ficheMd("Alpha", 1, "Un outil de suivi. 12 clients. Code public."));
+    expect(buildLlms({ fichesDir: dir })).toContain(" : Un outil de suivi. 12 clients. Code public.");
+  });
 });
