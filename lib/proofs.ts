@@ -17,7 +17,19 @@ export type ProofFiche = {
   captures: { legende: string; url: string }[];
   sections: { titre: string; texte: string }[];
 };
-export type Proofs = { fiches: ProofFiche[] };
+export type Proofs = {
+  version: string;
+  nom: string;
+  titre: string;
+  email: string;
+  github: string;
+  linkedin: string;
+  url: string;
+  fiches: ProofFiche[];
+};
+
+/** Version du format de `/proofs.json` ; elle change quand une clé change de sens ou disparaît. */
+const VERSION = "1.0";
 
 /**
  * Le contenu de `/proofs.json` : les preuves lisibles par un agent IA (PFO-112).
@@ -25,6 +37,13 @@ export type Proofs = { fiches: ProofFiche[] };
  */
 export function buildProofs({ fichesDir }: { fichesDir?: string } = {}): Proofs {
   return {
+    version: VERSION,
+    nom: site.name,
+    titre: site.title,
+    email: site.email,
+    github: site.links.github,
+    linkedin: site.links.linkedin,
+    url: site.url,
     fiches: loadFiches(fichesDir).map(({ slug, frontmatter, enBref, chiffres = [], captures = [], sections }) => ({
       slug,
       nom: frontmatter.nom,
