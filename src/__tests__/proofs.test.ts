@@ -199,6 +199,23 @@ describe("Le schéma public /proofs.schema.json (PFO-113)", () => {
     expect(ok).toBe(true);
   });
 
+  it("décrit chaque propriété, pour qu'un agent sache ce que veut dire chaque champ", () => {
+    /** Chemins des propriétés sans `description`, à toute profondeur. */
+    const sansDescription = (noeud: Record<string, unknown>, chemin: string): string[] => {
+      const props = (noeud.properties ?? {}) as Record<string, Record<string, unknown>>;
+      const items = noeud.items as Record<string, unknown> | undefined;
+      return [
+        ...Object.entries(props).flatMap(([cle, p]) => [
+          ...(typeof p.description === "string" && p.description.trim() ? [] : [`${chemin}.${cle}`]),
+          ...sansDescription(p, `${chemin}.${cle}`),
+        ]),
+        ...(items ? sansDescription(items, `${chemin}[]`) : []),
+      ];
+    };
+    expect(schema.description).toBeTruthy();
+    expect(sansDescription(schema, "proofs")).toEqual([]);
+  });
+
   it("refuse une fiche sans `url`", () => {
     const proofs = copie();
     delete proofs.fiches[0].url;
