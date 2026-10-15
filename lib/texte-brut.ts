@@ -3,6 +3,9 @@ import { marked, type Token, type Tokens } from "marked";
 /** Un chemin du site (`/projets/…`) devient une URL absolue ; une URL complète reste telle quelle. */
 const absolue = (href: string, site: string): string => (href.startsWith("/") ? site + href : href);
 
+/** Un fragment HTML sans ses balises : `<strong>mot</strong>` donne `mot`. */
+const sansBalise = (html: string): string => html.replace(/<[^>]*>/g, "");
+
 /** Texte d'une suite de tokens en ligne : mots seuls, sans marque de mise en forme. */
 function inline(tokens: Token[], site: string): string {
   return tokens
@@ -14,6 +17,7 @@ function inline(tokens: Token[], site: string): string {
         return texte === url ? url : `${texte} (${url})`;
       }
       if (t.type === "image") return `Image : ${t.text} (${absolue(t.href, site)})`;
+      if (t.type === "html") return sansBalise(t.text);
       return "tokens" in t && t.tokens ? inline(t.tokens, site) : "text" in t ? t.text : "";
     })
     .join("");
@@ -41,6 +45,7 @@ function block(t: Token, site: string): string {
       })
       .join("\n");
   }
+  if (t.type === "html") return sansBalise(t.text).trim();
   // Paragraphe, titre : une ligne, même si le Markdown coupait la phrase.
   return "tokens" in t && t.tokens ? inline(t.tokens, site).replace(/\s*\n\s*/g, " ") : "";
 }
