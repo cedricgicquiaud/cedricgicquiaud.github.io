@@ -11,11 +11,15 @@ _modes de lancement._
 ## Ta mission
 
 - Feature Linear : **<nom de la feature>** — livraison <n>/<total> « <titre> »
-- Tâches : <CODE>-a, <CODE>-b, <CODE>-c
+- Tâches, dans l'ordre de production : <CODE>-a, <CODE>-b, <CODE>-c. Un producteur par
+  tâche ; ta consigne de lancement dit laquelle est la tienne.
 - Branche : `feature/<CODE>-<n>-<slug>` (déjà créée, tu es dessus)
 - Titre de ta PR : `<CODE>-<n> <titre de la livraison>`
 
 ## Fichiers que tu modifies
+
+_Déduits du contrat, phrase par phrase : une phrase dont aucun fichier n'est ouvert ici ne_
+_pourra pas être livrée, et le producteur s'arrêtera pour le dire._
 
 - `<fichier ou dossier 1>`
 - `<fichier ou dossier 2>`
@@ -31,12 +35,12 @@ _Recopiées de la fiche feature. Elles sont tranchées : tu les appliques, tu ne
 
 ## Contrat de validation — ce que ta livraison doit rendre vrai
 
-_Les phrases du contrat de la feature affectées à cette livraison, avec leur numéro d'origine._
-_En toutes lettres : le numéro seul ne dit pas ce qu'il faut prouver._
+_Les phrases du contrat de la feature affectées à cette livraison, avec leur numéro d'origine_
+_et la tâche qui la prouve. En toutes lettres : le numéro seul ne dit pas ce qu'il faut prouver._
 
-4. <phrase du contrat>
-5. <phrase du contrat>
-6. <refus : ce qui doit rester impossible>
+4. <phrase du contrat> — <CODE>-a
+5. <phrase du contrat> — <CODE>-b
+6. <refus : ce qui doit rester impossible> — <CODE>-b
 
 ## Idiomes de ce projet
 
@@ -45,6 +49,15 @@ _avant de pousser._
 
 - <idiome 1>
 - <idiome 2>
+
+## Cases de chaque tâche
+
+_Le « Terminé quand » et les cas de test attendus de chaque fiche Linear, recopiés tels quels._
+_C'est la liste que le `verifier` contrôle case par case._
+
+### <CODE>-a <titre>
+- [ ] <case> (<source : D16, contrat 20>)
+- Cas de test attendus : <cas>
 
 ## Commande de tests
 
