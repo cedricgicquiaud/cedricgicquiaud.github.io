@@ -30,7 +30,8 @@ export type Capture = { fichier: string; legende: string };
 export type Chiffre = { valeur: string; libelle: string };
 /** La vidéo de démonstration déclarée dans le frontmatter : chemin dans `public/` et durée (« N min » ou « N s »). */
 export type Video = { fichier: string; duree: string };
-export type Section = { id: string; titre: string; html: string };
+/** `markdown` : le Markdown source de la section, lu par `lib/texte-brut.ts` (PFO-111). */
+export type Section = { id: string; titre: string; html: string; markdown?: string };
 
 // Les cinq sections du gabarit de fiche, dans l'ordre d'affichage.
 const SECTIONS: ReadonlyArray<{ id: string; titre: string }> = [
@@ -109,15 +110,14 @@ function parseEnBref(content: string): EnBref {
   return { quoi, chiffre, lien: reste.join(" ") };
 }
 
-/** Corps de chaque `## Titre` (jusqu'au `##` suivant), rendu en HTML ; section absente = html vide. */
+/** Corps de chaque `## Titre` (jusqu'au `##` suivant), en Markdown et rendu en HTML ; section absente = vide. */
 function parseSections(content: string): Section[] {
   const bodies = new Map<string, string>();
   for (const m of content.matchAll(/^## (.+)\n([^]*?)(?=^## |(?![^]))/gm)) bodies.set(m[1].trim(), m[2]);
-  return SECTIONS.map(({ id, titre }) => ({
-    id,
-    titre,
-    html: marked.parse(bodies.get(titre) ?? "", { async: false }).trim(),
-  }));
+  return SECTIONS.map(({ id, titre }) => {
+    const markdown = bodies.get(titre) ?? "";
+    return { id, titre, html: marked.parse(markdown, { async: false }).trim(), markdown };
+  });
 }
 
 /** Visuel généré par `scripts/project-visuals.mjs` pour une fiche sans visuel fourni. */

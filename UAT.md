@@ -518,6 +518,58 @@ Les deux PNG existent après `npm run build` (visuels générés) ; la vidéo n'
 - [ ] Carte anonyme : mettre `visibilite: anonyme` dans `slice.md` (avec le bloc `video`), recharger : la carte garde « Projet anonymisé : code et client non publiés », montre « Vidéo (2 min) », et aucun lien « Code » ni « Démo ». Remettre `visibilite: public`.
 - [ ] Refus : retirer le bloc `video`, recharger : le mot « Vidéo » n'apparaît sur aucune carte de l'accueil ; la carte SLICE garde son visuel « SLICE ».
 
+## Livraison 17 — proofs.json à la racine du site
+
+Toutes les commandes se lancent à la racine du site, après `npm run build`. Le fichier se lit aussi sur `http://localhost:3117/proofs.json` (`scripts/dev-serve.sh start 3117`, puis `stop 3117`). Une fiche modifiée dans `content/fiches/` pour un essai se remet en place par `npm run sync`.
+
+### PFO-111 — Fiches en texte brut
+
+- [ ] `grep -cE '<[a-zA-Z]|\*\*|\]\(|\|---\|' out/proofs.json` affiche `0` : aucune balise, aucun gras, aucun lien Markdown, aucun tableau Markdown dans les huit fiches.
+- [ ] `grep -o 'Image : [^)]*)' out/proofs.json` affiche les trois images de PILOT, chacune en « Image : légende (https://cedricgicquiaud.github.io/projets/pilot/….png) ». Dans `http://localhost:3117/proofs.json`, la section « Ce que j'ai construit » de PILOT contient la ligne « Agent — Quand — Ce qu'il fait — Ce qu'il ne fait jamais — Modèle — Limite », suivie d'une ligne « - contradicteur — … » par agent.
+- [ ] Refus : ajouter à la fin de la section « Problème » de `content/fiches/coach.md` la phrase `Voir **le détail** dans [la fiche](/projets/coach/).`, puis `npm run build` : dans `out/proofs.json`, la phrase devient « Voir le détail dans la fiche (https://cedricgicquiaud.github.io/projets/coach/). », et la commande `grep` du premier point affiche toujours `0`. Remettre par `npm run sync`.
+
+### PFO-112 — proofs.json assemblé depuis les fiches et le parcours
+
+- [ ] `node -e 'console.log(require("./out/proofs.json").fiches.map(f => f.nom).join(", "))'` donne les projets dans l'ordre exact des cartes de l'accueil (`http://localhost:3117/#projets`), du premier au dernier.
+- [ ] Sur `http://localhost:3117/projets/slice/`, la phrase sous le titre est identique, mot pour mot, à la valeur `enBref` de SLICE dans `proofs.json`. Même contrôle sur une fiche anonyme (Coach).
+- [ ] `node -e 'require("./out/proofs.json").parcours.forEach(b => console.log(b.periode, "|", b.role, "|", b.secteur))'` liste les mêmes postes, dans le même ordre, que la section Expérience de l'accueil ; le premier nomme Maison Epigenetic, comme sur le site.
+- [ ] `grep -c '"statut"' out/proofs.json` affiche `0`. Lancer `shasum out/proofs.json`, refaire `npm run build`, relancer `shasum` : la même empreinte (aucune date de génération).
+- [ ] Refus : la fiche SLICE déclare `demo: à venir (mise en ligne prévue)` ; dans `proofs.json`, SLICE a `"demo": ""`.
+- [ ] Refus : copier `content/fiches/tablo.md` en `content/fiches/archives/essai.md` et y mettre `nom: Essai`, puis `npm run build` : « Essai » n'apparaît pas dans `proofs.json`. Supprimer le dossier `archives/`.
+- [ ] Refus : dans `content/fiches/coach.md`, remplacer `depot:` par `depot: https://github.com/cedricgicquiaud/coach`, puis `npm run build` : Coach garde `"depot": ""` et `"demo": ""`. Remettre par `npm run sync`.
+
+### PFO-113 — Schéma public de proofs.json et conformité testée
+
+- [ ] `npx vitest run src/__tests__/proofs.test.ts` affiche, parmi les tests passés, « valide l'objet produit par buildProofs ».
+- [ ] `out/proofs.schema.json` existe après build ; `http://localhost:3117/proofs.schema.json` s'ouvre et chaque champ y porte une description en français.
+- [ ] Refus : dans `public/proofs.schema.json`, remplacer les deux `"url"` du bloc `fiches` (dans `required` et dans `properties`) par `"lien"`, puis `npm test` : le test « valide l'objet produit par buildProofs » échoue et « Test Files » compte un échec. Annuler la modification.
+
+### PFO-114 — proofs.json sort du build, annoncé dans l'en-tête de l'accueil
+
+- [ ] Après `npm run build`, `node -e 'JSON.parse(require("fs").readFileSync("out/proofs.json", "utf8")); console.log("ok")'` affiche `ok`.
+- [ ] Chaque `url` de fiche (`https://cedricgicquiaud.github.io/projets/<slug>/`) a son fichier `out/projets/<slug>/index.html` (`ls out/projets/*/index.html` : huit pages, mêmes noms que les `slug`).
+- [ ] `grep -o '<link rel="alternate"[^>]*>' out/index.html` affiche `<link rel="alternate" type="application/json" href="https://cedricgicquiaud.github.io/proofs.json"/>`.
+- [ ] Recette à la source : dans `WATIDO/fiches/tablo.md`, changer un mot du `role`, puis `npm run sync && npm run build` : le nouveau rôle apparaît dans `out/proofs.json`, sans autre geste. Annuler la modification dans `WATIDO/fiches`, refaire `npm run sync`.
+- [ ] Refus : `ls public/proofs.json` répond que le fichier n'existe pas. Mettre `out/proofs.json` à la corbeille, `npm run build` : il est recréé.
+- [ ] Refus : sur `http://localhost:3117/`, rien de nouveau à l'écran ; la recherche du navigateur (Cmd+F) ne trouve ni « proofs », ni « llms », ni « CV », ni « .pdf ».
+- [ ] Refus : `node -e 'require("./out/proofs.json").fiches.forEach(f => f.chiffres.forEach(c => console.log(c.libelle)))'` : aucun libellé ne parle de tests.
+
+### PFO-115 — Les contrôles du build lisent proofs.json et llms.txt
+
+Préparer un faux `out/` et une liste contenant le mot inventé « zorglub » (par son empreinte, jamais en clair dans la liste) :
+
+```bash
+mkdir -p /tmp/essai-out
+node -e 'import("./scripts/check-output.mjs").then(m => console.log(m.fingerprint("zorglub")))' > /tmp/essai-liste.txt
+printf 'zorglub \xf0\x9f\x9a\x80 06 12 34 56 78 https://cdn.example.com\n' > /tmp/essai-out/llms.txt
+printf '{"texte":"zorglub \xf0\x9f\x9a\x80 06 12 34 56 78 https://cdn.example.com"}\n' > /tmp/essai-out/proofs.json
+```
+
+- [ ] `node scripts/check-output.mjs /tmp/essai-out /tmp/essai-liste.txt` échoue avec 8 problèmes : pour `proofs.json` comme pour `llms.txt`, « mot interdit « zorglub » », « emoji », « numéro de téléphone « 06 12 34 56 78 » » et « domaine tiers « cdn.example.com » », chaque ligne commençant par le nom du fichier.
+- [ ] `npm run build` se termine par « check-output : … out propre ».
+- [ ] Refus : renommer `/tmp/essai-out/llms.txt` en `index.txt` (et supprimer `proofs.json`), relancer la commande : un seul problème, « index.txt : domaine tiers « cdn.example.com » » ; le téléphone n'est pas relevé.
+- [ ] Refus : renommer ce fichier en `autre.json`, relancer : « check-output : /tmp/essai-out propre » (un autre `.json` n'est pas lu).
+
 ## Tâche isolée PFO-69 — Positionnement « product builder IA »
 
 - [ ] `scripts/dev-serve.sh start 3005`, ouvrir http://localhost:3005/ : sous le nom, « Product builder IA », puis la phrase « Je transforme un besoin métier en application qui tourne, en faisant coder des agents IA sous contrôle. »
