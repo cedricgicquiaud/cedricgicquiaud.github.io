@@ -1,4 +1,5 @@
 import site from "../content/site.json";
+import { contentDir, loadExperience, type Bloc } from "./content";
 import { loadFiches, type Chiffre, type Visibilite } from "./fiches";
 import { texteBrut } from "./texte-brut";
 
@@ -26,6 +27,8 @@ export type Proofs = {
   linkedin: string;
   url: string;
   fiches: ProofFiche[];
+  /** Les postes de la section Expérience, du plus récent au plus ancien, employeur compris. */
+  parcours: Bloc[];
 };
 
 /** Version du format de `/proofs.json` ; elle change quand une clé change de sens ou disparaît. */
@@ -61,5 +64,6 @@ export function buildProofs({ fichesDir }: { fichesDir?: string } = {}): Proofs 
       captures: captures.map(({ fichier, legende }) => ({ legende, url: site.url + fichier })),
       sections: sections.map(({ titre, markdown = "" }) => ({ titre, texte: texteBrut(markdown, site.url) })),
     })),
+    parcours: loadExperience(contentDir).blocs,
   };
 }
