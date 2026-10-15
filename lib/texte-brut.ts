@@ -13,6 +13,7 @@ function inline(tokens: Token[], site: string): string {
         // URL nue (« https://… » dans le texte) : son texte est déjà l'adresse.
         return texte === url ? url : `${texte} (${url})`;
       }
+      if (t.type === "image") return `Image : ${t.text} (${absolue(t.href, site)})`;
       return "tokens" in t && t.tokens ? inline(t.tokens, site) : "text" in t ? t.text : "";
     })
     .join("");
