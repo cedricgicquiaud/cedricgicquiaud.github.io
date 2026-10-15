@@ -1,7 +1,13 @@
+import type { Metadata } from "next";
 import { About } from "@/components/about";
 import { Experience } from "@/components/experience";
 import { Intro } from "@/components/intro";
 import { Projects } from "@/components/projects";
+
+// Un agent IA trouve les preuves depuis l'en-tête de l'accueil ; aucun lien visible (D9).
+export const metadata: Metadata = {
+  alternates: { types: { "application/json": "/proofs.json" } },
+};
 
 export default function Home() {
   return (
