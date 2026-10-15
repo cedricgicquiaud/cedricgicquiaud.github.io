@@ -53,4 +53,14 @@ describe("texteBrut (PFO-111)", () => {
     const md = ["2. Le tdd-writer fabrique.", "   - Il écrit le test.", "   - Il écrit le code."].join("\n");
     expect(texteBrut(md, SITE)).toBe(["2. Le tdd-writer fabrique.", "  - Il écrit le test.", "  - Il écrit le code."].join("\n"));
   });
+
+  it("recolle une phrase coupée sur deux lignes dans le Markdown", () => {
+    expect(texteBrut("La difficulté n'est plus d'écrire : c'est\nde savoir si c'est juste.", SITE)).toBe(
+      "La difficulté n'est plus d'écrire : c'est de savoir si c'est juste.",
+    );
+  });
+
+  it("sépare deux paragraphes par une ligne vide", () => {
+    expect(texteBrut("Premier.\n\nSecond.", SITE)).toBe("Premier.\n\nSecond.");
+  });
 });
