@@ -79,7 +79,9 @@ describe("buildLlms — les projets (PFO-116)", () => {
   it("donne les fiches des cartes de l'accueil, dans le même ordre, chacune avec l'URL absolue de sa page", () => {
     const { container } = render(createElement(Projects));
     const cartes = Array.from(container.querySelectorAll("h3 a")).map((a) => `https://cedricgicquiaud.github.io${a.getAttribute("href")}`);
-    const liens = Array.from(buildLlms().matchAll(/^- \[[^\]]+\]\(([^)]+)\) : /gm), (m) => m[1]);
+    const texte = blocs(buildLlms());
+    const projets = texte[texte.indexOf("## Projets") + 1];
+    const liens = Array.from(projets.matchAll(/^- \[[^\]]+\]\(([^)]+)\) : /gm), (m) => m[1]);
     expect(cartes).toHaveLength(8);
     expect(liens).toEqual(cartes);
   });
