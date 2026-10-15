@@ -32,4 +32,10 @@ describe("buildLlms — l'en-tête (PFO-116)", () => {
     expect(blocs(texte)[2]).toBe("Je suis builder : voir Alpha (https://cedricgicquiaud.github.io/projets/alpha/).");
     expect(texte).not.toContain("Second paragraphe");
   });
+
+  it("refuse dans le paragraphe À propos du site tout gras, tout lien Markdown et toute balise", () => {
+    const paragraphe = blocs(buildLlms())[2];
+    expect(paragraphe).toMatch(/^Je suis product builder IA/);
+    for (const marque of ["**", "](/projets/", "<"]) expect(paragraphe).not.toContain(marque);
+  });
 });
