@@ -161,3 +161,20 @@ describe("buildProofs — le parcours (PFO-112)", () => {
     expect(buildProofs().parcours).toEqual(postes);
   });
 });
+
+describe("buildProofs — ce qui n'y figure pas (PFO-112)", () => {
+  /** Toutes les clés d'un objet JSON, à toute profondeur. */
+  const cles = (v: unknown): string[] =>
+    Array.isArray(v) ? v.flatMap(cles) : v && typeof v === "object" ? Object.entries(v).flatMap(([k, x]) => [k, ...cles(x)]) : [];
+
+  it("refuse toute clé `statut` (masqué depuis PFO-73)", () => {
+    expect(cles(buildProofs())).not.toContain("statut");
+  });
+
+  it("refuse toute date de génération : deux appels donnent le même JSON", () => {
+    const avant = JSON.stringify(buildProofs());
+    expect(cles(buildProofs()).filter((k) => /date|gener|genere/i.test(k))).toEqual([]);
+    expect(JSON.stringify(buildProofs())).toBe(avant);
+    expect(avant).not.toMatch(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/);
+  });
+});
