@@ -18,6 +18,8 @@ function inline(tokens: Token[], site: string): string {
       }
       if (t.type === "image") return `Image : ${t.text} (${absolue(t.href, site)})`;
       if (t.type === "html") return sansBalise(t.text);
+      // Un paramètre de commande (`/pilot <commande>`) passe entre guillemets : aucun `<mot` ne sort.
+      if (t.type === "codespan") return t.text.replace(/<([^<>]+)>/g, "«$1»");
       return "tokens" in t && t.tokens ? inline(t.tokens, site) : "text" in t ? t.text : "";
     })
     .join("");
