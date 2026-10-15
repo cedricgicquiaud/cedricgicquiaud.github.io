@@ -20,4 +20,10 @@ describe("texteBrut (PFO-111)", () => {
       "Dépôt : https://github.com/cedricgicquiaud/slice",
     );
   });
+
+  it("écrit une image en « Image : légende (URL absolue) »", () => {
+    expect(texteBrut("![Le tableau Linear](/projets/pilot/linear.png)", SITE)).toBe(
+      "Image : Le tableau Linear (https://cedricgicquiaud.github.io/projets/pilot/linear.png)",
+    );
+  });
 });
