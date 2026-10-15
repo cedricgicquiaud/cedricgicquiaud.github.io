@@ -36,4 +36,10 @@ describe("texteBrut (PFO-111)", () => {
     const tableau = ["| Fiche | Contenu |", "|---|---|", "| *Modèles à remplir (6)* | |"].join("\n");
     expect(texteBrut(tableau, SITE)).toBe(["Fiche — Contenu", "- Modèles à remplir (6)"].join("\n"));
   });
+
+  it("écrit une liste à puces en lignes « - … »", () => {
+    expect(texteBrut("- **Linear** est le tableau de bord.\n- GitHub est l'atelier.", SITE)).toBe(
+      "- Linear est le tableau de bord.\n- GitHub est l'atelier.",
+    );
+  });
 });
