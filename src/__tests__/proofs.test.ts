@@ -105,6 +105,13 @@ describe("buildProofs — les fiches (PFO-112)", () => {
     ]);
   });
 
+  it("suit une fiche modifiée sans autre geste", () => {
+    const dir = fichesDir({ "alpha.md": ficheMd("Alpha", { role: "conception" }) });
+    expect(buildProofs({ fichesDir: dir }).fiches[0].role).toBe("conception");
+    writeFileSync(path.join(dir, "alpha.md"), ficheMd("Alpha", { role: "conception et développement" }));
+    expect(buildProofs({ fichesDir: dir }).fiches[0].role).toBe("conception et développement");
+  });
+
   it("refuse une valeur non-URL : SLICE (« à venir… ») sort une démo vide", () => {
     const slice = buildProofs().fiches.find((f) => f.slug === "slice");
     expect(slice?.demo).toBe("");
