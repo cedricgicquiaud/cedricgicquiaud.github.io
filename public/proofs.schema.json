@@ -2,67 +2,78 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "$id": "https://cedricgicquiaud.github.io/proofs.schema.json",
   "title": "Preuves de Cédric Gicquiaud",
+  "description": "Format de https://cedricgicquiaud.github.io/proofs.json : les projets du site (une fiche de preuve par projet) et le parcours professionnel, en texte brut, pour un agent IA. Régénéré à chaque mise en ligne du site, depuis les mêmes sources que les pages.",
   "type": "object",
   "additionalProperties": false,
   "required": ["version", "nom", "titre", "email", "github", "linkedin", "url", "fiches", "parcours"],
   "properties": {
-    "version": { "type": "string" },
-    "nom": { "type": "string" },
-    "titre": { "type": "string" },
-    "email": { "type": "string" },
-    "github": { "type": "string" },
-    "linkedin": { "type": "string" },
-    "url": { "type": "string" },
+    "version": { "type": "string", "description": "Version du format de ce fichier. Elle change quand une clé change de sens ou disparaît." },
+    "nom": { "type": "string", "description": "Nom de la personne." },
+    "titre": { "type": "string", "description": "Ce que fait la personne, en une phrase (phrase d'accroche du site)." },
+    "email": { "type": "string", "description": "Adresse e-mail de contact." },
+    "github": { "type": "string", "description": "URL du profil GitHub." },
+    "linkedin": { "type": "string", "description": "URL du profil LinkedIn." },
+    "url": { "type": "string", "description": "URL du site, sans barre finale." },
     "fiches": {
       "type": "array",
+      "description": "Les projets, un par fiche de preuve, dans l'ordre des cartes de l'accueil du site.",
       "items": {
         "type": "object",
         "additionalProperties": false,
         "required": ["slug", "nom", "url", "periode", "role", "stack", "visibilite", "depot", "demo", "enBref", "chiffres", "captures", "sections"],
         "properties": {
-          "slug": { "type": "string" },
-          "nom": { "type": "string" },
-          "url": { "type": "string" },
-          "periode": { "type": "string" },
-          "role": { "type": "string" },
-          "stack": { "type": "array", "items": { "type": "string" } },
-          "visibilite": { "enum": ["public", "vitrine", "anonyme", "prive"] },
-          "depot": { "type": "string" },
-          "demo": { "type": "string" },
-          "enBref": { "type": "string" },
+          "slug": { "type": "string", "description": "Identifiant court du projet, repris dans l'URL de sa page." },
+          "nom": { "type": "string", "description": "Nom du projet." },
+          "url": { "type": "string", "description": "URL absolue de la page du projet sur le site." },
+          "periode": { "type": "string", "description": "Période du projet, en texte libre (ex. « mai 2026 → aujourd'hui »)." },
+          "role": { "type": "string", "description": "Ce que la personne a fait sur le projet." },
+          "stack": { "type": "array", "items": { "type": "string" }, "description": "Technologies et outils employés." },
+          "visibilite": {
+            "enum": ["public", "vitrine", "anonyme", "prive"],
+            "description": "Ce qui est publié : public (code ouvert), vitrine (démo sans code), anonyme (client et code non publiés, nom de code), prive (nom cité, code et clients non publiés)."
+          },
+          "depot": { "type": "string", "description": "URL du dépôt de code, ou chaîne vide s'il n'est pas publié." },
+          "demo": { "type": "string", "description": "URL de la démo en ligne, ou chaîne vide s'il n'y en a pas." },
+          "enBref": { "type": "string", "description": "Résumé du projet en trois phrases : ce que c'est, le chiffre clé, où le voir. Identique à l'accroche de sa page." },
           "chiffres": {
             "type": "array",
+            "description": "Chiffres clés du projet (trois au plus), des résultats mesurés ; liste vide s'il n'y en a pas.",
             "items": {
               "type": "object",
               "additionalProperties": false,
               "required": ["valeur", "libelle"],
               "properties": {
-                "valeur": { "type": "string" },
-                "libelle": { "type": "string" }
+                "valeur": { "type": "string", "description": "Le chiffre, tel qu'affiché (ex. « 500 »)." },
+                "libelle": { "type": "string", "description": "Ce que mesure le chiffre." }
               }
             }
           },
           "captures": {
             "type": "array",
+            "description": "Captures d'écran du projet ; liste vide s'il n'y en a pas.",
             "items": {
               "type": "object",
               "additionalProperties": false,
               "required": ["legende", "url"],
               "properties": {
-                "legende": { "type": "string" },
-                "url": { "type": "string" }
+                "legende": { "type": "string", "description": "Ce que montre la capture ; dit si les données sont fictives ou anonymisées." },
+                "url": { "type": "string", "description": "URL absolue de l'image." }
               }
             }
           },
           "sections": {
             "type": "array",
+            "description": "Le corps de la fiche en cinq sections, dans l'ordre : Problème, Ce que j'ai construit, Preuves, Ce que j'en ai appris, Artefacts.",
             "items": {
               "type": "object",
               "additionalProperties": false,
               "required": ["titre", "texte"],
               "properties": {
-                "titre": { "type": "string" },
-                "texte": { "type": "string" }
+                "titre": { "type": "string", "description": "Titre de la section." },
+                "texte": {
+                  "type": "string",
+                  "description": "Contenu en texte brut : un paragraphe par bloc, une ligne « - … » par élément de liste ou rangée de tableau, « Image : légende (URL) » pour une image, « texte (URL) » pour un lien ; URL absolues."
+                }
               }
             }
           }
@@ -71,16 +82,17 @@
     },
     "parcours": {
       "type": "array",
+      "description": "Les postes du parcours professionnel, du plus récent au plus ancien, comme dans la section Expérience du site.",
       "items": {
         "type": "object",
         "additionalProperties": false,
         "required": ["periode", "role", "secteur", "description", "tags"],
         "properties": {
-          "periode": { "type": "string" },
-          "role": { "type": "string" },
-          "secteur": { "type": "string" },
-          "description": { "type": "string" },
-          "tags": { "type": "array", "items": { "type": "string" } }
+          "periode": { "type": "string", "description": "Période du poste." },
+          "role": { "type": "string", "description": "Intitulé du poste." },
+          "secteur": { "type": "string", "description": "Employeur ou structure, type de contrat et lieu." },
+          "description": { "type": "string", "description": "Ce que la personne y a fait." },
+          "tags": { "type": "array", "items": { "type": "string" }, "description": "Compétences et outils mis en avant." }
         }
       }
     }
