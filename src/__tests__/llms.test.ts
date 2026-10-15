@@ -1,18 +1,21 @@
-import { copyFileSync, mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { copyFileSync, existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { cleanup, render } from "@testing-library/react";
 import { createElement } from "react";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, beforeAll, describe, expect, it } from "vitest";
 import { GET } from "../../app/llms.txt/route";
 import { Experience } from "../../components/experience";
 import { Projects } from "../../components/projects";
 import { buildLlms } from "../../lib/llms";
+import { checkOutput } from "../../scripts/check-output.mjs";
+import { ensureBuild } from "./helpers/build";
 
 afterEach(cleanup);
 
 // PFO-116 : llms.txt, le sommaire du site au format llmstxt.org.
-const CONTENT = path.join(__dirname, "../../content");
+const ROOT = path.join(__dirname, "../..");
+const CONTENT = path.join(ROOT, "content");
 
 /** Un dossier content/ temporaire avec cet `about.md` ; l'expérience est celle du site. */
 function contentDir(about: string): string {
@@ -135,5 +138,37 @@ describe("La route /llms.txt (PFO-117)", () => {
     const reponse = GET();
     expect(reponse.headers.get("Content-Type")).toBe("text/plain; charset=utf-8");
     expect(await reponse.text()).toBe(buildLlms());
+  });
+});
+
+describe("llms.txt dans out/ (PFO-117)", () => {
+  const SOURCES = ["app/llms.txt/route.ts", "lib/llms.ts", "lib/proofs.ts", "lib/texte-brut.ts", "lib/fiches.ts", "content/site.json", "content/about.md", "app/page.tsx"];
+  const llms = path.join(ROOT, "out", "llms.txt");
+  beforeAll(() => ensureBuild(SOURCES, { marker: "out/llms.txt" }), 300_000);
+
+  it("est le texte de lib/llms.ts, au caractère près", () => {
+    expect(readFileSync(llms, "utf8")).toBe(buildLlms());
+  });
+
+  it("passe les contrôles de check-output", () => {
+    const seul = mkdtempSync(path.join(tmpdir(), "llms-out-"));
+    copyFileSync(llms, path.join(seul, "llms.txt"));
+    const liste = readFileSync(path.join(CONTENT, "forbidden.txt"), "utf8").split("\n").map((l) => l.trim()).filter(Boolean);
+    expect(checkOutput(seul, liste)).toEqual([]);
+  });
+
+  it("refuse un llms.txt écrit à la main dans public/", () => {
+    expect(existsSync(path.join(ROOT, "public", "llms.txt"))).toBe(false);
+  });
+
+  it("refuse de dépendre d'un fichier laissé là : supprimé de out/, un rebuild le recrée", { timeout: 300_000 }, () => {
+    rmSync(llms);
+    ensureBuild(SOURCES, { marker: "out/llms.txt" });
+    expect(readFileSync(llms, "utf8")).toBe(buildLlms());
+  });
+
+  it("refuse tout lien visible vers llms.txt dans l'accueil", () => {
+    const accueil = readFileSync(path.join(ROOT, "out", "index.html"), "utf8");
+    expect(accueil).not.toMatch(/<a [^>]*href="[^"]*llms\.txt"/);
   });
 });
