@@ -7,7 +7,12 @@ const absolue = (href: string, site: string): string => (href.startsWith("/") ? 
 function inline(tokens: Token[], site: string): string {
   return tokens
     .map((t) => {
-      if (t.type === "link") return `${inline(t.tokens ?? [], site)} (${absolue(t.href, site)})`;
+      if (t.type === "link") {
+        const texte = inline(t.tokens ?? [], site);
+        const url = absolue(t.href, site);
+        // URL nue (« https://… » dans le texte) : son texte est déjà l'adresse.
+        return texte === url ? url : `${texte} (${url})`;
+      }
       return "tokens" in t && t.tokens ? inline(t.tokens, site) : "text" in t ? t.text : "";
     })
     .join("");
