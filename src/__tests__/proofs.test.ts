@@ -74,6 +74,18 @@ describe("buildProofs — les fiches (PFO-112)", () => {
     expect(buildProofs({ fichesDir: dir }).fiches.map((f) => f.chiffres)).toEqual([[{ valeur: "500", libelle: "vraies API passées" }], []]);
   });
 
+  it("donne les captures avec leur légende et leur URL absolue, une liste vide sans captures", () => {
+    const avec = ficheMd("Alpha").replace(
+      "---\n\n",
+      "captures:\n  - fichier: /projets/alpha/accueil.webp\n    legende: L'accueil, données fictives\n---\n\n",
+    );
+    const dir = fichesDir({ "alpha.md": avec, "beta.md": ficheMd("Beta") });
+    expect(buildProofs({ fichesDir: dir }).fiches.map((f) => f.captures)).toEqual([
+      [{ legende: "L'accueil, données fictives", url: "https://cedricgicquiaud.github.io/projets/alpha/accueil.webp" }],
+      [],
+    ]);
+  });
+
   it("refuse une valeur non-URL : SLICE (« à venir… ») sort une démo vide", () => {
     const slice = buildProofs().fiches.find((f) => f.slug === "slice");
     expect(slice?.demo).toBe("");
