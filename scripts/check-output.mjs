@@ -1,4 +1,5 @@
-// Contrôle du HTML généré dans out/ après `next build`.
+// Contrôle du HTML généré dans out/ après `next build`, et des fichiers lus par des agents IA
+// (proofs.json, llms.txt) à sa racine.
 // Refuse : mots interdits (content/forbidden.txt : une empreinte SHA-256 par ligne, jamais le mot
 // en clair), emoji, domaines tiers hors liste blanche, numéros de téléphone, et un out/ de plus de
 // 150 Mo au total (images et vidéos comptées dans le poids, jamais lues par les autres règles).
