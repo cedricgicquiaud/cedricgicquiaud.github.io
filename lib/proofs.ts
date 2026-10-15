@@ -1,5 +1,5 @@
 import site from "../content/site.json";
-import { loadFiches, type Visibilite } from "./fiches";
+import { loadFiches, type Chiffre, type Visibilite } from "./fiches";
 
 export type ProofFiche = {
   slug: string;
@@ -12,6 +12,7 @@ export type ProofFiche = {
   depot: string;
   demo: string;
   enBref: string;
+  chiffres: Chiffre[];
 };
 export type Proofs = { fiches: ProofFiche[] };
 
@@ -21,7 +22,7 @@ export type Proofs = { fiches: ProofFiche[] };
  */
 export function buildProofs({ fichesDir }: { fichesDir?: string } = {}): Proofs {
   return {
-    fiches: loadFiches(fichesDir).map(({ slug, frontmatter, enBref }) => ({
+    fiches: loadFiches(fichesDir).map(({ slug, frontmatter, enBref, chiffres = [] }) => ({
       slug,
       nom: frontmatter.nom,
       url: `${site.url}/projets/${slug}/`,
@@ -34,6 +35,7 @@ export function buildProofs({ fichesDir }: { fichesDir?: string } = {}): Proofs 
       demo: frontmatter.demo,
       // Même accroche que la page de la fiche (components/fiche.tsx) : les trois phrases bout à bout.
       enBref: [enBref.quoi, enBref.chiffre, enBref.lien].filter(Boolean).join(" "),
+      chiffres,
     })),
   };
 }
