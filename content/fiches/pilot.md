@@ -105,10 +105,10 @@ Elle a lieu une fois par fonctionnalité, en deux temps. Je valide à la fin de 
    attribuée à un livrable.
 3. Je valide le découpage. Claude crée les tâches dans Linear.
 
-![Une tâche réelle de ce site dans Linear](/projets/pilot/linear.png)
+![Une tâche réelle de l'application mobile de santé dans Linear](/projets/pilot/linear.png)
 
-*Une tâche réelle de ce site dans Linear : le problème, ce qu'on fait, et la liste « Terminé
-quand », refus compris, que les agents doivent tenir.*
+*Une tâche réelle de l'application mobile de santé, dans Linear : le problème, ce qu'on fait,
+et la liste « Terminé quand », refus compris, que les agents doivent tenir.*
 
 ### Étape 4 — Fabriquer (`run`)
 
@@ -156,10 +156,10 @@ deux agents modifient le code.*
    d'annulation doit toujours demander confirmation ; la remarque devient une règle du projet,
    et je n'ai plus à la refaire.
 
-![La PR qui livre la tâche Linear](/projets/pilot/pr.png)
+![Une PR réelle de ce site, écrite par l'agent](/projets/pilot/pr.png)
 
-*La PR qui livre cette tâche, écrite par l'agent : le code de la tâche dans le titre, ce qui
-change expliqué en clair, acceptée par moi.*
+*Une PR réelle de ce site, écrite par l'agent : le code de la tâche dans le titre, ce qui change
+expliqué en clair, acceptée par moi.*
 
 ### Au quotidien : `next`
 
