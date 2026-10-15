@@ -8,9 +8,22 @@
       "type": "array",
       "items": {
         "type": "object",
-        "required": ["url"],
+        "additionalProperties": false,
+        "required": ["slug", "nom", "url", "periode", "role", "stack", "visibilite", "depot", "demo", "enBref", "chiffres", "captures", "sections"],
         "properties": {
-          "url": { "type": "string" }
+          "slug": { "type": "string" },
+          "nom": { "type": "string" },
+          "url": { "type": "string" },
+          "periode": { "type": "string" },
+          "role": { "type": "string" },
+          "stack": { "type": "array", "items": { "type": "string" } },
+          "visibilite": { "enum": ["public", "vitrine", "anonyme", "prive"] },
+          "depot": { "type": "string" },
+          "demo": { "type": "string" },
+          "enBref": { "type": "string" },
+          "chiffres": { "type": "array" },
+          "captures": { "type": "array" },
+          "sections": { "type": "array" }
         }
       }
     }
