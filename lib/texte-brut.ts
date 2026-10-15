@@ -49,6 +49,7 @@ function block(t: Token, site: string): string {
   }
   if (t.type === "list") return liste(t as Tokens.List, site);
   if (t.type === "html") return sansBalise(t.text).trim();
+  if (t.type === "code") return t.text;
   // Paragraphe, titre : une ligne, même si le Markdown coupait la phrase.
   return "tokens" in t && t.tokens ? inline(t.tokens, site).replace(/\s*\n\s*/g, " ") : "";
 }
