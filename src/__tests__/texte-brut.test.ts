@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { loadFiches } from "../../lib/fiches";
 import { texteBrut } from "../../lib/texte-brut";
 
 // PFO-111 : le Markdown d'une section, lisible par un agent IA (D11).
@@ -71,4 +72,17 @@ describe("texteBrut (PFO-111)", () => {
   it("sépare deux paragraphes par une ligne vide", () => {
     expect(texteBrut("Premier.\n\nSecond.", SITE)).toBe("Premier.\n\nSecond.");
   });
+});
+
+describe("Les fiches de content/fiches/ en texte brut (PFO-111)", () => {
+  // Restes de Markdown ou de HTML qu'un agent lirait mal ; `(/` = lien resté relatif.
+  const RESTES = [/<[a-z]/i, /\*\*/, /\]\(/, /\|-{3}/, /\(\//];
+
+  for (const fiche of loadFiches()) {
+    it(`${fiche.slug} : cinq sections non vides, sans balise, gras, lien Markdown ni tableau`, () => {
+      const textes = fiche.sections.map((s) => texteBrut(s.markdown ?? "", SITE));
+      expect(textes.filter(Boolean)).toHaveLength(5);
+      for (const texte of textes) for (const reste of RESTES) expect(texte).not.toMatch(reste);
+    });
+  }
 });
