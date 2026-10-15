@@ -14,4 +14,10 @@ describe("texteBrut (PFO-111)", () => {
       "Voir l'app santé (https://cedricgicquiaud.github.io/projets/coach/).",
     );
   });
+
+  it("écrit une URL nue une seule fois", () => {
+    expect(texteBrut("Dépôt : https://github.com/cedricgicquiaud/slice", SITE)).toBe(
+      "Dépôt : https://github.com/cedricgicquiaud/slice",
+    );
+  });
 });
