@@ -42,4 +42,10 @@ describe("texteBrut (PFO-111)", () => {
       "- Linear est le tableau de bord.\n- GitHub est l'atelier.",
     );
   });
+
+  it("garde les numéros d'une liste numérotée", () => {
+    expect(texteBrut("1. Je relis la PR.\n2. Claude remet le tableau à jour.", SITE)).toBe(
+      "1. Je relis la PR.\n2. Claude remet le tableau à jour.",
+    );
+  });
 });
