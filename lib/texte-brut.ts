@@ -29,6 +29,9 @@ function block(t: Token, site: string): string {
     const table = t as Tokens.Table;
     return [rangee(table.header, site), ...table.rows.map((r) => `- ${rangee(r, site)}`)].join("\n");
   }
+  if (t.type === "list") {
+    return (t as Tokens.List).items.map((item) => `- ${item.tokens.map((b) => block(b, site)).filter(Boolean).join("\n")}`).join("\n");
+  }
   return "tokens" in t && t.tokens ? inline(t.tokens, site) : "";
 }
 
