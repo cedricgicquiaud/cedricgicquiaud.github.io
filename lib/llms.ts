@@ -30,5 +30,15 @@ function parcours(contentDir: string): string {
  * Le contenu de `/llms.txt` : le sommaire du site au format llmstxt.org, pour un agent IA (PFO-116).
  */
 export function buildLlms({ contentDir = defaultContentDir, fichesDir }: { contentDir?: string; fichesDir?: string } = {}): string {
-  return [`# ${site.name}`, `> ${site.title}`, premierParagraphe(contentDir), "## Projets", projets(fichesDir), "## Parcours", parcours(contentDir)].join("\n\n");
+  return [
+    `# ${site.name}`,
+    `> ${site.title}`,
+    premierParagraphe(contentDir),
+    "## Projets",
+    projets(fichesDir),
+    "## Parcours",
+    parcours(contentDir),
+    "## Données",
+    `- [proofs.json](${site.url}/proofs.json) : les mêmes fiches et le même parcours en JSON, sections comprises`,
+  ].join("\n\n");
 }
