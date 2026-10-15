@@ -26,19 +26,21 @@ de savoir si ce qui est écrit est juste, et de garder le fil d'un projet qui du
 Laissé seul, un agent fait trois choses que je ne veux pas :
 - **il décide à ma place.** Exemple : qui a le droit de voir une facture. C'est une décision
   produit, elle me revient ;
-- **il écrit les tests après le code.** Un test, c'est un petit programme qui vérifie que le
-  code fait ce qu'on attend. Écrit après coup, il confirme le code au lieu de le contrôler ;
+- **il écrit les tests après le code.** Un test vérifie que le code fait ce qu'on attend. Écrit après coup, il confirme le code au lieu de le contrôler ;
 - **il se relit lui-même**, et ne voit donc pas ses propres erreurs.
 
-PILOT répond à ces trois défauts : je garde les décisions, le test vient toujours avant le code,
-et celui qui écrit le code n'est jamais celui qui le vérifie.
+PILOT répond à ces trois défauts : je garde les décisions, le test vient toujours avant le code
+(méthode de Test Driven Development), et celui qui écrit le code n'est jamais celui qui le vérifie.
 
 ## Ce que j'ai construit
 
-**Le principe.** PILOT fait avancer un projet en cinq étapes. Je décide aux moments clés. Entre
-deux décisions, Claude et ses agents travaillent seuls.
+### Le principe
 
-**Les trois outils.**
+PILOT fait avancer un projet en cinq étapes. Je décide aux moments clés. Entre deux décisions,
+Claude et ses agents travaillent seuls.
+
+### Les trois outils
+
 - **Linear** est le tableau de bord : les tâches, dans l'ordre, et où on en est.
 - **GitHub** est l'atelier : c'est là que vit le code.
 - **Claude** est le chef d'atelier. Il lit le tableau, fait le travail ou le confie à ses agents,
@@ -49,18 +51,23 @@ GitHub. C'est ce fil qui permet au tableau de se mettre à jour tout seul.
 
 Pour illustrer les étapes, prenons une application de prise de rendez-vous pour un kiné.
 
-**Étape 1 — Comprendre le projet (`init`).** Elle n'a lieu qu'une fois, au démarrage.
-1. Claude se renseigne d'abord. Il cherche ce qui existe déjà : les logiciels de rendez-vous
-   connus, les règles à respecter (les données de santé, par exemple).
-2. Il m'interroge en quelques séries de questions. Pour chacune, il propose une réponse : « Les
-   patients peuvent-ils annuler en ligne ? Je propose : oui, jusqu'à 24 h avant. »
+### Étape 1 — Comprendre le projet (`init`)
+
+Elle n'a lieu qu'une fois, au démarrage.
+
+1. Claude effectue une recherche approfondie sur l'état de l'art et les meilleures pratiques du
+   marché pour le projet souhaité (skill `research-assistant`). Ici : les logiciels de
+   rendez-vous connus, les règles à respecter sur les données de santé.
+2. Il m'interroge en quelques séries de questions. Pour chacune, il propose une réponse :
+   « Les patients peuvent-ils annuler en ligne ? Je propose : oui, jusqu'à 24 h avant. »
 3. Il écrit une page qui décrit le produit : pour qui, quel problème, ce qui entre dans la
    première version et ce qui n'y entre pas.
 4. Si l'application a des écrans, il me demande des exemples d'interfaces que j'aime. Il en tire
    une direction visuelle.
 5. Je valide. Ensuite il prépare le tableau Linear et le dépôt de code.
 
-**Étape 2 — Faire la liste des fonctionnalités (`roadmap`).**
+### Étape 2 — Faire la liste des fonctionnalités (`roadmap`)
+
 1. Claude propose toutes les grandes fonctionnalités, dans l'ordre. Exemple : « Prendre
    rendez-vous », « Annuler », « Rappel par SMS », « Agenda du kiné ».
 2. Le contradicteur relit la liste. C'est un agent dont le seul travail est de chercher ce qui
@@ -70,25 +77,32 @@ Pour illustrer les étapes, prenons une application de prise de rendez-vous pour
 4. Si l'application a des écrans, Claude prépare aussi le système de design : les couleurs, les
    polices et les composants communs. Je le valide.
 
-**Étape 3 — Préparer une fonctionnalité (`feature`).** Elle a lieu une fois par fonctionnalité,
-en deux temps. Je valide à la fin de chacun.
+### Étape 3 — Préparer une fonctionnalité (`feature`)
 
-*Temps 1 — dire ce qui devra être vrai.*
+Elle a lieu une fois par fonctionnalité, en deux temps. Je valide à la fin de chacun.
+
+**Temps 1 — dire ce qui devra être vrai.**
+
 1. Claude pose ses dernières questions.
 2. Il écrit les décisions prises et une liste de 10 à 30 phrases vérifiables. Par exemple :
-   « Un patient voit les créneaux libres de la semaine. » « On ne peut pas réserver un créneau
-   déjà pris. » « On ne peut pas réserver dans le passé. » Au moins un tiers de ces phrases
-   disent ce qui doit être impossible. C'est souvent là que les bugs se cachent.
+   - « Un patient voit les créneaux libres de la semaine. »
+   - « On ne peut pas réserver un créneau déjà pris. »
+   - « On ne peut pas réserver dans le passé. »
+
+   Au moins un tiers de ces phrases disent ce qui doit être impossible. C'est souvent là que les
+   bugs se cachent.
 3. Le contradicteur relit encore : « Que se passe-t-il si deux patients cliquent sur le même
    créneau à la même seconde ? »
 4. Je valide. Cette liste de phrases s'appelle le contrat. Tout le reste sera jugé dessus.
 
-*Temps 2 — découper le travail.*
-1. Le découpeur est un agent qui partage la fonctionnalité en morceaux livrables. Deux morceaux
-   ne touchent jamais le même fichier, donc ils ne se gênent pas. On peut alors les fabriquer en
-   même temps. Exemple : morceau A « choisir un créneau », morceau B « recevoir la confirmation ».
-2. Chaque morceau reçoit ses tâches et ses phrases du contrat. Chaque phrase doit être attribuée
-   à un morceau.
+**Temps 2 — découper le travail.**
+
+1. Le découpeur est un agent qui partage la fonctionnalité en livrables. Deux livrables ne
+   touchent jamais le même fichier, donc ils ne se gênent pas. On peut alors les fabriquer en
+   même temps. Exemple : livrable A « choisir un créneau », livrable B « recevoir la
+   confirmation ».
+2. Chaque livrable reçoit ses tâches et ses phrases du contrat. Chaque phrase doit être
+   attribuée à un livrable.
 3. Je valide le découpage. Claude crée les tâches dans Linear.
 
 ![Une tâche réelle de ce site dans Linear](/projets/pilot/linear.png)
@@ -96,55 +110,69 @@ en deux temps. Je valide à la fin de chacun.
 *Une tâche réelle de ce site dans Linear : le problème, ce qu'on fait, et la liste « Terminé
 quand », refus compris, que les agents doivent tenir.*
 
-**Étape 4 — Fabriquer (`run`).** C'est la seule étape qui tourne entièrement sans moi.
-1. Chaque morceau a sa propre copie du projet. Chaque agent travaille dans sa copie, sans voir
-   les autres.
-2. Le tdd-writer fabrique, à raison d'un par morceau. Il suit une règle stricte : d'abord le
-   test, ensuite le code. Il écrit le test (« réserver un créneau pris doit être refusé »), vérifie
-   qu'il échoue, puisque le code n'existe pas encore, puis écrit juste assez de code pour qu'il
-   passe, et le met au propre. Il enregistre chaque étape à part : l'historique prouve donc que
-   le test est venu avant le code. À la fin, il ouvre une demande d'intégration (une « PR ») et
-   s'arrête. S'il tombe sur une question que sa mission ne règle pas, il ne tranche pas : il
-   prend l'option la plus facile à défaire et la signale.
-3. Deux relecteurs regardent le morceau en même temps. Aucun des deux ne l'a fabriqué, et aucun
-   ne le modifie. Le verifier lit le code, relance lui-même les tests, vérifie que chaque test a
-   précédé son code et que chaque phrase du contrat a son test. Il classe ce qu'il trouve en
-   trois niveaux : bloquant, important, à considérer. Le testeur ouvre l'application comme le
-   ferait un utilisateur, prend des captures d'écran et relève ce qui cloche : un bouton
-   invisible sur téléphone, une page qui plante.
-4. Le correcteur répare, s'il le faut. Il reçoit la liste des défauts et ne touche à rien
-   d'autre. Il ne passe qu'une fois. Pour chaque défaut, il écrit d'abord un test qui le montre,
-   puis il le corrige.
-5. Un rapport s'écrit dans chaque PR : ce qui a été fait, les preuves, les captures d'écran, les
-   questions laissées ouvertes. Puis tout s'arrête.
+### Étape 4 — Fabriquer (`run`)
+
+C'est la seule étape qui tourne entièrement sans moi.
+
+1. **Chaque livrable a sa propre copie du projet.** Chaque agent travaille dans sa copie, sans
+   voir les autres.
+2. **Le tdd-writer fabrique**, à raison d'un par livrable. Il suit une règle stricte : d'abord le
+   test, ensuite le code.
+   - Il écrit le test : « réserver un créneau pris doit être refusé ».
+   - Il vérifie que le test échoue, puisque le code n'existe pas encore.
+   - Il écrit juste assez de code pour que le test passe, puis il le met au propre.
+   - Il enregistre chaque étape à part. L'historique prouve donc que le test est venu avant le
+     code.
+
+   À la fin, il ouvre une demande d'intégration (une « PR ») et s'arrête. S'il tombe sur une
+   question que sa mission ne règle pas, il ne tranche pas : il prend l'option la plus facile à
+   défaire et la signale.
+3. **Deux relecteurs regardent le livrable en même temps.** Aucun des deux ne l'a fabriqué, et
+   aucun ne le modifie.
+   - Le verifier lit le code. Il relance lui-même les tests. Il vérifie que chaque test a
+     précédé son code et que chaque phrase du contrat a son test. Il classe ce qu'il trouve en
+     trois niveaux : bloquant, important, à considérer.
+   - Le testeur ouvre l'application, comme le ferait un utilisateur. Il prend des captures
+     d'écran et relève ce qui cloche : un bouton invisible sur téléphone, une page qui plante.
+4. **Le correcteur répare, s'il le faut.** Il reçoit la liste des défauts et ne touche à rien
+   d'autre. Il ne passe qu'une fois. Pour chaque défaut, il écrit d'abord un test qui le
+   montre, puis il le corrige.
+5. **Un rapport s'écrit dans chaque PR** : ce qui a été fait, les preuves, les captures d'écran,
+   les questions laissées ouvertes. Puis tout s'arrête.
 
 ![Le chef d'atelier et les six agents](/projets/pilot/agents.png)
 
 *Le chef d'atelier et les six agents : le rôle de chacun, et ce qu'il a le droit de faire. Seuls
 deux agents modifient le code.*
 
-**Étape 5 — Décider et apprendre (merge, puis `sync`).**
+### Étape 5 — Décider et apprendre (merge, puis `sync`)
+
 1. Je relis la PR et je décide de l'intégrer. C'est toujours moi qui le fais, jamais un agent :
    un verrou technique les en empêche. C'est aussi le moment où je réponds aux questions que les
    agents ont refusé de trancher.
 2. Claude remet le tableau à jour : statuts et dates.
-3. Il tire les leçons. Chaque erreur qui pourrait revenir devient une règle écrite, que les agents
-   liront la fois suivante. Exemple : au merge, je fais remarquer qu'un bouton d'annulation doit
-   toujours demander confirmation ; la remarque devient une règle du projet, et je n'ai plus à la
-   refaire.
+3. Il tire les leçons. Chaque erreur qui pourrait revenir devient une règle écrite, que les
+   agents liront la fois suivante. Exemple : au merge, je fais remarquer qu'un bouton
+   d'annulation doit toujours demander confirmation ; la remarque devient une règle du projet,
+   et je n'ai plus à la refaire.
 
 ![La PR qui livre la tâche Linear](/projets/pilot/pr.png)
 
 *La PR qui livre cette tâche, écrite par l'agent : le code de la tâche dans le titre, ce qui
 change expliqué en clair, acceptée par moi.*
 
-**Au quotidien : `next`.** Je n'ai pas à retenir l'ordre des étapes. Je tape `/pilot next`. Claude
-lit le tableau, résume en cinq lignes où on en est et propose l'étape suivante. Je réponds oui
-ou non. Pour une petite correction hors fonctionnalité, `/pilot fix` suffit : une tâche, un test,
-une PR, sans toute la chaîne.
+### Au quotidien : `next`
 
-**Ce qui compose la méthode.** Le tout tient dans des fichiers texte et quelques programmes,
-installés dans chaque projet en une commande.
+Je n'ai pas à retenir l'ordre des étapes. Je tape `/pilot next`. Claude lit le tableau, résume en
+cinq lignes où on en est et propose l'étape suivante. Je réponds oui ou non.
+
+Pour une petite correction hors fonctionnalité, `/pilot fix` suffit : une tâche, un test, une
+PR, sans toute la chaîne.
+
+### Ce qui compose la méthode
+
+Le tout tient dans des fichiers texte et quelques programmes, installés dans chaque projet en une
+commande.
 
 | Élément | Nombre | Ce que c'est concrètement | Rôle |
 |---|---|---|---|
@@ -155,7 +183,7 @@ installés dans chaque projet en une commande.
 | Outils | 3 | De vrais programmes, en Python ou en JavaScript, dans `.claude/tools/`. Deux sont branchés sur Claude Code par des « hooks » (des déclencheurs automatiques). | Faire ce qu'une machine fait mieux qu'un texte : mesurer, photographier, bloquer |
 | Scripts Linear | 4 | Des programmes Python qui parlent directement à Linear. | Faire ce que la connexion habituelle à Linear ne sait pas faire : créer la structure d'un tableau, dater, mesurer |
 
-**Les six skills.**
+### Les six skills
 
 | Skill | Ce qu'il y a dedans |
 |---|---|
@@ -166,14 +194,14 @@ installés dans chaque projet en une commande.
 | `research-assistant` | Comment mener une recherche sur un sujet et en tirer une synthèse. `init` l'utilise avant l'entretien. |
 | `rendu-fonctionnel` | Le format de mes comptes rendus : d'abord ce qui change pour moi, ensuite les détails techniques. |
 
-**Les 19 fiches de référence.**
+### Les 19 fiches de référence
 
 | Fiche | Ce qu'elle contient |
 |---|---|
 | *Pas-à-pas des commandes (5)* | |
 | `init.md` | La recherche, l'entretien, la page produit, la direction visuelle, le branchement de Linear, la mise en place du dépôt |
 | `roadmap.md` | Proposer les fonctionnalités, les créer et les dater dans Linear, préparer le système de design |
-| `feature.md` | Le cadrage avec son contrat, puis le découpage en morceaux et en tâches |
+| `feature.md` | Le cadrage avec son contrat, puis le découpage en livrables et en tâches |
 | `produire.md` | Les copies du projet, le lancement des agents, les relectures, la correction et le modèle du rapport de PR |
 | `suivre.md` | Les étapes de `next`, `fix`, `sync` et `benchmark`, dont la façon de transformer mes remarques de merge en règles |
 | *Règles d'un geste (8)* | |
@@ -189,19 +217,19 @@ installés dans chaque projet en une commande.
 | `template-feature.md` | Le formulaire d'une fiche feature : problème, ce que l'utilisateur pourra faire, décisions produit, contrat |
 | `template-tache.md` | Le formulaire d'une tâche : problème, ce qu'on fait, cases « Terminé quand », cas de test |
 | `template-bug.md` | Le formulaire d'un bug : comment le reproduire pas à pas, ce qui est attendu, ce qui arrive |
-| `MISSION.template.md` | L'ordre de mission d'un morceau livrable : ses fichiers, ses phrases du contrat, ses décisions |
+| `MISSION.template.md` | L'ordre de mission d'un livrable : ses fichiers, ses phrases du contrat, ses décisions |
 | `AGENT.template.md` | Comment s'écrit une fiche d'agent, pour en créer une ou en modifier une |
 | `section-pilot.md` | Le bloc à coller dans le `CLAUDE.md` d'un projet pour le déclarer piloté |
 
-**Les trois outils.**
+### Les trois outils de la méthode
 
 | Outil | Ce que c'est |
 |---|---|
-| `cout-agents` | Un programme Python qui lit les journaux des agents. Il donne, pour chaque morceau livrable, le temps passé et les jetons consommés. Un petit script ouvre un panneau de suivi en direct dès qu'un agent démarre. |
+| `cout-agents` | Un programme Python qui lit les journaux des agents. Il donne, pour chaque livrable, le temps passé et les jetons consommés. Un petit script ouvre un panneau de suivi en direct dès qu'un agent démarre. |
 | `passe-visuelle` | Un programme JavaScript qui ouvre l'application dans un navigateur invisible, prend les captures d'écran et mesure les défauts. Le testeur s'en sert. |
 | `verrou-git` | Un programme Python appelé avant chaque commande. Il refuse tout merge, tout envoi direct sur la branche principale et tout envoi forcé. Il a ses propres tests. |
 
-**Les règles qui la font tenir.**
+### Les règles qui la font tenir
 
 | Règle | Nombre | Rôle | Détail |
 |---|---|---|---|
@@ -209,27 +237,29 @@ installés dans chaque projet en une commande.
 | Validations par projet | 2, plus 2 avec des écrans | Vérifier que le produit et son plan sont les bons avant de construire | la page produit et la liste des fonctionnalités ; avec des écrans, la direction visuelle et le système de design |
 | Validations par fonctionnalité | 4 | Garder la main là où une erreur coûte cher, et nulle part ailleurs | le contrat, le découpage, le merge, les règles à retenir |
 | Phrases du contrat | 10 à 30 | Dire avant le code ce qui devra être vrai, pour juger le résultat dessus | dont au moins un tiers de refus |
-| PR par morceau livrable | 1 | Livrer par petits morceaux, faciles à relire et à défaire | |
+| PR par livrable | 1 | Livrer par petits livrables, faciles à relire et à défaire | |
 | Passages du correcteur | 1 | Empêcher une boucle de corrections sans fin, qui coûte sans aboutir | jamais de deuxième tour |
 | Niveaux de gravité | 3 | Montrer d'un coup d'œil ce qui bloque et ce qui peut attendre | bloquant, important, à considérer |
 | Statuts d'une fonctionnalité | 6 | Dire où en est chaque fonctionnalité ; c'est Claude qui les pose | À cadrer, Planifiée, En développement, En revue, Terminée, Rétro faite |
 | Statuts d'une tâche | 5 | Dire où en est chaque tâche ; c'est GitHub qui les met à jour | plus Bloquée et Annulée |
 
-**Les six agents.** La limite est le nombre maximal d'échanges d'un agent ; au-delà, il est
+### Les six agents
+
+La limite est le nombre maximal d'échanges d'un agent ; au-delà, il est
 arrêté. Fable sert à juger, Opus à fabriquer, Sonnet à exécuter.
 
 | Agent | Quand | Ce qu'il fait | Ce qu'il ne fait jamais | Modèle | Limite |
 |---|---|---|---|---|---|
 | contradicteur | Liste des fonctionnalités, préparation d'une fonctionnalité | Cherche ce qui manque ou se contredit | Répondre à ma place | Fable | 50 |
-| découpeur | Préparation d'une fonctionnalité | Partage le travail en morceaux qui ne se gênent pas | Décider seul | Fable | 70 |
-| tdd-writer | Fabrication | Écrit le test, puis le code, puis ouvre la PR | Sortir de son morceau | Opus | 150 |
+| découpeur | Préparation d'une fonctionnalité | Partage le travail en livrables qui ne se gênent pas | Décider seul | Fable | 70 |
+| tdd-writer | Fabrication | Écrit le test, puis le code, puis ouvre la PR | Sortir de son livrable | Opus | 150 |
 | verifier | Après la fabrication | Relit le code et vérifie les preuves | Corriger | Fable | 50 |
 | testeur | Après la fabrication | Utilise l'application et prend des captures | Corriger | Sonnet | 60 |
 | correcteur | Après les relectures | Répare la liste des défauts, une seule fois | Toucher à autre chose | Opus | 80 |
 
 ## Preuves
 
-État au 15/10/2026 : utilisée tous les jours sur mes projets ; publiée le 09/10/2026.
+État au 15/10/2026 : utilisée tous les jours sur mes projets.
 
 - **Ce site.** 67 livraisons depuis le 29/08/2026, chacune avec sa tâche Linear et sa PR relue
   avant d'être acceptée.
@@ -242,9 +272,6 @@ arrêté. Fable sert à juger, Opus à fabriquer, Sonnet à exécuter.
   données entre comptes, tous corrigés avant que je les voie. Une fonctionnalité que j'estimais à
   2,44 h de travail est sortie en 0,66 h.
 
-Ce qui reste à prouver : je suis toujours devant l'écran pendant que les agents travaillent ; le
-mode « je lance deux chantiers et je reviens le soir » n'est pas encore fait.
-
 ## Ce que j'en ai appris
 
 - **Des tests qui passent ne disent pas que le code est sûr.** Ce qui attrape les vrais défauts,
@@ -253,8 +280,8 @@ mode « je lance deux chantiers et je reviens le soir » n'est pas encore fait.
   que personne ne l'avait demandé. C'est ce qui m'a fait ajouter le testeur, qui regarde l'écran.
 - **Le contrat doit dire ce qui est interdit, pas seulement ce qui est attendu.** La plupart des
   défauts venaient de cas négatifs que personne n'avait écrits.
-- **Le modèle le plus puissant n'est pas le meilleur partout.** Pour juger, il voit plus. Pour
-  exécuter une consigne précise, un modèle moins cher fait le même travail.
+- **Le modèle le plus puissant n'est pas le meilleur partout.** Pour juger, il voit plus. Mais un
+  modèle moins compétent est plus adapté à certaines tâches, comme exécuter une consigne précise.
 
 ## Artefacts
 
