@@ -48,4 +48,9 @@ describe("texteBrut (PFO-111)", () => {
       "1. Je relis la PR.\n2. Claude remet le tableau à jour.",
     );
   });
+
+  it("décale de deux espaces une liste dans une liste", () => {
+    const md = ["2. Le tdd-writer fabrique.", "   - Il écrit le test.", "   - Il écrit le code."].join("\n");
+    expect(texteBrut(md, SITE)).toBe(["2. Le tdd-writer fabrique.", "  - Il écrit le test.", "  - Il écrit le code."].join("\n"));
+  });
 });
