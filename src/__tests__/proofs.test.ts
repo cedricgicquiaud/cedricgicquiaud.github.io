@@ -68,6 +68,24 @@ describe("buildProofs — les fiches (PFO-112)", () => {
     });
   });
 
+  it("refuse une valeur non-URL : SLICE (« à venir… ») sort une démo vide", () => {
+    const slice = buildProofs().fiches.find((f) => f.slug === "slice");
+    expect(slice?.demo).toBe("");
+    expect(Object.values(slice ?? {})).not.toContain("à venir (mise en ligne prévue)");
+  });
+
+  it("refuse les liens d'une fiche anonyme, même déclarés dans la source", () => {
+    const dir = fichesDir({
+      "coach.md": ficheMd("Coach", { visibilite: "anonyme", depot: "https://github.com/x/coach", demo: "https://coach.giveme5xxxxx.fr" }),
+    });
+    expect(buildProofs({ fichesDir: dir }).fiches[0]).toMatchObject({ depot: "", demo: "" });
+  });
+
+  it("refuse une fiche rangée dans archives/", () => {
+    const dir = fichesDir({ "alpha.md": ficheMd("Alpha"), "archives/foreman.md": ficheMd("Foreman") });
+    expect(buildProofs({ fichesDir: dir }).fiches.map((f) => f.slug)).toEqual(["alpha"]);
+  });
+
   it("reprend mot pour mot l'accroche En bref de la page de chaque fiche", () => {
     for (const { slug, enBref } of buildProofs().fiches) {
       const { container, unmount } = render(createElement(Fiche, { fiche: loadFiche(slug) }));
