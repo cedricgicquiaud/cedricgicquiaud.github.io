@@ -1,7 +1,8 @@
-import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { cleanup, render } from "@testing-library/react";
+import Ajv2020 from "ajv/dist/2020";
 import { createElement } from "react";
 import { afterEach, describe, expect, it } from "vitest";
 import { Experience } from "../../components/experience";
@@ -183,5 +184,18 @@ describe("buildProofs — ce qui n'y figure pas (PFO-112)", () => {
     expect(cles(buildProofs()).filter((k) => /date|gener|genere/i.test(k))).toEqual([]);
     expect(JSON.stringify(buildProofs())).toBe(avant);
     expect(avant).not.toMatch(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}/);
+  });
+});
+
+describe("Le schéma public /proofs.schema.json (PFO-113)", () => {
+  const schema = JSON.parse(readFileSync(path.join(__dirname, "../../public/proofs.schema.json"), "utf8"));
+  const valide = new Ajv2020({ allErrors: true }).compile(schema);
+  /** Une copie modifiable de l'objet produit. */
+  const copie = () => JSON.parse(JSON.stringify(buildProofs()));
+
+  it("refuse une fiche sans `url`", () => {
+    const proofs = copie();
+    delete proofs.fiches[0].url;
+    expect(valide(proofs)).toBe(false);
   });
 });
