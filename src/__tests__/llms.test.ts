@@ -4,6 +4,7 @@ import path from "node:path";
 import { cleanup, render } from "@testing-library/react";
 import { createElement } from "react";
 import { afterEach, describe, expect, it } from "vitest";
+import { GET } from "../../app/llms.txt/route";
 import { Experience } from "../../components/experience";
 import { Projects } from "../../components/projects";
 import { buildLlms } from "../../lib/llms";
@@ -126,5 +127,13 @@ describe("buildLlms — les données (PFO-116)", () => {
 
   it("pointe aussi vers le schéma de proofs.json, en lien absolu", () => {
     expect(blocs(buildLlms()).at(-1)).toMatch(/^- \[proofs\.schema\.json\]\(https:\/\/cedricgicquiaud\.github\.io\/proofs\.schema\.json\) : /m);
+  });
+});
+
+describe("La route /llms.txt (PFO-117)", () => {
+  it("répond en texte brut UTF-8 avec le texte de lib/llms.ts", async () => {
+    const reponse = GET();
+    expect(reponse.headers.get("Content-Type")).toBe("text/plain; charset=utf-8");
+    expect(await reponse.text()).toBe(buildLlms());
   });
 });
