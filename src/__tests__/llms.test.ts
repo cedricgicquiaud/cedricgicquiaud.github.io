@@ -1,8 +1,13 @@
 import { copyFileSync, mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
+import { cleanup, render } from "@testing-library/react";
+import { createElement } from "react";
+import { afterEach, describe, expect, it } from "vitest";
+import { Projects } from "../../components/projects";
 import { buildLlms } from "../../lib/llms";
+
+afterEach(cleanup);
 
 // PFO-116 : llms.txt, le sommaire du site au format llmstxt.org.
 const CONTENT = path.join(__dirname, "../../content");
@@ -68,5 +73,13 @@ describe("buildLlms — les projets (PFO-116)", () => {
         "- [Alpha](https://cedricgicquiaud.github.io/projets/alpha/) : Un outil de suivi. 3 clients. Code public.",
       ].join("\n"),
     );
+  });
+
+  it("donne les fiches des cartes de l'accueil, dans le même ordre, chacune avec l'URL absolue de sa page", () => {
+    const { container } = render(createElement(Projects));
+    const cartes = Array.from(container.querySelectorAll("h3 a")).map((a) => `https://cedricgicquiaud.github.io${a.getAttribute("href")}`);
+    const liens = Array.from(buildLlms().matchAll(/^- \[[^\]]+\]\(([^)]+)\) : /gm), (m) => m[1]);
+    expect(cartes).toHaveLength(8);
+    expect(liens).toEqual(cartes);
   });
 });
