@@ -86,3 +86,30 @@ describe("Les fiches de content/fiches/ en texte brut (PFO-111)", () => {
     });
   }
 });
+
+describe("La fiche PILOT en texte brut (PFO-111)", () => {
+  const pilot = loadFiches().find((f) => f.slug === "pilot");
+  const construit = texteBrut(pilot?.sections.find((s) => s.id === "construit")?.markdown ?? "", SITE);
+
+  it("écrit le tableau des agents en titre puis une ligne par agent", () => {
+    expect(construit).toContain(
+      [
+        "Agent — Quand — Ce qu'il fait — Ce qu'il ne fait jamais — Modèle — Limite",
+        "- contradicteur — Liste des fonctionnalités, préparation d'une fonctionnalité — Cherche ce qui manque ou se contredit — Répondre à ma place — Fable — 50",
+      ].join("\n"),
+    );
+    expect(construit).toContain("- correcteur — Après les relectures — Répare la liste des défauts, une seule fois — Toucher à autre chose — Opus — 80");
+  });
+
+  it("écrit ses trois images en « Image : légende (URL absolue) »", () => {
+    expect(construit).toContain(
+      "Image : Une tâche réelle de l'application mobile de santé dans Linear (https://cedricgicquiaud.github.io/projets/pilot/linear.png)",
+    );
+    expect(construit).toContain("Image : Le chef d'atelier et les six agents (https://cedricgicquiaud.github.io/projets/pilot/agents.png)");
+    expect(construit).toContain("Image : Une PR réelle de ce site, écrite par l'agent (https://cedricgicquiaud.github.io/projets/pilot/pr.png)");
+  });
+
+  it("écrit ses sous-titres ### en lignes simples", () => {
+    expect(construit).toContain("\n\nÉtape 1 — Comprendre le projet (init)\n\n");
+  });
+});
