@@ -13,6 +13,7 @@ export type ProofFiche = {
   demo: string;
   enBref: string;
   chiffres: Chiffre[];
+  captures: { legende: string; url: string }[];
 };
 export type Proofs = { fiches: ProofFiche[] };
 
@@ -22,7 +23,7 @@ export type Proofs = { fiches: ProofFiche[] };
  */
 export function buildProofs({ fichesDir }: { fichesDir?: string } = {}): Proofs {
   return {
-    fiches: loadFiches(fichesDir).map(({ slug, frontmatter, enBref, chiffres = [] }) => ({
+    fiches: loadFiches(fichesDir).map(({ slug, frontmatter, enBref, chiffres = [], captures = [] }) => ({
       slug,
       nom: frontmatter.nom,
       url: `${site.url}/projets/${slug}/`,
@@ -36,6 +37,7 @@ export function buildProofs({ fichesDir }: { fichesDir?: string } = {}): Proofs 
       // Même accroche que la page de la fiche (components/fiche.tsx) : les trois phrases bout à bout.
       enBref: [enBref.quoi, enBref.chiffre, enBref.lien].filter(Boolean).join(" "),
       chiffres,
+      captures: captures.map(({ fichier, legende }) => ({ legende, url: site.url + fichier })),
     })),
   };
 }
