@@ -123,4 +123,8 @@ describe("buildLlms — les données (PFO-116)", () => {
     expect(texte.at(-2)).toBe("## Données");
     expect(texte.at(-1)).toMatch(/^- \[proofs\.json\]\(https:\/\/cedricgicquiaud\.github\.io\/proofs\.json\) : /);
   });
+
+  it("pointe aussi vers le schéma de proofs.json, en lien absolu", () => {
+    expect(blocs(buildLlms()).at(-1)).toMatch(/^- \[proofs\.schema\.json\]\(https:\/\/cedricgicquiaud\.github\.io\/proofs\.schema\.json\) : /m);
+  });
 });
