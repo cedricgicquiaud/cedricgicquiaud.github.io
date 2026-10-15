@@ -30,7 +30,14 @@ function block(t: Token, site: string): string {
     return [rangee(table.header, site), ...table.rows.map((r) => `- ${rangee(r, site)}`)].join("\n");
   }
   if (t.type === "list") {
-    return (t as Tokens.List).items.map((item) => `- ${item.tokens.map((b) => block(b, site)).filter(Boolean).join("\n")}`).join("\n");
+    const list = t as Tokens.List;
+    const debut = Number(list.start) || 1;
+    return list.items
+      .map((item, i) => {
+        const puce = list.ordered ? `${debut + i}.` : "-";
+        return `${puce} ${item.tokens.map((b) => block(b, site)).filter(Boolean).join("\n")}`;
+      })
+      .join("\n");
   }
   return "tokens" in t && t.tokens ? inline(t.tokens, site) : "";
 }
