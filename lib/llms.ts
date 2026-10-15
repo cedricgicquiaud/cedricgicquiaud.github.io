@@ -39,6 +39,9 @@ export function buildLlms({ contentDir = defaultContentDir, fichesDir }: { conte
     "## Parcours",
     parcours(contentDir),
     "## Données",
-    `- [proofs.json](${site.url}/proofs.json) : les mêmes fiches et le même parcours en JSON, sections comprises`,
+    [
+      `- [proofs.json](${site.url}/proofs.json) : les mêmes fiches et le même parcours en JSON, sections comprises`,
+      `- [proofs.schema.json](${site.url}/proofs.schema.json) : le schéma de proofs.json, chaque champ décrit`,
+    ].join("\n"),
   ].join("\n\n");
 }
