@@ -193,6 +193,12 @@ describe("Le schéma public /proofs.schema.json (PFO-113)", () => {
   /** Une copie modifiable de l'objet produit. */
   const copie = () => JSON.parse(JSON.stringify(buildProofs()));
 
+  it("valide l'objet produit par buildProofs", () => {
+    const ok = valide(buildProofs());
+    expect(valide.errors ?? [], JSON.stringify(valide.errors)).toEqual([]);
+    expect(ok).toBe(true);
+  });
+
   it("refuse une fiche sans `url`", () => {
     const proofs = copie();
     delete proofs.fiches[0].url;
