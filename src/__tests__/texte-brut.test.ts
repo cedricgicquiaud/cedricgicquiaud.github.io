@@ -64,6 +64,10 @@ describe("texteBrut (PFO-111)", () => {
     expect(texteBrut("Un <strong>mot</strong> clé.<br>\n\n<div>Bloc</div>", SITE)).toBe("Un mot clé.\n\nBloc");
   });
 
+  it("écrit le code sans accents graves, un paramètre `<nom>` entre guillemets", () => {
+    expect(texteBrut("On tape `/pilot <commande>` dans `SKILL.md`.", SITE)).toBe("On tape /pilot «commande» dans SKILL.md.");
+  });
+
   it("sépare deux paragraphes par une ligne vide", () => {
     expect(texteBrut("Premier.\n\nSecond.", SITE)).toBe("Premier.\n\nSecond.");
   });
