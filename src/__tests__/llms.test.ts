@@ -13,7 +13,7 @@ import { ensureBuild } from "./helpers/build";
 
 afterEach(cleanup);
 
-// PFO-116 : llms.txt, le sommaire du site au format llmstxt.org.
+// PFO-116 : llms.txt, le sommaire du site au format llmstxt.org ; PFO-117 : sa sortie au build.
 const ROOT = path.join(__dirname, "../..");
 const CONTENT = path.join(ROOT, "content");
 
