@@ -4,6 +4,7 @@ import path from "node:path";
 import { cleanup, render } from "@testing-library/react";
 import { createElement } from "react";
 import { afterEach, describe, expect, it } from "vitest";
+import { Experience } from "../../components/experience";
 import { Projects } from "../../components/projects";
 import { buildLlms } from "../../lib/llms";
 
@@ -98,5 +99,18 @@ describe("buildLlms — les projets (PFO-116)", () => {
     expect(buildLlms({ fichesDir: dir })).toContain(" : Un outil de suivi. 3 clients. Code public.");
     writeFileSync(path.join(dir, "alpha.md"), ficheMd("Alpha", 1, "Un outil de suivi. 12 clients. Code public."));
     expect(buildLlms({ fichesDir: dir })).toContain(" : Un outil de suivi. 12 clients. Code public.");
+  });
+});
+
+describe("buildLlms — le parcours (PFO-116)", () => {
+  it("donne un poste par ligne, « période — rôle, secteur », dans l'ordre de la section Expérience", () => {
+    const { container } = render(createElement(Experience));
+    const postes = Array.from(container.querySelectorAll("article")).map((article) => {
+      const [periode, secteur] = Array.from(article.querySelectorAll("p")).map((p) => p.textContent);
+      return `- ${periode} — ${article.querySelector("h3")?.textContent}, ${secteur}`;
+    });
+    expect(postes.length).toBeGreaterThan(0);
+    const texte = blocs(buildLlms());
+    expect(texte[texte.indexOf("## Parcours") + 1]).toBe(postes.join("\n"));
   });
 });
