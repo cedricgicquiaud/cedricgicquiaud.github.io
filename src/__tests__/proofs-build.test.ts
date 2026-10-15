@@ -6,7 +6,7 @@ import { ensureBuild } from "./helpers/build";
 // PFO-114 : proofs.json sort du build, à la racine de out/.
 const root = path.resolve(__dirname, "../..");
 const out = (fichier: string) => path.join(root, "out", fichier);
-const SOURCES = ["lib/proofs.ts", "lib/texte-brut.ts", "lib/fiches.ts", "content/site.json", "app/page.tsx"];
+const SOURCES = ["app/proofs.json/route.ts", "lib/proofs.ts", "lib/texte-brut.ts", "lib/fiches.ts", "content/site.json", "app/page.tsx"];
 
 describe("proofs.json dans out/ (PFO-114)", () => {
   beforeAll(() => ensureBuild(SOURCES, { marker: "out/proofs.json" }), 300_000);
