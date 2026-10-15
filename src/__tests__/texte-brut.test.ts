@@ -60,6 +60,10 @@ describe("texteBrut (PFO-111)", () => {
     );
   });
 
+  it("retire les balises HTML et garde leur texte", () => {
+    expect(texteBrut("Un <strong>mot</strong> clé.<br>\n\n<div>Bloc</div>", SITE)).toBe("Un mot clé.\n\nBloc");
+  });
+
   it("sépare deux paragraphes par une ligne vide", () => {
     expect(texteBrut("Premier.\n\nSecond.", SITE)).toBe("Premier.\n\nSecond.");
   });
