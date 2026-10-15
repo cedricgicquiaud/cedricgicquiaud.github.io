@@ -114,3 +114,11 @@ describe("buildLlms — le parcours (PFO-116)", () => {
     expect(texte[texte.indexOf("## Parcours") + 1]).toBe(postes.join("\n"));
   });
 });
+
+describe("buildLlms — les données (PFO-116)", () => {
+  it("termine par une section Données qui pointe vers proofs.json, en lien absolu", () => {
+    const texte = blocs(buildLlms());
+    expect(texte.at(-2)).toBe("## Données");
+    expect(texte.at(-1)).toMatch(/^- \[proofs\.json\]\(https:\/\/cedricgicquiaud\.github\.io\/proofs\.json\) : /);
+  });
+});
