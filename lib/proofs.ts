@@ -1,5 +1,6 @@
 import site from "../content/site.json";
 import { loadFiches, type Chiffre, type Visibilite } from "./fiches";
+import { texteBrut } from "./texte-brut";
 
 export type ProofFiche = {
   slug: string;
@@ -14,6 +15,7 @@ export type ProofFiche = {
   enBref: string;
   chiffres: Chiffre[];
   captures: { legende: string; url: string }[];
+  sections: { titre: string; texte: string }[];
 };
 export type Proofs = { fiches: ProofFiche[] };
 
@@ -23,7 +25,7 @@ export type Proofs = { fiches: ProofFiche[] };
  */
 export function buildProofs({ fichesDir }: { fichesDir?: string } = {}): Proofs {
   return {
-    fiches: loadFiches(fichesDir).map(({ slug, frontmatter, enBref, chiffres = [], captures = [] }) => ({
+    fiches: loadFiches(fichesDir).map(({ slug, frontmatter, enBref, chiffres = [], captures = [], sections }) => ({
       slug,
       nom: frontmatter.nom,
       url: `${site.url}/projets/${slug}/`,
@@ -38,6 +40,7 @@ export function buildProofs({ fichesDir }: { fichesDir?: string } = {}): Proofs 
       enBref: [enBref.quoi, enBref.chiffre, enBref.lien].filter(Boolean).join(" "),
       chiffres,
       captures: captures.map(({ fichier, legende }) => ({ legende, url: site.url + fichier })),
+      sections: sections.map(({ titre, markdown = "" }) => ({ titre, texte: texteBrut(markdown, site.url) })),
     })),
   };
 }
