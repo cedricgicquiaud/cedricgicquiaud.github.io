@@ -3,7 +3,16 @@
   "$id": "https://cedricgicquiaud.github.io/proofs.schema.json",
   "title": "Preuves de Cédric Gicquiaud",
   "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "nom", "titre", "email", "github", "linkedin", "url", "fiches", "parcours"],
   "properties": {
+    "version": { "type": "string" },
+    "nom": { "type": "string" },
+    "titre": { "type": "string" },
+    "email": { "type": "string" },
+    "github": { "type": "string" },
+    "linkedin": { "type": "string" },
+    "url": { "type": "string" },
     "fiches": {
       "type": "array",
       "items": {
@@ -21,9 +30,57 @@
           "depot": { "type": "string" },
           "demo": { "type": "string" },
           "enBref": { "type": "string" },
-          "chiffres": { "type": "array" },
-          "captures": { "type": "array" },
-          "sections": { "type": "array" }
+          "chiffres": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["valeur", "libelle"],
+              "properties": {
+                "valeur": { "type": "string" },
+                "libelle": { "type": "string" }
+              }
+            }
+          },
+          "captures": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["legende", "url"],
+              "properties": {
+                "legende": { "type": "string" },
+                "url": { "type": "string" }
+              }
+            }
+          },
+          "sections": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["titre", "texte"],
+              "properties": {
+                "titre": { "type": "string" },
+                "texte": { "type": "string" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "parcours": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["periode", "role", "secteur", "description", "tags"],
+        "properties": {
+          "periode": { "type": "string" },
+          "role": { "type": "string" },
+          "secteur": { "type": "string" },
+          "description": { "type": "string" },
+          "tags": { "type": "array", "items": { "type": "string" } }
         }
       }
     }
