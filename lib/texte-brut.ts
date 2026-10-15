@@ -19,9 +19,9 @@ function inline(tokens: Token[], site: string): string {
     .join("");
 }
 
-/** Cellules d'une rangée, séparées par « — ». */
+/** Cellules non vides d'une rangée, séparées par « — ». */
 const rangee = (cells: Tokens.TableCell[], site: string): string =>
-  cells.map((c) => inline(c.tokens, site)).join(" — ");
+  cells.map((c) => inline(c.tokens, site)).filter(Boolean).join(" — ");
 
 /** Texte d'un bloc Markdown ; un tableau donne son en-tête puis une ligne « - … » par rangée. */
 function block(t: Token, site: string): string {
