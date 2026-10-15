@@ -1,8 +1,13 @@
 import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
+import { cleanup, render } from "@testing-library/react";
+import { createElement } from "react";
+import { afterEach, describe, expect, it } from "vitest";
+import { Projects } from "../../components/projects";
 import { buildProofs } from "../../lib/proofs";
+
+afterEach(cleanup);
 
 // PFO-112 : proofs.json assemblé depuis les fiches et le parcours.
 
@@ -31,5 +36,12 @@ describe("buildProofs — les fiches (PFO-112)", () => {
       "gamma.md": ficheMd("Gamma"),
     });
     expect(buildProofs({ fichesDir: dir }).fiches.map((f) => f.slug)).toEqual(["beta", "alpha", "gamma"]);
+  });
+
+  it("donne les fiches des cartes de l'accueil, dans le même ordre, chacune avec l'URL absolue de sa page", () => {
+    const { container } = render(createElement(Projects));
+    const cartes = Array.from(container.querySelectorAll("h3 a")).map((a) => `https://cedricgicquiaud.github.io${a.getAttribute("href")}`);
+    expect(cartes).toHaveLength(8);
+    expect(buildProofs().fiches.map((f) => f.url)).toEqual(cartes);
   });
 });
