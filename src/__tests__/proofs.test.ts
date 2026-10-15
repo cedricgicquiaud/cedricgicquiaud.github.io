@@ -9,7 +9,7 @@ import { Experience } from "../../components/experience";
 import { Fiche } from "../../components/fiche";
 import { Projects } from "../../components/projects";
 import { loadFiche } from "../../lib/fiches";
-import { buildProofs } from "../../lib/proofs";
+import { buildProofs, type Proofs } from "../../lib/proofs";
 
 afterEach(cleanup);
 
@@ -191,7 +191,7 @@ describe("Le schéma public /proofs.schema.json (PFO-113)", () => {
   const schema = JSON.parse(readFileSync(path.join(__dirname, "../../public/proofs.schema.json"), "utf8"));
   const valide = new Ajv2020({ allErrors: true }).compile(schema);
   /** Une copie modifiable de l'objet produit. */
-  const copie = () => JSON.parse(JSON.stringify(buildProofs()));
+  const copie = (): Proofs => structuredClone(buildProofs());
 
   it("valide l'objet produit par buildProofs", () => {
     const ok = valide(buildProofs());
@@ -218,25 +218,25 @@ describe("Le schéma public /proofs.schema.json (PFO-113)", () => {
 
   it("refuse une fiche sans `url`", () => {
     const proofs = copie();
-    delete proofs.fiches[0].url;
+    Reflect.deleteProperty(proofs.fiches[0], "url");
     expect(valide(proofs)).toBe(false);
   });
 
-  it.each([
-    ["l'en-tête", (p: any) => p],
-    ["un poste du parcours", (p: any) => p.parcours[0]],
-    ["un chiffre clé", (p: any) => p.fiches.find((f: any) => f.chiffres.length).chiffres[0]],
-    ["une capture", (p: any) => p.fiches.find((f: any) => f.captures.length).captures[0]],
-    ["une section", (p: any) => p.fiches[0].sections[0]],
+  it.each<[string, (p: Proofs) => object | undefined]>([
+    ["l'en-tête", (p) => p],
+    ["un poste du parcours", (p) => p.parcours[0]],
+    ["un chiffre clé", (p) => p.fiches.find((f) => f.chiffres.length)?.chiffres[0]],
+    ["une capture", (p) => p.fiches.find((f) => f.captures.length)?.captures[0]],
+    ["une section", (p) => p.fiches[0].sections[0]],
   ])("refuse une clé inconnue dans %s", (_, cible) => {
     const proofs = copie();
-    cible(proofs).inconnue = "x";
+    Object.assign(cible(proofs) ?? {}, { inconnue: "x" });
     expect(valide(proofs)).toBe(false);
   });
 
   it("refuse une clé `statut` ajoutée à une fiche", () => {
     const proofs = copie();
-    proofs.fiches[0].statut = "en cours";
+    Object.assign(proofs.fiches[0], { statut: "en cours" });
     expect(valide(proofs)).toBe(false);
   });
 });
