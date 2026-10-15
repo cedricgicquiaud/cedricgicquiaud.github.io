@@ -41,7 +41,8 @@ function block(t: Token, site: string): string {
       })
       .join("\n");
   }
-  return "tokens" in t && t.tokens ? inline(t.tokens, site) : "";
+  // Paragraphe, titre : une ligne, même si le Markdown coupait la phrase.
+  return "tokens" in t && t.tokens ? inline(t.tokens, site).replace(/\s*\n\s*/g, " ") : "";
 }
 
 /**
