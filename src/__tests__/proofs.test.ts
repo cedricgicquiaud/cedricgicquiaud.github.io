@@ -4,6 +4,7 @@ import path from "node:path";
 import { cleanup, render } from "@testing-library/react";
 import { createElement } from "react";
 import { afterEach, describe, expect, it } from "vitest";
+import { Experience } from "../../components/experience";
 import { Fiche } from "../../components/fiche";
 import { Projects } from "../../components/projects";
 import { loadFiche } from "../../lib/fiches";
@@ -144,5 +145,19 @@ describe("buildProofs — l'en-tête (PFO-112)", () => {
       linkedin: "https://www.linkedin.com/in/cedric-gicquiaud/",
       url: "https://cedricgicquiaud.github.io",
     });
+  });
+});
+
+describe("buildProofs — le parcours (PFO-112)", () => {
+  it("reprend les postes de la section Expérience, dans le même ordre, employeur compris", () => {
+    const { container } = render(createElement(Experience));
+    const postes = Array.from(container.querySelectorAll("article")).map((article) => {
+      const [periode, secteur, description] = Array.from(article.querySelectorAll("p")).map((p) => p.textContent);
+      const role = article.querySelector("h3")?.textContent;
+      const tags = Array.from(article.querySelectorAll("li")).map((li) => li.textContent);
+      return { periode, role, secteur, description, tags };
+    });
+    expect(postes.length).toBeGreaterThan(0);
+    expect(buildProofs().parcours).toEqual(postes);
   });
 });
