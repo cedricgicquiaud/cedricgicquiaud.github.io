@@ -86,6 +86,24 @@ describe("buildProofs — les fiches (PFO-112)", () => {
     ]);
   });
 
+  it("donne les cinq sections en texte brut, Artefacts compris", () => {
+    const corps = [
+      "## Problème", "", "Un **vrai** besoin.", "",
+      "## Ce que j'ai construit", "", "Un outil.", "",
+      "## Preuves", "", "- 3 clients.", "",
+      "## Ce que j'en ai appris", "", "Tester avant.", "",
+      "## Artefacts", "", "- [Le dépôt](https://github.com/x/alpha)",
+    ].join("\n");
+    const dir = fichesDir({ "alpha.md": ficheMd("Alpha", {}, corps) });
+    expect(buildProofs({ fichesDir: dir }).fiches[0].sections).toEqual([
+      { titre: "Problème", texte: "Un vrai besoin." },
+      { titre: "Ce que j'ai construit", texte: "Un outil." },
+      { titre: "Preuves", texte: "- 3 clients." },
+      { titre: "Ce que j'en ai appris", texte: "Tester avant." },
+      { titre: "Artefacts", texte: "- Le dépôt (https://github.com/x/alpha)" },
+    ]);
+  });
+
   it("refuse une valeur non-URL : SLICE (« à venir… ») sort une démo vide", () => {
     const slice = buildProofs().fiches.find((f) => f.slug === "slice");
     expect(slice?.demo).toBe("");
