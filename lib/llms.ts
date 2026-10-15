@@ -3,6 +3,7 @@ import path from "node:path";
 import matter from "gray-matter";
 import site from "../content/site.json";
 import { contentDir as defaultContentDir } from "./content";
+import { buildProofs } from "./proofs";
 import { texteBrut } from "./texte-brut";
 
 /** Le premier paragraphe de `about.md`, en texte brut, liens absolus. */
@@ -11,9 +12,16 @@ function premierParagraphe(contentDir: string): string {
   return texteBrut(content, site.url).split("\n\n")[0];
 }
 
+/** Une ligne par fiche, celles de proofs.json : même ordre, même URL, même accroche En bref. */
+function projets(fichesDir?: string): string {
+  return buildProofs({ fichesDir })
+    .fiches.map(({ nom, url, enBref }) => `- [${nom}](${url}) : ${enBref}`)
+    .join("\n");
+}
+
 /**
  * Le contenu de `/llms.txt` : le sommaire du site au format llmstxt.org, pour un agent IA (PFO-116).
  */
-export function buildLlms({ contentDir = defaultContentDir }: { contentDir?: string } = {}): string {
-  return [`# ${site.name}`, `> ${site.title}`, premierParagraphe(contentDir)].join("\n\n");
+export function buildLlms({ contentDir = defaultContentDir, fichesDir }: { contentDir?: string; fichesDir?: string } = {}): string {
+  return [`# ${site.name}`, `> ${site.title}`, premierParagraphe(contentDir), "## Projets", projets(fichesDir)].join("\n\n");
 }
