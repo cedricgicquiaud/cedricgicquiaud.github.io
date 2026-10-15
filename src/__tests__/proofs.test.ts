@@ -68,6 +68,12 @@ describe("buildProofs — les fiches (PFO-112)", () => {
     });
   });
 
+  it("donne les chiffres clés de la fiche, une liste vide sans champ `chiffres`", () => {
+    const avec = ficheMd("Alpha").replace("---\n\n", 'chiffres:\n  - valeur: "500"\n    libelle: vraies API passées\n---\n\n');
+    const dir = fichesDir({ "alpha.md": avec, "beta.md": ficheMd("Beta") });
+    expect(buildProofs({ fichesDir: dir }).fiches.map((f) => f.chiffres)).toEqual([[{ valeur: "500", libelle: "vraies API passées" }], []]);
+  });
+
   it("refuse une valeur non-URL : SLICE (« à venir… ») sort une démo vide", () => {
     const slice = buildProofs().fiches.find((f) => f.slug === "slice");
     expect(slice?.demo).toBe("");
