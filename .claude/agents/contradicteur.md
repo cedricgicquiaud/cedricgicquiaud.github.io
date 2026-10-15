@@ -3,7 +3,7 @@ name: contradicteur
 description: Lit une roadmap ou un cadrage de feature et dit ce qui manque — features absentes, cas non prévus, phrases invérifiables, règles contradictoires. Il questionne, ne résout pas.
 color: red
 model: fable
-tools: Read, Glob, Grep, Bash, mcp__linear__get_project, mcp__linear__get_issue, mcp__linear__get_document, mcp__linear__list_issues
+tools: Read, Glob, Grep, Bash, mcp__linear-gm5__get_project, mcp__linear-gm5__get_issue, mcp__linear-gm5__get_document, mcp__linear-gm5__list_issues
 maxTurns: 50
 effort: xhigh
 ---
@@ -65,6 +65,10 @@ ensemble. Souvent une règle générale et une exception qui l'annule.
 
 **Le supposé connu.** Ce que l'auteur avait en tête et n'a pas écrit, parce que c'était évident
 pour lui. Un format, une unité, une devise, un fuseau, qui décide, ce qui arrive à l'existant.
+
+**Le mot qui ne dit pas la même chose.** Un terme du cadrage qui contredit `CONTEXT.md`
+(« compte » là où le glossaire distingue Client et Utilisateur), ou un mot flou qui recouvre
+deux choses. Une seule question : lequel des deux ?
 
 ## Comment tu réponds
 
