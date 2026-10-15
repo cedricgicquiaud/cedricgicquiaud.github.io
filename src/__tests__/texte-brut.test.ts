@@ -26,4 +26,9 @@ describe("texteBrut (PFO-111)", () => {
       "Image : Le tableau Linear (https://cedricgicquiaud.github.io/projets/pilot/linear.png)",
     );
   });
+
+  it("écrit un tableau en titre puis une ligne « - cellule — cellule » par rangée", () => {
+    const tableau = ["| Agent | Rôle |", "|---|---|", "| verifier | Relit le **code** |", "| testeur | Prend des captures |"].join("\n");
+    expect(texteBrut(tableau, SITE)).toBe(["Agent — Rôle", "- verifier — Relit le code", "- testeur — Prend des captures"].join("\n"));
+  });
 });
