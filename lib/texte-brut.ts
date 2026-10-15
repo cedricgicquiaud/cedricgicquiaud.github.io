@@ -29,24 +29,25 @@ function inline(tokens: Token[], site: string): string {
 const rangee = (cells: Tokens.TableCell[], site: string): string =>
   cells.map((c) => inline(c.tokens, site)).filter(Boolean).join(" — ");
 
+/** Une ligne « - … » (ou « 1. … ») par élément ; ce qui suit sa première ligne est décalé de deux espaces. */
+function liste(list: Tokens.List, site: string): string {
+  const debut = Number(list.start) || 1;
+  return list.items
+    .map((item, i) => {
+      const puce = list.ordered ? `${debut + i}.` : "-";
+      const [premier = "", ...suite] = item.tokens.map((b) => block(b, site)).filter(Boolean);
+      return [`${puce} ${premier}`, ...suite.map((s) => s.replace(/^/gm, "  "))].join("\n");
+    })
+    .join("\n");
+}
+
 /** Texte d'un bloc Markdown ; un tableau donne son en-tête puis une ligne « - … » par rangée. */
 function block(t: Token, site: string): string {
   if (t.type === "table") {
     const table = t as Tokens.Table;
     return [rangee(table.header, site), ...table.rows.map((r) => `- ${rangee(r, site)}`)].join("\n");
   }
-  if (t.type === "list") {
-    const list = t as Tokens.List;
-    const debut = Number(list.start) || 1;
-    return list.items
-      .map((item, i) => {
-        const puce = list.ordered ? `${debut + i}.` : "-";
-        const [premier = "", ...suite] = item.tokens.map((b) => block(b, site)).filter(Boolean);
-        // Ce qui suit la première ligne de l'élément (sous-liste, paragraphe) est décalé de deux espaces.
-        return [`${puce} ${premier}`, ...suite.map((s) => s.replace(/^/gm, "  "))].join("\n");
-      })
-      .join("\n");
-  }
+  if (t.type === "list") return liste(t as Tokens.List, site);
   if (t.type === "html") return sansBalise(t.text).trim();
   // Paragraphe, titre : une ligne, même si le Markdown coupait la phrase.
   return "tokens" in t && t.tokens ? inline(t.tokens, site).replace(/\s*\n\s*/g, " ") : "";
