@@ -31,4 +31,9 @@ describe("texteBrut (PFO-111)", () => {
     const tableau = ["| Agent | Rôle |", "|---|---|", "| verifier | Relit le **code** |", "| testeur | Prend des captures |"].join("\n");
     expect(texteBrut(tableau, SITE)).toBe(["Agent — Rôle", "- verifier — Relit le code", "- testeur — Prend des captures"].join("\n"));
   });
+
+  it("omet les cellules vides d'une rangée", () => {
+    const tableau = ["| Fiche | Contenu |", "|---|---|", "| *Modèles à remplir (6)* | |"].join("\n");
+    expect(texteBrut(tableau, SITE)).toBe(["Fiche — Contenu", "- Modèles à remplir (6)"].join("\n"));
+  });
 });
