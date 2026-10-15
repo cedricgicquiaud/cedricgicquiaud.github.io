@@ -1,4 +1,4 @@
-import { marked, type Token } from "marked";
+import { marked, type Token, type Tokens } from "marked";
 
 /** Un chemin du site (`/projets/…`) devient une URL absolue ; une URL complète reste telle quelle. */
 const absolue = (href: string, site: string): string => (href.startsWith("/") ? site + href : href);
@@ -19,8 +19,16 @@ function inline(tokens: Token[], site: string): string {
     .join("");
 }
 
-/** Texte d'un bloc Markdown. */
+/** Cellules d'une rangée, séparées par « — ». */
+const rangee = (cells: Tokens.TableCell[], site: string): string =>
+  cells.map((c) => inline(c.tokens, site)).join(" — ");
+
+/** Texte d'un bloc Markdown ; un tableau donne son en-tête puis une ligne « - … » par rangée. */
 function block(t: Token, site: string): string {
+  if (t.type === "table") {
+    const table = t as Tokens.Table;
+    return [rangee(table.header, site), ...table.rows.map((r) => `- ${rangee(r, site)}`)].join("\n");
+  }
   return "tokens" in t && t.tokens ? inline(t.tokens, site) : "";
 }
 
