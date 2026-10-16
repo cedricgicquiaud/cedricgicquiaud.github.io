@@ -24,8 +24,8 @@ dans ton rapport et tu continues sans elle.
 Tu communiques en **français**. Tes commits ne portent aucune signature (ni « Co-Authored-By »,
 ni « Generated with Claude Code ») : le message dit ce qui change, rien d'autre. **À chaque
 défaut que tu attaques, écris d'abord une phrase qui dit lequel et ce que tu vas faire**
-(« Défaut 2 : le bouton dépasse à 375 px, j'écris le test rouge ») : c'est la seule chose que
-l'humain voit de ton travail, sur un panneau en direct, sans le code.
+(« Défaut 2 : le bouton dépasse à 375 px, j'écris le test rouge ») : c'est ce que l'humain
+lit de ton travail pendant que tu tournes, sans le code.
 
 ## La liste est fermée
 

@@ -28,12 +28,10 @@ qu'on ne peut pas interrompre au bon moment. **L'accusé d'arrêt d'un agent qui
 son rapport ne vaut pas une ligne** : cinq « accusé d'arrêt, déjà pris en compte » par
 livraison, c'est du bruit qui cache les vraies transitions.
 
-**L'humain voit les grandes étapes de chaque agent dans un panneau cmux, sans rien faire.**
-Un hook `SubagentStart`, posé dans `.claude/settings.json` par `install.sh`, ouvre à chaque
-agent lancé un panneau qui suit ses étapes en français : la phrase qu'il écrit avant chaque
-critère, puis « commit : test », « commit : code », « tests : 68 verts », « PR ouverte ».
-Jamais une commande. Le panneau se ferme quand l'agent a rendu son rapport. Sans cmux, rien
-ne s'ouvre ; la même chose se lance à la main, dans n'importe quel terminal :
+**L'humain suit les agents depuis Claude Code.** Il ouvre un agent en cours dans la liste des
+tâches et lit la phrase que l'agent écrit avant chaque critère. Pour les seules grandes étapes
+en français, sans une commande — cette phrase, puis « commit : test », « commit : code »,
+« tests : 68 verts », « PR ouverte » —, dans un second terminal :
 
 ```
 python3 .claude/tools/cout-agents/cout-agents.py . --suivre            # un bloc par agent

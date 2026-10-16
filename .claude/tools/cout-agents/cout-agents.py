@@ -11,13 +11,10 @@ Une ligne par étape : l'heure, puis la phrase que l'agent a écrite entre deux 
 repère mécanique — « commit : test », « commit : code », « tests : 68 verts », « PR ouverte ».
 Jamais une commande. Sans nom : un bloc par agent en cours, l'un sous l'autre, les dernières
 étapes de chacun, rafraîchi toutes les 10 s. Avec un nom : le flux complet de cet agent, qui
-suit jusqu'à son rapport final puis s'arrête (à lancer dans un panneau cmux par agent).
-
-Avec `--journal <fichier>` : le flux d'un agent désigné par son fichier de journal ; c'est ce que
-lance le hook `SubagentStart` (`panneau-agent.sh`) dans un panneau cmux à chaque agent lancé.
+suit jusqu'à son rapport final puis s'arrête.
 
 Mode direct : pendant un run, un tableau des agents en cours, rafraîchi toutes les 30 s, à
-lancer dans un second terminal (un panneau cmux à côté de la session). Une ligne par agent dont
+lancer dans un second terminal. Une ligne par agent dont
 le journal a bougé depuis `--depuis` minutes (120 par défaut) : état, temps actif, jetons relus
 contre son seuil, dernier geste. `--une-fois` affiche le tableau et sort (pour le lead, dans
 ses messages). `--notifier` envoie les alertes en notification macOS par `cmux notify` si la
@@ -309,43 +306,24 @@ def etapes(chemin):
                 del attendus[it.get("tool_use_id")]
     return out, fini
 
-ANSI = {"green": "32", "orange": "38;5;208", "yellow": "33", "red": "31", "blue": "34", "cyan": "36", "purple": "35", "pink": "95"}
-
-def suivre(projet, nom, depuis, journal=None, couleur=""):
-    import time, shutil, subprocess
+def suivre(projet, nom, depuis):
+    import time, shutil
     vus = {}
-    if journal:
-        # lancé par le hook au démarrage de l'agent : le fichier peut mettre quelques secondes à exister
-        for _ in range(60):
-            if os.path.exists(journal): break
-            time.sleep(1)
-        else: print(f"journal jamais apparu : {journal}"); return 1
-        nom = nom_agent(journal)
-        try:  # le nom donné à l'agent et la couleur de sa fiche : Claude Code les écrit à côté du journal
-            meta = json.load(open(journal[:-len(".jsonl")] + ".meta.json"))
-            if meta.get("name"): nom = meta["name"]
-            if meta.get("color"): couleur = meta["color"]
-        except Exception: pass
-        if shutil.which("cmux") and os.environ.get("CMUX_SURFACE_ID"):
-            subprocess.run(["cmux", "rename-tab", "--surface", os.environ["CMUX_SURFACE_ID"], nom],
-                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    code = ANSI.get(couleur, "")
-    teinte = (lambda x: f"\033[{code}m{x}\033[0m") if code else (lambda x: x)
     while True:
         maintenant = datetime.datetime.now(datetime.timezone.utc)
-        fichiers = [journal] if journal else [f for f in transcripts(projet)
+        fichiers = [f for f in transcripts(projet)
                     if (maintenant.timestamp() - os.path.getmtime(f)) < depuis * 60 and (not nom or nom_agent(f) == nom)]
         if nom:
             if not fichiers:
                 print(f"aucun agent « {nom} » en cours (journal bougé depuis {depuis} min)"); return 1
             f = fichiers[0]; lignes, fini = etapes(f)
             if vus.get(f) != len(lignes):
-                # le panneau dit « ça avance », pas « voilà tout » : les cinq dernières étapes, une ligne chacune
+                # le flux dit « ça avance », pas « voilà tout » : les cinq dernières étapes, une ligne chacune
                 larg = shutil.get_terminal_size((80, 24)).columns
-                print("\033[2J\033[H" + teinte(nom) + "\n", flush=True)
+                print("\033[2J\033[H" + nom + "\n", flush=True)
                 for t, x in lignes[-5:]:
                     x = x.replace("\n", " ").replace("**", "")
-                    print(f"  {t.astimezone().strftime('%H:%M')}  {teinte(x[:max(10, larg - 10)])}", flush=True)
+                    print(f"  {t.astimezone().strftime('%H:%M')}  {x[:max(10, larg - 10)]}", flush=True)
             vus[f] = len(lignes)
             # l'agent a rendu : son dernier événement est un texte sans appel d'outil, et rien depuis 60 s
             x = lire(f)
@@ -381,10 +359,6 @@ def main():
     if "--depuis" in sys.argv:
         i = sys.argv.index("--depuis"); depuis = int(sys.argv[i + 1]); args = [a for a in args if a != sys.argv[i + 1]]
     else: depuis = 120
-    if "--journal" in sys.argv:
-        j = sys.argv[sys.argv.index("--journal") + 1]
-        couleur = sys.argv[sys.argv.index("--couleur") + 1] if "--couleur" in sys.argv else ""
-        return suivre(os.getcwd(), None, depuis, journal=j, couleur=couleur)
     if "--suivre" in sys.argv:
         i = sys.argv.index("--suivre")
         nom = sys.argv[i + 1] if len(sys.argv) > i + 1 and not sys.argv[i + 1].startswith("--") and sys.argv[i + 1] not in args[:1] else None
