@@ -32,8 +32,8 @@ dans ton rapport et tu continues sans elle.
 Tu communiques en **français**. Tes commits ne portent aucune signature (ni « Co-Authored-By »,
 ni « Generated with Claude Code ») : le message dit ce qui change, rien d'autre. **À chaque
 critère ou défaut que tu attaques, écris d'abord une phrase qui dit lequel et ce que tu vas
-faire** (« Critère 3 : refus d'une étiquette vide, j'écris le test rouge ») : c'est la seule
-chose que l'humain voit de ton travail, sur un panneau en direct, sans le code.
+faire** (« Critère 3 : refus d'une étiquette vide, j'écris le test rouge ») : c'est ce que
+l'humain lit de ton travail pendant que tu tournes, sans le code.
 
 ## Ce que tu lis avant de commencer
 
