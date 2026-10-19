@@ -8,4 +8,4 @@ En ce moment, je mène seul côté technique une [application mobile de santé](
 
 Ma méthode relève de l'**agentic engineering**, formalisée dans [PILOT](/projets/pilot/) : six agents spécialisés, des tests écrits avant le code, une vérification par un agent qui ne l'a pas écrit, un merge toujours décidé par un humain. Sur deux projets réels, l'audit a attrapé 8 défauts cachés derrière des tests verts. Tout a commencé en 2023 avec [GiveMe5](/projets/giveme5/), un produit vendu à des commerçants.
 
-Le détail : concepteur-développeur chez VIVEO puis **chef de projets** chez Sopra Steria, avec une équipe de quinze personnes ; en immobilier, plus de 150 clients et dix conseillers animés.
+Le détail : concepteur-développeur chez VIVEO puis **chef de projets** chez Sopra Steria, avec une équipe de quinze personnes ; en immobilier, plus de 150 clients et dix conseillers animés. J'en garde deux convictions : un retard vient presque toujours d'un besoin mal cadré, et on vend un résultat, pas un effort.
