@@ -26,6 +26,16 @@ describe("Positionnement « product builder IA » (PFO-69)", () => {
     expect(read("content/experience.md")).toMatch(/role: Product builder IA/);
   });
 
+  // PFO-118 (19/10) : le parcours ouvre « À propos », en termes métier.
+  it("« À propos » ouvre sur le parcours et ne parle plus de recette", () => {
+    const about = read("content/about.md");
+    const [premier] = about.split(/^---$/m)[2].trim().split(/\n\s*\n/);
+    expect(premier).toMatch(/Treize ans dans l'informatique bancaire/);
+    expect(premier).toMatch(/dix ans de conseil immobilier/);
+    expect(premier).toMatch(/je cadre, je vérifie et je réponds du résultat/);
+    expect(about).not.toMatch(/je recette|ce qui part/);
+  });
+
   it("la fiche app santé est la première carte, en visibilité anonyme", () => {
     const [first] = loadFiches(contentDir);
     expect(first.slug).toBe("coach");
