@@ -25,6 +25,8 @@ export type Proofs = {
   email: string;
   github: string;
   linkedin: string;
+  /** Page de réservation d'un échange (PFO-119). */
+  rendezVous: string;
   url: string;
   fiches: ProofFiche[];
   /** Les postes de la section Expérience, du plus récent au plus ancien, employeur compris. */
@@ -67,6 +69,7 @@ export function buildProofs({ fichesDir }: { fichesDir?: string } = {}): Proofs 
     email: site.email,
     github: site.links.github,
     linkedin: site.links.linkedin,
+    rendezVous: site.links.rendezVous,
     url: site.url,
     fiches: loadFiches(fichesDir).map(proofFiche),
     parcours: loadExperience(contentDir).blocs,

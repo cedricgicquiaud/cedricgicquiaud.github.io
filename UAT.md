@@ -612,3 +612,11 @@ Toutes les commandes se lancent à la racine du site, après `npm run build`. Le
 - [ ] Les liens « application mobile de santé », « PILOT » et « GiveMe5 » sont blancs, passent en cyan au survol et ouvrent la fiche correspondante ; au clavier (Tab), chaque lien montre un contour.
 - [ ] À 375 px de large, pas de défilement horizontal.
 - [ ] Refus : remplacer `/projets/pilot/` par `/projets/inconnu/` dans `content/about.md`, lancer `npm test` : le test « chaque lien /projets/<slug>/ désigne une fiche existante » échoue. Annuler la modification.
+
+## Tâche isolée PFO-119 — Prendre rendez-vous
+
+- [ ] `scripts/dev-serve.sh start 3005`, ouvrir http://localhost:3005/ : sous la phrase d'accroche, le bouton « Prendre rendez-vous » ; un clic ouvre la page de réservation Google « Échange découverte » dans un nouvel onglet.
+- [ ] Page `/projets/slice/` : en bas, après « Liens », l'encadré « Un projet similaire ? Parlons-en. » et le même bouton.
+- [ ] À 360 px de large, le bouton est visible sur l'accueil et sur une fiche, sans défilement horizontal.
+- [ ] Outils de développement, onglet Réseau, rechargement : aucune requête vers `calendar.google.com` ni `calendar.app.google`.
+- [ ] Refus : ajouter `<script src="https://calendar.google.com/calendar/scheduling-button-script.js"></script>` dans `components/booking-link.tsx`, lancer `npm run build` : `check-output` échoue sur « domaine tiers ». Annuler la modification.
