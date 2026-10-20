@@ -1,4 +1,5 @@
 import site from "../content/site.json";
+import { BookingLink } from "./booking-link";
 import { Nav } from "./nav";
 import { SocialIcons } from "./social-icons";
 
@@ -12,6 +13,7 @@ export function Intro() {
         <h1 className="text-5xl font-bold leading-tight tracking-tight">{site.name}</h1>
         <h2 className="mt-3 text-xl font-medium tracking-tight">{SHORT_TITLE}</h2>
         <p className="mt-4 max-w-xs text-base text-muted-foreground">{site.title}</p>
+        <BookingLink className="mt-6" />
         <div className="mt-16 hidden lg:block">
           <Nav />
         </div>

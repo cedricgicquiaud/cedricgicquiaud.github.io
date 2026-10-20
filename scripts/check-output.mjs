@@ -61,6 +61,8 @@ const ALLOWED_HOSTS = [
   "cedricgicquiaud.github.io",
   // Démos citées par les fiches (champ `demo`).
   "giveme5xxxxx.fr",
+  // Page de réservation Google Agenda (PFO-119) : un simple lien ; le script du bouton (calendar.google.com) reste refusé.
+  "calendar.app.google",
   // Liens de documentation et espaces de noms cités dans les chunks Next/React (aucune requête réseau).
   "react.dev",
   "nextjs.org",

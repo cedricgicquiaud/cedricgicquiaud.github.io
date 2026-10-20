@@ -5,7 +5,7 @@
   "description": "Format de https://cedricgicquiaud.github.io/proofs.json : les projets du site (une fiche de preuve par projet) et le parcours professionnel, en texte brut, pour un agent IA. Régénéré à chaque mise en ligne du site, depuis les mêmes sources que les pages.",
   "type": "object",
   "additionalProperties": false,
-  "required": ["version", "nom", "titre", "email", "github", "linkedin", "url", "fiches", "parcours"],
+  "required": ["version", "nom", "titre", "email", "github", "linkedin", "rendezVous", "url", "fiches", "parcours"],
   "properties": {
     "version": { "type": "string", "description": "Version du format de ce fichier. Elle change quand une clé change de sens ou disparaît." },
     "nom": { "type": "string", "description": "Nom de la personne." },
@@ -13,6 +13,7 @@
     "email": { "type": "string", "description": "Adresse e-mail de contact." },
     "github": { "type": "string", "description": "URL du profil GitHub." },
     "linkedin": { "type": "string", "description": "URL du profil LinkedIn." },
+    "rendezVous": { "type": "string", "description": "URL de la page de réservation d'un échange de 30 minutes (Google Agenda)." },
     "url": { "type": "string", "description": "URL du site, sans barre finale." },
     "fiches": {
       "type": "array",

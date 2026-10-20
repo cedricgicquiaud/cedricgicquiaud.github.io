@@ -38,6 +38,11 @@ export function buildLlms({ contentDir = defaultContentDir, fichesDir }: { conte
     projets(fichesDir),
     "## Parcours",
     parcours(contentDir),
+    "## Contact",
+    [
+      `- [Prendre rendez-vous](${site.links.rendezVous}) : un échange de 30 minutes en visio`,
+      `- [LinkedIn](${site.links.linkedin})`,
+    ].join("\n"),
     "## Données",
     [
       `- [proofs.json](${site.url}/proofs.json) : les mêmes fiches et le même parcours en JSON, sections comprises`,

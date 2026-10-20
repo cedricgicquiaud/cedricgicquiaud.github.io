@@ -4,6 +4,7 @@ import site from "../content/site.json";
 import type { Fiche as FicheData } from "../lib/fiches";
 import { Badge } from "./ui/badge";
 import { AFFICHER_STATUT } from "../lib/affichage";
+import { BookingLink } from "./booking-link";
 import { DemoLink } from "./demo-link";
 import { GitHubLink } from "./github-link";
 
@@ -148,6 +149,11 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
             </Section>
           ) : null,
         )}
+        {/* Invitation de fin de fiche (PFO-119) : un visiteur convaincu réserve un échange. */}
+        <aside id="rendez-vous" className="mt-14 flex flex-wrap items-center justify-between gap-4 rounded-lg border border-border bg-card/40 px-5 py-4">
+          <p className="text-base font-medium">Un projet similaire ? Parlons-en.</p>
+          <BookingLink />
+        </aside>
       </div>
     </article>
   );
