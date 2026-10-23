@@ -18,17 +18,18 @@ describe("« À propos » dense, à la manière du modèle (PFO-71)", () => {
   // Deux rendus laissés dans le document dupliquent l'id de section : jsdom trouverait le premier.
   afterEach(cleanup);
 
-  it("tient en 3 ou 4 paragraphes d'au moins 35 mots chacun, 250 mots au plus", () => {
+  // PFO-120 (23/10) : un cinquième paragraphe dit ce que je garde pour moi face à l'IA ; plafond porté à 310 mots.
+  it("tient en 3 à 5 paragraphes d'au moins 35 mots chacun, 310 mots au plus", () => {
     const paras = paragraphs();
     expect(paras.length).toBeGreaterThanOrEqual(3);
-    expect(paras.length).toBeLessThanOrEqual(4);
+    expect(paras.length).toBeLessThanOrEqual(5);
     for (const p of paras) expect(words(p).length, p.slice(0, 40)).toBeGreaterThanOrEqual(35);
-    expect(words(body()).length).toBeLessThanOrEqual(250);
+    expect(words(body()).length).toBeLessThanOrEqual(310);
   });
 
   it("garde le métier, l'app santé, la méthode, la banque, le chef de projets, l'indépendant et le principe des preuves", () => {
     const text = body();
-    for (const key of [/product builder IA/i, /application mobile de santé/, /seul côté technique/, /agentic engineering/, /informatique bancaire/, /chef de projets/, /indépendant/, /ce qui fonctionne et ce qui reste à faire/]) {
+    for (const key of [/product builder IA/i, /application mobile de santé/, /je développe et implémente seul/, /agentic engineering/, /informatique bancaire/, /chef de projets/, /indépendant/, /ce qui fonctionne et ce qui reste à faire/]) {
       expect(text).toMatch(key);
     }
   });
@@ -58,6 +59,13 @@ describe("« À propos » dense, à la manière du modèle (PFO-71)", () => {
     const linked = [...loadAbout(contentDir).html.matchAll(/href="\/projets\/([^/"]+)\/"/g)].map((m) => m[1]);
     expect(linked.length).toBeGreaterThan(0);
     for (const slug of linked) expect(slugs.has(slug), slug).toBe(true);
+  });
+
+  it("dit ce que je ne confie pas à l'IA et comment je valide une PR (PFO-120)", () => {
+    const text = body().replace(/\s+/g, " ");
+    for (const key of [/décisions produit ni le modèle de données/, /Je valide chaque PR au niveau fonctionnel/, /si une erreur est récurrente, ça devient une règle/]) {
+      expect(text).toMatch(key);
+    }
   });
 
   it("refus : jamais « production » dans « À propos »", () => {
