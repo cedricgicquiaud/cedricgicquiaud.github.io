@@ -199,7 +199,7 @@ describe("page fiche — visuel (PFO-36)", () => {
 describe("visuels dans out/ — lit out/ produit par npm run build (PFO-35)", () => {
   const outGenerated = path.join(root, "out", "projets", "generated");
   const fichesDir = path.join(root, "content", "fiches");
-  // Une fiche qui déclare `visuel` n'a pas de visuel généré. Depuis PFO-108, les 8 fiches en déclarent un :
+  // Une fiche qui déclare `visuel` n'a pas de visuel généré. Depuis PFO-108, les 12 fiches en déclarent un :
   // le générateur reste couvert par ses tests unitaires (plus haut), ce bloc vérifie qu'il ne produit rien de trop.
   const provides = (name: string) => /^visuel:\s*\S/m.test(readFileSync(path.join(fichesDir, name), "utf8"));
 
@@ -211,7 +211,7 @@ describe("visuels dans out/ — lit out/ produit par npm run build (PFO-35)", ()
 
   it("contient un PNG généré pour chaque fiche sans visuel fourni, et aucun pour une fiche qui en déclare un", () => {
     const slugs = readdirSync(fichesDir).filter((n) => n.endsWith(".md"));
-    expect(slugs).toHaveLength(8);
+    expect(slugs).toHaveLength(12);
     for (const name of slugs) {
       const png = path.join(outGenerated, name.replace(/\.md$/, ".png"));
       expect(existsSync(png), name).toBe(!provides(name));

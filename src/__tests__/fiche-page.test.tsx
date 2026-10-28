@@ -121,10 +121,10 @@ describe("Layout (PFO-25 ; menu du haut retiré par PFO-29, pied de page par PFO
 });
 
 describe("Route statique /projets/[slug]/ (PFO-26)", () => {
-  it("génère un paramètre par fiche : les 8 slugs de content/fiches, et rien d'autre", async () => {
+  it("génère un paramètre par fiche : les 12 slugs de content/fiches, et rien d'autre", async () => {
     const params = await fichePage.generateStaticParams();
     const expected = loadFiches().map((f) => ({ slug: f.slug }));
-    expect(expected).toHaveLength(8);
+    expect(expected).toHaveLength(12);
     expect(params).toEqual(expected);
     expect(fichePage.dynamicParams).toBe(false);
   });
@@ -232,15 +232,17 @@ describe("Sortie du build : une page par fiche (PFO-26)", () => {
     }
   }, 120_000);
 
-  it("écrit out/projets/<slug>/index.html pour les 8 fiches, avec titre et lien retour (sans menu depuis PFO-29, sans pied de page depuis PFO-54)", () => {
+  it("écrit out/projets/<slug>/index.html pour les 12 fiches, avec titre et lien retour (sans menu depuis PFO-29, sans pied de page depuis PFO-54)", () => {
     const fiches = loadFiches();
-    expect(fiches).toHaveLength(8);
+    expect(fiches).toHaveLength(12);
     for (const fiche of fiches) {
       const file = pageOf(fiche.slug);
       expect(existsSync(file), file).toBe(true);
       const html = readFileSync(file, "utf8");
-      expect(html).toContain(`<title>${fiche.frontmatter.nom} — Cédric Gicquiaud</title>`);
-      expect(html).toContain(`<meta property="og:title" content="${fiche.frontmatter.nom} — Cédric Gicquiaud"/>`);
+      // React encode aussi l'apostrophe d'un nom (« Posts LinkedIn d'une agence web ») en &#x27;.
+      const nom = fiche.frontmatter.nom.replace(/'/g, "&#x27;");
+      expect(html).toContain(`<title>${nom} — Cédric Gicquiaud</title>`);
+      expect(html).toContain(`<meta property="og:title" content="${nom} — Cédric Gicquiaud"/>`);
       // React encode l'apostrophe en &#x27; dans les attributs : on compare la valeur décodée.
       const ogDescription = html.match(/<meta property="og:description" content="([^"]*)"/)?.[1].replace(/&#x27;/g, "'");
       expect(ogDescription).toBe(fiche.enBref.quoi);
@@ -254,7 +256,7 @@ describe("Sortie du build : une page par fiche (PFO-26)", () => {
   // Anciennes adresses gardées pour les liens déjà partagés : une simple redirection, pas une fiche.
   const ANCIENNES_ADRESSES = ["dashboard", "app-sante"]; // PFO-81 : Tablo le 08/10 ; PFO-89 : Coach le 09/10
 
-  it("refuse un slug inconnu : aucun dossier hors des 8 fiches (et `generated/`, les visuels de PFO-35)", () => {
+  it("refuse un slug inconnu : aucun dossier hors des 12 fiches (et `generated/`, les visuels de PFO-35)", () => {
     const dirs = readdirSync(path.join(out, "projets")).filter(
       (n) =>
         n !== "generated" &&

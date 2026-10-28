@@ -234,10 +234,10 @@ describe("lib/fiches — loadFiches", () => {
 describe("lib/fiches — vraies fiches copiées dans content/fiches", () => {
   const contentDir = path.resolve(__dirname, "../../content/fiches");
 
-  it("renvoie 8 fiches, ordre 1..8 distincts, chacune retrouvable par loadFiche(slug)", () => {
+  it("renvoie 12 fiches, ordre 1..12 distincts, chacune retrouvable par loadFiche(slug)", () => {
     const fiches = loadFiches(contentDir);
-    expect(fiches).toHaveLength(8);
-    expect(fiches.map((f) => f.frontmatter.ordre)).toEqual([1, 2, 3, 4, 5, 6, 7, 8]);
+    expect(fiches).toHaveLength(12);
+    expect(fiches.map((f) => f.frontmatter.ordre)).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]);
     for (const f of fiches) {
       expect(f.titre).not.toBe("");
       expect(f.enBref.quoi).not.toBe("");
