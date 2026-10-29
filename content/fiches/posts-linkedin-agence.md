@@ -1,5 +1,5 @@
 ---
-nom: Posts LinkedIn d'une agence web
+nom: Posts LinkedIn d'agence web
 statut: livré
 periode: 2025 → aujourd'hui
 role: conception, construction et mise en service, seul, en mission freelance pour une agence web
@@ -11,7 +11,7 @@ ordre: 9
 visuel: /projets/posts-linkedin-agence/workflows.webp
 ---
 
-# Posts LinkedIn d'une agence web — des thèmes à la publication, sans intervention
+# Posts LinkedIn d'agence web
 
 **En bref.** Chaque mois, les posts LinkedIn des clients d'une agence web s'écrivent et se
 publient seuls : l'IA choisit les thèmes selon le métier du client, rédige, programme, publie.
