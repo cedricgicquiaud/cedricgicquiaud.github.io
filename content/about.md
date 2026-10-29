@@ -2,7 +2,7 @@
 titre: À propos
 ---
 
-Je suis **product builder IA**. Treize ans dans l'informatique bancaire, de la conception à la direction de projets, puis dix ans de conseil immobilier en indépendant, au contact direct des clients. Aujourd'hui, je pars d'un besoin métier et je livre une application opérationnelle. Des agents IA écrivent le code ; moi, je cadre, je vérifie et je réponds du résultat. Chaque projet présenté ici dit ce qui fonctionne et ce qui reste à faire.
+Je suis **product builder IA**. Treize ans dans l'informatique bancaire, de la conception à la gestion de projets, puis dix ans de conseil immobilier en indépendant, au contact direct des clients. Aujourd'hui, je pars d'un besoin métier et je livre une application opérationnelle. Des agents IA écrivent le code ; moi, je cadre, je vérifie et je réponds du résultat. Chaque projet présenté ici dit ce qui fonctionne et ce qui reste à faire.
 
 Je ne confie pas à l'IA les décisions produit ni le modèle de données : c'est moi qui valide chaque décision, chaque table, chaque relation. Je valide chaque PR au niveau fonctionnel : je vérifie que la feature fait ce qui a été décidé. À la fin de chaque feature, si une erreur est récurrente, ça devient une règle.
 
