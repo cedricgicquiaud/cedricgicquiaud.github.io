@@ -62,9 +62,11 @@ plaques, des automatisations autour de la vente, un site de vente.
 **Les automatisations (2025, n8n et Make).** Le but : vendre et servir sans y passer mes
 soirées.
 - **Facturation** : une vente dans le CRM déclenche la création du client et de la facture
-  à la banque, puis l'envoi par e-mail. Plus de facture faite à la main.
-- **Service client** : un chatbot qui répondait aux questions des commerçants à partir d'une
-  base de connaissances, en cherchant par le sens et non par le mot exact.
+  à la banque, puis l'envoi par e-mail. Plus de facture faite à la main
+  (fiche : https://cedricgicquiaud.github.io/projets/facturation-giveme5/).
+- **Service client** : un chatbot qui répond aux questions des commerçants à partir d'une
+  base de connaissances, en cherchant par le sens et non par le mot exact
+  (fiche : https://cedricgicquiaud.github.io/projets/chatbot-giveme5/).
 
 **Le site de vente (2026).** La présentation complète avec un simulateur d'avis, une page de
 commande courte envoyée par SMS après un appel, et un suivi des parrains : un lien
@@ -116,4 +118,4 @@ Décisions qui ont compté :
 - Site de vente (code) : https://github.com/cedricgicquiaud/giveme5
 - Site en ligne : https://hello.giveme5xxxxx.fr
 - Backoffice : dépôt privé
-- Workflows n8n/Make : à exporter (JSON anonymisé) et à publier
+- Automatisations : fiches « Facturation automatique » et « Chatbot du service client »

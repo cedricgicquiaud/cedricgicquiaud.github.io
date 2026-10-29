@@ -45,7 +45,7 @@ describe("buildProofs — les fiches (PFO-112)", () => {
   it("donne les fiches des cartes de l'accueil, dans le même ordre, chacune avec l'URL absolue de sa page", () => {
     const { container } = render(createElement(Projects));
     const cartes = Array.from(container.querySelectorAll("h3 a")).map((a) => `https://cedricgicquiaud.github.io${a.getAttribute("href")}`);
-    expect(cartes).toHaveLength(8);
+    expect(cartes).toHaveLength(12);
     expect(buildProofs().fiches.map((f) => f.url)).toEqual(cartes);
   });
 

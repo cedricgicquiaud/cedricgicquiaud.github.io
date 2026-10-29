@@ -86,7 +86,7 @@ describe("buildLlms — les projets (PFO-116)", () => {
     const texte = blocs(buildLlms());
     const projets = texte[texte.indexOf("## Projets") + 1];
     const liens = Array.from(projets.matchAll(/^- \[[^\]]+\]\(([^)]+)\) : /gm), (m) => m[1]);
-    expect(cartes).toHaveLength(8);
+    expect(cartes).toHaveLength(12);
     expect(liens).toEqual(cartes);
   });
 
