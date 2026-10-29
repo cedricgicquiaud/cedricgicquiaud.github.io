@@ -1,5 +1,5 @@
 ---
-nom: Chatbot du service client (GiveMe5)
+nom: Chatbot GiveMe5
 statut: livré
 periode: 2025 → aujourd'hui
 role: conception, construction et mise en service, seul, pour GiveMe5
@@ -11,7 +11,7 @@ ordre: 12
 visuel: /projets/chatbot-giveme5/agent.webp
 ---
 
-# Chatbot du service client (GiveMe5) — il répond à partir des documents, et seulement d'eux
+# Chatbot GiveMe5
 
 **En bref.** Un assistant qui répond aux questions des commerçants à partir des documents de
 GiveMe5, et refuse poliment tout ce qui sort du sujet. En service sur le site de vente.

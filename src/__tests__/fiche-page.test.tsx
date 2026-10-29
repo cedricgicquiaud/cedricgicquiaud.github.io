@@ -239,7 +239,7 @@ describe("Sortie du build : une page par fiche (PFO-26)", () => {
       const file = pageOf(fiche.slug);
       expect(existsSync(file), file).toBe(true);
       const html = readFileSync(file, "utf8");
-      // React encode aussi l'apostrophe d'un nom (« Posts LinkedIn d'une agence web ») en &#x27;.
+      // React encode aussi l'apostrophe d'un nom (« Posts LinkedIn d'agence web ») en &#x27;.
       const nom = fiche.frontmatter.nom.replace(/'/g, "&#x27;");
       expect(html).toContain(`<title>${nom} — Cédric Gicquiaud</title>`);
       expect(html).toContain(`<meta property="og:title" content="${nom} — Cédric Gicquiaud"/>`);

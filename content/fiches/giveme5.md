@@ -118,4 +118,4 @@ Décisions qui ont compté :
 - Site de vente (code) : https://github.com/cedricgicquiaud/giveme5
 - Site en ligne : https://hello.giveme5xxxxx.fr
 - Backoffice : dépôt privé
-- Automatisations : fiches « Facturation automatique » et « Chatbot du service client »
+- Automatisations : fiches « Facturation GiveMe5 » et « Chatbot GiveMe5 »

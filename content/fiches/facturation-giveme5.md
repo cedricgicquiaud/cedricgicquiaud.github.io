@@ -1,5 +1,5 @@
 ---
-nom: Facturation automatique (GiveMe5)
+nom: Facturation GiveMe5
 statut: livré
 periode: 2025 → aujourd'hui
 role: conception, construction et mise en service, seul, pour GiveMe5
@@ -11,7 +11,7 @@ ordre: 11
 visuel: /projets/facturation-giveme5/scenario.webp
 ---
 
-# Facturation automatique (GiveMe5) — de la vente à la facture envoyée
+# Facturation GiveMe5
 
 **En bref.** Une vente enregistrée dans le CRM crée le client et la facture à la banque, puis
 l'envoie par e-mail au client. Plus aucune facture faite à la main pour GiveMe5. Scénario privé.

@@ -1,5 +1,5 @@
 ---
-nom: Documentation automatique des workflows
+nom: Documentation de workflows n8n
 statut: livré
 periode: 2025
 role: conception et construction, seul, pour mon instance n8n
@@ -11,7 +11,7 @@ ordre: 10
 visuel: /projets/documentation-workflows/workflow.webp
 ---
 
-# Documentation automatique des workflows — la note s'écrit seule, chaque nuit
+# Documentation de workflows n8n
 
 **En bref.** Chaque nuit, l'IA relit les workflows n8n modifiés dans la journée et colle à côté
 de chacun une note qui explique ce qu'il fait. La documentation existe sans que personne ne
