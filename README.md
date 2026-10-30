@@ -2,6 +2,8 @@
 
 Site portfolio statique (Next.js, export HTML). Publié sur GitHub Pages à chaque push sur `main`.
 
+Mise en page inspirée du site de [Brittany Chiang](https://brittanychiang.com) ; le code est écrit de zéro.
+
 ## Lancer
 
 ```sh
