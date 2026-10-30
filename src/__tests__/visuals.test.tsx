@@ -167,12 +167,18 @@ describe("ProjectCard — visuel (PFO-36)", () => {
     expect(onlyImg(container).className).toMatch(/\baspect-\[16\/10\]/);
   });
 
-  it("le conteneur bleu du visuel épouse l'image (self-start) au lieu de s'étirer sur la hauteur de la carte", () => {
+  it("le conteneur du visuel épouse l'image (self-start) au lieu de s'étirer sur la hauteur de la carte", () => {
     const { container } = render(<ProjectCard fiche={fakeFiche()} />);
     const wrapper = onlyImg(container).parentElement!;
-    expect(wrapper.className).toMatch(/\bbg-primary\b/);
     expect(wrapper.className).toMatch(/\bself-start\b/);
     expect(wrapper.className).toMatch(/\boverflow-hidden\b/);
+  });
+
+  it("affiche le visuel dans ses couleurs, sans filtre ni fondu, au repos comme au survol (PFO-128)", () => {
+    const { container } = render(<ProjectCard fiche={fakeFiche()} />);
+    const img = onlyImg(container);
+    expect(img.className).not.toMatch(/grayscale|mix-blend/);
+    expect(img.parentElement!.className).not.toMatch(/\bbg-primary\b/);
   });
 });
 
