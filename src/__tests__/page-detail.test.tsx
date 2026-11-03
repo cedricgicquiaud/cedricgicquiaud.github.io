@@ -44,6 +44,7 @@ function fiche(over: Partial<FicheData> = {}, fm: Partial<FicheData["frontmatter
       { id: "appris", titre: "Ce que j'en ai appris", html: html("Les leçons.") },
       { id: "artefacts", titre: "Artefacts", html: html("Les liens.") },
     ],
+    facultatives: [],
     visuel: "/projets/generated/alpha.png",
     ...over,
   };
@@ -106,28 +107,30 @@ describe("Page détail — chiffres clés (PFO-75)", () => {
 });
 
 describe("Page détail — sections (PFO-75)", () => {
-  it("six intitulés, dans l'ordre du README", () => {
+  it("intitulés dans l'ordre (PFO-130) : Stack technique et Décisions ont leur propre section", () => {
     render(<Fiche fiche={fiche()} />);
     const titres = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
-    expect(titres).toEqual(["Contexte", "Le produit", "Architecture", "Où en est le projet", "Ce que j'en retiens", "Liens"]);
+    expect(titres).toEqual(["Contexte", "Le produit", "Stack technique", "Décisions", "Où en est le projet", "Ce que j'en retiens", "Liens"]);
   });
 
-  it("« Décisions qui ont compté » passe dans Architecture, avec les pastilles de stack", () => {
+  it("« Décisions qui ont compté » passe dans Décisions ; les pastilles dans Stack technique (PFO-130)", () => {
     render(<Fiche fiche={fiche()} />);
     const produit = screen.getByRole("heading", { level: 2, name: "Le produit" }).closest("section")!;
-    const archi = screen.getByRole("heading", { level: 2, name: "Architecture" }).closest("section")!;
+    const stack = screen.getByRole("heading", { level: 2, name: "Stack technique" }).closest("section")!;
+    const decisions = screen.getByRole("heading", { level: 2, name: "Décisions" }).closest("section")!;
     expect(produit).toHaveTextContent("Un service en trois écrans.");
     expect(produit).not.toHaveTextContent("Isolation.");
-    expect(within(archi).getByText("TypeScript")).toBeInTheDocument();
-    expect(within(archi).getByText("Zod")).toBeInTheDocument();
-    expect(archi).toHaveTextContent("Le parsing tourne à part.");
+    expect(within(stack).getByText("TypeScript")).toBeInTheDocument();
+    expect(within(stack).getByText("Zod")).toBeInTheDocument();
+    expect(decisions).toHaveTextContent("Le parsing tourne à part.");
   });
 
-  it("une fiche sans « Décisions qui ont compté » garde tout dans Le produit ; Architecture montre la stack", () => {
+  it("une fiche sans « Décisions qui ont compté » garde tout dans Le produit, sans section Décisions", () => {
     const sections = fiche().sections.map((s) => (s.id === "construit" ? { ...s, html: "<p>Tout ici.</p>" } : s));
     render(<Fiche fiche={fiche({ sections })} />);
     expect(screen.getByRole("heading", { level: 2, name: "Le produit" }).closest("section")).toHaveTextContent("Tout ici.");
-    expect(within(screen.getByRole("heading", { level: 2, name: "Architecture" }).closest("section")!).getByText("Zod")).toBeInTheDocument();
+    expect(within(screen.getByRole("heading", { level: 2, name: "Stack technique" }).closest("section")!).getByText("Zod")).toBeInTheDocument();
+    expect(screen.queryByRole("heading", { level: 2, name: "Décisions" })).toBeNull();
   });
 
   it("la galerie s'affiche dans Le produit", () => {
