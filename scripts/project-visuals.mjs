@@ -1,5 +1,5 @@
 // Génère public/projets/generated/<slug>.png (1200×750) pour chaque fiche sans visuel fourni :
-// fond et quadrillage du thème, nom du projet en bleu, chiffre clé en dessous.
+// fond uni du thème (sans quadrillage depuis PFO-130), nom du projet en bleu, chiffre clé en dessous.
 // Usage : node scripts/project-visuals.mjs [dossier des fiches] [dossier public]
 // (défauts : content/fiches et public ; lancé par `npm run build` avant `next build`).
 import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from "node:fs";
@@ -15,25 +15,12 @@ const publicDir = path.resolve(process.argv[3] ?? path.join(root, "public"));
 
 const WIDTH = 1200;
 const HEIGHT = 750;
-const STEP = 60;
 
 /** Deuxième phrase du bloc « **En bref.** » : le chiffre clé.
  * Duplique `parseEnBref` de lib/fiches.ts (le .ts n'est pas importable ici) ; garder les deux alignés. */
 function chiffreOf(content) {
   const bloc = content.match(/\*\*En bref\.\*\*([^]*?)(?:\n\s*\n|$)/)?.[1] ?? "";
   return bloc.replace(/\s+/g, " ").trim().split(/(?<=\.)\s+/).filter(Boolean)[1] ?? "";
-}
-
-/** Lignes du quadrillage : une div de 1 px tous les STEP px, dans les deux sens. */
-function gridLines(color) {
-  const lines = [];
-  for (let x = STEP; x < WIDTH; x += STEP) {
-    lines.push(h("div", { style: { position: "absolute", left: x, top: 0, width: 1, height: HEIGHT, background: color } }));
-  }
-  for (let y = STEP; y < HEIGHT; y += STEP) {
-    lines.push(h("div", { style: { position: "absolute", top: y, left: 0, height: 1, width: WIDTH, background: color } }));
-  }
-  return lines;
 }
 
 function visual(nom, chiffre) {
@@ -53,7 +40,6 @@ function visual(nom, chiffre) {
           fontFamily: "Inter",
         },
       },
-      ...gridLines(token("grid-line")),
       h("div", { style: { fontSize: 96, fontWeight: 600, letterSpacing: "-0.02em", color: token("primary") } }, nom),
       h("div", { style: { marginTop: 32, fontSize: 40, lineHeight: 1.3, color: token("foreground") } }, chiffre),
     ),
