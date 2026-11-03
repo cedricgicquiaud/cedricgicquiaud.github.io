@@ -128,7 +128,8 @@ function Decisions({ html }: { html: string }) {
           key={titre}
           className={`gap-x-10 py-6 first:pt-0 md:grid md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] ${i > 0 ? "border-t border-border" : ""}`}
         >
-          <h3 className="mb-3 text-xl font-normal leading-snug tracking-tight md:mb-0">{titre}</h3>
+          {/* Le titre vient du HTML de `marked` (entités, gras) : même source maîtrisée que le corps. */}
+          <h3 className="mb-3 text-xl font-normal leading-snug tracking-tight md:mb-0" dangerouslySetInnerHTML={{ __html: titre }} />
           <Markdown html={texte} />
         </li>
       ))}

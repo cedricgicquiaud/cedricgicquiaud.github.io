@@ -1,4 +1,4 @@
-/** Une décision affichée en grille (PFO-130) : son titre et son texte en HTML. */
+/** Une décision affichée en grille (PFO-130) : son titre et son texte, tous deux en HTML (entités comprises). */
 export type Decision = { titre: string; html: string };
 
 /**
