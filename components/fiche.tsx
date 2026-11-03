@@ -8,11 +8,11 @@ import { BookingLink } from "./booking-link";
 import { DemoLink } from "./demo-link";
 import { GitHubLink } from "./github-link";
 
-// Mise en forme du HTML Markdown (Tailwind retire les puces et le soulignement par défaut).
+// Mise en forme du HTML Markdown. Listes de premier niveau en lignes séparées par un trait, sans puce (PFO-130).
 const MARKDOWN =
-  "space-y-4 text-base leading-relaxed [&_ul]:list-disc [&_ul]:space-y-1 [&_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:text-foreground [&_a]:break-words [&_strong]:font-semibold [&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_code]:text-sm" +
+  "space-y-4 text-base leading-relaxed [&>ul]:list-none [&>ul]:pl-0 [&>ul>li]:my-0 [&>ul>li]:border-b [&>ul>li]:border-border [&>ul>li]:py-3 [&>ul>li:first-child]:pt-0 [&>ul>li:last-child]:border-b-0 [&_ul_ul]:list-disc [&_ul_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:text-foreground [&_a]:break-words [&_strong]:font-semibold [&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_code]:text-sm" +
   // Sous-titres, images du corps (captures placées dans le texte) et tableaux quadrillés : le tableau défile seul sur mobile, jamais la page.
-  " [&_h3]:pt-8 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:tracking-tight [&_li]:my-1.5 [&_ol>li]:pl-1 [&_ul_ul]:mt-2 [&_img]:mt-6 [&_img]:w-full [&_img]:rounded-lg [&_img]:border [&_img]:border-border [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto [&_table]:border-collapse [&_table]:text-sm [&_th]:border [&_th]:border-border [&_th]:bg-muted/60 [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:align-bottom [&_th]:font-semibold [&_td]:border [&_td]:border-border [&_td]:px-3 [&_td]:py-2 [&_td]:align-top";
+  " [&_h3]:pt-8 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:tracking-tight [&_ol>li]:my-1.5 [&_ul_ul>li]:my-1.5 [&_ol>li]:pl-1 [&_ul_ul]:mt-2 [&_img]:mt-6 [&_img]:w-full [&_img]:rounded-lg [&_img]:border [&_img]:border-border [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto [&_table]:border-collapse [&_table]:text-sm [&_th]:border [&_th]:border-border [&_th]:bg-muted/60 [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:align-bottom [&_th]:font-semibold [&_td]:border [&_td]:border-border [&_td]:px-3 [&_td]:py-2 [&_td]:align-top";
 
 const LINK =
   "underline underline-offset-4 hover:text-foreground focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring";
