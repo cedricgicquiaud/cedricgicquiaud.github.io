@@ -39,24 +39,22 @@ describe("Portrait : composant conservé, plus rendu (PFO-37, retiré par PFO-48
   });
 });
 
-describe("Quadrillage sur toute la page (PFO-38)", () => {
+describe("Fond uni, sans quadrillage (PFO-130, remplace PFO-38)", () => {
   const root = path.resolve(__dirname, "../..");
   const source = (rel: string) => readFileSync(path.join(root, rel), "utf8");
 
-  it("body porte bg-grid dans app/layout.tsx ; l'intro ne le porte plus", () => {
+  it("refus : ni body ni l'intro ne portent bg-grid", () => {
     const layout = source("app/layout.tsx");
     const bodyTag = layout.slice(layout.indexOf("<body"), layout.indexOf(">", layout.indexOf("<body")));
-    expect(bodyTag).toMatch(/className="[^"]*\bbg-grid\b/);
+    expect(bodyTag).not.toMatch(/\bbg-grid\b/);
     const { container } = render(<Intro />);
     expect(container.querySelector("section#intro")).not.toHaveClass("bg-grid");
   });
 
-  it("bg-grid dessine le quadrillage avec --grid-line, défini dans le seul bloc de tokens (sombre seul depuis PFO-55)", () => {
+  it("refus : le style du quadrillage et sa couleur ont disparu de globals.css", () => {
     const css = source("app/globals.css");
-    const rule = css.slice(css.indexOf("@utility bg-grid"), css.indexOf("}", css.indexOf("@utility bg-grid")));
-    expect(rule).toContain("var(--grid-line)");
-    expect(rule).not.toMatch(/background-attachment/);
-    expect(css.match(/--grid-line:/g)).toHaveLength(1);
+    expect(css).not.toContain("bg-grid");
+    expect(css).not.toContain("--grid-line");
   });
 });
 
