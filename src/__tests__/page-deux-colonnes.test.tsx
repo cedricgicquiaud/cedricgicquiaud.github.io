@@ -129,6 +129,15 @@ describe("Page projet — deux colonnes et sommaire (PFO-130)", () => {
     }
   });
 
+  it("occupe la largeur comme le modèle : titres en grand, colonne de titres large (retour du 03/11)", () => {
+    const { container } = render(<Fiche fiche={fiche()} />);
+    expect(container.querySelector("article > div")).toHaveClass("max-w-7xl");
+    for (const h of screen.getAllByRole("heading", { level: 2 })) {
+      expect(h).toHaveClass("lg:text-4xl");
+      expect(h.closest("section")!.className).toContain("lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]");
+    }
+  });
+
   it("le sommaire liste les sections présentes, dans l'ordre, avec leur ancre", () => {
     render(<Fiche fiche={fiche()} />);
     const nav = screen.getByRole("navigation", { name: "Sommaire" });
