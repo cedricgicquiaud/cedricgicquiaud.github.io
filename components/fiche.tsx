@@ -43,9 +43,9 @@ function splitConstruit(html: string): { produit: string; decisions: string } {
 function Section({ id, titre, children }: { id: string; titre: string; children: ReactNode }) {
   return (
     // Deux colonnes sur écran large (PFO-130) : le titre à gauche, le contenu à droite, sans filet (le quadrillage suffit) ; empilés sur téléphone.
-    <section id={id} className="mt-20 scroll-mt-8 lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-x-20">
+    <section id={id} className="mt-20 scroll-mt-8 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-x-20">
       {/* Titres en grand, graisse normale, comme le modèle (retour du 03/11). */}
-      <h2 className="mb-4 text-2xl font-normal tracking-tight lg:mb-0 lg:text-4xl">{titre}</h2>
+      <h2 className="mb-4 text-2xl font-normal tracking-tight lg:mb-0 lg:text-3xl">{titre}</h2>
       <div className="min-w-0 max-w-3xl">{children}</div>
     </section>
   );
@@ -159,7 +159,7 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
   const meta = [AFFICHER_STATUT ? frontmatter.statut : "", frontmatter.periode, frontmatter.role].filter(Boolean);
   return (
     <article className="px-6 py-16 lg:px-16">
-      <div className="mx-auto w-full max-w-7xl">
+      <div className="mx-auto w-full max-w-6xl">
         <Link href={`/#${site.sections.projects}`} className={`text-sm text-muted-foreground ${LINK}`}>
           ← Projets
         </Link>
@@ -215,7 +215,7 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
           </Section>
         ))}
         {/* Invitation de fin de fiche (PFO-119) : un visiteur convaincu réserve un échange. */}
-        <aside id="rendez-vous" className="mt-14 flex flex-wrap items-center justify-between gap-4 rounded-lg border border-border bg-card/40 px-5 py-4">
+        <aside id="rendez-vous" className="mx-auto mt-20 flex w-fit max-w-full flex-wrap items-center justify-center gap-x-8 gap-y-4 rounded-lg border border-border bg-card/40 px-6 py-4">
           <p className="text-base font-medium">Un projet similaire ? Parlons-en.</p>
           <BookingLink />
         </aside>
