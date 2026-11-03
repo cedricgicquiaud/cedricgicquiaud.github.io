@@ -114,7 +114,7 @@ describe("Tailles du modèle : page fiche (PFO-47)", () => {
     const sectionTitles = container.querySelectorAll("section h2");
     expect(sectionTitles.length).toBeGreaterThan(0);
     for (const h2 of sectionTitles) {
-      expect(classesOf(h2)).toEqual(expect.arrayContaining(["text-2xl", "lg:text-4xl", "font-normal"]));
+      expect(classesOf(h2)).toEqual(expect.arrayContaining(["text-2xl", "lg:text-3xl", "font-normal"]));
       expect(classesOf(h2)).not.toContain("uppercase");
     }
     for (const body of container.querySelectorAll("section h2 + div.space-y-4")) {

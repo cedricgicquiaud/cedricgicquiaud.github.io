@@ -129,13 +129,19 @@ describe("Page projet — deux colonnes et sommaire (PFO-130)", () => {
     }
   });
 
-  it("occupe la largeur comme le modèle : titres en grand, colonne de titres large (retour du 03/11)", () => {
+  it("page resserrée au centre, titres grands sans excès, colonne de titres sur un tiers (retours du 03/11)", () => {
     const { container } = render(<Fiche fiche={fiche()} />);
-    expect(container.querySelector("article > div")).toHaveClass("max-w-7xl");
+    expect(container.querySelector("article > div")).toHaveClass("mx-auto", "max-w-6xl");
     for (const h of screen.getAllByRole("heading", { level: 2 })) {
-      expect(h).toHaveClass("lg:text-4xl");
-      expect(h.closest("section")!.className).toContain("lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)]");
+      expect(h).toHaveClass("lg:text-3xl");
+      expect(h).not.toHaveClass("lg:text-4xl");
+      expect(h.closest("section")!.className).toContain("lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]");
     }
+  });
+
+  it("l'invitation de fin a la largeur de son contenu, centrée", () => {
+    const { container } = render(<Fiche fiche={fiche()} />);
+    expect(container.querySelector("#rendez-vous")).toHaveClass("mx-auto", "w-fit");
   });
 
   it("le sommaire liste les sections présentes, dans l'ordre, avec leur ancre", () => {
