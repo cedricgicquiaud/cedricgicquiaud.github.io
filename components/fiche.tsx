@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import site from "../content/site.json";
 import { decisionsDe } from "../lib/decisions";
+import { TitreSection } from "./titre-section";
 import type { Fiche as FicheData } from "../lib/fiches";
 import { Badge } from "./ui/badge";
 import { AFFICHER_STATUT } from "../lib/affichage";
@@ -46,8 +47,8 @@ function Section({ id, titre, children }: { id: string; titre: string; children:
     // Deux colonnes sur écran large (PFO-130) : le titre à gauche, le contenu à droite, sans filet (le quadrillage suffit) ; empilés sur téléphone.
     <section id={id} className="mt-20 scroll-mt-8 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-x-20">
       {/* Titres en grand, graisse normale, comme le modèle (retour du 03/11). */}
-      {/* Le titre reste visible à gauche pendant qu'on lit une section longue, comme la colonne de l'accueil. */}
-      <h2 className="mb-4 text-2xl font-normal tracking-tight lg:sticky lg:top-8 lg:mb-0 lg:self-start lg:text-3xl">{titre}</h2>
+      {/* Le titre reste visible à gauche seulement si la section dépasse l'écran (TitreSection mesure). */}
+      <TitreSection titre={titre} className="mb-4 text-2xl font-normal tracking-tight lg:mb-0 lg:text-3xl" />
       <div className="min-w-0 max-w-3xl">{children}</div>
     </section>
   );
