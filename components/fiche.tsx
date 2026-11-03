@@ -43,9 +43,10 @@ function splitConstruit(html: string): { produit: string; decisions: string } {
 function Section({ id, titre, children }: { id: string; titre: string; children: ReactNode }) {
   return (
     // Deux colonnes sur écran large (PFO-130) : le titre à gauche, le contenu à droite, sans filet (le quadrillage suffit) ; empilés sur téléphone.
-    <section id={id} className="mt-20 scroll-mt-8 lg:grid lg:grid-cols-[12rem_minmax(0,1fr)] lg:gap-x-20">
-      <h2 className="mb-4 text-xl font-semibold tracking-tight lg:mb-0">{titre}</h2>
-      <div className="min-w-0">{children}</div>
+    <section id={id} className="mt-20 scroll-mt-8 lg:grid lg:grid-cols-[minmax(0,5fr)_minmax(0,7fr)] lg:gap-x-20">
+      {/* Titres en grand, graisse normale, comme le modèle (retour du 03/11). */}
+      <h2 className="mb-4 text-2xl font-normal tracking-tight lg:mb-0 lg:text-4xl">{titre}</h2>
+      <div className="min-w-0 max-w-3xl">{children}</div>
     </section>
   );
 }
@@ -158,12 +159,12 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
   const meta = [AFFICHER_STATUT ? frontmatter.statut : "", frontmatter.periode, frontmatter.role].filter(Boolean);
   return (
     <article className="px-6 py-16 lg:px-16">
-      <div className="mx-auto w-full max-w-5xl">
+      <div className="mx-auto w-full max-w-7xl">
         <Link href={`/#${site.sections.projects}`} className={`text-sm text-muted-foreground ${LINK}`}>
           ← Projets
         </Link>
         <h1 className="mt-6 text-4xl font-bold tracking-tight text-balance">{fiche.titre || frontmatter.nom}</h1>
-        <p className="mt-4 text-lg leading-relaxed text-muted-foreground">{accroche}</p>
+        <p className="mt-4 max-w-3xl text-lg leading-relaxed text-muted-foreground">{accroche}</p>
         {/* Mêmes règles que les cartes : un lien par URL non vide ; une fiche anonyme n'a aucun lien, une mention à la place. */}
         <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
           {frontmatter.visibilite === "anonyme" ? (
@@ -185,10 +186,10 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
           alt=""
           width={1200}
           height={750}
-          className="mt-8 aspect-[16/10] w-full rounded-lg border border-border object-cover"
+          className="mt-8 aspect-[16/10] w-full max-w-4xl rounded-lg border border-border object-cover"
         />
         {fiche.chiffres?.length ? (
-          <ul aria-label="Chiffres clés" className="mt-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <ul aria-label="Chiffres clés" className="mt-6 grid max-w-4xl grid-cols-1 gap-3 sm:grid-cols-3">
             {fiche.chiffres.map(({ valeur, libelle }) => (
               <li key={`${valeur}-${libelle}`} className="min-w-0 rounded-lg border border-border bg-card/40 px-4 py-3">
                 <span className="block text-2xl font-semibold tracking-tight text-cyber">{valeur}</span>
