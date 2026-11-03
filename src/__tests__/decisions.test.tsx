@@ -77,6 +77,11 @@ describe("Page projet — décisions en trois colonnes", () => {
     expect(items[1].className).toMatch(/\bborder-t\b/);
   });
 
+  it("une apostrophe du titre s'affiche comme une apostrophe, pas en code HTML", () => {
+    render(<Fiche fiche={fiche("<h3>Ce qui n&#39;est pas coché</h3>\n<p>Texte.</p>")} />);
+    expect(within(section("Décisions")).getByRole("heading", { level: 3 }).textContent).toBe("Ce qui n'est pas coché");
+  });
+
   it("refus : un texte libre reste affiché tel quel, sans grille", () => {
     render(<Fiche fiche={fiche("<p>Un seul paragraphe.</p>")} />);
     expect(section("Décisions")).toHaveTextContent("Un seul paragraphe.");
