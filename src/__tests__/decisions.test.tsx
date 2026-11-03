@@ -89,11 +89,30 @@ describe("Page projet — décisions en trois colonnes", () => {
   });
 });
 
-describe("Page projet — titre de section fixe pendant le défilement", () => {
-  it("chaque titre de section reste collé en haut sur écran large", () => {
+describe("Page projet — titre fixe seulement quand la section dépasse l'écran (retour du 03/11)", () => {
+  const original = Element.prototype.getBoundingClientRect;
+  afterEach(() => {
+    Element.prototype.getBoundingClientRect = original;
+  });
+
+  /** Simule la hauteur du contenu de chaque section (la colonne de droite) ; l'écran fait 800 px. */
+  function hauteurContenu(px: number) {
+    window.innerHeight = 800;
+    Element.prototype.getBoundingClientRect = function () {
+      const haut = this.parentElement?.tagName === "SECTION" && this.tagName !== "H2" ? px : 0;
+      return { height: haut, width: 0, top: 0, left: 0, right: 0, bottom: haut, x: 0, y: 0, toJSON() {} } as DOMRect;
+    };
+  }
+
+  it("section plus haute que l'écran : son titre reste collé en haut sur écran large", () => {
+    hauteurContenu(1200);
     render(<Fiche fiche={fiche("<p>X.</p>")} />);
-    for (const h of screen.getAllByRole("heading", { level: 2 })) {
-      expect(h).toHaveClass("lg:sticky", "lg:self-start");
-    }
+    for (const h of screen.getAllByRole("heading", { level: 2 })) expect(h).toHaveClass("lg:sticky", "lg:self-start");
+  });
+
+  it("refus : section qui tient dans l'écran, son titre défile avec le texte", () => {
+    hauteurContenu(500);
+    render(<Fiche fiche={fiche("<p>X.</p>")} />);
+    for (const h of screen.getAllByRole("heading", { level: 2 })) expect(h).not.toHaveClass("lg:sticky");
   });
 });
