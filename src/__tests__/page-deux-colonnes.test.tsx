@@ -176,11 +176,11 @@ ${corps}`;
     const { src, dest, pub } = dirs("", "\n## Architecture\n\nLe serveur.\n\n## Décisions\n\n1. Un choix.\n");
     syncFiches(src, dest);
     const f = loadFiche("alpha", dest, pub);
-    expect(f.facultatives.map((s) => [s.id, s.titre])).toEqual([
+    expect(f.facultatives!.map((s) => [s.id, s.titre])).toEqual([
       ["architecture", "Architecture"],
       ["decisions", "Décisions"],
     ]);
-    expect(f.facultatives[0].html).toBe("<p>Le serveur.</p>");
+    expect(f.facultatives![0].html).toBe("<p>Le serveur.</p>");
   });
 
   it("refus : les sections facultatives ne changent pas les cinq sections du gabarit", () => {

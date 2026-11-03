@@ -20,14 +20,17 @@ const LINK =
 /** Intitulés affichés, dans l'ordre du README GitHub (PFO-75) ; les fiches gardent leurs propres intitulés. */
 const AFFICHAGE: Record<string, string> = {
   probleme: "Contexte",
+  livrables: "Livrables",
   construit: "Le produit",
   architecture: "Architecture",
+  stack: "Stack technique",
+  decisions: "Décisions",
   preuves: "Où en est le projet",
   appris: "Ce que j'en retiens",
   artefacts: "Liens",
 };
 
-// Paragraphe qui ouvre les décisions dans « Ce que j'ai construit » : ce qui suit passe dans Architecture.
+// Paragraphe qui ouvre les décisions dans « Ce que j'ai construit » : ce qui suit passe dans Décisions (PFO-130).
 const DECISIONS = /<p>Décisions qui ont compté\s*:?<\/p>\s*/;
 
 /** Coupe le HTML de « Ce que j'ai construit » : le produit avant les décisions, les décisions après. */
@@ -39,10 +42,75 @@ function splitConstruit(html: string): { produit: string; decisions: string } {
 
 function Section({ id, titre, children }: { id: string; titre: string; children: ReactNode }) {
   return (
-    <section id={id} className="mt-14">
-      <h2 className="mb-4 text-xl font-semibold tracking-tight">{titre}</h2>
-      {children}
+    // Deux colonnes sur écran large (PFO-130) : le titre à gauche, le contenu à droite ; empilés sur téléphone.
+    <section id={id} className="mt-12 scroll-mt-8 border-t border-border pt-10 lg:grid lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-10">
+      <h2 className="mb-4 text-xl font-semibold tracking-tight lg:mb-0">{titre}</h2>
+      <div className="min-w-0">{children}</div>
     </section>
+  );
+}
+
+/** Vidéo puis captures de la fiche ; rien si elle n'en déclare pas. */
+function Medias({ fiche }: { fiche: FicheData }) {
+  return (
+    <>
+      {fiche.video && (
+        <div id="video" className="mt-6">
+          {/* Lecteur natif, contrôles au clavier ; jamais d'autoplay. Le poster est le visuel principal de la fiche. */}
+          <video controls preload="metadata" poster={fiche.visuel} className="w-full rounded-lg border border-border">
+            <source src={fiche.video.fichier} type="video/mp4" />
+          </video>
+        </div>
+      )}
+      {fiche.captures?.length ? (
+        <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
+          {fiche.captures.map(({ fichier, legende }) => (
+            <figure key={fichier}>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={fichier} alt={legende} loading="lazy" className="h-auto w-full rounded-lg border border-border" />
+              <figcaption className="mt-2 text-sm text-muted-foreground">{legende}</figcaption>
+            </figure>
+          ))}
+        </div>
+      ) : null}
+    </>
+  );
+}
+
+function Pastilles({ outils, label }: { outils: string[]; label?: string }) {
+  return (
+    <ul aria-label={label} className="flex min-w-0 flex-wrap gap-2">
+      {outils.map((tag) => (
+        <li key={tag} className="min-w-0">
+          <Badge variant="cyber" className="whitespace-normal">
+            {tag}
+          </Badge>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
+/** Stack technique (PFO-130) : une ligne par catégorie si la fiche déclare `stack_detail`, sinon les pastilles de `stack`. */
+function Stack({ fiche }: { fiche: FicheData }) {
+  if (!fiche.stackDetail?.length) {
+    return fiche.frontmatter.stack.length ? <Pastilles outils={fiche.frontmatter.stack} label="Stack" /> : null;
+  }
+  return (
+    <table className="w-full border-collapse text-sm">
+      <tbody>
+        {fiche.stackDetail.map(({ categorie, outils }) => (
+          <tr key={categorie} className="border-b border-border last:border-b-0">
+            <th scope="row" className="w-32 py-3 pr-4 text-left align-top font-normal text-muted-foreground sm:w-40">
+              {categorie}
+            </th>
+            <td className="py-3">
+              <Pastilles outils={outils} />
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }
 
@@ -54,12 +122,43 @@ function Markdown({ html }: { html: string }) {
 export function Fiche({ fiche }: { fiche: FicheData }) {
   const { frontmatter } = fiche;
   const html = (id: string) => fiche.sections.find((s) => s.id === id)?.html ?? "";
-  const { produit, decisions } = splitConstruit(html("construit"));
+  const facultative = (id: string) => fiche.facultatives?.find((s) => s.id === id)?.html ?? "";
+  const { produit, decisions: anciennesDecisions } = splitConstruit(html("construit"));
+  const livrables = facultative("livrables");
+  const decisions = facultative("decisions") || anciennesDecisions;
+  const medias = Boolean(fiche.captures?.length || fiche.video);
+  // Captures et vidéo vont dans Le produit ; à défaut de Le produit, dans Livrables.
+  const mediasDansLivrables = medias && !produit && Boolean(livrables);
+  const blocs: { id: string; contenu: ReactNode }[] = [
+    { id: "probleme", contenu: html("probleme") && <Markdown html={html("probleme")} /> },
+    {
+      id: "livrables",
+      contenu: livrables && (
+        <>
+          <Markdown html={livrables} />
+          {mediasDansLivrables && <Medias fiche={fiche} />}
+        </>
+      ),
+    },
+    {
+      id: "construit",
+      contenu: (produit || (medias && !mediasDansLivrables)) && (
+        <>
+          {produit && <Markdown html={produit} />}
+          {!mediasDansLivrables && <Medias fiche={fiche} />}
+        </>
+      ),
+    },
+    { id: "architecture", contenu: facultative("architecture") && <Markdown html={facultative("architecture")} /> },
+    { id: "stack", contenu: <Stack fiche={fiche} /> },
+    { id: "decisions", contenu: decisions && <Markdown html={decisions} /> },
+    ...(["preuves", "appris", "artefacts"] as const).map((id) => ({ id, contenu: html(id) && <Markdown html={html(id)} /> })),
+  ].filter((b) => b.contenu);
   const accroche = [fiche.enBref.quoi, fiche.enBref.chiffre, fiche.enBref.lien].filter(Boolean).join(" ");
   const meta = [AFFICHER_STATUT ? frontmatter.statut : "", frontmatter.periode, frontmatter.role].filter(Boolean);
   return (
     <article className="px-6 py-16 lg:px-16">
-      <div className="mx-auto w-full max-w-3xl">
+      <div className="mx-auto w-full max-w-5xl">
         <Link href={`/#${site.sections.projects}`} className={`text-sm text-muted-foreground ${LINK}`}>
           ← Projets
         </Link>
@@ -98,57 +197,22 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
             ))}
           </ul>
         ) : null}
-        {html("probleme") && (
-          <Section id="probleme" titre={AFFICHAGE.probleme}>
-            <Markdown html={html("probleme")} />
-          </Section>
-        )}
-        {(produit || fiche.captures?.length || fiche.video) && (
-          <Section id="construit" titre={AFFICHAGE.construit}>
-            {produit && <Markdown html={produit} />}
-            {fiche.video && (
-              <div id="video" className="mt-6">
-                {/* Lecteur natif, contrôles au clavier ; jamais d'autoplay. Le poster est le visuel principal de la fiche. */}
-                <video controls preload="metadata" poster={fiche.visuel} className="w-full rounded-lg border border-border">
-                  <source src={fiche.video.fichier} type="video/mp4" />
-                </video>
-              </div>
-            )}
-            {fiche.captures?.length ? (
-              <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
-                {fiche.captures.map(({ fichier, legende }) => (
-                  <figure key={fichier}>
-                    {/* eslint-disable-next-line @next/next/no-img-element */}
-                    <img src={fichier} alt={legende} loading="lazy" className="h-auto w-full rounded-lg border border-border" />
-                    <figcaption className="mt-2 text-sm text-muted-foreground">{legende}</figcaption>
-                  </figure>
-                ))}
-              </div>
-            ) : null}
-          </Section>
-        )}
-        <Section id="architecture" titre={AFFICHAGE.architecture}>
-          <ul aria-label="Stack" className="flex flex-wrap gap-2">
-            {frontmatter.stack.map((tag) => (
-              <li key={tag}>
-                <Badge variant="cyber">{tag}</Badge>
+        <nav aria-label="Sommaire" className="mt-10">
+          <ul className="flex flex-wrap gap-x-5 gap-y-2 text-sm text-muted-foreground">
+            {blocs.map(({ id }) => (
+              <li key={id}>
+                <a href={`#${id}`} className={LINK}>
+                  {AFFICHAGE[id]}
+                </a>
               </li>
             ))}
           </ul>
-          {decisions && (
-            <>
-              <h3 className="mt-6 mb-3 text-base font-semibold">Décisions qui ont compté</h3>
-              <Markdown html={decisions} />
-            </>
-          )}
-        </Section>
-        {(["preuves", "appris", "artefacts"] as const).map((id) =>
-          html(id) ? (
-            <Section key={id} id={id} titre={AFFICHAGE[id]}>
-              <Markdown html={html(id)} />
-            </Section>
-          ) : null,
-        )}
+        </nav>
+        {blocs.map(({ id, contenu }) => (
+          <Section key={id} id={id} titre={AFFICHAGE[id]}>
+            {contenu}
+          </Section>
+        ))}
         {/* Invitation de fin de fiche (PFO-119) : un visiteur convaincu réserve un échange. */}
         <aside id="rendez-vous" className="mt-14 flex flex-wrap items-center justify-between gap-4 rounded-lg border border-border bg-card/40 px-5 py-4">
           <p className="text-base font-medium">Un projet similaire ? Parlons-en.</p>

@@ -30,6 +30,8 @@ export type Capture = { fichier: string; legende: string };
 export type Chiffre = { valeur: string; libelle: string };
 /** La vidéo de démonstration déclarée dans le frontmatter : chemin dans `public/` et durée (« N min » ou « N s »). */
 export type Video = { fichier: string; duree: string };
+/** Une ligne de la section « Stack technique » (PFO-130) : une catégorie et ses outils. */
+export type StackCategorie = { categorie: string; outils: string[] };
 /** `markdown` : le Markdown source de la section, lu par `lib/texte-brut.ts` (PFO-111). */
 export type Section = { id: string; titre: string; html: string; markdown?: string };
 
@@ -42,12 +44,23 @@ const SECTIONS: ReadonlyArray<{ id: string; titre: string }> = [
   { id: "artefacts", titre: "Artefacts" },
 ];
 
+// Sections facultatives (PFO-130), dans l'ordre d'affichage ; seules les présentes sont renvoyées.
+const FACULTATIVES: ReadonlyArray<{ id: string; titre: string }> = [
+  { id: "livrables", titre: "Livrables" },
+  { id: "architecture", titre: "Architecture" },
+  { id: "decisions", titre: "Décisions" },
+];
+
 export type Fiche = {
   slug: string;
   titre: string;
   frontmatter: Frontmatter;
   enBref: EnBref;
   sections: Section[];
+  /** Livrables, Architecture, Décisions : seulement celles que la fiche contient (PFO-130). */
+  facultatives?: Section[];
+  /** Outils rangés par catégorie (`stack_detail`, PFO-130) ; absent sans champ. */
+  stackDetail?: StackCategorie[];
   /** Chemin du visuel affiché, relatif à `public/` : le fourni s'il est déclaré, sinon le généré. */
   visuel: string;
   /** Captures déclarées dans le frontmatter, dans l'ordre ; absentes = liste vide. */
@@ -110,13 +123,46 @@ function parseEnBref(content: string): EnBref {
   return { quoi, chiffre, lien: reste.join(" ") };
 }
 
-/** Corps de chaque `## Titre` (jusqu'au `##` suivant), en Markdown et rendu en HTML ; section absente = vide. */
-function parseSections(content: string): Section[] {
+/** Corps de chaque `## Titre` (jusqu'au `##` suivant), en Markdown. */
+function sectionBodies(content: string): Map<string, string> {
   const bodies = new Map<string, string>();
   for (const m of content.matchAll(/^## (.+)\n([^]*?)(?=^## |(?![^]))/gm)) bodies.set(m[1].trim(), m[2]);
-  return SECTIONS.map(({ id, titre }) => {
-    const markdown = bodies.get(titre) ?? "";
-    return { id, titre, html: marked.parse(markdown, { async: false }).trim(), markdown };
+  return bodies;
+}
+
+const toSection = (id: string, titre: string, markdown: string): Section => ({
+  id,
+  titre,
+  html: marked.parse(markdown, { async: false }).trim(),
+  markdown,
+});
+
+/** Les cinq sections du gabarit, en Markdown et rendu en HTML ; section absente = vide. */
+function parseSections(content: string): Section[] {
+  const bodies = sectionBodies(content);
+  return SECTIONS.map(({ id, titre }) => toSection(id, titre, bodies.get(titre) ?? ""));
+}
+
+/** Les sections facultatives présentes et non vides, dans l'ordre d'affichage. */
+function parseFacultatives(content: string): Section[] {
+  const bodies = sectionBodies(content);
+  return FACULTATIVES.flatMap(({ id, titre }) => {
+    const markdown = bodies.get(titre)?.trim() ?? "";
+    return markdown ? [toSection(id, titre, markdown)] : [];
+  });
+}
+
+/** Les entrées de `stack_detail`, dans l'ordre déclaré ; `undefined` sans champ. Mêmes refus que `sync`. */
+function parseStackDetail(slug: string, data: Record<string, unknown>): StackCategorie[] | undefined {
+  if (data.stack_detail === undefined) return undefined;
+  if (!Array.isArray(data.stack_detail)) throw new Error(`${slug} : stack_detail doit être une liste`);
+  return (data.stack_detail as (Record<string, unknown> | null)[]).map((entry, i) => {
+    const where = `${slug} : stack_detail, entrée ${i + 1}`;
+    const categorie = text(entry?.categorie);
+    const outils = splitStack(text(entry?.outils));
+    if (!categorie) throw new Error(`${where} : « categorie » requise et non vide`);
+    if (!outils.length) throw new Error(`${where} : « outils » requis et non vide`);
+    return { categorie, outils };
   });
 }
 
@@ -216,6 +262,8 @@ function parseFiche(slug: string, raw: string, publicDir: string): Fiche {
     frontmatter,
     enBref: parseEnBref(content),
     sections: parseSections(content),
+    facultatives: parseFacultatives(content),
+    ...(data.stack_detail !== undefined ? { stackDetail: parseStackDetail(slug, data) } : {}),
     visuel: resolveVisual(slug, frontmatter.visuel, publicDir),
     captures: parseCaptures(slug, data, publicDir),
     video: parseVideo(slug, data, publicDir),
