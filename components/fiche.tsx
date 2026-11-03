@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ReactNode } from "react";
 import site from "../content/site.json";
+import { decisionsDe } from "../lib/decisions";
 import type { Fiche as FicheData } from "../lib/fiches";
 import { Badge } from "./ui/badge";
 import { AFFICHER_STATUT } from "../lib/affichage";
@@ -45,7 +46,8 @@ function Section({ id, titre, children }: { id: string; titre: string; children:
     // Deux colonnes sur écran large (PFO-130) : le titre à gauche, le contenu à droite, sans filet (le quadrillage suffit) ; empilés sur téléphone.
     <section id={id} className="mt-20 scroll-mt-8 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-x-20">
       {/* Titres en grand, graisse normale, comme le modèle (retour du 03/11). */}
-      <h2 className="mb-4 text-2xl font-normal tracking-tight lg:mb-0 lg:text-3xl">{titre}</h2>
+      {/* Le titre reste visible à gauche pendant qu'on lit une section longue, comme la colonne de l'accueil. */}
+      <h2 className="mb-4 text-2xl font-normal tracking-tight lg:sticky lg:top-8 lg:mb-0 lg:self-start lg:text-3xl">{titre}</h2>
       <div className="min-w-0 max-w-3xl">{children}</div>
     </section>
   );
@@ -115,6 +117,25 @@ function Stack({ fiche }: { fiche: FicheData }) {
   );
 }
 
+/** Décisions en grille (PFO-130) : titre à gauche, texte à droite, un trait entre deux ; texte libre sinon. */
+function Decisions({ html }: { html: string }) {
+  const decisions = decisionsDe(html);
+  if (!decisions) return <Markdown html={html} />;
+  return (
+    <ol className="space-y-0">
+      {decisions.map(({ titre, html: texte }, i) => (
+        <li
+          key={titre}
+          className={`gap-x-10 py-6 first:pt-0 md:grid md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] ${i > 0 ? "border-t border-border" : ""}`}
+        >
+          <h3 className="mb-3 text-xl font-normal leading-snug tracking-tight md:mb-0">{titre}</h3>
+          <Markdown html={texte} />
+        </li>
+      ))}
+    </ol>
+  );
+}
+
 function Markdown({ html }: { html: string }) {
   // HTML produit par `marked` depuis les fiches du dépôt : contenu maîtrisé, contrôlé au build.
   return <div className={MARKDOWN} dangerouslySetInnerHTML={{ __html: html }} />;
@@ -152,7 +173,7 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
     },
     { id: "architecture", contenu: facultative("architecture") && <Markdown html={facultative("architecture")} /> },
     { id: "stack", contenu: <Stack fiche={fiche} /> },
-    { id: "decisions", contenu: decisions && <Markdown html={decisions} /> },
+    { id: "decisions", contenu: decisions && <Decisions html={decisions} /> },
     ...(["preuves", "appris", "artefacts"] as const).map((id) => ({ id, contenu: html(id) && <Markdown html={html(id)} /> })),
   ].filter((b) => b.contenu);
   const accroche = [fiche.enBref.quoi, fiche.enBref.chiffre, fiche.enBref.lien].filter(Boolean).join(" ");
