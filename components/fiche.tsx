@@ -82,7 +82,7 @@ function Pastilles({ outils, label }: { outils: string[]; label?: string }) {
     <ul aria-label={label} className="flex min-w-0 flex-wrap gap-2">
       {outils.map((tag) => (
         <li key={tag} className="min-w-0">
-          <Badge variant="cyber" className="whitespace-normal">
+          <Badge variant="cyber" className="h-auto whitespace-normal">
             {tag}
           </Badge>
         </li>
