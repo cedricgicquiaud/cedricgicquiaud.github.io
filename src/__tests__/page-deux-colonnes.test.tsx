@@ -101,6 +101,12 @@ describe("Page projet — Stack technique (PFO-130)", () => {
     expect(lignes.map((l) => l.textContent)).toEqual(["LangagesTypeScript", "ServeurNode.jsExpress"]);
   });
 
+  it("une pastille longue passe à la ligne au lieu d'être coupée (375 px)", () => {
+    render(<Fiche fiche={fiche({ stackDetail: [{ categorie: "Tests", outils: ["Intégration continue GitHub Actions"] }] })} />);
+    const pastille = within(section("Stack technique")).getByText("Intégration continue GitHub Actions");
+    expect(pastille).toHaveClass("whitespace-normal", "h-auto");
+  });
+
   it("sans stack_detail, les outils du champ stack", () => {
     render(<Fiche fiche={fiche({ stackDetail: undefined })} />);
     const stack = section("Stack technique");
