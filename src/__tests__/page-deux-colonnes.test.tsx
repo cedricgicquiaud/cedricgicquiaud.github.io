@@ -116,12 +116,14 @@ describe("Page projet — Stack technique (PFO-130)", () => {
 });
 
 describe("Page projet — deux colonnes et sommaire (PFO-130)", () => {
-  it("chaque section : titre à gauche, contenu à droite sur écran large, filet au-dessus", () => {
+  it("chaque section : titre à gauche, contenu à droite sur écran large, large écart entre les deux", () => {
     render(<Fiche fiche={fiche()} />);
     for (const h of screen.getAllByRole("heading", { level: 2 })) {
       const s = h.closest("section")!;
       expect(s.className).toMatch(/\blg:grid-cols-/);
-      expect(s.className).toMatch(/\bborder-t\b/);
+      expect(s.className).toMatch(/\blg:gap-x-20\b/);
+      // Refus (retour du 03/11) : pas de filet entre les sections, le quadrillage du fond suffit.
+      expect(s.className).not.toMatch(/\bborder-t\b/);
       expect(s.children).toHaveLength(2);
       expect(s.children[0]).toBe(h);
     }
