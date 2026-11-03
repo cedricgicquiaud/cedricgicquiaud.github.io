@@ -94,6 +94,22 @@ describe("Page projet — sections facultatives (PFO-130)", () => {
   });
 });
 
+describe("Page projet — listes en lignes séparées, sans puces (retour du 03/11)", () => {
+  it("une liste du texte : pas de puce, un trait fin entre deux éléments", () => {
+    render(<Fiche fiche={fiche()} />);
+    const corps = within(section("Livrables")).getByText("Trois écrans.").closest("ul")!.parentElement!;
+    expect(corps.className).toContain("[&>ul]:list-none");
+    expect(corps.className).toContain("[&>ul>li]:border-b");
+    expect(corps.className).toContain("[&>ul>li:last-child]:border-b-0");
+  });
+
+  it("refus : plus de puces sur les listes de premier niveau", () => {
+    render(<Fiche fiche={fiche()} />);
+    const corps = within(section("Livrables")).getByText("Trois écrans.").closest("ul")!.parentElement!;
+    expect(corps.className).not.toContain("[&_ul]:list-disc");
+  });
+});
+
 describe("Page projet — Stack technique (PFO-130)", () => {
   it("une ligne par catégorie, avec ses outils", () => {
     render(<Fiche fiche={fiche()} />);
