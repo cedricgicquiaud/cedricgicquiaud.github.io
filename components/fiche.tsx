@@ -42,8 +42,8 @@ function splitConstruit(html: string): { produit: string; decisions: string } {
 
 function Section({ id, titre, children }: { id: string; titre: string; children: ReactNode }) {
   return (
-    // Deux colonnes sur écran large (PFO-130) : le titre à gauche, le contenu à droite ; empilés sur téléphone.
-    <section id={id} className="mt-12 scroll-mt-8 border-t border-border pt-10 lg:grid lg:grid-cols-[11rem_minmax(0,1fr)] lg:gap-10">
+    // Deux colonnes sur écran large (PFO-130) : le titre à gauche, le contenu à droite, sans filet (le quadrillage suffit) ; empilés sur téléphone.
+    <section id={id} className="mt-20 scroll-mt-8 lg:grid lg:grid-cols-[12rem_minmax(0,1fr)] lg:gap-x-20">
       <h2 className="mb-4 text-xl font-semibold tracking-tight lg:mb-0">{titre}</h2>
       <div className="min-w-0">{children}</div>
     </section>
