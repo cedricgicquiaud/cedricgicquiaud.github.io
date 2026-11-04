@@ -116,7 +116,7 @@ describe("« La méthode » lisible (PFO-148)", () => {
     render(<Fiche fiche={ficheAvec(ETAPES)} />);
     const h3 = within(section("La méthode")).getAllByRole("heading", { level: 3 })[0];
     expect(h3.textContent).toBe("Le principe");
-    expect(h3).toHaveClass("text-base");
+    expect(h3).toHaveClass("text-xl");
   });
 
   it("colonne du texte plus large : la section et ses lignes donnent trois quarts au contenu", () => {
@@ -178,5 +178,50 @@ describe("« La méthode » en frise (PFO-149)", () => {
     render(<Fiche fiche={ficheAvec(AVEC_EXEMPLE)} />);
     const decisions = screen.getByRole("heading", { level: 2, name: "Décisions" }).closest("section")!;
     expect(decisions.querySelector(".frise")).toBeNull();
+  });
+});
+
+// PFO-150 (04/11) : une Architecture qui commence par un ### s'affiche en trois colonnes, comme La méthode.
+describe("Architecture en pièces (PFO-150)", () => {
+  const ARCHI_PIECES = `
+## Architecture
+
+### Distribution
+
+Un script copie la méthode.
+
+### Garde-fou
+
+Un hook bloque le merge.
+`;
+
+  function ficheArchi(archi: string) {
+    const dir = mkdtempSync(path.join(tmpdir(), "archi-"));
+    const corps = SECTIONS_APRES_PROBLEME.replace("\n## Architecture\n\nLe serveur.\n", archi);
+    writeFileSync(
+      path.join(dir, "alpha.md"),
+      `---\nnom: Alpha\nstatut: en cours\nperiode: "2026"\nrole: seul\nstack: TypeScript\nvisibilite: public\ndepot: https://github.com/x/alpha\ndemo:\nordre: 1\n${STACK_DETAIL}---\n\n# Alpha — un titre\n\n**En bref.** Une accroche.\n\n## Problème\n\nLe besoin.\n${corps}`,
+    );
+    return loadFiche("alpha", dir);
+  }
+
+  it("une ligne par pièce, le nom en 20 px à côté de son texte, colonne large", () => {
+    render(<Fiche fiche={ficheArchi(ARCHI_PIECES)} />);
+    const lignes = within(section("Architecture")).getAllByRole("listitem");
+    expect(lignes).toHaveLength(2);
+    const h3 = within(lignes[1]).getByRole("heading", { level: 3 });
+    expect(h3.textContent).toBe("Garde-fou");
+    expect(h3).toHaveClass("text-xl");
+    expect(lignes[1]).toHaveTextContent("Un hook bloque le merge.");
+    expect(section("Architecture").className).toMatch(/lg:grid-cols-\[minmax\(0,1fr\)_minmax\(0,3fr\)\]/);
+  });
+
+  it("refus : une Architecture en texte suivi ou en liste en gras reste telle quelle", () => {
+    render(<Fiche fiche={ficheArchi("\n## Architecture\n\nLe serveur parle à la base.\n")} />);
+    expect(within(section("Architecture")).queryByRole("heading", { level: 3 })).toBeNull();
+    expect(section("Architecture").className).toMatch(/lg:grid-cols-\[minmax\(0,1fr\)_minmax\(0,2fr\)\]/);
+    cleanup();
+    render(<Fiche fiche={ficheArchi("\n## Architecture\n\n- **Les thèmes.** Un déclencheur.\n- **Les posts.** Un modèle.\n")} />);
+    expect(within(section("Architecture")).queryByRole("heading", { level: 3 })).toBeNull();
   });
 });

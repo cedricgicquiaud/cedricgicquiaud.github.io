@@ -138,13 +138,16 @@ function Stack({ fiche }: { fiche: FicheData }) {
   );
 }
 
+/** Une section qui commence par un ### : une ligne par pièce, en trois colonnes (PFO-150). */
+const enPieces = (html: string) => html.trim().startsWith("<h3");
+
 // Titre d'étape de « La méthode » (PFO-148) : « Étape 1 — Nom (<code>init</code>) ».
 const ETAPE = /^(Étape \d+)\s*—\s*(.+?)(?:\s*\((.+)\))?$/;
 
 /** Le titre d'une étape en trois niveaux ; un autre titre garde son texte entier. */
 function TitreEtape({ titre }: { titre: string }) {
   const m = titre.match(ETAPE);
-  if (!m) return <h3 className="mb-3 text-base font-medium leading-snug md:mb-0" dangerouslySetInnerHTML={{ __html: titre }} />;
+  if (!m) return <h3 className="mb-3 text-xl font-medium leading-snug tracking-tight md:mb-0" dangerouslySetInnerHTML={{ __html: titre }} />;
   const [, numero, nom, commande] = m;
   return (
     <h3 className="mb-3 md:mb-0">
@@ -221,7 +224,13 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
     },
     // La méthode (PFO-147) : une ligne par étape (###), même grille en trois colonnes que les décisions.
     { id: "methode", contenu: facultative("methode") && <Decisions html={facultative("methode")} etapes /> },
-    { id: "architecture", contenu: facultative("architecture") && <Markdown html={facultative("architecture")} /> },
+    // Architecture en pièces (PFO-150) : si elle commence par un ###, même grille que La méthode ; sinon texte suivi.
+    {
+      id: "architecture",
+      contenu:
+        facultative("architecture") &&
+        (enPieces(facultative("architecture")) ? <Decisions html={facultative("architecture")} etapes /> : <Markdown html={facultative("architecture")} />),
+    },
     { id: "stack", contenu: <Stack fiche={fiche} /> },
     { id: "decisions", contenu: decisions && <Decisions html={decisions} /> },
     ...(["preuves", "appris", "artefacts"] as const).map((id) => ({ id, contenu: html(id) && <Markdown html={html(id)} /> })),
@@ -304,7 +313,7 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
           </ul>
         </nav>
         {blocs.map(({ id, contenu, large }) => (
-          <Section key={id} id={id} titre={AFFICHAGE[id]} large={large} etendue={id === "methode"}>
+          <Section key={id} id={id} titre={AFFICHAGE[id]} large={large} etendue={id === "methode" || (id === "architecture" && enPieces(facultative("architecture")))}>
             {contenu}
           </Section>
         ))}
