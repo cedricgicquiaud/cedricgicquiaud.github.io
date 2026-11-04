@@ -75,18 +75,19 @@ describe("Galerie légendée sur la page (PFO-63)", () => {
     }
   });
 
-  it("se place dans « Le produit », en une colonne puis deux dès sm, images à leur ratio, sans script ni lightbox (PFO-75)", () => {
+  it("se place dans « Le produit », en carrousel sur toute la largeur de la section, images à leur ratio (PFO-138, remplace la grille PFO-75)", () => {
     const { container } = render(<Fiche fiche={fakeFiche({ captures: CAPTURES })} />);
-    const gallery = container.querySelector("figure")!.parentElement!;
-    expect(gallery.querySelectorAll("figure")).toHaveLength(2);
-    expect(gallery).toHaveClass("grid", "grid-cols-1", "sm:grid-cols-2");
-    expect(gallery.closest("section#construit")).not.toBeNull();
-    for (const img of Array.from(gallery.querySelectorAll("img"))) {
-      expect(img.className).not.toMatch(/aspect-|object-cover/);
-      expect(img.className).toMatch(/\bw-full\b/);
+    const carrousel = container.querySelector("[aria-roledescription='carrousel']")!;
+    expect(carrousel.querySelectorAll("figure")).toHaveLength(2);
+    expect(carrousel.closest("section#construit")).not.toBeNull();
+    // Hors de la colonne de texte : la capture prend la largeur des deux colonnes.
+    expect(carrousel.closest(".max-w-3xl")).toBeNull();
+    expect(carrousel.parentElement).toHaveClass("lg:col-span-2");
+    for (const img of Array.from(carrousel.querySelectorAll("img"))) {
+      expect(img.className).not.toMatch(/object-cover/);
       expect(img.className).toMatch(/\bh-auto\b/);
     }
-    expect(container.querySelector("script, button, dialog, a[href$='.png']")).toBeNull();
+    expect(container.querySelector("script, dialog, a[href$='.png']")).toBeNull();
   });
 
   it("refus : une liste de captures vide ne rend ni galerie ni conteneur, le corps est identique à une fiche sans captures", () => {
