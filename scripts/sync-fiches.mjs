@@ -33,7 +33,24 @@ function problemOf(name, text, seen) {
     if (seen.has(data.ordre)) return `ordre ${data.ordre} déjà pris par ${seen.get(data.ordre)}`;
     seen.set(data.ordre, name);
   }
-  return capturesProblem(data.captures) ?? videoProblem(data.video) ?? chiffresProblem(data.chiffres);
+  return (
+    capturesProblem(data.captures) ??
+    videoProblem(data.video) ??
+    chiffresProblem(data.chiffres) ??
+    stackDetailProblem(data.stack_detail)
+  );
+}
+
+/** Raison du refus de `stack_detail` (liste de `categorie` + `outils`, PFO-130), ou `null`. */
+function stackDetailProblem(stackDetail) {
+  if (stackDetail === undefined) return null;
+  if (!Array.isArray(stackDetail)) return "stack_detail doit être une liste";
+  for (const [i, entry] of stackDetail.entries()) {
+    const where = `stack_detail, entrée ${i + 1}`;
+    if (!isText(entry?.categorie)) return `${where} : « categorie » requise et non vide`;
+    if (!isText(entry?.outils)) return `${where} : « outils » requis et non vide`;
+  }
+  return null;
 }
 
 /** Un chemin `/…` qui ne sort pas de `public/` (même règle que `insidePublic` dans lib/fiches.ts). */

@@ -135,7 +135,8 @@ describe("Route statique /projets/[slug]/ (PFO-26)", () => {
     render(page);
     expect(screen.getByRole("main")).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(slice.titre);
-    expect(screen.getAllByRole("heading", { level: 2 })).toHaveLength(6);
+    // PFO-130 : les décisions de SLICE ont leur section, la stack aussi (sept intitulés).
+    expect(screen.getAllByRole("heading", { level: 2 })).toHaveLength(7);
     expect(screen.getByRole("link", { name: "← Projets" })).toBeInTheDocument();
   });
 
@@ -178,7 +179,8 @@ describe("Rendu de la fiche : En bref et cinq sections (PFO-27)", () => {
     expect(enBref).toHaveTextContent("Un service factice. 12 tests verts. Code public.");
 
     const h2 = screen.getAllByRole("heading", { level: 2 }).map((h) => h.textContent);
-    expect(h2).toEqual(["Contexte", "Le produit", "Architecture", "Où en est le projet", "Ce que j'en retiens", "Liens"]);
+    // PFO-130 : sans section Architecture dans la fiche, la stack s'affiche sous « Stack technique ».
+    expect(h2).toEqual(["Contexte", "Le produit", "Stack technique", "Où en est le projet", "Ce que j'en retiens", "Liens"]);
     expect(document.body.textContent!.indexOf("Un service factice.")).toBeLessThan(document.body.textContent!.indexOf("Contexte"));
 
     const construit = screen.getByRole("heading", { level: 2, name: "Le produit" }).parentElement!;
