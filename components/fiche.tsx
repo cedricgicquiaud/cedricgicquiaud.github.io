@@ -2,11 +2,10 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import site from "../content/site.json";
 import { decisionsDe } from "../lib/decisions";
-import { anneeDe, decoupeTitre } from "../lib/entete";
+import { anneeDe, codeDe, decoupeTitre, enCapitale, etatDe } from "../lib/entete";
 import { TitreSection } from "./titre-section";
 import type { Fiche as FicheData } from "../lib/fiches";
 import { Badge } from "./ui/badge";
-import { AFFICHER_STATUT } from "../lib/affichage";
 import { BookingLink } from "./booking-link";
 import { Carrousel } from "./carrousel";
 import { DemoLink } from "./demo-link";
@@ -177,7 +176,13 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
   const accroche = [fiche.enBref.quoi, fiche.enBref.chiffre, fiche.enBref.lien].filter(Boolean).join(" ");
   const { nom, sousTitre } = decoupeTitre(fiche.titre || frontmatter.nom);
   const annee = anneeDe(frontmatter.periode);
-  const meta = [AFFICHER_STATUT ? frontmatter.statut : "", frontmatter.periode, frontmatter.role].filter(Boolean);
+  // Bloc « Fiche » (PFO-145) : une ligne par information non vide, dans l'ordre de la page de référence.
+  const lignesFiche = [
+    { terme: "Rôle", valeur: enCapitale(frontmatter.role) },
+    { terme: "Période", valeur: enCapitale(frontmatter.periode) },
+    { terme: "Statut", valeur: etatDe(html("preuves")) },
+    { terme: "Code", valeur: codeDe(frontmatter.visibilite) },
+  ].filter((l) => l.valeur);
   return (
     <article className="px-6 py-16 lg:px-16">
       <div className="mx-auto w-full max-w-6xl">
@@ -190,20 +195,13 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
           {annee && <p className="shrink-0 text-xl text-muted-foreground tabular-nums">{annee}</p>}
         </div>
         {sousTitre && <p className="mt-5 max-w-3xl text-lg leading-relaxed first-letter:uppercase lg:text-xl">{sousTitre}</p>}
-        {/* Mêmes règles que les cartes : un lien par URL non vide ; une fiche anonyme n'a aucun lien, une mention à la place. */}
-        <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
-          {frontmatter.visibilite === "anonyme" ? (
-            <span className="text-muted-foreground">Projet anonymisé : code et client non publiés</span>
-          ) : frontmatter.visibilite === "prive" ? (
-            <span className="text-muted-foreground">Code privé</span>
-          ) : (
-            <>
-              {frontmatter.depot && <GitHubLink href={frontmatter.depot} />}
-              {frontmatter.demo && <DemoLink href={frontmatter.demo} />}
-            </>
-          )}
-          {meta.length > 0 && <span className="min-w-0 text-muted-foreground">{meta.join(" · ")}</span>}
-        </div>
+        {/* Un lien par URL non vide ; une fiche anonyme ou privée n'en a aucun, sa visibilité est dans le bloc « Fiche » (PFO-145). */}
+        {frontmatter.visibilite !== "anonyme" && frontmatter.visibilite !== "prive" && (frontmatter.depot || frontmatter.demo) ? (
+          <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+            {frontmatter.depot && <GitHubLink href={frontmatter.depot} />}
+            {frontmatter.demo && <DemoLink href={frontmatter.demo} />}
+          </div>
+        ) : null}
         {/* Même visuel que la carte, sur toute la largeur de la page ; balise native (export statique). Au-dessus du pli : pas de loading="lazy". */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
@@ -213,10 +211,23 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
           height={750}
           className="mt-12 aspect-[16/10] w-full rounded-lg border border-border object-cover"
         />
-        {/* « En bref » sous la capture : petit libellé en capitales, l'accroche en gros texte (PFO-142). */}
-        <div className="mt-16 max-w-3xl">
-          <p className="text-sm uppercase tracking-wider text-muted-foreground">En bref</p>
-          <p data-accroche className="mt-3 text-lg leading-relaxed text-pretty">{accroche}</p>
+        {/* Sous la capture : « En bref » à gauche (deux tiers), le bloc « Fiche » à droite (un tiers) ; empilés sur téléphone (PFO-145). */}
+        <div className="mt-16 grid gap-x-16 gap-y-12 lg:grid-cols-[minmax(0,2fr)_minmax(0,1fr)]">
+          <div className="min-w-0">
+            <p className="text-sm uppercase tracking-wider text-muted-foreground">En bref</p>
+            <p data-accroche className="mt-3 text-lg leading-relaxed text-pretty">{accroche}</p>
+          </div>
+          <section aria-labelledby="fiche-titre" className="min-w-0">
+            <p id="fiche-titre" className="text-sm uppercase tracking-wider text-muted-foreground">Fiche</p>
+            <dl className="mt-3 border-t border-border">
+              {lignesFiche.map(({ terme, valeur }, i) => (
+                <div key={terme} className={`py-3 ${i > 0 ? "border-t border-border" : ""}`}>
+                  <dt className="text-xs uppercase tracking-wider text-muted-foreground">{terme}</dt>
+                  <dd className="mt-1 text-sm leading-relaxed">{valeur}</dd>
+                </div>
+              ))}
+            </dl>
+          </section>
         </div>
         {fiche.chiffres?.length ? (
           <ul aria-label="Chiffres clés" className="mt-10 grid max-w-4xl grid-cols-1 gap-3 sm:grid-cols-3">

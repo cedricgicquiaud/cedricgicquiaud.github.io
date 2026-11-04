@@ -1,5 +1,5 @@
 import "@testing-library/jest-dom/vitest";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import { mkdtempSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
@@ -99,9 +99,9 @@ describe("Visibilité « prive » (PFO-95)", () => {
     expect(screen.queryByRole("link", { name: /code|démo/i })).toBeNull();
   });
 
-  it("la page détail affiche « Code privé », sans la mention anonyme", () => {
+  it("la page détail affiche « Privé » dans la ligne Code du bloc « Fiche », sans la mention anonyme (PFO-145)", () => {
     render(<Fiche fiche={fiche("prive")} />);
-    expect(screen.getByText("Code privé")).toHaveClass("text-muted-foreground");
+    expect(within(screen.getByRole("region", { name: "Fiche" })).getByText("Privé")).toBeInTheDocument();
     expect(screen.queryByText(ANONYME)).toBeNull();
   });
 

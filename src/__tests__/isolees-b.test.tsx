@@ -63,9 +63,9 @@ describe("PFO-39 — mention « projet anonymisé » sur la carte", () => {
 });
 
 describe("PFO-39 — mention « projet anonymisé » sur la page fiche", () => {
-  it("affiche la mention en text-muted-foreground pour une fiche anonyme, sans lien Code ni Démo", () => {
+  it("une fiche anonyme le dit dans la ligne Code du bloc « Fiche » (PFO-145), sans lien Code ni Démo", () => {
     render(<Fiche fiche={fiche({ visibilite: "anonyme" })} />);
-    expect(screen.getByText(MENTION)).toHaveClass("text-muted-foreground");
+    expect(screen.getByText("Privé, projet anonymisé")).toBeInTheDocument();
     expect(screen.queryByRole("link", { name: "Code sur GitHub" })).toBeNull();
     expect(screen.queryByRole("link", { name: "Démo" })).toBeNull();
   });

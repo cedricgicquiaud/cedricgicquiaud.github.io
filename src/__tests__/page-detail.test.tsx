@@ -66,25 +66,25 @@ describe("Page détail — en-tête (PFO-75)", () => {
     expect(screen.getByRole("link", { name: "Démo" })).toHaveAttribute("href", "https://alpha.example.test/");
   });
 
-  it("la ligne des liens porte la période et le rôle", () => {
+  it("la période et le rôle sont dans le bloc « Fiche » (PFO-145, remplace la ligne des liens)", () => {
     render(<Fiche fiche={fiche()} />);
-    const ligne = screen.getByRole("link", { name: "Code sur GitHub" }).closest("div,p")!;
-    expect(ligne).toHaveTextContent("mai 2026 → aujourd'hui");
-    expect(ligne).toHaveTextContent("seul, avec des agents de code");
+    const bloc = screen.getByRole("region", { name: "Fiche" });
+    expect(bloc).toHaveTextContent("Mai 2026 → aujourd'hui");
+    expect(bloc).toHaveTextContent("Seul, avec des agents de code");
   });
 
-  it("refus : ni « Visibilité », ni statut, ni liste de définitions", () => {
+  it("refus : ni « Visibilité », ni le mot de statut du frontmatter ; une seule liste de définitions, le bloc « Fiche » (PFO-145)", () => {
     render(<Fiche fiche={fiche()} />);
     expect(screen.queryByText("Visibilité")).toBeNull();
     expect(screen.queryByText(/en cours/i)).toBeNull();
-    expect(document.querySelector("dl")).toBeNull();
+    expect(document.querySelectorAll("dl")).toHaveLength(1);
   });
 
   it("refus : une fiche anonyme n'a aucun lien de code ni de démo", () => {
     render(<Fiche fiche={fiche({}, { visibilite: "anonyme", depot: "", demo: "" })} />);
     expect(screen.queryByRole("link", { name: "Code sur GitHub" })).toBeNull();
     expect(screen.queryByRole("link", { name: "Démo" })).toBeNull();
-    expect(screen.getByText(/Projet anonymisé/)).toBeInTheDocument();
+    expect(screen.getByText("Privé, projet anonymisé")).toBeInTheDocument();
   });
 });
 
