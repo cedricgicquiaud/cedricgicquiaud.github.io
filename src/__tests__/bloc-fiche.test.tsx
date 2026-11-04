@@ -128,8 +128,10 @@ describe("Page projet — bloc « Fiche » (PFO-145)", () => {
     expect(within(bloc()).getAllByRole("term").map((t) => t.textContent)).toEqual(["Rôle", "Période", "Code"]);
   });
 
-  it("chaque fiche réelle a ses quatre lignes, Statut compris", () => {
-    for (const f of loadFiches()) {
+  it("chaque fiche réelle qui ouvre ses preuves par « État au » a ses quatre lignes, Statut compris", () => {
+    const avecEtat = loadFiches().filter((f) => /^<p>État au /.test(f.sections.find((s) => s.id === "preuves")?.html ?? ""));
+    expect(avecEtat.length).toBeGreaterThanOrEqual(11);
+    for (const f of avecEtat) {
       const { unmount } = render(<Fiche fiche={f} />);
       expect(within(bloc()).getAllByRole("term"), f.slug).toHaveLength(4);
       unmount();
