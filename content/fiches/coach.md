@@ -3,14 +3,14 @@ nom: Coach
 statut: en cours
 periode: janvier 2026 → aujourd'hui
 role: produit et développement, seul côté technique, avec des agents de code ; cadrage avec les dirigeants, échanges avec les partenaires
-stack: React Native, Expo, TypeScript, Python/FastAPI, Supabase (Postgres, Auth), Railway, EAS, OpenAI, plateforme d'agents IA, MCP, Jest, pytest, Maestro, Linear
+stack: React Native, Expo, TypeScript, Python/FastAPI, PostgreSQL, Scalingo (hébergement HDS), EAS, OpenAI, plateforme d'agents IA, MCP, Jest, pytest, Maestro, Linear
 stack_detail:
   - categorie: Mobile
     outils: React Native, Expo, TypeScript, EAS
   - categorie: Serveur
-    outils: Python, FastAPI, Railway
+    outils: Python, FastAPI, Scalingo (hébergement certifié HDS)
   - categorie: Données et comptes
-    outils: Supabase (Postgres, Auth)
+    outils: PostgreSQL
   - categorie: IA
     outils: OpenAI, plateforme d'agents IA, serveurs MCP
   - categorie: Tests
@@ -39,14 +39,15 @@ ordre: 1
 
 # Coach — santé et longévité IA
 
-**En bref.** Une application mobile de santé et de longévité qui relie montres connectées, analyses sanguines à domicile, entraînement et boutique, avec un coach IA qui s'appuie sur les vraies données de l'utilisateur. Je la mène seul côté technique depuis janvier 2026 : une dizaine de services externes branchés, un orchestrateur et quatre agents IA spécialisés, une version de test distribuée sur iPhone. Projet client présenté sous un nom de code, code privé, pas encore sorti sur les stores.
+**En bref.** Une application mobile de santé et de longévité qui relie montres connectées, analyses sanguines à domicile, entraînement et boutique, avec un coach IA qui s'appuie sur les vraies données de l'utilisateur. Je la mène seul côté technique depuis janvier 2026 : une dizaine de services externes branchés, un orchestrateur et quatre agents IA spécialisés, une version de test distribuée sur iPhone. Application de Maison Epigenetic présentée sous un nom de code, code privé, pas encore sortie sur les stores.
 
 ## Problème
 
-Une marque de santé préventive haut de gamme accueille ses clients en centre. Chacun y suit un
-protocole selon son objectif : performance, récupération, qualité de la peau, longévité. La
-méthode : mesurer par un bilan complet, personnaliser par un plan sur mesure, puis ajuster en
-continu.
+[Maison Epigenetic](https://www.maisonepigenetic.com) est une maison de santé préventive et de
+longévité haut de gamme, avec des centres à Paris et à Cannes. Ses clients y suivent un protocole
+selon leur objectif : performance, récupération, beauté régénérative, longévité. La méthode :
+mesurer par un bilan complet, personnaliser par un plan sur mesure, puis ajuster en continu
+selon les résultats. J'y suis product builder IA depuis janvier 2026.
 
 Entre deux séances, ce suivi n'avait pas de support. Les mesures du quotidien (montre, sommeil,
 entraînement) et les résultats d'analyse restaient séparés, sans interprétation et sans lien
@@ -72,7 +73,8 @@ complément, un nouveau test. Le projet partait de zéro, et j'étais seul côt�
 ## Architecture
 
 L'application mobile (React Native, Expo) parle à un serveur (FastAPI). Les comptes et les
-données de santé vivent dans Supabase, et le serveur est hébergé sur Railway.
+données de santé vivent dans une base PostgreSQL. Le serveur et la base sont hébergés chez
+Scalingo, sur une offre certifiée HDS (hébergement de données de santé).
 
 Chaque partenaire passe par un adaptateur interchangeable : montres connectées, analyses,
 compléments, paiement. Le code métier ne connaît aucun service externe.
