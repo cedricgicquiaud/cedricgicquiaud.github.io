@@ -79,7 +79,9 @@ describe("Page projet — en-tête (PFO-142)", () => {
   it("l'année à droite du nom, en grand et en gris", () => {
     render(<Fiche fiche={fiche()} />);
     const annee = screen.getByText("Depuis 2025");
-    expect(annee).toHaveClass("text-muted-foreground");
+    expect(annee).toHaveClass("text-muted-foreground", "text-xl");
+    // PFO-143 : beaucoup plus petite que le nom, sans agrandissement sur grand écran.
+    expect(annee.className).not.toMatch(/\b(lg:)?text-(2xl|3xl|4xl|5xl)\b/);
     expect(annee.parentElement).toBe(screen.getByRole("heading", { level: 1 }).parentElement);
     expect(annee.parentElement).toHaveClass("justify-between");
   });
@@ -105,7 +107,10 @@ describe("Page projet — en-tête (PFO-142)", () => {
     expect(image).toHaveClass("w-full");
     expect(image).not.toHaveClass("max-w-4xl");
     expect(screen.getByText("En bref")).toHaveClass("uppercase", "text-sm");
-    expect(screen.getByText("Une accroche. 500 cas. Code public.")).toHaveClass("lg:text-3xl");
+    // PFO-143 : l'accroche en texte courant un peu plus grand (18 px), plus en très gros.
+    const accroche = screen.getByText("Une accroche. 500 cas. Code public.");
+    expect(accroche).toHaveClass("text-lg", "leading-relaxed");
+    expect(accroche.className).not.toMatch(/\b(lg:)?text-(2xl|3xl)\b/);
   });
 
   it("refus : « En bref » n'est pas un titre de section (les huit h2 restent les huit sections)", () => {
