@@ -141,10 +141,12 @@ Pour illustrer les étapes, prenons une application de prise de rendez-vous pour
 Elle n'a lieu qu'une fois, au démarrage.
 
 1. Claude effectue une recherche approfondie sur l'état de l'art et les meilleures pratiques du
-   marché pour le projet souhaité (skill `research-assistant`). Ici : les logiciels de
-   rendez-vous connus, les règles à respecter sur les données de santé.
+   marché pour le projet souhaité (skill `research-assistant`).
+
+   > Ici : les logiciels de rendez-vous connus, les règles à respecter sur les données de santé.
 2. Il m'interroge en quelques séries de questions. Pour chacune, il propose une réponse :
-   « Les patients peuvent-ils annuler en ligne ? Je propose : oui, jusqu'à 24 h avant. »
+
+   > « Les patients peuvent-ils annuler en ligne ? Je propose : oui, jusqu'à 24 h avant. »
 3. Il écrit une page qui décrit le produit : pour qui, quel problème, ce qui entre dans la
    première version et ce qui n'y entre pas.
 4. Si l'application a des écrans, il me demande des exemples d'interfaces que j'aime. Il en tire
@@ -153,11 +155,13 @@ Elle n'a lieu qu'une fois, au démarrage.
 
 ### Étape 2 — Faire la liste des fonctionnalités (`roadmap`)
 
-1. Claude propose toutes les grandes fonctionnalités, dans l'ordre. Exemple : « Prendre
-   rendez-vous », « Annuler », « Rappel par SMS », « Agenda du kiné ».
+1. Claude propose toutes les grandes fonctionnalités, dans l'ordre.
+
+   > Exemple : « Prendre rendez-vous », « Annuler », « Rappel par SMS », « Agenda du kiné ».
 2. Le contradicteur relit la liste. C'est un agent dont le seul travail est de chercher ce qui
-   manque. Il demande par exemple : « Rien n'est prévu quand le kiné est malade et doit tout
-   décaler ? » Il pose des questions, il ne répond pas à ma place.
+   manque. Il pose des questions, il ne répond pas à ma place.
+
+   > Il demande par exemple : « Rien n'est prévu quand le kiné est malade et doit tout décaler ? »
 3. Je valide la liste. Claude la crée dans Linear et la place sur un calendrier.
 4. Si l'application a des écrans, Claude prépare aussi le système de design : les couleurs, les
    polices et les composants communs. Je le valide.
@@ -170,22 +174,25 @@ Elle a lieu une fois par fonctionnalité, en deux temps. Je valide à la fin de 
 
 1. Claude pose ses dernières questions.
 2. Il écrit les décisions prises et une liste de 10 à 30 phrases vérifiables. Par exemple :
-   - « Un patient voit les créneaux libres de la semaine. »
-   - « On ne peut pas réserver un créneau déjà pris. »
-   - « On ne peut pas réserver dans le passé. »
+
+   > - « Un patient voit les créneaux libres de la semaine. »
+   > - « On ne peut pas réserver un créneau déjà pris. »
+   > - « On ne peut pas réserver dans le passé. »
 
    Au moins un tiers de ces phrases disent ce qui doit être impossible. C'est souvent là que les
    bugs se cachent.
-3. Le contradicteur relit encore : « Que se passe-t-il si deux patients cliquent sur le même
-   créneau à la même seconde ? »
+3. Le contradicteur relit encore :
+
+   > « Que se passe-t-il si deux patients cliquent sur le même créneau à la même seconde ? »
 4. Je valide. Cette liste de phrases s'appelle le contrat. Tout le reste sera jugé dessus.
 
 **Temps 2 — découper le travail.**
 
 1. Le découpeur est un agent qui partage la fonctionnalité en livrables. Deux livrables ne
    touchent jamais le même fichier, donc ils ne se gênent pas. On peut alors les fabriquer en
-   même temps. Exemple : livrable A « choisir un créneau », livrable B « recevoir la
-   confirmation ».
+   même temps.
+
+   > Exemple : livrable A « choisir un créneau », livrable B « recevoir la confirmation ».
 2. Chaque livrable reçoit ses tâches et ses phrases du contrat. Chaque phrase doit être
    attribuée à un livrable.
 3. Je valide le découpage. Claude crée les tâches dans Linear.
@@ -237,9 +244,10 @@ deux agents modifient le code.*
    agents ont refusé de trancher.
 2. Claude remet le tableau à jour : statuts et dates.
 3. Il tire les leçons. Chaque erreur qui pourrait revenir devient une règle écrite, que les
-   agents liront la fois suivante. Exemple : au merge, je fais remarquer qu'un bouton
-   d'annulation doit toujours demander confirmation ; la remarque devient une règle du projet,
-   et je n'ai plus à la refaire.
+   agents liront la fois suivante.
+
+   > Exemple : au merge, je fais remarquer qu'un bouton d'annulation doit toujours demander
+   > confirmation ; la remarque devient une règle du projet, et je n'ai plus à la refaire.
 
 ![Une PR réelle de ce site, écrite par l'agent](/projets/pilot/pr.png)
 
