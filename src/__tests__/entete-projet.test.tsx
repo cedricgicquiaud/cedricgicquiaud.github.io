@@ -69,11 +69,13 @@ function fiche(): FicheData {
 const after = (a: Node, b: Node) => Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
 
 describe("Page projet — en-tête (PFO-142)", () => {
-  it("le h1 porte le nom seul, en très grand et en gras", () => {
+  it("le h1 porte le nom seul, en grand (48 px) et en gras", () => {
     render(<Fiche fiche={fiche()} />);
     const h1 = screen.getByRole("heading", { level: 1 });
     expect(h1.textContent).toBe("Alpha");
-    expect(h1).toHaveClass("font-bold", "lg:text-7xl");
+    // PFO-144 : 48 px au plus (taille de titre du site), jamais 60 ou 72 px.
+    expect(h1).toHaveClass("font-bold", "lg:text-5xl");
+    expect(h1.className).not.toMatch(/\b(sm:|lg:)?text-(6xl|7xl)\b/);
   });
 
   it("l'année à droite du nom, en grand et en gris", () => {
