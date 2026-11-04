@@ -67,8 +67,6 @@ complément, un nouveau test. Le projet partait de zéro, et j'étais seul côt�
 - Des kits d'analyse sanguine à domicile, avec des résultats classés et interprétés.
 - Une boutique de compléments, liée au protocole proposé par le coach.
 - Un profil où l'utilisateur voit ce que l'application sait de lui, et ce qu'il contrôle.
-- Une roadmap par portes de lancement et des études d'impact réglementaires, pour les
-  dirigeants.
 
 ## Architecture
 
@@ -106,10 +104,12 @@ qui le demande.
 Une action qui écrit (planifier une séance) demande une confirmation. Aucun modèle n'est appelé
 sans le consentement IA de l'utilisateur.
 
-### Une roadmap par portes de lancement
+### Trois jalons de sortie, un périmètre gelé
 
-Distribution restreinte, publication publique, puis après lancement : chaque nouvelle demande se
-range dans une porte, ce qui garde la date lisible pour les dirigeants.
+J'ai découpé le lancement en trois jalons : bêta fermée, publication sur les stores, évolutions
+après le lancement. Chaque nouvelle demande des dirigeants est priorisée et affectée à un jalon.
+Le périmètre de la sortie est gelé : une idée qui arrive tard passe au jalon suivant, et la date
+tient.
 
 ### Les sujets réglementaires écrits noir sur blanc
 
@@ -129,7 +129,7 @@ l'hébergement des données de santé, pour que les dirigeants tranchent.
 - **C'est utilisable ?** Sur 15 questions hors périmètre posées au coach, 15 déclinées
   poliment en une phrase.
 
-Prochaine porte : la publication sur les stores — achats réels, recette Android, environnement
+Prochain jalon : la publication sur les stores — achats réels, recette Android, environnement
 final et validation juridique de l'hébergement des données de santé.
 
 ## Ce que j'en ai appris
@@ -138,8 +138,8 @@ final et validation juridique de l'hébergement des données de santé.
   montres aurait été une réécriture.
 - **Un agent branché sur des données de santé commence par les droits.** Je les pose avant
   de lui donner le moindre outil.
-- **Les demandes ne s'arrêtent jamais.** Sans roadmap par portes, chaque nouvelle idée
-  repousse la date. Rangée dans une porte, elle devient une décision.
+- **Les demandes ne s'arrêtent jamais.** Sans périmètre gelé, chaque nouvelle idée repousse la
+  date. Affectée à un jalon, elle devient une décision.
 - **Le juridique n'est pas mon métier, mais je le rends visible.** Une étude d'impact courte
   permet aux dirigeants de trancher, au lieu de découvrir le sujet à la revue d'Apple.
 

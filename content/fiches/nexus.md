@@ -126,7 +126,7 @@ comme le typage strict.
 - **C'est utilisable ?** Un audit produit un rapport figé, lisible par un dirigeant sans
   ouvrir l'outil.
 
-Prochaine porte : un premier déploiement chez un hébergeur européen, puis des PME pilotes.
+Prochain jalon : un premier déploiement chez un hébergeur européen, puis des PME pilotes.
 
 ## Ce que j'en ai appris
 
