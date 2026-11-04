@@ -6,7 +6,7 @@ Je suis **product builder IA**. Treize ans dans l'informatique bancaire, de la c
 
 Je ne confie pas à l'IA les décisions produit ni le modèle de données : c'est moi qui valide chaque décision, chaque table, chaque relation. Je valide chaque PR au niveau fonctionnel : je vérifie que la feature fait ce qui a été décidé. À la fin de chaque feature, si une erreur est récurrente, ça devient une règle.
 
-En ce moment, je développe et implémente seul une [application mobile de santé](/projets/coach/) : une dizaine de services branchés, un coach IA fait d'un orchestrateur et de quatre agents, une version de test sur iPhone. Je travaille directement avec les dirigeants. En parallèle, je prends des réalisations en **freelance** pour des TPE.
+En ce moment, je développe et implémente seul une [application mobile de santé](/projets/coach/) : une dizaine de services branchés, un coach IA fait d'un orchestrateur et de quatre agents, une sortie imminente sur iPhone et Android. Je travaille directement avec les dirigeants. En parallèle, je prends des réalisations en **freelance** pour des TPE.
 
 Ma méthode relève de l'**agentic engineering**, formalisée dans [PILOT](/projets/pilot/) : six agents spécialisés, des tests écrits avant le code, une vérification par un agent qui ne l'a pas écrit, un merge toujours décidé par un humain. Sur deux projets réels, l'audit a attrapé 8 défauts cachés derrière des tests verts. Tout a commencé en 2023 avec [GiveMe5](/projets/giveme5/), un produit vendu à des commerçants.
 
