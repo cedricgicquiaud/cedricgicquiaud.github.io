@@ -50,9 +50,11 @@ function Section({ id, titre, children, large }: { id: string; titre: string; ch
       {/* Titres en grand, graisse normale, comme le modèle (retour du 03/11). */}
       {/* Le titre reste visible à gauche seulement si la section dépasse l'écran (TitreSection mesure). */}
       <TitreSection titre={titre} className="mb-4 text-2xl font-normal tracking-tight lg:mb-0 lg:text-3xl" />
-      {children && <div className="min-w-0 max-w-3xl">{children}</div>}
-      {/* Captures et vidéo sur la largeur des deux colonnes (PFO-138). */}
-      {large && <div className="mt-10 min-w-0 lg:col-span-2">{large}</div>}
+      {/* Captures et vidéo dans la colonne de droite, sous le texte (PFO-139, retour du 04/11). */}
+      <div className="min-w-0 max-w-3xl">
+        {children}
+        {large && <div className={children ? "mt-8" : undefined}>{large}</div>}
+      </div>
     </section>
   );
 }
