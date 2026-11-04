@@ -138,7 +138,7 @@ describe("buildProofs — les fiches (PFO-112)", () => {
   it("reprend mot pour mot l'accroche En bref de la page de chaque fiche", () => {
     for (const { slug, enBref } of buildProofs().fiches) {
       const { container, unmount } = render(createElement(Fiche, { fiche: loadFiche(slug) }));
-      const accroche = container.querySelector("h1 + p")?.textContent;
+      const accroche = container.querySelector("[data-accroche]")?.textContent;
       unmount();
       expect(accroche, slug).toBeTruthy();
       expect(enBref, slug).toBe(accroche);
