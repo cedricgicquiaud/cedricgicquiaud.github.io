@@ -161,13 +161,15 @@ describe("Route statique /projets/[slug]/ (PFO-26)", () => {
 });
 
 describe("Rendu de la fiche : en-tête (PFO-27)", () => {
-  it("rend le lien « ← Projets » vers /#projets, le titre en h1, puis période et rôle sur la ligne des liens (PFO-75)", () => {
+  it("rend le lien « ← Projets » vers /#projets, le titre en h1, puis période et rôle dans le bloc « Fiche » (PFO-145)", () => {
     render(<Fiche fiche={fakeFiche()} />);
     expect(screen.getByRole("link", { name: "← Projets" })).toHaveAttribute("href", "/#projets");
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Factice");
     expect(screen.getByText("un titre de fiche")).toBeInTheDocument();
-    expect(document.querySelector("dl")).toBeNull();
-    expect(screen.getByText(/mai 2026 → aujourd'hui · conception et tests/)).toBeInTheDocument();
+    // PFO-145 : période et rôle dans le bloc « Fiche ».
+    const bloc = screen.getByRole("region", { name: "Fiche" });
+    expect(bloc).toHaveTextContent("Mai 2026 → aujourd'hui");
+    expect(bloc).toHaveTextContent("Conception et tests");
     const badges = Array.from(screen.getByRole("list", { name: "Stack" }).querySelectorAll("li")).map((li) => li.textContent);
     expect(badges).toEqual(["TypeScript", "Vitest"]);
   });
