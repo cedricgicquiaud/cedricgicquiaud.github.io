@@ -185,9 +185,9 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
           ← Projets
         </Link>
         {/* En-tête d'après la page de référence de Cédric (PFO-142) : le nom en grand, l'année à droite, le sous-titre dessous. */}
-        <div className="mt-10 flex flex-wrap items-end justify-between gap-x-10 gap-y-2">
+        <div className="mt-10 flex flex-wrap items-baseline justify-between gap-x-10 gap-y-2">
           <h1 className="min-w-0 text-4xl font-bold tracking-tight text-balance break-words sm:text-6xl lg:text-7xl">{nom}</h1>
-          {annee && <p className="shrink-0 text-3xl tracking-tight text-muted-foreground tabular-nums lg:text-5xl">{annee}</p>}
+          {annee && <p className="shrink-0 text-xl text-muted-foreground tabular-nums">{annee}</p>}
         </div>
         {sousTitre && <p className="mt-5 max-w-3xl text-lg leading-relaxed first-letter:uppercase lg:text-xl">{sousTitre}</p>}
         {/* Mêmes règles que les cartes : un lien par URL non vide ; une fiche anonyme n'a aucun lien, une mention à la place. */}
@@ -214,9 +214,9 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
           className="mt-12 aspect-[16/10] w-full rounded-lg border border-border object-cover"
         />
         {/* « En bref » sous la capture : petit libellé en capitales, l'accroche en gros texte (PFO-142). */}
-        <div className="mt-16 max-w-4xl">
+        <div className="mt-16 max-w-3xl">
           <p className="text-sm uppercase tracking-wider text-muted-foreground">En bref</p>
-          <p data-accroche className="mt-4 text-2xl leading-snug tracking-tight text-pretty lg:text-3xl">{accroche}</p>
+          <p data-accroche className="mt-3 text-lg leading-relaxed text-pretty">{accroche}</p>
         </div>
         {fiche.chiffres?.length ? (
           <ul aria-label="Chiffres clés" className="mt-10 grid max-w-4xl grid-cols-1 gap-3 sm:grid-cols-3">
