@@ -47,6 +47,7 @@ const SECTIONS: ReadonlyArray<{ id: string; titre: string }> = [
 // Sections facultatives (PFO-130), dans l'ordre d'affichage ; seules les présentes sont renvoyées.
 const FACULTATIVES: ReadonlyArray<{ id: string; titre: string }> = [
   { id: "livrables", titre: "Livrables" },
+  { id: "methode", titre: "La méthode" },
   { id: "architecture", titre: "Architecture" },
   { id: "decisions", titre: "Décisions" },
 ];
@@ -57,7 +58,7 @@ export type Fiche = {
   frontmatter: Frontmatter;
   enBref: EnBref;
   sections: Section[];
-  /** Livrables, Architecture, Décisions : seulement celles que la fiche contient (PFO-130). */
+  /** Livrables, La méthode, Architecture, Décisions : seulement celles que la fiche contient (PFO-130, PFO-147). */
   facultatives?: Section[];
   /** Outils rangés par catégorie (`stack_detail`, PFO-130) ; absent sans champ. */
   stackDetail?: StackCategorie[];
@@ -72,7 +73,7 @@ export type Fiche = {
 };
 
 // Ordre des sections dans la page d'une fiche (components/fiche.tsx), Stack technique mise à part.
-const ORDRE_CORPS = ["probleme", "livrables", "construit", "architecture", "decisions", "preuves", "appris", "artefacts"];
+const ORDRE_CORPS = ["probleme", "livrables", "construit", "methode", "architecture", "decisions", "preuves", "appris", "artefacts"];
 
 /**
  * Le corps d'une fiche tel que la page le montre : sections du gabarit et facultatives, non vides,

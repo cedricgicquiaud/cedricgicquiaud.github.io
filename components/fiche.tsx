@@ -25,6 +25,7 @@ const AFFICHAGE: Record<string, string> = {
   probleme: "Contexte",
   livrables: "Livrables",
   construit: "Le produit",
+  methode: "La méthode",
   architecture: "Architecture",
   stack: "Stack technique",
   decisions: "Décisions",
@@ -168,6 +169,8 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
       contenu: produit && <Markdown html={produit} />,
       large: medias && !mediasDansLivrables && <Medias fiche={fiche} />,
     },
+    // La méthode (PFO-147) : une ligne par étape (###), même grille en trois colonnes que les décisions.
+    { id: "methode", contenu: facultative("methode") && <Decisions html={facultative("methode")} /> },
     { id: "architecture", contenu: facultative("architecture") && <Markdown html={facultative("architecture")} /> },
     { id: "stack", contenu: <Stack fiche={fiche} /> },
     { id: "decisions", contenu: decisions && <Decisions html={decisions} /> },

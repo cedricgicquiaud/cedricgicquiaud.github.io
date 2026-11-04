@@ -83,10 +83,10 @@ describe("Les fiches de content/fiches/ en texte brut (PFO-111)", () => {
   const RESTES = [/<[a-z]/i, /\*\*/, /\]\(/, /\|-{3}/, /\(\//];
 
   for (const fiche of loadFiches()) {
-    it(`${fiche.slug} : sept sections non vides, sans balise, gras, lien Markdown ni tableau`, () => {
-      // PFO-136 : Problème, Livrables, Architecture, Décisions, Preuves, Ce que j'en ai appris, Artefacts.
+    it(`${fiche.slug} : sept sections non vides (huit avec La méthode), sans balise, gras, lien Markdown ni tableau`, () => {
+      // PFO-136 : Problème, Livrables, Architecture, Décisions, Preuves, Ce que j'en ai appris, Artefacts ; PFO-147 : La méthode, facultative.
       const textes = corpsDe(fiche).map((s) => texteBrut(s.markdown ?? "", SITE));
-      expect(textes.filter(Boolean)).toHaveLength(7);
+      expect(textes.filter(Boolean)).toHaveLength(corpsDe(fiche).some((s) => s.id === "methode") ? 8 : 7);
       for (const texte of textes) for (const reste of RESTES) expect(texte).not.toMatch(reste);
     });
   }
