@@ -122,6 +122,33 @@ describe("PFO-76 — check-output accepte le domaine de la démo GiveMe5", () =>
   });
 });
 
+describe("PFO-137 — la fiche Coach cite le site de Maison Epigenetic", () => {
+  const dir = () => mkdtempSync(path.join(tmpdir(), "check-me-"));
+  // La vraie liste du site : le nom du domaine ne doit pas y figurer.
+  const readFingerprints = () =>
+    readFileSync(path.resolve(__dirname, "../../content/forbidden.txt"), "utf8").split("\n").map((w) => w.trim()).filter(Boolean);
+
+  it("accepte le lien vers le site de Maison Epigenetic", () => {
+    const d = dir();
+    try {
+      writeFileSync(path.join(d, "index.html"), `<a href="https://www.maisonepigenetic.com">Maison Epigenetic</a>`);
+      expect(checkOutput(d, readFingerprints())).toEqual([]);
+    } finally {
+      rmSync(d, { recursive: true, force: true });
+    }
+  });
+
+  it("refuse toujours un domaine qui ne fait que lui ressembler", () => {
+    const d = dir();
+    try {
+      writeFileSync(path.join(d, "index.html"), `<a href="https://maisonepigenetic.com.example.com">x</a>`);
+      expect(checkOutput(d, [])[0]).toContain("domaine tiers");
+    } finally {
+      rmSync(d, { recursive: true, force: true });
+    }
+  });
+});
+
 const root = path.resolve(__dirname, "../..");
 
 describe("PFO-19 — script npm og", () => {

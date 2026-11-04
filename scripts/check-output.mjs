@@ -61,6 +61,8 @@ const ALLOWED_HOSTS = [
   "cedricgicquiaud.github.io",
   // Démos citées par les fiches (champ `demo`).
   "giveme5xxxxx.fr",
+  // Site de Maison Epigenetic, cité par la fiche Coach (PFO-137).
+  "maisonepigenetic.com",
   // Page de réservation Google Agenda (PFO-119) : un simple lien ; le script du bouton (calendar.google.com) reste refusé.
   "calendar.app.google",
   // Liens de documentation et espaces de noms cités dans les chunks Next/React (aucune requête réseau).
