@@ -39,7 +39,7 @@ describe("Fiche Coach (PFO-89)", () => {
     expect(content).not.toMatch(/faille|trop permissif|corrigé/i);
     expect(content).not.toMatch(/jeton|journal|huit parcours/i);
     expect(content).not.toMatch(/à produire|à anonymiser/);
-    expect(content).toMatch(/^État au 10\/10\/2026/m);
+    expect(content).toMatch(/^État au 04\/11\/2026/m);
     // PFO-137 (04/11) : Maison Epigenetic est nommée ; le nom de l'app, jamais.
     expect(content).not.toMatch(/volt/i);
   });
@@ -80,6 +80,15 @@ describe("Fiche Coach (PFO-89)", () => {
     expect(content).toMatch(/Scalingo/);
     expect(content).toMatch(/HDS/);
     expect(content + JSON.stringify(data)).not.toMatch(/Supabase|Railway/);
+  });
+
+  // PFO-140 (04/11) : la formule du CV, partout sur le site.
+  it("jamais « version de test » : sortie imminente sur iPhone et Android, dans la fiche, À propos et Expérience", () => {
+    for (const fichier of ["fiches/coach.md", "about.md", "experience.md"]) {
+      const texte = readFileSync(path.join(CONTENT, fichier), "utf8").replace(/\s+/g, " ");
+      expect(texte, fichier).not.toMatch(/version de test|en test sur iPhone/i);
+      expect(texte, fichier).toMatch(/[Ss]ortie imminente sur iPhone et Android/);
+    }
   });
 
   it("« À propos » pointe vers la nouvelle adresse", () => {

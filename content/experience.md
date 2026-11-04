@@ -9,7 +9,7 @@ blocs:
       longévité. Un coach IA fait d'un orchestrateur et de quatre agents
       spécialisés, qui s'appuie sur les vraies données de l'utilisateur. Une
       dizaine de services externes branchés, des montres connectées aux
-      analyses sanguines. Version de test distribuée sur iPhone. Travail direct
+      analyses sanguines. Sortie imminente sur iPhone et Android. Travail direct
       avec les dirigeants, du cadrage aux sujets réglementaires.
     tags: [Agentic engineering, React Native, FastAPI, Claude Code]
   - periode: "août 2023 → aujourd'hui"

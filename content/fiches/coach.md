@@ -39,7 +39,7 @@ ordre: 1
 
 # Coach — santé et longévité IA
 
-**En bref.** Une application mobile de santé et de longévité qui relie montres connectées, analyses sanguines à domicile, entraînement et boutique, avec un coach IA qui s'appuie sur les vraies données de l'utilisateur. Je la mène seul côté technique depuis janvier 2026 : une dizaine de services externes branchés, un orchestrateur et quatre agents IA spécialisés, une version de test distribuée sur iPhone. Application de Maison Epigenetic présentée sous un nom de code, code privé, pas encore sortie sur les stores.
+**En bref.** Une application mobile de santé et de longévité qui relie montres connectées, analyses sanguines à domicile, entraînement et boutique, avec un coach IA qui s'appuie sur les vraies données de l'utilisateur. Je la mène seul côté technique depuis janvier 2026 : une dizaine de services externes branchés, un orchestrateur et quatre agents IA spécialisés, une sortie imminente sur iPhone et Android. Application de Maison Epigenetic présentée sous un nom de code, code privé.
 
 ## Problème
 
@@ -118,9 +118,9 @@ l'hébergement des données de santé, pour que les dirigeants tranchent.
 
 ## Preuves
 
-État au 10/10/2026 : en développement ; version de test distribuée, sortie sur les stores en préparation.
+État au 04/11/2026 : sortie imminente sur iPhone et Android.
 
-- **Ça marche ?** Version de test envoyée aux testeurs sur iPhone le 24/07/2026. Connexion des
+- **Ça marche ?** Premiers utilisateurs sur iPhone depuis le 24/07/2026. Connexion des
   montres depuis l'application validée sur un iPhone réel ; notifications reçues sur un iPhone
   réel.
 - **C'est solide ?** Intégration continue verte le 15/09/2026 sur le serveur et le mobile.
