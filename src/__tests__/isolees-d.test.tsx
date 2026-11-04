@@ -105,7 +105,7 @@ describe("Grille du modèle : proportions et espace entre colonnes (PFO-47)", ()
 });
 
 describe("Tailles du modèle : page fiche (PFO-47)", () => {
-  it("h1 en text-4xl font-bold, titres de section en grand (PFO-130, remplace le text-xl de PFO-75), corps en text-base, accroche en text-lg", () => {
+  it("h1 en text-4xl font-bold, titres de section en grand (PFO-130, remplace le text-xl de PFO-75), corps en text-base, accroche en gros texte (PFO-142)", () => {
     const { container } = render(<Fiche fiche={loadFiches()[0]} />);
     const h1 = screen.getByRole("heading", { level: 1 });
     expect(classesOf(h1)).toEqual(expect.arrayContaining(["text-4xl", "font-bold", "tracking-tight"]));
@@ -120,8 +120,8 @@ describe("Tailles du modèle : page fiche (PFO-47)", () => {
     for (const body of container.querySelectorAll("section h2 + div.space-y-4")) {
       expect(classesOf(body)).toEqual(expect.arrayContaining(["text-base", "leading-relaxed"]));
     }
-    const accroche = screen.getByRole("heading", { level: 1 }).nextElementSibling!;
-    expect(classesOf(accroche)).toEqual(expect.arrayContaining(["text-lg", "leading-relaxed", "text-muted-foreground"]));
+    const accroche = container.querySelector("[data-accroche]")!;
+    expect(classesOf(accroche)).toEqual(expect.arrayContaining(["text-2xl", "lg:text-3xl", "leading-snug"]));
   });
 });
 

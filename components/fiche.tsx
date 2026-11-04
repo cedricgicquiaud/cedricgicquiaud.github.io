@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { ReactNode } from "react";
 import site from "../content/site.json";
 import { decisionsDe } from "../lib/decisions";
+import { anneeDe, decoupeTitre } from "../lib/entete";
 import { TitreSection } from "./titre-section";
 import type { Fiche as FicheData } from "../lib/fiches";
 import { Badge } from "./ui/badge";
@@ -174,6 +175,8 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
     ...(["preuves", "appris", "artefacts"] as const).map((id) => ({ id, contenu: html(id) && <Markdown html={html(id)} /> })),
   ].filter((b) => b.contenu || b.large);
   const accroche = [fiche.enBref.quoi, fiche.enBref.chiffre, fiche.enBref.lien].filter(Boolean).join(" ");
+  const { nom, sousTitre } = decoupeTitre(fiche.titre || frontmatter.nom);
+  const annee = anneeDe(frontmatter.periode);
   const meta = [AFFICHER_STATUT ? frontmatter.statut : "", frontmatter.periode, frontmatter.role].filter(Boolean);
   return (
     <article className="px-6 py-16 lg:px-16">
@@ -181,8 +184,12 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
         <Link href={`/#${site.sections.projects}`} className={`text-sm text-muted-foreground ${LINK}`}>
           ← Projets
         </Link>
-        <h1 className="mt-6 text-4xl font-bold tracking-tight text-balance">{fiche.titre || frontmatter.nom}</h1>
-        <p className="mt-4 max-w-3xl text-lg leading-relaxed text-muted-foreground">{accroche}</p>
+        {/* En-tête d'après la page de référence de Cédric (PFO-142) : le nom en grand, l'année à droite, le sous-titre dessous. */}
+        <div className="mt-10 flex flex-wrap items-end justify-between gap-x-10 gap-y-2">
+          <h1 className="min-w-0 text-4xl font-bold tracking-tight text-balance break-words sm:text-6xl lg:text-7xl">{nom}</h1>
+          {annee && <p className="shrink-0 text-3xl tracking-tight text-muted-foreground tabular-nums lg:text-5xl">{annee}</p>}
+        </div>
+        {sousTitre && <p className="mt-5 max-w-3xl text-lg leading-relaxed first-letter:uppercase lg:text-xl">{sousTitre}</p>}
         {/* Mêmes règles que les cartes : un lien par URL non vide ; une fiche anonyme n'a aucun lien, une mention à la place. */}
         <div className="mt-5 flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
           {frontmatter.visibilite === "anonyme" ? (
@@ -197,17 +204,22 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
           )}
           {meta.length > 0 && <span className="min-w-0 text-muted-foreground">{meta.join(" · ")}</span>}
         </div>
-        {/* Même visuel que la carte, en couleur ; balise native (export statique, pas de next/image). Au-dessus du pli : pas de loading="lazy". */}
+        {/* Même visuel que la carte, sur toute la largeur de la page ; balise native (export statique). Au-dessus du pli : pas de loading="lazy". */}
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img
           src={fiche.visuel}
           alt=""
           width={1200}
           height={750}
-          className="mt-8 aspect-[16/10] w-full max-w-4xl rounded-lg border border-border object-cover"
+          className="mt-12 aspect-[16/10] w-full rounded-lg border border-border object-cover"
         />
+        {/* « En bref » sous la capture : petit libellé en capitales, l'accroche en gros texte (PFO-142). */}
+        <div className="mt-16 max-w-4xl">
+          <p className="text-sm uppercase tracking-wider text-muted-foreground">En bref</p>
+          <p data-accroche className="mt-4 text-2xl leading-snug tracking-tight text-pretty lg:text-3xl">{accroche}</p>
+        </div>
         {fiche.chiffres?.length ? (
-          <ul aria-label="Chiffres clés" className="mt-6 grid max-w-4xl grid-cols-1 gap-3 sm:grid-cols-3">
+          <ul aria-label="Chiffres clés" className="mt-10 grid max-w-4xl grid-cols-1 gap-3 sm:grid-cols-3">
             {fiche.chiffres.map(({ valeur, libelle }) => (
               <li key={`${valeur}-${libelle}`} className="min-w-0 rounded-lg border border-border bg-card/40 px-4 py-3">
                 <span className="block text-2xl font-semibold tracking-tight text-cyber">{valeur}</span>
