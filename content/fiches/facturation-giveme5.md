@@ -4,6 +4,15 @@ statut: livré
 periode: 2025 → aujourd'hui
 role: conception, construction et mise en service, seul, pour GiveMe5
 stack: Make, Pipedrive, Qonto, Gmail
+stack_detail:
+  - categorie: Automatisation
+    outils: Make (webhook, routeur, stockage de données)
+  - categorie: CRM
+    outils: Pipedrive
+  - categorie: Banque et facturation
+    outils: Qonto
+  - categorie: Envoi
+    outils: Gmail
 visibilite: prive
 depot:
 demo:
@@ -21,17 +30,35 @@ l'envoie par e-mail au client. Plus aucune facture faite à la main pour GiveMe5
 Chaque vente de plaque demandait le même enchaînement : créer le client à la banque, faire la
 facture, lui donner un numéro, l'envoyer. Répétitif, avec à la clé des doublons et des oublis.
 
-## Ce que j'ai construit
+## Livrables
 
-Un scénario Make déclenché par chaque vente dans Pipedrive :
-- il récupère le produit, la quantité, le prix et le client ;
-- il cherche le client dans Qonto et le crée s'il n'existe pas encore ;
-- il crée la facture avec le numéro suivant, puis envoie au client un e-mail avec le lien de
+- Un scénario Make en production, déclenché par chaque vente enregistrée dans Pipedrive.
+- La création automatique du client à la banque, s'il n'existe pas encore.
+- Une facture numérotée à la suite, envoyée au client par e-mail avec son lien de
   téléchargement.
 
-Décision qui a compté :
-- **Vérifier avant de créer.** Le client est toujours recherché avant d'être créé : jamais de
-  doublon dans la comptabilité.
+## Architecture
+
+Une vente dans Pipedrive appelle le scénario. Il lit l'affaire et ses produits (quantité, prix),
+puis cherche le client dans Qonto.
+
+Un routeur sépare alors deux chemins :
+- **client connu** : la facture est créée directement ;
+- **nouveau client** : le client est d'abord créé dans Qonto, puis la facture.
+
+Le dernier numéro de facture est gardé dans un stockage de données de Make. Il est lu avant la
+création, puis augmenté de un. Gmail envoie enfin le lien de la facture au client.
+
+## Décisions
+
+### Vérifier avant de créer
+
+Le client est toujours recherché avant d'être créé : jamais de doublon dans la comptabilité.
+
+### Un compteur de factures tenu par le scénario
+
+Le numéro suivant est lu puis incrémenté à chaque passage. Les factures se suivent sans
+numéro tapé à la main.
 
 ## Preuves
 

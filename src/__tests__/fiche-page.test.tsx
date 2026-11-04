@@ -135,8 +135,8 @@ describe("Route statique /projets/[slug]/ (PFO-26)", () => {
     render(page);
     expect(screen.getByRole("main")).toBeInTheDocument();
     expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(slice.titre);
-    // PFO-130 : les décisions de SLICE ont leur section, la stack aussi (sept intitulés).
-    expect(screen.getAllByRole("heading", { level: 2 })).toHaveLength(7);
+    // PFO-131 : SLICE a les huit sections, de Contexte à Liens.
+    expect(screen.getAllByRole("heading", { level: 2 })).toHaveLength(8);
     expect(screen.getByRole("link", { name: "← Projets" })).toBeInTheDocument();
   });
 

@@ -60,6 +60,7 @@ Linear sans liste validée.
 - Pas de photo sur le site (portrait retiré le 30/08 ; composant conservé, non rendu).
 - Pas de pied de page (retiré le 30/08) ; les liens vivent dans la colonne gauche.
 - Pas de bouton de thème : le site est sombre seul (décision du 30/08, remplace la bascule).
-- Quadrillage `bg-grid` sur toute la page.
+- Fond uni, sans quadrillage (retiré partout le 04/11, PFO-130 ; remplace le `bg-grid` du 30/08).
 - Échelle typographique du modèle : titre 48 px, titre court 20 px, corps 16 px, titres de section 14 px en capitales.
-- Page détail d'un projet (PFO-75, 05/10) : ordre du README GitHub — accroche, liens, capture, chiffres clés, puis Contexte, Le produit, Architecture, Où en est le projet, Ce que j'en retiens, Liens ; ses titres de section sont en 20 px casse normale (amende la ligne précédente pour cette page seulement).
+- Page détail d'un projet (PFO-130, 04/11 ; remplace PFO-75) : accroche, liens, capture, chiffres clés, sommaire, puis huit sections en deux colonnes (titre à gauche, contenu à droite) : Contexte, Livrables, Architecture, Stack technique, Décisions (trois colonnes, une par `###`), Où en est le projet, Ce que j'en retiens, Liens. Titres de section en 24 px, 30 px sur grand écran, casse normale ; un titre ne reste fixe que si sa section dépasse la hauteur de l'écran. Listes sans puces, séparées par des lignes.
+- Une fiche a les huit sections et `stack_detail` (PFO-136) : `npm run sync` refuse sinon, en nommant le fichier et la section ; `proofs.json` reprend les mêmes sections, dans le même ordre.

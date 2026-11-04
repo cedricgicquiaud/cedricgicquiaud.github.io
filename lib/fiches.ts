@@ -71,6 +71,18 @@ export type Fiche = {
   video?: Video;
 };
 
+// Ordre des sections dans la page d'une fiche (components/fiche.tsx), Stack technique mise à part.
+const ORDRE_CORPS = ["probleme", "livrables", "construit", "architecture", "decisions", "preuves", "appris", "artefacts"];
+
+/**
+ * Le corps d'une fiche tel que la page le montre : sections du gabarit et facultatives, non vides,
+ * dans l'ordre de la page (PFO-136). Lu par `proofs.json` pour qu'un agent voie les mêmes sections.
+ */
+export function corpsDe(fiche: Fiche): Section[] {
+  const toutes = [...fiche.sections, ...(fiche.facultatives ?? [])].filter((s) => s.html !== "");
+  return ORDRE_CORPS.flatMap((id) => toutes.filter((s) => s.id === id));
+}
+
 /** Valeur de frontmatter en texte ; un nombre (ex. `periode: 2026`) est accepté, le reste devient vide. */
 const text = (v: unknown): string =>
   typeof v === "string" ? v.trim() : typeof v === "number" ? String(v) : "";

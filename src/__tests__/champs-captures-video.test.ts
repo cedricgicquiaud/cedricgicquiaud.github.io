@@ -4,18 +4,23 @@ import path from "node:path";
 import { describe, expect, it } from "vitest";
 import { loadFiche } from "../../lib/fiches";
 import { syncFiches } from "../../scripts/sync-fiches.mjs";
+import { SECTIONS_APRES_PROBLEME, STACK_DETAIL } from "./helpers/fiche-complete";
 
 /** Une fiche factice minimale ; `front` : lignes YAML ajoutées au frontmatter. */
 const fiche = (front = "") => `---
 nom: Alpha
 statut: en cours
 visibilite: public
-${front}---
+${STACK_DETAIL}${front}---
 
 # Alpha — un titre
 
 **En bref.** Un outil. 120 tests. Code public.
-`;
+
+## Problème
+
+Le problème.
+${SECTIONS_APRES_PROBLEME}`;
 
 /** Un dossier temporaire avec `fiches/alpha.md` et un `public/` vide. */
 function sandbox(front = "") {

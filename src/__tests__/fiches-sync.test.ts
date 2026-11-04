@@ -3,8 +3,9 @@ import { mkdtempSync, readdirSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { describe, expect, it } from "vitest";
-import { loadFiche, loadFiches } from "../../lib/fiches";
+import { corpsDe, loadFiche, loadFiches } from "../../lib/fiches";
 import { syncFiches } from "../../scripts/sync-fiches.mjs";
+import { SECTIONS_NOUVELLES } from "./helpers/fiche-complete";
 
 /** Une fiche factice complète ; `front` surcharge le frontmatter, `body` le corps. */
 function fiche(front: Record<string, unknown> = {}, body?: string): string {
@@ -17,6 +18,7 @@ function fiche(front: Record<string, unknown> = {}, body?: string): string {
     visibilite: "public",
     depot: "https://github.com/x/alpha",
     demo: "https://alpha.example",
+    stack_detail: "\n  - categorie: Langage\n    outils: TypeScript",
     ...front,
   };
   const lines = Object.entries(data)
@@ -35,7 +37,7 @@ Le problème.
 ## Ce que j'ai construit
 
 La construction.
-
+${SECTIONS_NOUVELLES}
 ## Preuves
 
 Les preuves.
@@ -109,6 +111,31 @@ describe("sync-fiches — contrôle du frontmatter", () => {
   it("refuse deux fiches avec le même « ordre »", () => {
     const src = tempDir({ "alpha.md": fiche({ ordre: 1 }), "beta.md": fiche({ nom: "Beta", ordre: 1 }) });
     expect(() => syncFiches(src, tempDir())).toThrow(/^beta\.md : .*ordre.*1.*alpha\.md/);
+  });
+
+  // PFO-136 : la structure en huit sections ne se perd plus.
+  it.each(["Problème", "Livrables", "Architecture", "Décisions", "Preuves", "Ce que j'en ai appris", "Artefacts"])(
+    "refuse une fiche sans section « %s », en citant le fichier et la section",
+    (titre) => {
+      const sans = fiche({ ordre: 1 }).replace(new RegExp(`## ${titre}\\n[^]*?(?=## |$)`), "");
+      expect(sans).not.toContain(`## ${titre}\n`);
+      expect(() => syncFiches(tempDir({ "alpha.md": sans }), tempDir())).toThrow(new RegExp(`^alpha\\.md : .*${titre}`));
+    },
+  );
+
+  it("refuse une section présente mais vide", () => {
+    const vide = fiche({ ordre: 1 }).replace(/## Architecture\n[^]*?(?=## )/, "## Architecture\n\n");
+    expect(() => syncFiches(tempDir({ "alpha.md": vide }), tempDir())).toThrow(/^alpha\.md : .*Architecture/);
+  });
+
+  it("refuse une fiche sans stack_detail", () => {
+    const src = tempDir({ "alpha.md": fiche({ ordre: 1, stack_detail: undefined }) });
+    expect(() => syncFiches(src, tempDir())).toThrow(/^alpha\.md : .*stack_detail/);
+  });
+
+  it("accepte une fiche sans « Ce que j'ai construit » : la section n'existe plus dans le gabarit", () => {
+    const sans = fiche({ ordre: 1 }).replace(/## Ce que j'ai construit\n[^]*?(?=## )/, "");
+    expect(syncFiches(tempDir({ "alpha.md": sans }), tempDir())).toBe(1);
   });
 
   it("refuse un « ordre » qui n'est pas un entier", () => {
@@ -221,6 +248,22 @@ describe("lib/fiches — loadFiches", () => {
     expect(f.sections[4].html).not.toContain("<h2");
   });
 
+  it("corpsDe : les sections présentes et non vides, dans l'ordre de la page (PFO-136)", () => {
+    const [f] = loadFiches(tempDir({ "alpha.md": fiche({ ordre: 1 }) }));
+    expect(corpsDe(f).map((s) => [s.id, s.titre])).toEqual([
+      ["probleme", "Problème"],
+      ["livrables", "Livrables"],
+      ["construit", "Ce que j'ai construit"],
+      ["architecture", "Architecture"],
+      ["decisions", "Décisions"],
+      ["preuves", "Preuves"],
+      ["appris", "Ce que j'en ai appris"],
+      ["artefacts", "Artefacts"],
+    ]);
+    const [g] = loadFiches(tempDir({ "alpha.md": fiche({ ordre: 1 }).replace(/## Ce que j'ai construit\n[^]*?(?=## )/, "") }));
+    expect(corpsDe(g).map((s) => s.id)).not.toContain("construit");
+  });
+
   it("vide depot et demo d'une fiche « anonyme », quoi qu'en dise le fichier", () => {
     const [f] = loadFiches(
       tempDir({ "ben.md": fiche({ ordre: 1, visibilite: "anonyme", depot: "https://github.com/x/secret", demo: "https://secret.example" }) }),
@@ -241,7 +284,10 @@ describe("lib/fiches — vraies fiches copiées dans content/fiches", () => {
     for (const f of fiches) {
       expect(f.titre).not.toBe("");
       expect(f.enBref.quoi).not.toBe("");
-      expect(f.sections.every((s) => s.html !== "")).toBe(true);
+      // PFO-136 : les huit sections de la page, Stack technique comprise.
+      expect(corpsDe(f).map((s) => s.id)).toEqual(["probleme", "livrables", "architecture", "decisions", "preuves", "appris", "artefacts"]);
+      expect(corpsDe(f).every((s) => s.html !== "")).toBe(true);
+      expect(f.stackDetail?.length).toBeGreaterThan(0);
       expect(loadFiche(f.slug, contentDir)).toEqual(f);
     }
   });

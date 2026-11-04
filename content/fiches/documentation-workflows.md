@@ -4,6 +4,13 @@ statut: livré
 periode: 2025
 role: conception et construction, seul, pour mon instance n8n
 stack: n8n, OpenAI, API n8n
+stack_detail:
+  - categorie: Automatisation
+    outils: n8n, API n8n
+  - categorie: Modèle
+    outils: OpenAI
+  - categorie: Script
+    outils: JavaScript (nœud Code de n8n)
 visibilite: prive
 depot:
 demo:
@@ -22,17 +29,32 @@ l'écrive. Workflow privé.
 Construire un workflow allait vite ; le documenter ne se faisait jamais. Quelques semaines plus
 tard, il fallait tout relire pour comprendre ce qu'il faisait et pourquoi.
 
-## Ce que j'ai construit
+## Livrables
 
-- Chaque nuit, le workflow récupère par l'API de n8n tous les workflows modifiés dans les
-  dernières 24 heures.
-- Pour chacun, l'IA rédige une documentation : objectif, chemin des données, rôle de chaque
-  étape, accès nécessaires.
-- Un script la place dans une note, à côté du workflow, et enregistre le tout.
+- Un workflow n8n qui tourne chaque nuit sur mon instance.
+- Une note de documentation posée à côté de chaque workflow modifié : objectif, chemin des
+  données, rôle de chaque étape, accès nécessaires.
 
-Décision qui a compté :
-- **La documentation à côté du workflow, pas dans un autre outil.** On la lit au moment où l'on
-  ouvre le workflow ; un document rangé ailleurs, personne ne va le chercher.
+## Architecture
+
+Un déclencheur planifié lance le workflow chaque nuit. Il récupère par l'API de n8n la liste de
+tous les workflows, puis ne garde que ceux modifiés dans les dernières 24 heures.
+
+Une boucle les traite un par un. Pour chacun, OpenAI rédige la documentation en Markdown. Un
+script calcule où placer la note sur le canevas et la met en forme. Le workflow est enfin
+réenregistré par l'API, avec sa nouvelle note.
+
+## Décisions
+
+### La documentation à côté du workflow, pas dans un autre outil
+
+On la lit au moment où l'on ouvre le workflow ; un document rangé ailleurs, personne ne va le
+chercher.
+
+### Seulement ce qui a changé
+
+Le filtre des 24 heures limite le travail aux workflows touchés dans la journée : la
+documentation suit les modifications, sans tout réécrire chaque nuit.
 
 ## Preuves
 

@@ -37,8 +37,23 @@ function problemOf(name, text, seen) {
     capturesProblem(data.captures) ??
     videoProblem(data.video) ??
     chiffresProblem(data.chiffres) ??
-    stackDetailProblem(data.stack_detail)
+    stackDetailProblem(data.stack_detail) ??
+    gabaritProblem(data, content)
   );
+}
+
+// Les sections que toute fiche doit avoir, non vides (PFO-136) ; « Ce que j'ai construit » est facultative.
+const SECTIONS_REQUISES = ["Problème", "Livrables", "Architecture", "Décisions", "Preuves", "Ce que j'en ai appris", "Artefacts"];
+
+/** Raison du refus d'une fiche qui n'a pas la structure en huit sections, ou `null`. */
+function gabaritProblem(data, content) {
+  const corps = new Map();
+  for (const m of content.matchAll(/^## (.+)\n([^]*?)(?=^## |(?![^]))/gm)) corps.set(m[1].trim(), m[2].trim());
+  for (const titre of SECTIONS_REQUISES) {
+    if (!corps.get(titre)) return `section « ## ${titre} » absente ou vide`;
+  }
+  if (data.stack_detail === undefined) return "stack_detail requis (les outils rangés par catégorie)";
+  return null;
 }
 
 /** Raison du refus de `stack_detail` (liste de `categorie` + `outils`, PFO-130), ou `null`. */

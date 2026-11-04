@@ -4,6 +4,19 @@ statut: en cours
 periode: avril 2026 → mai 2026 (code public en octobre 2026)
 role: conception, développement, tests — seul, avec des agents de code
 stack: Next.js 16, TypeScript strict, Tailwind v4, shadcn/ui, Supabase (Postgres, Auth, RLS), Claude API, AlaSQL, Recharts, Vitest
+stack_detail:
+  - categorie: Langage
+    outils: TypeScript strict
+  - categorie: Interface
+    outils: Next.js 16, Tailwind v4, shadcn/ui, Recharts
+  - categorie: Données et comptes
+    outils: Supabase (Postgres, Auth, protection par ligne)
+  - categorie: IA
+    outils: Claude API (Haiku 4.5)
+  - categorie: Requêtes en mémoire
+    outils: AlaSQL
+  - categorie: Tests
+    outils: Vitest, intégration continue GitHub Actions
 visibilite: public
 depot: https://github.com/cedricgicquiaud/tablo
 demo:
@@ -39,30 +52,55 @@ avec une connexion sécurisée et des droits en lecture seule, est le vrai trava
 Et même branché, un tableau de bord classique oblige à savoir à l'avance quels graphiques construire. La question
 qu'on se pose vraiment est plus simple : « quel canal rapporte le plus ce mois-ci ? ». Tablo part de cette phrase.
 
-## Ce que j'ai construit
+## Livrables
 
-Une application web où l'on connecte un outil qu'on a déjà, puis où l'on pose ses questions en français.
-
-**Le trajet d'une question.**
-- **Brancher.** On connecte sa base Supabase, son compte Stripe ou une base Airtable, par la connexion officielle
-  de chaque service. Tablo lit la structure des données une fois et la garde en mémoire.
-- **Demander.** On écrit sa question. Un agent IA regarde les tables, écrit une requête SQL, vérifie le résultat et
-  propose un widget parmi huit types : chiffre clé, courbe, barres, anneau, jauge, tableau, tunnel, chronologie.
-- **Épingler.** On garde le widget sur un tableau de bord, on le déplace où l'on veut. Chaque réponse propose des
+- Une application web : on branche un outil qu'on a déjà, puis on pose ses questions en français.
+- Trois connecteurs réels : Supabase, Stripe et Airtable, chacun par sa connexion officielle.
+- Huit types de widgets que l'IA sait proposer : chiffre clé, courbe, barres, anneau, jauge,
+  tableau, tunnel, chronologie.
+- Un tableau de bord où l'on épingle et déplace les widgets ; chaque réponse propose des
   questions de suite.
-- **Démarrer vite.** À la connexion d'une base Supabase, Tablo reconnaît le type d'activité (e-commerce, CRM, SaaS,
-  finance) et construit seul quatre ou cinq widgets de départ.
+- Un tableau de départ automatique : à la connexion d'une base Supabase, Tablo reconnaît
+  l'activité (e-commerce, CRM, SaaS, finance) et construit seul quatre ou cinq widgets.
+- Une vitrine des 16 widgets d'origine, avec palettes et mode sombre.
+- Un README d'installation locale, avec données et compte de démo.
 
-Décisions qui ont compté :
-- **Lecture seule par construction.** Chaque requête passe un contrôle avant d'atteindre la source : une seule
-  instruction, `SELECT` ou `WITH`, aucun mot d'écriture. La base de l'application refuse elle-même ce qu'un compte
-  n'a pas le droit de lire (protection par ligne sur chaque table).
-- **Les secrets restent côté serveur.** Les jetons de connexion sont chiffrés en base (AES-256-GCM) ; les clés
-  d'administration et d'IA ne sont jamais envoyées au navigateur.
-- **Une seule interface pour toutes les sources.** Stripe et Airtable sont interrogés en SQL en mémoire, en ne
-  chargeant que les tables citées par la requête. Ajouter Airtable n'a rien changé à l'agent ni aux widgets.
-- **Une dépense bornée.** Chaque question est plafonnée : dix étapes au plus, trois essais par outil, 0,05 $.
-  Au-delà, la question s'arrête avec un message au lieu de tourner.
+## Architecture
+
+On écrit une question. Un agent IA (Claude Haiku 4.5) consulte la structure des tables, gardée
+en mémoire après la première lecture. Il écrit une requête SQL, qui passe un contrôle de lecture
+seule avant d'atteindre la source.
+
+Toutes les sources répondent à la même interface. Supabase est interrogé directement ; Stripe et
+Airtable le sont en SQL en mémoire (AlaSQL), en ne chargeant que les tables citées par la
+requête. L'agent renvoie une proposition de widget, affichée au fil de l'eau, que l'on épingle
+sur le tableau de bord.
+
+Les comptes, les tableaux et les connexions vivent dans Supabase. Le navigateur n'y écrit
+jamais directement : tout passe par le serveur.
+
+## Décisions
+
+### Lecture seule par construction
+
+Chaque requête passe un contrôle avant d'atteindre la source : une seule instruction, `SELECT`
+ou `WITH`, aucun mot d'écriture. La base de l'application refuse elle-même ce qu'un compte n'a
+pas le droit de lire (protection par ligne sur chaque table).
+
+### Les secrets restent côté serveur
+
+Les jetons de connexion sont chiffrés en base (AES-256-GCM). Les clés d'administration et d'IA
+ne sont jamais envoyées au navigateur.
+
+### Une seule interface pour toutes les sources
+
+Stripe et Airtable sont interrogés en SQL en mémoire, comme une base. Ajouter Airtable n'a rien
+changé à l'agent ni aux widgets.
+
+### Une dépense bornée
+
+Chaque question est plafonnée : dix étapes au plus, trois essais par outil, 0,05 $. Au-delà, la
+question s'arrête avec un message au lieu de tourner.
 
 ## Preuves
 

@@ -88,10 +88,12 @@ describe("buildProofs — les fiches (PFO-112)", () => {
     ]);
   });
 
-  it("donne les cinq sections en texte brut, Artefacts compris", () => {
+  it("donne les sections présentes en texte brut, dans l'ordre de la page (PFO-136)", () => {
     const corps = [
       "## Problème", "", "Un **vrai** besoin.", "",
-      "## Ce que j'ai construit", "", "Un outil.", "",
+      "## Livrables", "", "- Un écran.", "",
+      "## Architecture", "", "Le serveur.", "",
+      "## Décisions", "", "### Un choix", "", "Parce que.", "",
       "## Preuves", "", "- 3 clients.", "",
       "## Ce que j'en ai appris", "", "Tester avant.", "",
       "## Artefacts", "", "- [Le dépôt](https://github.com/x/alpha)",
@@ -99,7 +101,9 @@ describe("buildProofs — les fiches (PFO-112)", () => {
     const dir = fichesDir({ "alpha.md": ficheMd("Alpha", {}, corps) });
     expect(buildProofs({ fichesDir: dir }).fiches[0].sections).toEqual([
       { titre: "Problème", texte: "Un vrai besoin." },
-      { titre: "Ce que j'ai construit", texte: "Un outil." },
+      { titre: "Livrables", texte: "- Un écran." },
+      { titre: "Architecture", texte: "Le serveur." },
+      { titre: "Décisions", texte: "Un choix\n\nParce que." },
       { titre: "Preuves", texte: "- 3 clients." },
       { titre: "Ce que j'en ai appris", texte: "Tester avant." },
       { titre: "Artefacts", texte: "- Le dépôt (https://github.com/x/alpha)" },
