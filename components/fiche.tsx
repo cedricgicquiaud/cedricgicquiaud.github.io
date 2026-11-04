@@ -7,6 +7,7 @@ import type { Fiche as FicheData } from "../lib/fiches";
 import { Badge } from "./ui/badge";
 import { AFFICHER_STATUT } from "../lib/affichage";
 import { BookingLink } from "./booking-link";
+import { Carrousel } from "./carrousel";
 import { DemoLink } from "./demo-link";
 import { GitHubLink } from "./github-link";
 
@@ -42,14 +43,16 @@ function splitConstruit(html: string): { produit: string; decisions: string } {
   return { produit: html.slice(0, m.index).trim(), decisions: html.slice(m.index + m[0].length).trim() };
 }
 
-function Section({ id, titre, children }: { id: string; titre: string; children: ReactNode }) {
+function Section({ id, titre, children, large }: { id: string; titre: string; children: ReactNode; large?: ReactNode }) {
   return (
     // Deux colonnes sur écran large (PFO-130) : le titre à gauche, le contenu à droite, sans filet (le quadrillage suffit) ; empilés sur téléphone.
     <section id={id} className="mt-20 scroll-mt-8 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-x-20">
       {/* Titres en grand, graisse normale, comme le modèle (retour du 03/11). */}
       {/* Le titre reste visible à gauche seulement si la section dépasse l'écran (TitreSection mesure). */}
       <TitreSection titre={titre} className="mb-4 text-2xl font-normal tracking-tight lg:mb-0 lg:text-3xl" />
-      <div className="min-w-0 max-w-3xl">{children}</div>
+      {children && <div className="min-w-0 max-w-3xl">{children}</div>}
+      {/* Captures et vidéo sur la largeur des deux colonnes (PFO-138). */}
+      {large && <div className="mt-10 min-w-0 lg:col-span-2">{large}</div>}
     </section>
   );
 }
@@ -59,7 +62,7 @@ function Medias({ fiche }: { fiche: FicheData }) {
   return (
     <>
       {fiche.video && (
-        <div id="video" className="mt-6">
+        <div id="video">
           {/* Lecteur natif, contrôles au clavier ; jamais d'autoplay. Le poster est le visuel principal de la fiche. */}
           <video controls preload="metadata" poster={fiche.visuel} className="w-full rounded-lg border border-border">
             <source src={fiche.video.fichier} type="video/mp4" />
@@ -67,15 +70,13 @@ function Medias({ fiche }: { fiche: FicheData }) {
         </div>
       )}
       {fiche.captures?.length ? (
-        <div className="mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
-          {fiche.captures.map(({ fichier, legende }) => (
-            <figure key={fichier}>
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={fichier} alt={legende} loading="lazy" className="h-auto w-full rounded-lg border border-border" />
-              <figcaption className="mt-2 text-sm text-muted-foreground">{legende}</figcaption>
-            </figure>
-          ))}
-        </div>
+        fiche.video ? (
+          <div className="mt-10">
+            <Carrousel captures={fiche.captures} />
+          </div>
+        ) : (
+          <Carrousel captures={fiche.captures} />
+        )
       ) : null}
     </>
   );
@@ -153,31 +154,23 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
   const medias = Boolean(fiche.captures?.length || fiche.video);
   // Captures et vidéo vont dans Le produit ; à défaut de Le produit, dans Livrables.
   const mediasDansLivrables = medias && !produit && Boolean(livrables);
-  const blocs: { id: string; contenu: ReactNode }[] = [
+  const blocs: { id: string; contenu: ReactNode; large?: ReactNode }[] = [
     { id: "probleme", contenu: html("probleme") && <Markdown html={html("probleme")} /> },
     {
       id: "livrables",
-      contenu: livrables && (
-        <>
-          <Markdown html={livrables} />
-          {mediasDansLivrables && <Medias fiche={fiche} />}
-        </>
-      ),
+      contenu: livrables && <Markdown html={livrables} />,
+      large: mediasDansLivrables && <Medias fiche={fiche} />,
     },
     {
       id: "construit",
-      contenu: (produit || (medias && !mediasDansLivrables)) && (
-        <>
-          {produit && <Markdown html={produit} />}
-          {!mediasDansLivrables && <Medias fiche={fiche} />}
-        </>
-      ),
+      contenu: produit && <Markdown html={produit} />,
+      large: medias && !mediasDansLivrables && <Medias fiche={fiche} />,
     },
     { id: "architecture", contenu: facultative("architecture") && <Markdown html={facultative("architecture")} /> },
     { id: "stack", contenu: <Stack fiche={fiche} /> },
     { id: "decisions", contenu: decisions && <Decisions html={decisions} /> },
     ...(["preuves", "appris", "artefacts"] as const).map((id) => ({ id, contenu: html(id) && <Markdown html={html(id)} /> })),
-  ].filter((b) => b.contenu);
+  ].filter((b) => b.contenu || b.large);
   const accroche = [fiche.enBref.quoi, fiche.enBref.chiffre, fiche.enBref.lien].filter(Boolean).join(" ");
   const meta = [AFFICHER_STATUT ? frontmatter.statut : "", frontmatter.periode, frontmatter.role].filter(Boolean);
   return (
@@ -232,8 +225,8 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
             ))}
           </ul>
         </nav>
-        {blocs.map(({ id, contenu }) => (
-          <Section key={id} id={id} titre={AFFICHAGE[id]}>
+        {blocs.map(({ id, contenu, large }) => (
+          <Section key={id} id={id} titre={AFFICHAGE[id]} large={large}>
             {contenu}
           </Section>
         ))}
