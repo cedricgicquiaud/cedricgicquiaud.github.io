@@ -72,13 +72,54 @@ describe("Carrousel de captures (PFO-138)", () => {
     expect(compteur()).toHaveTextContent("1 / 3");
   });
 
-  it("refus : pas de défilement automatique, la capture reste la même au bout de 30 s", () => {
+  // PFO-139 (04/11, remplace le refus de PFO-138) : le carrousel défile seul, avec une pause.
+  it("défile seul toutes les 5 s, puis revient à la première après la dernière", () => {
     vi.useFakeTimers();
     render(<Carrousel captures={CAPTURES} />);
-    act(() => {
-      vi.advanceTimersByTime(30_000);
-    });
+    act(() => vi.advanceTimersByTime(4_900));
     expect(compteur()).toHaveTextContent("1 / 3");
+    act(() => vi.advanceTimersByTime(200));
+    expect(compteur()).toHaveTextContent("2 / 3");
+    act(() => vi.advanceTimersByTime(10_000));
+    expect(compteur()).toHaveTextContent("1 / 3");
+  });
+
+  it("le bouton pause arrête le défilement, « Lire » le relance", () => {
+    vi.useFakeTimers();
+    render(<Carrousel captures={CAPTURES} />);
+    fireEvent.click(screen.getByRole("button", { name: "Mettre en pause" }));
+    act(() => vi.advanceTimersByTime(30_000));
+    expect(compteur()).toHaveTextContent("1 / 3");
+    fireEvent.click(screen.getByRole("button", { name: "Lire" }));
+    act(() => vi.advanceTimersByTime(5_000));
+    expect(compteur()).toHaveTextContent("2 / 3");
+  });
+
+  it("s'arrête tant que la souris ou le focus est sur le carrousel", () => {
+    vi.useFakeTimers();
+    render(<Carrousel captures={CAPTURES} />);
+    fireEvent.mouseEnter(region());
+    act(() => vi.advanceTimersByTime(30_000));
+    expect(compteur()).toHaveTextContent("1 / 3");
+    fireEvent.mouseLeave(region());
+    fireEvent.focus(region());
+    act(() => vi.advanceTimersByTime(30_000));
+    expect(compteur()).toHaveTextContent("1 / 3");
+    fireEvent.blur(region());
+    act(() => vi.advanceTimersByTime(5_000));
+    expect(compteur()).toHaveTextContent("2 / 3");
+  });
+
+  it("refus : aucun défilement automatique si l'appareil demande moins d'animations", () => {
+    vi.useFakeTimers();
+    vi.stubGlobal("matchMedia", (q: string) => ({ matches: q.includes("reduce"), media: q, addEventListener() {}, removeEventListener() {} }));
+    try {
+      render(<Carrousel captures={CAPTURES} />);
+      act(() => vi.advanceTimersByTime(30_000));
+      expect(compteur()).toHaveTextContent("1 / 3");
+    } finally {
+      vi.unstubAllGlobals();
+    }
   });
 
   it("refus : une seule capture n'a ni flèches, ni points, ni compteur", () => {

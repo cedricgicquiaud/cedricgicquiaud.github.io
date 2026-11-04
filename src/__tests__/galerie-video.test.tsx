@@ -75,14 +75,16 @@ describe("Galerie légendée sur la page (PFO-63)", () => {
     }
   });
 
-  it("se place dans « Le produit », en carrousel sur toute la largeur de la section, images à leur ratio (PFO-138, remplace la grille PFO-75)", () => {
+  it("se place dans « Le produit », en carrousel dans la colonne de droite, sous le texte, images à leur ratio (PFO-139)", () => {
     const { container } = render(<Fiche fiche={fakeFiche({ captures: CAPTURES })} />);
     const carrousel = container.querySelector("[aria-roledescription='carrousel']")!;
     expect(carrousel.querySelectorAll("figure")).toHaveLength(2);
     expect(carrousel.closest("section#construit")).not.toBeNull();
-    // Hors de la colonne de texte : la capture prend la largeur des deux colonnes.
-    expect(carrousel.closest(".max-w-3xl")).toBeNull();
-    expect(carrousel.parentElement).toHaveClass("lg:col-span-2");
+    // Dans la colonne de texte, après le texte (retour du 04/11 : colonne de droite).
+    const colonne = carrousel.closest(".max-w-3xl")!;
+    expect(colonne).not.toBeNull();
+    expect(colonne.previousElementSibling?.tagName).toBe("H2");
+    expect(container.querySelector(".lg\\:col-span-2")).toBeNull();
     for (const img of Array.from(carrousel.querySelectorAll("img"))) {
       expect(img.className).not.toMatch(/object-cover/);
       expect(img.className).toMatch(/\bh-auto\b/);
