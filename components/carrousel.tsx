@@ -1,32 +1,60 @@
 "use client";
 
-import { useRef, useState, type KeyboardEvent } from "react";
+import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import type { Capture } from "../lib/fiches";
 
 const BOUTON =
   "inline-flex size-9 items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:border-cyber hover:text-cyber focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring disabled:pointer-events-none disabled:opacity-30";
 
+/** Délai entre deux captures en défilement automatique (PFO-139). */
+const DELAI = 5_000;
+
 /**
- * Les captures d'une fiche en grand, une à la fois (PFO-138). Toutes restent dans le HTML : sans
- * JavaScript, la piste défile au doigt ou à la molette (défilement accroché, natif). Flèches, points
- * et clavier font défiler la piste ; jamais de défilement automatique.
+ * Les captures d'une fiche, une à la fois (PFO-138). Toutes restent dans le HTML : sans JavaScript,
+ * la piste défile au doigt ou à la molette (défilement accroché, natif). Flèches, points et clavier
+ * font défiler la piste. Défilement automatique toutes les 5 s (PFO-139), avec un bouton pause ;
+ * arrêté sous la souris ou le focus, et jamais si l'appareil demande moins d'animations.
  */
 export function Carrousel({ captures }: { captures: Capture[] }) {
   const piste = useRef<HTMLUListElement>(null);
   const [courante, setCourante] = useState(0);
+  const [enPause, setEnPause] = useState(false);
+  const [survol, setSurvol] = useState(false);
+  const [focus, setFocus] = useState(false);
   const plusieurs = captures.length > 1;
+
+  // Position tenue à jour sans attendre le rendu : deux tours du minuteur rapprochés ne la perdent pas.
+  const position = useRef(0);
 
   const aller = (i: number) => {
     const cible = Math.max(0, Math.min(captures.length - 1, i));
+    position.current = cible;
     setCourante(cible);
     const el = piste.current;
     el?.scrollTo?.({ left: cible * el.clientWidth, behavior: "smooth" });
   };
 
+  // La dernière version de « passer à la suivante » pour le minuteur, qui ne se recrée pas à chaque capture.
+  const suivanteAuto = useRef<() => void>(() => {});
+  useEffect(() => {
+    suivanteAuto.current = () => aller(position.current + 1 < captures.length ? position.current + 1 : 0);
+  });
+
+  const actif = plusieurs && !enPause && !survol && !focus;
+  useEffect(() => {
+    if (!actif) return;
+    if (window.matchMedia?.("(prefers-reduced-motion: reduce)").matches) return;
+    const minuteur = window.setInterval(() => suivanteAuto.current(), DELAI);
+    return () => window.clearInterval(minuteur);
+  }, [actif]);
+
   // Suit le doigt ou la molette : la capture courante est celle qui occupe la piste.
   const suivreDefilement = () => {
     const el = piste.current;
-    if (el && el.clientWidth > 0) setCourante(Math.round(el.scrollLeft / el.clientWidth));
+    if (el && el.clientWidth > 0) {
+      position.current = Math.round(el.scrollLeft / el.clientWidth);
+      setCourante(position.current);
+    }
   };
 
   const clavier = (e: KeyboardEvent) => {
@@ -43,6 +71,12 @@ export function Carrousel({ captures }: { captures: Capture[] }) {
       aria-label="Captures d'écran"
       tabIndex={plusieurs ? 0 : undefined}
       onKeyDown={plusieurs ? clavier : undefined}
+      onMouseEnter={() => setSurvol(true)}
+      onMouseLeave={() => setSurvol(false)}
+      onFocus={() => setFocus(true)}
+      onBlur={(e) => {
+        if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setFocus(false);
+      }}
       className="rounded-lg focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ring"
     >
       <ul
@@ -91,6 +125,16 @@ export function Carrousel({ captures }: { captures: Capture[] }) {
           <p aria-live="polite" className="min-w-12 text-center text-sm tabular-nums text-muted-foreground">
             {`${courante + 1} / ${captures.length}`}
           </p>
+          <button
+            type="button"
+            aria-label={enPause ? "Lire" : "Mettre en pause"}
+            onClick={() => setEnPause(!enPause)}
+            className={BOUTON}
+          >
+            <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true">
+              {enPause ? <path d="M4 2.5v11l9.5-5.5z" /> : <path d="M3.5 2.5h3v11h-3zM9.5 2.5h3v11h-3z" />}
+            </svg>
+          </button>
           <button
             type="button"
             aria-label="Capture suivante"
