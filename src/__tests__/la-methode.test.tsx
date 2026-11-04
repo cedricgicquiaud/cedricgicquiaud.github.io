@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 import { cleanup, render, screen, within } from "@testing-library/react";
-import { mkdirSync, mkdtempSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import path from "node:path";
 import { afterEach, describe, expect, it } from "vitest";
@@ -105,7 +105,8 @@ describe("« La méthode » lisible (PFO-148)", () => {
     expect(numero).toHaveTextContent("Étape 1");
     expect(numero).toHaveClass("uppercase", "text-xs", "text-muted-foreground");
     expect(nom.textContent).toBe("Comprendre le projet");
-    expect(nom).toHaveClass("text-base");
+    // PFO-149 : nom de l'étape en 20 px.
+    expect(nom).toHaveClass("text-xl");
     expect(commande.textContent).toBe("init");
     expect(commande).toHaveClass("text-muted-foreground");
     expect(h3[2].children[2].textContent).toBe("merge, puis sync");
@@ -136,8 +137,46 @@ describe("« La méthode » lisible (PFO-148)", () => {
   it("listes : numéros gris et compacts, puces rétablies sous une liste numérotée, commandes jamais coupées", () => {
     render(<Fiche fiche={ficheAvec(ETAPES)} />);
     const texte = within(section("La méthode")).getByText("Claude pose ses questions.").closest("div[class*='space-y']")!;
-    expect(texte.className).toContain("[&_ol>li::marker]:text-muted-foreground");
     expect(texte.className).toContain("[&_ol_ul]:list-disc");
     expect(texte.className).toContain("[&_code]:whitespace-nowrap");
+  });
+});
+
+// PFO-149 (04/11) : frise verticale pour les points numérotés, exemples à part.
+describe("« La méthode » en frise (PFO-149)", () => {
+  const AVEC_EXEMPLE = `
+## La méthode
+
+### Étape 1 — Comprendre le projet (\`init\`)
+
+1. Claude fait une recherche.
+
+   > Ici : les logiciels connus.
+
+2. Il m'interroge.
+`;
+
+  it("le texte d'une étape porte la classe « frise », dont la feuille de style dessine cercles et trait", () => {
+    render(<Fiche fiche={ficheAvec(AVEC_EXEMPLE)} />);
+    const texte = within(section("La méthode")).getByText("Il m'interroge.").closest("div[class*='space-y']")!;
+    expect(texte).toHaveClass("frise");
+    const css = readFileSync(path.join(__dirname, "../../app/globals.css"), "utf8");
+    expect(css).toMatch(/\.frise > ol > li::before\s*\{[^}]*counter\(etape\)/);
+    expect(css).toMatch(/\.frise > ol > li:not\(:last-child\)::after/);
+    expect(css).toMatch(/\.frise blockquote\s*\{[^}]*border-left/);
+  });
+
+  it("l'exemple est une citation sous son point, séparée de l'action", () => {
+    render(<Fiche fiche={ficheAvec(AVEC_EXEMPLE)} />);
+    const exemple = within(section("La méthode")).getByText("Ici : les logiciels connus.");
+    const point = exemple.closest("li")!;
+    expect(exemple.closest("blockquote")).not.toBeNull();
+    expect(point).toHaveTextContent("Claude fait une recherche.");
+  });
+
+  it("refus : les décisions des autres fiches n'ont pas de frise", () => {
+    render(<Fiche fiche={ficheAvec(AVEC_EXEMPLE)} />);
+    const decisions = screen.getByRole("heading", { level: 2, name: "Décisions" }).closest("section")!;
+    expect(decisions.querySelector(".frise")).toBeNull();
   });
 });

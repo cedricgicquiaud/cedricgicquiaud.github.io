@@ -149,7 +149,7 @@ function TitreEtape({ titre }: { titre: string }) {
   return (
     <h3 className="mb-3 md:mb-0">
       <span className="block text-xs uppercase tracking-wider text-muted-foreground">{numero}</span>
-      <span className="mt-1 block text-base font-medium leading-snug" dangerouslySetInnerHTML={{ __html: nom }} />
+      <span className="mt-1 block text-xl font-medium leading-snug tracking-tight" dangerouslySetInnerHTML={{ __html: nom }} />
       {commande && (
         <span
           className="mt-1 block font-mono text-sm text-muted-foreground"
@@ -162,9 +162,9 @@ function TitreEtape({ titre }: { titre: string }) {
 
 // Un paragraphe entièrement en gras (« Temps 1 — … ») devient un libellé en petites capitales (PFO-148).
 const LIBELLE = /<p><strong>([^<]+?)\.?<\/strong><\/p>/g;
-// Listes compactes, numéros gris, libellés en petites capitales : dans « La méthode » seulement.
+// Points numérotés en frise (classe `frise`, app/globals.css, PFO-149), libellés en petites capitales : dans « La méthode » seulement.
 const ETAPES_TEXTE =
-  " [&_ol>li]:my-1 [&_li>p]:my-0 [&_ol>li::marker]:text-muted-foreground [&_p[data-etiquette]]:pt-2 [&_p[data-etiquette]]:text-xs [&_p[data-etiquette]]:uppercase [&_p[data-etiquette]]:tracking-wider [&_p[data-etiquette]]:text-muted-foreground";
+  " frise [&_li>p]:my-0 [&_p[data-etiquette]]:pt-2 [&_p[data-etiquette]]:text-xs [&_p[data-etiquette]]:uppercase [&_p[data-etiquette]]:tracking-wider [&_p[data-etiquette]]:text-muted-foreground";
 
 /** Décisions en grille (PFO-130) : titre à gauche, texte à droite, un trait entre deux ; texte libre sinon. Variante « étapes » pour La méthode (PFO-148). */
 function Decisions({ html, etapes }: { html: string; etapes?: boolean }) {
