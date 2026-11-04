@@ -40,7 +40,8 @@ describe("Fiche Coach (PFO-89)", () => {
     expect(content).not.toMatch(/jeton|journal|huit parcours/i);
     expect(content).not.toMatch(/à produire|à anonymiser/);
     expect(content).toMatch(/^État au 10\/10\/2026/m);
-    expect(content).not.toMatch(/volt|epigenetic/i);
+    // PFO-137 (04/11) : Maison Epigenetic est nommée ; le nom de l'app, jamais.
+    expect(content).not.toMatch(/volt/i);
   });
 
   // PFO-91 (10/10) : maquettes neutres aux couleurs du portfolio, jamais les vrais écrans du client.
@@ -61,14 +62,24 @@ describe("Fiche Coach (PFO-89)", () => {
     for (const f of [data.visuel, ...fichiers]) expect(existsSync(path.join(PUBLIC, f))).toBe(true);
   });
 
-  // PFO-92 (10/10) : le contexte décrit l'activité réelle du client sans le rendre identifiable.
-  it("le contexte parle de santé préventive et de protocoles par objectif, sans indice sur le client", () => {
+  // PFO-137 (04/11, remplace PFO-92) : le contexte nomme Maison Epigenetic, lien vers son site, comme le CV.
+  it("le contexte nomme Maison Epigenetic avec son site, ses centres et ses protocoles par objectif", () => {
     const { content } = matter(readFileSync(path.join(CONTENT, "fiches", "coach.md"), "utf8"));
     const probleme = content.split("## Problème")[1].split("\n## ")[0];
-    expect(probleme).toMatch(/santé préventive haut de gamme/);
-    expect(probleme).toMatch(/performance, récupération, qualité de la peau, longévité/);
+    expect(probleme).toMatch(/\[Maison Epigenetic\]\(https:\/\/www\.maisonepigenetic\.com\)/);
+    expect(probleme).toMatch(/santé préventive et de\s+longévité haut de gamme/);
+    expect(probleme).toMatch(/Paris et à Cannes/);
+    expect(probleme).toMatch(/performance, récupération, beauté régénérative, longévité/);
     expect(probleme).toMatch(/prolonge le centre au quotidien/);
-    expect(content).not.toMatch(/épigén|epigen|Paris|Cannes|Miami|juin/i);
+  });
+
+  // PFO-137 : la base et l'hébergement ont changé (PostgreSQL chez Scalingo, offre HDS).
+  it("l'architecture dit PostgreSQL et Scalingo HDS, plus Supabase ni Railway", () => {
+    const { data, content } = matter(readFileSync(path.join(CONTENT, "fiches", "coach.md"), "utf8"));
+    expect(content).toMatch(/PostgreSQL/);
+    expect(content).toMatch(/Scalingo/);
+    expect(content).toMatch(/HDS/);
+    expect(content + JSON.stringify(data)).not.toMatch(/Supabase|Railway/);
   });
 
   it("« À propos » pointe vers la nouvelle adresse", () => {
