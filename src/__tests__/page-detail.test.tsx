@@ -54,15 +54,15 @@ function fiche(over: Partial<FicheData> = {}, fm: Partial<FicheData["frontmatter
 const after = (a: Node, b: Node) => Boolean(a.compareDocumentPosition(b) & Node.DOCUMENT_POSITION_FOLLOWING);
 
 describe("Page détail — en-tête (PFO-75)", () => {
-  it("le titre, puis tout le « En bref » en accroche, puis les liens, puis la capture principale", () => {
+  it("le titre, puis les liens, puis la capture principale, puis tout le « En bref » en accroche (PFO-142)", () => {
     render(<Fiche fiche={fiche()} />);
     const h1 = screen.getByRole("heading", { level: 1 });
     const accroche = screen.getByText("Une accroche qui dit quoi. 500 cas réels. Code public.");
     const github = screen.getByRole("link", { name: "Code sur GitHub" });
     const image = document.querySelector('img[src="/projets/generated/alpha.png"]')!;
-    expect(after(h1, accroche)).toBe(true);
-    expect(after(accroche, github)).toBe(true);
+    expect(after(h1, github)).toBe(true);
     expect(after(github, image)).toBe(true);
+    expect(after(image, accroche)).toBe(true);
     expect(screen.getByRole("link", { name: "Démo" })).toHaveAttribute("href", "https://alpha.example.test/");
   });
 

@@ -134,7 +134,7 @@ describe("Route statique /projets/[slug]/ (PFO-26)", () => {
     const page = await fichePage.default({ params: Promise.resolve({ slug: "slice" }), searchParams: Promise.resolve({}) });
     render(page);
     expect(screen.getByRole("main")).toBeInTheDocument();
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(slice.titre);
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent(slice.titre.split(" — ")[0]);
     // PFO-131 : SLICE a les huit sections, de Contexte à Liens.
     expect(screen.getAllByRole("heading", { level: 2 })).toHaveLength(8);
     expect(screen.getByRole("link", { name: "← Projets" })).toBeInTheDocument();
@@ -164,7 +164,8 @@ describe("Rendu de la fiche : en-tête (PFO-27)", () => {
   it("rend le lien « ← Projets » vers /#projets, le titre en h1, puis période et rôle sur la ligne des liens (PFO-75)", () => {
     render(<Fiche fiche={fakeFiche()} />);
     expect(screen.getByRole("link", { name: "← Projets" })).toHaveAttribute("href", "/#projets");
-    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Factice — un titre de fiche");
+    expect(screen.getByRole("heading", { level: 1 })).toHaveTextContent("Factice");
+    expect(screen.getByText("un titre de fiche")).toBeInTheDocument();
     expect(document.querySelector("dl")).toBeNull();
     expect(screen.getByText(/mai 2026 → aujourd'hui · conception et tests/)).toBeInTheDocument();
     const badges = Array.from(screen.getByRole("list", { name: "Stack" }).querySelectorAll("li")).map((li) => li.textContent);
@@ -192,7 +193,7 @@ describe("Rendu de la fiche : En bref et cinq sections (PFO-27)", () => {
 });
 
 describe("Rendu de la fiche : liens Code et Démo (PFO-27)", () => {
-  it("rend Code et Démo sous l'accroche, avant la capture et les sections (PFO-75)", () => {
+  it("rend Code et Démo sous le titre, avant la capture et les sections (PFO-75)", () => {
     render(<Fiche fiche={fakeFiche()} />);
     const code = screen.getByRole("link", { name: "Code sur GitHub" });
     const demo = screen.getByRole("link", { name: "Démo" });
