@@ -186,7 +186,7 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
         </Link>
         {/* En-tête d'après la page de référence de Cédric (PFO-142) : le nom en grand, l'année à droite, le sous-titre dessous. */}
         <div className="mt-10 flex flex-wrap items-baseline justify-between gap-x-10 gap-y-2">
-          <h1 className="min-w-0 text-4xl font-bold tracking-tight text-balance break-words sm:text-6xl lg:text-7xl">{nom}</h1>
+          <h1 className="min-w-0 text-4xl font-bold tracking-tight text-balance break-words lg:text-5xl">{nom}</h1>
           {annee && <p className="shrink-0 text-xl text-muted-foreground tabular-nums">{annee}</p>}
         </div>
         {sousTitre && <p className="mt-5 max-w-3xl text-lg leading-relaxed first-letter:uppercase lg:text-xl">{sousTitre}</p>}
