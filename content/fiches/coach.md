@@ -4,6 +4,19 @@ statut: en cours
 periode: janvier 2026 → aujourd'hui
 role: produit et développement, seul côté technique, avec des agents de code ; cadrage avec les dirigeants, échanges avec les partenaires
 stack: React Native, Expo, TypeScript, Python/FastAPI, Supabase (Postgres, Auth), Railway, EAS, OpenAI, plateforme d'agents IA, MCP, Jest, pytest, Maestro, Linear
+stack_detail:
+  - categorie: Mobile
+    outils: React Native, Expo, TypeScript, EAS
+  - categorie: Serveur
+    outils: Python, FastAPI, Railway
+  - categorie: Données et comptes
+    outils: Supabase (Postgres, Auth)
+  - categorie: IA
+    outils: OpenAI, plateforme d'agents IA, serveurs MCP
+  - categorie: Tests
+    outils: Jest, pytest, Maestro
+  - categorie: Pilotage
+    outils: Linear
 visibilite: anonyme
 depot:
 demo:
@@ -43,30 +56,63 @@ Le besoin : une application qui prolonge le centre au quotidien. Elle rassemble 
 un profil, les fait interpréter par une IA et en tire des actions concrètes : une séance, un
 complément, un nouveau test. Le projet partait de zéro, et j'étais seul côté technique.
 
-## Ce que j'ai construit
+## Livrables
 
-Une application iOS et Android et son serveur. L'utilisateur connecte sa montre, commande un
-kit d'analyse, suit un programme d'entraînement et discute avec un coach IA qui connaît ses
-mesures.
+- Une application iOS et Android et son serveur.
+- La connexion des montres connectées, et une forme du jour calculée à partir de la montre et du
+  sommeil.
+- Un coach IA qui connaît les mesures de l'utilisateur et propose des séances, à confirmer.
+- Des programmes d'entraînement générés semaine par semaine, à partir d'un objectif daté.
+- Des kits d'analyse sanguine à domicile, avec des résultats classés et interprétés.
+- Une boutique de compléments, liée au protocole proposé par le coach.
+- Un profil où l'utilisateur voit ce que l'application sait de lui, et ce qu'il contrôle.
+- Une roadmap par portes de lancement et des études d'impact réglementaires, pour les
+  dirigeants.
 
-Les décisions qui ont compté :
-- **Un adaptateur par partenaire.** Le code métier ne connaît aucun service externe : chaque
-  partenaire (montres, analyses, compléments, paiement) passe par un adaptateur
-  interchangeable. Quand j'ai changé d'agrégateur de montres connectées, le code métier
-  n'a pas bougé.
-- **Un orchestrateur et quatre agents.** Chaque demande est aiguillée vers le bon spécialiste :
-  analyse des données, expertise médicale, coaching, recommandation de produits. Les agents
-  lisent les données par des serveurs MCP, jamais par un accès direct à la base.
-- **Les droits d'abord.** Chaque accès aux données de santé est vérifié côté serveur, y compris
-  quand c'est un agent IA qui le demande.
-- **L'IA propose, l'utilisateur valide.** Une action qui écrit (planifier une séance) demande
-  une confirmation. Aucun modèle n'est appelé sans le consentement IA de l'utilisateur.
-- **Une roadmap par portes de lancement.** Distribution restreinte, publication publique, puis
-  après lancement : chaque nouvelle demande se range dans une porte, ce qui garde la date
-  lisible pour les dirigeants.
-- **Les sujets réglementaires écrits noir sur blanc.** J'ai mis en place la transparence exigée
-  par l'AI Act et rédigé les études d'impact sur l'hébergement des données de santé, pour que
-  les dirigeants tranchent.
+## Architecture
+
+L'application mobile (React Native, Expo) parle à un serveur (FastAPI). Les comptes et les
+données de santé vivent dans Supabase, et le serveur est hébergé sur Railway.
+
+Chaque partenaire passe par un adaptateur interchangeable : montres connectées, analyses,
+compléments, paiement. Le code métier ne connaît aucun service externe.
+
+Côté IA, un orchestrateur aiguille chaque demande vers l'un des quatre agents spécialisés :
+analyse des données, expertise médicale, coaching, recommandation de produits. Les agents
+lisent les données par des serveurs MCP, jamais par un accès direct à la base. Le serveur vérifie
+les droits à chaque lecture.
+
+## Décisions
+
+### Un adaptateur par partenaire
+
+Le code métier ne connaît aucun service externe. Quand j'ai changé d'agrégateur de montres
+connectées, le code métier n'a pas bougé.
+
+### Un orchestrateur et quatre agents
+
+Chaque demande est aiguillée vers le bon spécialiste. Les agents lisent les données par des
+serveurs MCP, jamais par un accès direct à la base.
+
+### Les droits d'abord
+
+Chaque accès aux données de santé est vérifié côté serveur, y compris quand c'est un agent IA
+qui le demande.
+
+### L'IA propose, l'utilisateur valide
+
+Une action qui écrit (planifier une séance) demande une confirmation. Aucun modèle n'est appelé
+sans le consentement IA de l'utilisateur.
+
+### Une roadmap par portes de lancement
+
+Distribution restreinte, publication publique, puis après lancement : chaque nouvelle demande se
+range dans une porte, ce qui garde la date lisible pour les dirigeants.
+
+### Les sujets réglementaires écrits noir sur blanc
+
+J'ai mis en place la transparence exigée par l'AI Act et rédigé les études d'impact sur
+l'hébergement des données de santé, pour que les dirigeants tranchent.
 
 ## Preuves
 

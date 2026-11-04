@@ -4,6 +4,15 @@ statut: livré
 periode: 2025 → aujourd'hui
 role: conception, construction et mise en service, seul, en mission freelance pour une agence web
 stack: n8n, Make, OpenAI (GPT-4o), Google Sheets, API LinkedIn
+stack_detail:
+  - categorie: Automatisation
+    outils: n8n, Make
+  - categorie: Modèle
+    outils: OpenAI GPT-4o
+  - categorie: Tableau de pilotage
+    outils: Google Sheets
+  - categorie: Publication et envoi
+    outils: API LinkedIn, Gmail
 visibilite: prive
 depot:
 demo:
@@ -24,22 +33,36 @@ L'agence vendait à ses clients une présence régulière sur LinkedIn. Chaque m
 trouver des sujets adaptés au métier de chacun, écrire dans son ton, caler un calendrier, puis
 publier. Le même travail, client par client, à la main.
 
-## Ce que j'ai construit
+## Livrables
 
-Deux workflows n8n, puis une publication dans Make.
-- **Les thèmes du mois.** Le premier workflow lit la liste des clients actifs dans un Google
-  Sheet : métier, présentation, ton de rédaction. Pour chacun, l'IA propose les thèmes du mois,
-  enregistrés dans l'onglet du client.
-- **Les posts et le calendrier.** Le second rédige un post par thème, fixe sa structure et sa
-  date de publication, puis met à jour le calendrier du client.
-- **La publication.** Un scénario Make publie les posts sur la page LinkedIn du client, avec
-  ou sans image, au rythme prévu par son contrat, et les marque comme publiés.
+- Deux workflows n8n et un scénario Make, en production pour les clients d'une agence web.
+- Un Google Sheet de pilotage : une ligne par client, avec son métier, sa présentation et son
+  ton.
+- Les thèmes du mois, enregistrés dans l'onglet de chaque client.
+- Un calendrier de posts rédigés, datés et publiés sur la page LinkedIn du client.
 
-Décisions qui ont compté :
-- **Le Google Sheet comme tableau de bord.** Ajouter un client, c'est ajouter une ligne.
-  L'agence n'a jamais besoin d'ouvrir n8n.
-- **Des étapes séparées.** Les thèmes sont enregistrés avant que les posts soient écrits :
-  l'agence peut en corriger un avant la rédaction.
+## Architecture
+
+- **Les thèmes du mois.** Un déclencheur planifié lance le premier workflow n8n. Il lit les
+  paramètres des clients actifs dans le Google Sheet. Pour chacun, l'IA (GPT-4o) propose les
+  thèmes du mois, enregistrés dans l'onglet du client. En fin de boucle, il lance le second
+  workflow.
+- **Les posts et le calendrier.** Le second workflow calcule les dates et la structure de chaque
+  post. L'IA rédige un post par thème, puis le calendrier du client est mis à jour dans le
+  Google Sheet. Un e-mail part en fin de traitement.
+- **La publication.** Un scénario Make publie les posts sur la page LinkedIn du client, avec ou
+  sans image, au rythme prévu par son contrat, et les marque comme publiés.
+
+## Décisions
+
+### Le Google Sheet comme tableau de bord
+
+Ajouter un client, c'est ajouter une ligne. L'agence n'a jamais besoin d'ouvrir n8n.
+
+### Des étapes séparées
+
+Les thèmes sont enregistrés avant que les posts soient écrits : l'agence peut en corriger un
+avant la rédaction.
 
 ## Preuves
 

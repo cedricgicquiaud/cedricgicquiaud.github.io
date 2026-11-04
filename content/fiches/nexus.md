@@ -4,6 +4,19 @@ statut: en cours
 periode: mai 2026 → aujourd'hui
 role: cofondateur technique, en binôme avec un associé ; architecture, infrastructure, sécurité et RGPD, connecteurs
 stack: Python/FastAPI, React, TypeScript, Vite, Supabase (Postgres, Auth), Neo4j, Graphiti, Mistral, pg_cron, Docker, mypy
+stack_detail:
+  - categorie: Interface
+    outils: React, TypeScript, Vite
+  - categorie: Serveur
+    outils: Python, FastAPI, LangGraph
+  - categorie: Données et comptes
+    outils: Supabase (Postgres, Auth), pg_cron, DuckDB
+  - categorie: Mémoire et recherche
+    outils: Neo4j, Graphiti, ChromaDB
+  - categorie: Modèles
+    outils: Mistral
+  - categorie: Qualité
+    outils: mypy, pytest, Playwright, contrôle d'accessibilité RGAA, Docker
 visibilite: prive
 depot:
 demo:
@@ -37,27 +50,69 @@ Le besoin : un assistant qui lit ces outils, signale ce qui compte, et dont chaq
 et chaque action se vérifient. Nous sommes partis à deux : mon associé côté marché, moi côté
 technique.
 
-## Ce que j'ai construit
+## Livrables
 
-Une application web et son serveur, branchés sur une quinzaine d'outils. Le dirigeant pose
-une question ou lance un audit ; l'assistant répond avec les chiffres de son entreprise.
+- Une application web et son serveur, branchés sur une quinzaine d'outils du quotidien d'une
+  PME : CRM, messagerie, agenda, facturation.
+- Un assistant à qui le dirigeant pose ses questions, et qui répond avec les chiffres de son
+  entreprise.
+- Un accueil qui montre ce qui demande une action aujourd'hui : relances en retard, affaires qui
+  stagnent.
+- Un audit du CRM : 21 règles métier écrites en code et un score de maturité, dans un rapport
+  figé à sa date et exportable en PDF.
+- Des tableaux de bord calculés sur les données du CRM.
+- Des relances planifiées, et un registre d'audit de chaque action.
 
-Les décisions qui ont compté :
-- **Le code détecte et décide, l'IA explique.** 6 règles de revenus et 15 règles d'hygiène du
-  CRM sont écrites en code, avec un score de maturité. Le modèle de langage ne calcule rien :
-  il met en mots ce que le code a trouvé.
-- **Proposer, puis confirmer.** Toute action qui écrit dans un outil du client passe par une
-  carte de confirmation. C'est le code qui l'impose, pas la consigne donnée au modèle.
-- **Une trace qu'on peut relire.** Chaque action entre dans un registre d'audit inaltérable.
-  Un rapport d'audit est figé à sa date et s'exporte en PDF.
-- **Une mémoire qui connaît les dates.** L'assistant sait ce qui était vrai, et quand : un
-  contact qui a changé de poste n'efface pas son historique.
-- **Un seul mécanisme pour tous les connecteurs.** Ajouter un outil revient à le décrire, pas à
-  réécrire l'authentification.
-- **Les automatisations vivent dans la base.** Une relance planifiée tourne sans outil
-  d'automatisation tiers.
-- **Européen et accessible par construction.** Chaîne de modèles 100 % Mistral. Le contrôle
-  d'accessibilité RGAA bloque l'intégration continue, comme le typage strict.
+## Architecture
+
+L'interface web (React) est un simple client : elle parle au serveur (FastAPI) et reçoit les
+réponses au fil de l'eau. Le serveur porte tout le reste : l'authentification, les connexions
+aux outils du client et l'agent (LangGraph), qui choisit quels outils interroger.
+
+Les données des outils sont lues puis interrogées en SQL (DuckDB). Les règles de revenus et
+d'hygiène du CRM tournent dans le code. Le modèle de langage (Mistral) ne reçoit que leurs
+résultats, pour les mettre en mots.
+
+Trois bases se partagent le travail :
+- Supabase pour les comptes, les rapports, le registre d'audit et les relances planifiées
+  (pg_cron) ;
+- Neo4j, avec Graphiti, pour la mémoire datée : qui était quoi, et quand ;
+- ChromaDB pour la recherche dans la base de connaissances.
+
+## Décisions
+
+### Le code détecte et décide, l'IA explique
+
+6 règles de revenus et 15 règles d'hygiène du CRM sont écrites en code, avec un score de
+maturité. Le modèle de langage ne calcule rien : il met en mots ce que le code a trouvé.
+
+### Proposer, puis confirmer
+
+Toute action qui écrit dans un outil du client passe par une carte de confirmation. C'est le
+code qui l'impose, pas la consigne donnée au modèle.
+
+### Une trace qu'on peut relire
+
+Chaque action entre dans un registre d'audit inaltérable. Un rapport d'audit est figé à sa date
+et s'exporte en PDF.
+
+### Une mémoire qui connaît les dates
+
+L'assistant sait ce qui était vrai, et quand : un contact qui a changé de poste n'efface pas son
+historique.
+
+### Un seul mécanisme pour tous les connecteurs
+
+Ajouter un outil revient à le décrire, pas à réécrire l'authentification.
+
+### Les automatisations vivent dans la base
+
+Une relance planifiée tourne sans outil d'automatisation tiers.
+
+### Européen et accessible par construction
+
+Chaîne de modèles 100 % Mistral. Le contrôle d'accessibilité RGAA bloque l'intégration continue,
+comme le typage strict.
 
 ## Preuves
 

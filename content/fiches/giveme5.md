@@ -4,6 +4,19 @@ statut: livré
 periode: août 2023 → aujourd'hui
 role: idée, produit physique, développement, automatisations, déploiement, vente — seul ; 2023 avec ChatGPT, 2025 en n8n/Make, 2026 avec Claude Code
 stack: Python/Django, MySQL, Google Places API, HTML/CSS/JS, Stripe, n8n/Make
+stack_detail:
+  - categorie: Backoffice
+    outils: Python 3.12, Django 5.2 LTS, MySQL
+  - categorie: Services Google
+    outils: Google Places API, Google Drive
+  - categorie: Site de vente
+    outils: HTML, CSS, JavaScript
+  - categorie: Paiement
+    outils: Stripe Payment Link
+  - categorie: Automatisations
+    outils: n8n, Make
+  - categorie: Qualité
+    outils: tests Django, intégration continue, Dependabot
 visibilite: public
 depot: https://github.com/cedricgicquiaud/giveme5
 demo: https://hello.giveme5xxxxx.fr
@@ -44,46 +57,63 @@ il est déjà sur la bonne page, il note.
 Contrainte côté vendeur : chaque plaque doit pouvoir être liée à n'importe quelle boutique
 après fabrication, sans intervention technique. On fabrique en série, on associe plus tard.
 
-## Ce que j'ai construit
+## Livrables
 
-Un produit physique et trois briques logicielles : un backoffice qui fabrique et redirige les
-plaques, des automatisations autour de la vente, un site de vente.
+- Une plaque et une carte physiques, avec QR code et puce NFC, plus de 200 en service.
+- Un backoffice qui fabrique les plaques par lot et redirige chaque scan vers le bon
+  formulaire d'avis.
+- Une page d'activation : au premier scan, le commerçant retrouve sa boutique par une recherche
+  Google Places.
+- Deux automatisations autour de la vente : la facturation
+  (fiche : https://cedricgicquiaud.github.io/projets/facturation-giveme5/) et un chatbot de
+  service client (fiche : https://cedricgicquiaud.github.io/projets/chatbot-giveme5/).
+- Un site de vente : présentation complète avec simulateur d'avis, page de commande courte
+  envoyée par SMS après un appel, suivi des parrains (un lien `?ref=marie` rattache la vente à
+  Marie dans Stripe).
 
-**Le trajet d'une plaque.**
-- **Fabrication.** Dans l'admin, on choisit un type (plaque ou carte) et une quantité. Chaque
-  plaque reçoit une adresse unique ; son QR code part sur Google Drive pour l'impression, et
-  la même adresse est écrite dans la puce NFC.
-- **Premier scan, par le commerçant.** La plaque n'est liée à aucune boutique : elle affiche
-  une recherche Google Places. Le commerçant tape le nom de sa boutique, Google renvoie
-  l'identifiant de l'établissement, et l'adresse du formulaire d'avis est enregistrée.
-- **Tous les scans suivants.** Le serveur redirige directement vers le formulaire d'avis
-  Google de la boutique, sans page intermédiaire.
+## Architecture
 
-**Les automatisations (2025, n8n et Make).** Le but : vendre et servir sans y passer mes
-soirées.
-- **Facturation** : une vente dans le CRM déclenche la création du client et de la facture
-  à la banque, puis l'envoi par e-mail. Plus de facture faite à la main
-  (fiche : https://cedricgicquiaud.github.io/projets/facturation-giveme5/).
-- **Service client** : un chatbot qui répond aux questions des commerçants à partir d'une
-  base de connaissances, en cherchant par le sens et non par le mot exact
-  (fiche : https://cedricgicquiaud.github.io/projets/chatbot-giveme5/).
+Le trajet d'une plaque passe par trois étapes.
 
-**Le site de vente (2026).** La présentation complète avec un simulateur d'avis, une page de
-commande courte envoyée par SMS après un appel, et un suivi des parrains : un lien
-`?ref=marie` rattache la vente à Marie dans Stripe.
+- **Fabrication.** Dans l'admin Django, on choisit un type (plaque ou carte) et une quantité.
+  Chaque plaque reçoit une adresse unique. Son QR code part sur Google Drive pour l'impression,
+  et la même adresse est écrite dans la puce NFC.
+- **Premier scan, par le commerçant.** La plaque n'est liée à aucune boutique : elle affiche une
+  recherche Google Places. Le commerçant tape le nom de sa boutique, Google renvoie
+  l'identifiant de l'établissement, et l'adresse du formulaire d'avis est enregistrée en base
+  (MySQL).
+- **Tous les scans suivants.** Le serveur redirige directement vers le formulaire d'avis Google
+  de la boutique, sans page intermédiaire.
 
-Décisions qui ont compté :
-- **Lier la plaque après fabrication.** La plaque porte une adresse, pas une boutique. On
-  imprime en série, on vend à n'importe qui, et c'est le commerçant qui l'active.
-- **Rediriger sur le serveur, pas dans la plaque.** La puce et le QR code ne contiennent que
-  l'adresse de la plaque. Une plaque activée est verrouillée : sa destination ne peut plus
-  être changée, et seul un formulaire d'avis Google est accepté.
-- **Django pour l'admin fourni** : gérer les plaques et voir celles qui sont activées, sans
-  écrire d'écran.
-- **Un site statique et un lien de paiement.** HTML écrit à la main, images et vidéos
-  hébergées avec le site, Stripe Payment Link plutôt qu'un tunnel maison. Rien à compiler,
-  pas de code de paiement à maintenir.
-- **Automatiser ce que je refaisais à chaque vente**, la facturation d'abord, sans code.
+À côté, le site de vente est un site statique séparé : trois pages HTML et un lien de paiement
+Stripe. Les automatisations (n8n et Make) prennent le relais après la vente.
+
+## Décisions
+
+### Lier la plaque après fabrication
+
+La plaque porte une adresse, pas une boutique. On imprime en série, on vend à n'importe qui,
+et c'est le commerçant qui l'active.
+
+### Rediriger sur le serveur, pas dans la plaque
+
+La puce et le QR code ne contiennent que l'adresse de la plaque. Une plaque activée est
+verrouillée : sa destination ne peut plus être changée, et seul un formulaire d'avis Google est
+accepté.
+
+### Django pour l'admin fourni
+
+Gérer les plaques et voir celles qui sont activées, sans écrire d'écran.
+
+### Un site statique et un lien de paiement
+
+HTML écrit à la main, images et vidéos hébergées avec le site, Stripe Payment Link plutôt qu'un
+tunnel maison. Rien à compiler, pas de code de paiement à maintenir.
+
+### Automatiser ce que je refaisais à chaque vente
+
+La facturation d'abord, sans code. Le critère : la tâche répétée à chaque vente, pas la plus
+spectaculaire.
 
 ## Preuves
 

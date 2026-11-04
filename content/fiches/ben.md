@@ -4,6 +4,19 @@ statut: livré
 periode: mars 2026 → juin 2026
 role: conception, développement, tests, benchmark des modèles — seul, avec des agents de code
 stack: Python, PyTorch, DINOv2, YOLOv8, NumPy, FastAPI, APScheduler, SQLite/SQLModel, SvelteKit, Tailwind, pytest
+stack_detail:
+  - categorie: Vision
+    outils: PyTorch, DINOv2, YOLOv8
+  - categorie: Calcul
+    outils: NumPy
+  - categorie: Serveur
+    outils: Python, FastAPI, APScheduler
+  - categorie: Données
+    outils: SQLite, SQLModel
+  - categorie: Interface
+    outils: SvelteKit, Tailwind
+  - categorie: Tests
+    outils: pytest
 visibilite: anonyme
 depot:
 demo:
@@ -43,44 +56,70 @@ La seule information fiable, c'est la photo. Il faut regarder chaque photo de ch
 annonce, la comparer à ce qu'on cherche, et le faire vite : la bonne pièce part en quelques
 heures.
 
-## Ce que j'ai construit
+## Livrables
 
-Un service qui tourne en continu. À intervalle réglable, il récupère les nouvelles annonces de
-deux catégories, télécharge les photos, calcule pour chacune une signature visuelle, la compare
-à la liste de référence, et affiche les correspondances dans un tableau de bord web : photo de
-référence et photo de l'annonce côte à côte, score, lien vers l'annonce.
+- Un service qui tourne en continu : à intervalle réglable, il récupère les nouvelles annonces
+  de deux catégories et compare leurs photos à une liste de référence.
+- Un tableau de bord web : photo de référence et photo de l'annonce côte à côte, score, lien
+  vers l'annonce, classement par ressemblance.
+- La gestion de la liste des pièces recherchées, photos encodées à l'ajout.
+- Des réglages de la chasse et du seuil de similarité.
+- Un script de calibration qui trace la courbe précision/rappel à partir des retours
+  « vraie pièce / sosie ».
+- Un benchmark des modèles de vision, consigné dans le journal de décisions.
 
-**Le trajet d'une annonce.**
+## Architecture
+
+Le trajet d'une annonce passe par cinq étapes.
+
 - **Collecter.** Les nouvelles annonces arrivent par un service tiers, sous forme structurée.
   La collecte s'arrête à la première annonce déjà vue.
-- **Filtrer.** Une liste noire de mots écarte les meubles industriels avant même de
-  télécharger les photos.
-- **Isoler.** Un détecteur d'objets (YOLOv8) découpe le meuble, puis un second modèle le
-  détoure et le pose sur fond blanc, comme une photo de catalogue.
-- **Comparer.** Chaque photo devient une signature (DINOv2), comparée d'un coup à toute la
-  liste de référence.
+- **Filtrer.** Une liste noire de mots écarte les meubles industriels avant même de télécharger
+  les photos.
+- **Isoler.** Un détecteur d'objets (YOLOv8) découpe le meuble, puis un second modèle le détoure
+  et le pose sur fond blanc, comme une photo de catalogue.
+- **Comparer.** Chaque photo devient une signature (DINOv2), comparée d'un coup à toute la liste
+  de référence.
 - **Trier.** Le tableau de bord classe les annonces par ressemblance. On valide ou on écarte ;
   chaque retour nourrit la calibration du seuil.
 
-Décisions qui ont compté :
-- **Changer de modèle de vision après un benchmark.** Le prototype utilisait CLIP, le modèle
-  le plus connu pour comparer des images. Sur de vraies photos de catalogue, il séparait mal
-  les designers entre eux. Un benchmark contre DINOv2-large a montré un écart de séparation
-  dix fois plus grand. J'ai reconstruit le moteur sur DINOv2.
-- **Isoler le meuble avant de le comparer.** Une photo d'annonce est prise dans un salon
-  encombré ; une photo de référence vient d'un catalogue sur fond blanc. Détourer des deux
-  côtés fait passer le score d'une vraie correspondance de 0,74 à 0,88, et descendre celui
-  d'un sosie de 0,55 à 0,50.
-- **Un produit matriciel plutôt qu'un index vectoriel.** Pour une liste de moins de 200
-  références, NumPy suffit : plus simple, aucune dépendance binaire.
-- **Un garde-fou de quota.** La collecte passe par un service payant. Chaque requête est
-  comptée avant l'appel réseau, et le pipeline s'arrête proprement à 80 % du budget mensuel.
-- **Tout enregistrer pour calibrer.** Le pipeline garde le meilleur score de chaque annonce,
-  même sous le seuil. Les retours « vraie pièce / sosie » du tableau de bord alimentent un
-  script qui trace la courbe précision/rappel ; les notifications attendent ce seuil calibré.
-- **Un seul processus.** Serveur web, planificateur et modèles chargés une fois en mémoire,
-  dans le même processus Python, sur une base SQLite. Un test de concurrence garantit qu'une
-  reconstruction de l'index pendant une comparaison ne renvoie jamais un résultat mélangé.
+Serveur web (FastAPI), planificateur (APScheduler) et modèles tournent dans un seul processus
+Python, sur une base SQLite. L'interface est en SvelteKit.
+
+## Décisions
+
+### Changer de modèle de vision après un benchmark
+
+Le prototype utilisait CLIP, le modèle le plus connu pour comparer des images. Sur de vraies
+photos de catalogue, il séparait mal les designers entre eux. Un benchmark contre DINOv2-large a
+montré un écart de séparation dix fois plus grand. J'ai reconstruit le moteur sur DINOv2.
+
+### Isoler le meuble avant de le comparer
+
+Une photo d'annonce est prise dans un salon encombré ; une photo de référence vient d'un
+catalogue sur fond blanc. Détourer des deux côtés fait passer le score d'une vraie
+correspondance de 0,74 à 0,88, et descendre celui d'un sosie de 0,55 à 0,50.
+
+### Un produit matriciel plutôt qu'un index vectoriel
+
+Pour une liste de moins de 200 références, NumPy suffit : plus simple, aucune dépendance
+binaire.
+
+### Un garde-fou de quota
+
+La collecte passe par un service payant. Chaque requête est comptée avant l'appel réseau, et le
+pipeline s'arrête proprement à 80 % du budget mensuel.
+
+### Tout enregistrer pour calibrer
+
+Le pipeline garde le meilleur score de chaque annonce, même sous le seuil. Les retours du
+tableau de bord alimentent la calibration ; les notifications attendent ce seuil calibré.
+
+### Un seul processus
+
+Serveur web, planificateur et modèles sont chargés une fois en mémoire. Un test de concurrence
+garantit qu'une reconstruction de l'index pendant une comparaison ne renvoie jamais un résultat
+mélangé.
 
 ## Preuves
 

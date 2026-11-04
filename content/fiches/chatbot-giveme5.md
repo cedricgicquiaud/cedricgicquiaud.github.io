@@ -4,6 +4,13 @@ statut: livré
 periode: 2025 → aujourd'hui
 role: conception, construction et mise en service, seul, pour GiveMe5
 stack: n8n, OpenAI (GPT-4o-mini), Google Drive
+stack_detail:
+  - categorie: Automatisation
+    outils: n8n (agent IA, mémoire de conversation)
+  - categorie: Modèles
+    outils: OpenAI GPT-4o-mini, embeddings OpenAI
+  - categorie: Documents
+    outils: Google Drive
 visibilite: prive
 depot:
 demo: https://hello.giveme5xxxxx.fr
@@ -21,17 +28,35 @@ GiveMe5, et refuse poliment tout ce qui sort du sujet. En service sur le site de
 Les commerçants posaient toujours les mêmes questions : prix, fonctionnement, installation. Il
 fallait répondre vite, y compris le soir, sans y passer mes journées.
 
-## Ce que j'ai construit
+## Livrables
 
-Un agent IA dans n8n, en deux parties :
-- **La base de connaissances.** Les documents de GiveMe5, rangés dans Google Drive, sont
-  découpés et indexés pour une recherche par le sens, pas par le mot exact.
-- **L'agent.** À chaque question, il cherche dans cette base avant de répondre, garde en mémoire
-  les cinq derniers échanges et répond court et affirmatif.
+- Un assistant de discussion en service sur le site de vente de GiveMe5.
+- Une base de connaissances construite à partir des documents de GiveMe5, rangés dans Google
+  Drive.
+- Une réponse type pour toute question hors sujet.
 
-Décision qui a compté :
-- **Limiter le sujet.** L'agent ne répond qu'aux questions sur GiveMe5 et ses produits ; pour le
-  reste, une réponse type. Il n'invente pas et ne dérape pas.
+## Architecture
+
+Deux workflows n8n.
+
+- **L'indexation.** Les documents sont téléchargés depuis Google Drive, découpés en morceaux,
+  puis transformés en vecteurs par les embeddings d'OpenAI. Le résultat va dans une base
+  vectorielle, qui permet de chercher par le sens et non par le mot exact.
+- **La conversation.** Chaque message reçu déclenche un agent IA (GPT-4o-mini). Il dispose d'un
+  outil de recherche dans cette base et d'une mémoire des cinq derniers échanges. Il cherche
+  avant de répondre, puis répond court et affirmatif.
+
+## Décisions
+
+### Limiter le sujet
+
+L'agent ne répond qu'aux questions sur GiveMe5 et ses produits ; pour le reste, une réponse
+type. Il n'invente pas et ne dérape pas.
+
+### Chercher avant de répondre
+
+La réponse s'appuie sur les documents de GiveMe5, pas sur ce que le modèle croit savoir. Mettre
+un document à jour, puis relancer l'indexation, suffit à changer la réponse.
 
 ## Preuves
 

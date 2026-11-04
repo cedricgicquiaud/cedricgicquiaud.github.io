@@ -4,6 +4,19 @@ statut: livré
 periode: août 2026
 role: conception, développement, tests, écriture des formations, recette — seul, avec des agents de code
 stack: TypeScript, Node/Hono, SQLite, React/Vite, Vitest, markdown-it, Shiki, Mermaid
+stack_detail:
+  - categorie: Langage
+    outils: TypeScript strict
+  - categorie: Interface
+    outils: React, Vite
+  - categorie: Serveur
+    outils: Node.js, Hono
+  - categorie: Données
+    outils: SQLite
+  - categorie: Rendu des leçons
+    outils: markdown-it, Shiki, Mermaid
+  - categorie: Tests
+    outils: Vitest, intégration continue GitHub Actions
 visibilite: public
 depot: https://github.com/cedricgicquiaud/parcours
 demo:
@@ -44,41 +57,64 @@ Deux besoins concrets derrière :
 - Une lecture qui ressemble à un vrai cours : catalogue, modules, leçons, cases à cocher qui
   se souviennent de ce que j'ai fait.
 
-## Ce que j'ai construit
+## Livrables
 
-Une application web en deux parties : un serveur qui lit les dossiers de formation, rend le
-Markdown et garde comptes et progression dans une base SQLite ; une interface React avec
-catalogue, fiche de formation, page de leçon, recherche plein texte, mode clair et sombre.
+- Une application web de lecture : catalogue, fiche de formation, page de leçon, recherche plein
+  texte, mode clair et sombre.
+- Un format de formation documenté : un dossier avec un `formation.json` pour le sommaire et un
+  fichier Markdown par leçon, qu'un agent peut écrire d'un bout à l'autre.
+- Le dépôt d'une formation par glisser-déposer, avec un message d'erreur exact si le dossier est
+  invalide (`modules[2].lecons[0].id manquant`).
+- Des critères de réussite à cocher en fin de leçon, et un bouton « Reprendre » qui rouvre la
+  première leçon non terminée.
+- Un éditeur de leçon intégré : renommer, réordonner, corriger une phrase sans rouvrir Claude.
+- Des comptes : un administrateur qui écrit et gère, des lecteurs qui lisent et cochent, chacun
+  avec sa progression. Inscription confirmée par e-mail et mot de passe oublié, actifs dès qu'un
+  serveur d'envoi est configuré.
+- Deux formations complètes, dont une qui enseigne Parcours dans Parcours.
 
-**Le trajet d'une formation.**
-- **Écrire.** On décrit le sujet à Claude Code. Il écrit un dossier : un `formation.json`
-  pour le sommaire, un fichier Markdown par leçon, en suivant le format documenté.
-- **Déposer.** On glisse le dossier sur le catalogue. Parcours le vérifie ; s'il est
-  invalide, la carte dit exactement où (`modules[2].lecons[0].id manquant`).
-- **Lire et cocher.** Chaque leçon finit par des critères de réussite à cocher. Cocher le
-  dernier termine la leçon ; « Reprendre » rouvre la première leçon non terminée.
-- **Retoucher.** Renommer, réordonner, corriger une phrase dans l'éditeur intégré, sans
-  rouvrir Claude.
+## Architecture
 
-**Les comptes.** Au premier lancement, Parcours crée l'administrateur. Il écrit les
-formations et gère les comptes ; les lecteurs lisent et cochent, chacun avec sa propre
-progression. Inscription avec confirmation par e-mail et mot de passe oublié, inactifs tant
-qu'aucun serveur d'envoi n'est configuré.
+Les dossiers de formation sont la source de vérité. Au démarrage, le serveur (Node.js, Hono) les
+parcourt et les vérifie, puis rend le Markdown en HTML : code coloré (Shiki), schémas (Mermaid),
+exercices à solution repliée.
 
-Décisions qui ont compté :
-- **Le format, c'est un dossier.** Des identifiants stables : renommer un titre ne perd pas
-  la progression. C'est ce qui permet à un agent d'écrire une formation entière.
-- **Chaque case à cocher devient un critère de réussite mémorisé.** Son identité vient de
-  son texte : insérer ou déplacer ne casse rien, reformuler perd la coche. Choix assumé,
-  documenté.
-- **Rien ne sort de la machine.** Polices, icônes, coloration et schémas embarqués, aucune
-  requête réseau depuis l'interface.
-- **Jamais de suppression de fichier.** Archivage, corbeille, restauration : l'application
-  déplace, elle n'efface pas. L'éditeur refuse d'enregistrer si le fichier a changé sur le
-  disque entre-temps.
-- **Lire et écrire séparés.** Les outils d'auteur vivent derrière un interrupteur
-  « Édition » réservé aux administrateurs, éteint par défaut ; le serveur refuse l'écriture
-  à tout autre compte.
+L'interface React interroge ce serveur, qui n'écoute que sur la machine locale. Les comptes, les
+sessions et la progression vivent dans une base SQLite, à part du contenu. La progression est
+rangée par identifiants stables : modifier un titre ne la perd pas.
+
+## Décisions
+
+### Le format, c'est un dossier
+
+Pas de base de données pour le contenu : le sommaire tient dans un fichier, le texte dans le
+Markdown. Des identifiants stables font que renommer un titre ne perd pas la progression. C'est
+ce qui permet à un agent d'écrire une formation entière.
+
+### Un critère de réussite se reconnaît à son texte
+
+Chaque case à cocher devient un critère mémorisé. Insérer ou déplacer ne casse rien ;
+reformuler perd la coche. Choix assumé, documenté.
+
+### Rien ne sort de la machine
+
+Polices, icônes, coloration et schémas sont embarqués : l'interface ne fait aucune requête
+réseau.
+
+### Jamais de suppression de fichier
+
+Archivage, corbeille, restauration : l'application déplace, elle n'efface pas. L'éditeur refuse
+d'enregistrer si le fichier a changé sur le disque entre-temps.
+
+### Lire et écrire séparés
+
+Les outils d'auteur vivent derrière un interrupteur « Édition » réservé aux administrateurs,
+éteint par défaut. Le serveur refuse l'écriture à tout autre compte.
+
+### Des sessions qu'on peut couper
+
+Mots de passe hachés (scrypt), jetons de session aléatoires stockés hachés. Désactiver un compte
+ou changer un mot de passe coupe ses sessions aussitôt.
 
 ## Preuves
 
