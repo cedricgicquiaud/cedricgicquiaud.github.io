@@ -211,10 +211,10 @@ ${corps}`;
     return { src, dest, pub };
   }
 
+  // Fiches partielles : lues à la source, sans passer par sync, qui les refuse (PFO-136).
   it("lit Livrables, Architecture et Décisions, seulement celles présentes", () => {
-    const { src, dest, pub } = dirs("", "\n## Architecture\n\nLe serveur.\n\n## Décisions\n\n1. Un choix.\n");
-    syncFiches(src, dest);
-    const f = loadFiche("alpha", dest, pub);
+    const { src, pub } = dirs("", "\n## Architecture\n\nLe serveur.\n\n## Décisions\n\n1. Un choix.\n");
+    const f = loadFiche("alpha", src, pub);
     expect(f.facultatives!.map((s) => [s.id, s.titre])).toEqual([
       ["architecture", "Architecture"],
       ["decisions", "Décisions"],
@@ -223,26 +223,23 @@ ${corps}`;
   });
 
   it("refus : les sections facultatives ne changent pas les cinq sections du gabarit", () => {
-    const { src, dest, pub } = dirs("", "\n## Livrables\n\n- Un écran.\n");
-    syncFiches(src, dest);
-    expect(loadFiche("alpha", dest, pub).sections.map((s) => s.id)).toEqual(["probleme", "construit", "preuves", "appris", "artefacts"]);
+    const { src, pub } = dirs("", "\n## Livrables\n\n- Un écran.\n");
+    expect(loadFiche("alpha", src, pub).sections.map((s) => s.id)).toEqual(["probleme", "construit", "preuves", "appris", "artefacts"]);
   });
 
   it("lit stack_detail dans l'ordre, outils découpés sur les virgules", () => {
-    const { src, dest, pub } = dirs(
+    const { src, pub } = dirs(
       "stack_detail:\n  - categorie: Langages\n    outils: TypeScript\n  - categorie: Serveur\n    outils: Node.js, Express (API)\n",
     );
-    syncFiches(src, dest);
-    expect(loadFiche("alpha", dest, pub).stackDetail).toEqual([
+    expect(loadFiche("alpha", src, pub).stackDetail).toEqual([
       { categorie: "Langages", outils: ["TypeScript"] },
       { categorie: "Serveur", outils: ["Node.js", "Express (API)"] },
     ]);
   });
 
   it("sans stack_detail : champ absent", () => {
-    const { src, dest, pub } = dirs("");
-    syncFiches(src, dest);
-    expect(loadFiche("alpha", dest, pub).stackDetail).toBeUndefined();
+    const { src, pub } = dirs("");
+    expect(loadFiche("alpha", src, pub).stackDetail).toBeUndefined();
   });
 
   it("refus : un stack_detail mal formé, avec le nom de la fiche", () => {

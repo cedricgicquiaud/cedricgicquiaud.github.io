@@ -7,6 +7,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { Fiche } from "../../components/fiche";
 import { loadFiche, type Fiche as FicheData } from "../../lib/fiches";
 import { syncFiches } from "../../scripts/sync-fiches.mjs";
+import { SECTIONS_APRES_PROBLEME, STACK_DETAIL } from "./helpers/fiche-complete";
 
 afterEach(cleanup);
 
@@ -162,7 +163,7 @@ stack: TypeScript
 visibilite: public
 depot: https://github.com/x/alpha
 demo:
-${chiffres}---
+${STACK_DETAIL}${chiffres}---
 
 # Alpha — un titre
 
@@ -171,7 +172,7 @@ ${chiffres}---
 ## Problème
 
 Texte.
-`;
+${SECTIONS_APRES_PROBLEME}`;
   function dirs(chiffres: string) {
     const src = mkdtempSync(path.join(tmpdir(), "chiffres-src-"));
     const dest = mkdtempSync(path.join(tmpdir(), "chiffres-dest-"));

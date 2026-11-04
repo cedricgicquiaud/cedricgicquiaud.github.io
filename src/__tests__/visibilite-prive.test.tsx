@@ -8,6 +8,7 @@ import { Fiche } from "../../components/fiche";
 import { ProjectCard } from "../../components/project-card";
 import { loadFiches, type Fiche as FicheData } from "../../lib/fiches";
 import { syncFiches } from "../../scripts/sync-fiches.mjs";
+import { SECTIONS_NOUVELLES, STACK_DETAIL } from "./helpers/fiche-complete";
 
 // PFO-95 (10/10) : `prive` cite le nom du projet ; le code et les clients restent non publiés.
 afterEach(cleanup);
@@ -20,7 +21,7 @@ statut: en cours
 periode: 2026
 role: développement
 stack: TypeScript
-visibilite: ${visibilite}
+${STACK_DETAIL}visibilite: ${visibilite}
 depot: https://github.com/x/secret
 demo: https://secret.example
 ordre: 1
@@ -37,7 +38,7 @@ P.
 ## Ce que j'ai construit
 
 C.
-
+${SECTIONS_NOUVELLES}
 ## Preuves
 
 P.

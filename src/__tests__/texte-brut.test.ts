@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { loadFiches } from "../../lib/fiches";
+import { corpsDe, loadFiches } from "../../lib/fiches";
 import { texteBrut } from "../../lib/texte-brut";
 
 // PFO-111 : le Markdown d'une section, lisible par un agent IA (D11).
@@ -83,9 +83,10 @@ describe("Les fiches de content/fiches/ en texte brut (PFO-111)", () => {
   const RESTES = [/<[a-z]/i, /\*\*/, /\]\(/, /\|-{3}/, /\(\//];
 
   for (const fiche of loadFiches()) {
-    it(`${fiche.slug} : cinq sections non vides, sans balise, gras, lien Markdown ni tableau`, () => {
-      const textes = fiche.sections.map((s) => texteBrut(s.markdown ?? "", SITE));
-      expect(textes.filter(Boolean)).toHaveLength(5);
+    it(`${fiche.slug} : sept sections non vides, sans balise, gras, lien Markdown ni tableau`, () => {
+      // PFO-136 : Problème, Livrables, Architecture, Décisions, Preuves, Ce que j'en ai appris, Artefacts.
+      const textes = corpsDe(fiche).map((s) => texteBrut(s.markdown ?? "", SITE));
+      expect(textes.filter(Boolean)).toHaveLength(7);
       for (const texte of textes) for (const reste of RESTES) expect(texte).not.toMatch(reste);
     });
   }
@@ -93,7 +94,8 @@ describe("Les fiches de content/fiches/ en texte brut (PFO-111)", () => {
 
 describe("La fiche PILOT en texte brut (PFO-111)", () => {
   const pilot = loadFiches().find((f) => f.slug === "pilot");
-  const construit = texteBrut(pilot?.sections.find((s) => s.id === "construit")?.markdown ?? "", SITE);
+  // PFO-135 : l'ancien « Ce que j'ai construit » est réparti entre Livrables, Architecture et Décisions.
+  const construit = pilot ? corpsDe(pilot).map((s) => texteBrut(s.markdown ?? "", SITE)).join("\n\n") : "";
 
   it("écrit le tableau des agents en titre puis une ligne par agent", () => {
     expect(construit).toContain(
