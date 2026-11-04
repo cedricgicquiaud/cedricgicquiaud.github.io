@@ -64,7 +64,7 @@
           },
           "sections": {
             "type": "array",
-            "description": "Le corps de la fiche en cinq sections, dans l'ordre : Problème, Ce que j'ai construit, Preuves, Ce que j'en ai appris, Artefacts.",
+            "description": "Le corps de la fiche, sections non vides dans l'ordre de sa page : Problème, Livrables, Ce que j'ai construit (anciennes fiches), Architecture, Décisions, Preuves, Ce que j'en ai appris, Artefacts.",
             "items": {
               "type": "object",
               "additionalProperties": false,

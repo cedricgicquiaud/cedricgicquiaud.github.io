@@ -1,6 +1,6 @@
 import site from "../content/site.json";
 import { contentDir, loadExperience, type Bloc } from "./content";
-import { loadFiches, type Chiffre, type Fiche, type Visibilite } from "./fiches";
+import { corpsDe, loadFiches, type Chiffre, type Fiche, type Visibilite } from "./fiches";
 import { texteBrut } from "./texte-brut";
 
 export type ProofFiche = {
@@ -37,7 +37,8 @@ export type Proofs = {
 const VERSION = "1.0";
 
 /** Une fiche telle que la lit un agent : liens absolus, texte brut, ni statut ni visuel. */
-function proofFiche({ slug, frontmatter, enBref, chiffres = [], captures = [], sections }: Fiche): ProofFiche {
+function proofFiche(fiche: Fiche): ProofFiche {
+  const { slug, frontmatter, enBref, chiffres = [], captures = [] } = fiche;
   return {
     slug,
     nom: frontmatter.nom,
@@ -53,7 +54,8 @@ function proofFiche({ slug, frontmatter, enBref, chiffres = [], captures = [], s
     enBref: [enBref.quoi, enBref.chiffre, enBref.lien].filter(Boolean).join(" "),
     chiffres,
     captures: captures.map(({ fichier, legende }) => ({ legende, url: site.url + fichier })),
-    sections: sections.map(({ titre, markdown = "" }) => ({ titre, texte: texteBrut(markdown, site.url) })),
+    // PFO-136 : les sections de la page, Livrables, Architecture et Décisions comprises.
+    sections: corpsDe(fiche).map(({ titre, markdown = "" }) => ({ titre, texte: texteBrut(markdown, site.url) })),
   };
 }
 
