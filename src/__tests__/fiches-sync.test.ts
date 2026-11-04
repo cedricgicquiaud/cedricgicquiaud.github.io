@@ -285,7 +285,9 @@ describe("lib/fiches — vraies fiches copiées dans content/fiches", () => {
       expect(f.titre).not.toBe("");
       expect(f.enBref.quoi).not.toBe("");
       // PFO-136 : les huit sections de la page, Stack technique comprise.
-      expect(corpsDe(f).map((s) => s.id)).toEqual(["probleme", "livrables", "architecture", "decisions", "preuves", "appris", "artefacts"]);
+      // PFO-147 : PILOT a en plus la section facultative « La méthode », entre Livrables et Architecture.
+      const methode = f.slug === "pilot" ? ["methode"] : [];
+      expect(corpsDe(f).map((s) => s.id)).toEqual(["probleme", "livrables", ...methode, "architecture", "decisions", "preuves", "appris", "artefacts"]);
       expect(corpsDe(f).every((s) => s.html !== "")).toBe(true);
       expect(f.stackDetail?.length).toBeGreaterThan(0);
       expect(loadFiche(f.slug, contentDir)).toEqual(f);

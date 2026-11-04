@@ -117,7 +117,7 @@ arrêté. Fable sert à juger, Opus à fabriquer, Sonnet à exécuter.
 | testeur | Après la fabrication | Utilise l'application et prend des captures | Corriger | Sonnet | 60 |
 | correcteur | Après les relectures | Répare la liste des défauts, une seule fois | Toucher à autre chose | Opus | 80 |
 
-## Architecture
+## La méthode
 
 ### Le principe
 
@@ -253,6 +253,36 @@ cinq lignes où on en est et propose l'étape suivante. Je réponds oui ou non.
 
 Pour une petite correction hors fonctionnalité, `/pilot fix` suffit : une tâche, un test, une
 PR, sans toute la chaîne.
+
+## Architecture
+
+PILOT n'est pas un programme qui tourne à côté de Claude Code. C'est un ensemble de fichiers que
+Claude Code lit : fiches d'agent, skills, fiches de référence et outils. Un script, `install.sh`,
+les copie dans le dossier `.claude/` de chaque projet. La méthode est donc versionnée avec le
+projet : tous ceux qui le clonent travaillent avec la même.
+
+Le trajet d'une commande, par exemple `/pilot run` :
+
+1. Claude Code charge la skill `pilot`, un sommaire court. Le pas-à-pas de la commande
+   (`produire.md`) n'est lu qu'à ce moment-là, pour ne pas encombrer la mémoire de travail de
+   Claude.
+2. Claude lit les tâches dans Linear par la connexion standard (MCP). Ce qu'elle ne sait pas
+   faire, comme créer la structure d'un tableau ou poser des dates, passe par des scripts Python
+   qui appellent directement l'API de Linear.
+3. Pour chaque livrable, Claude crée une copie isolée du dépôt (un worktree git), partie de la
+   branche principale à jour. Il y dépose un ordre de mission, `MISSION.md` : les tâches, les
+   phrases du contrat, les décisions déjà prises.
+4. Il lance les agents dans ces copies. Chaque agent est un fichier texte qui fixe son modèle, sa
+   limite d'échanges et la liste fermée de ses outils. Le verifier et le testeur ne reçoivent
+   aucun outil pour modifier un fichier.
+5. Avant chaque commande du terminal, un déclencheur automatique (un hook) appelle `verrou-git`.
+   Il refuse tout merge, tout envoi sur la branche principale et tout envoi forcé. La règle « le
+   merge est humain » ne dépend donc pas de la bonne volonté d'un agent.
+6. La branche et la PR portent le code de la tâche. L'intégration GitHub de Linear fait alors
+   avancer les statuts seule : en cours au premier envoi, en revue à l'ouverture de la PR,
+   terminée au merge.
+7. Pendant et après un run, `cout-agents` lit les journaux des agents. Il donne, pour chaque
+   livrable, le temps passé et les jetons consommés.
 
 ## Décisions
 
