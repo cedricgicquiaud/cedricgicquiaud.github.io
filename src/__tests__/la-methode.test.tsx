@@ -71,3 +71,72 @@ describe("Section « La méthode » (PFO-147)", () => {
     expect(screen.queryByRole("link", { name: "La méthode" })).toBeNull();
   });
 });
+
+// PFO-148 (04/11) : mise en page plus lisible de « La méthode », texte inchangé.
+const ETAPES = `
+## La méthode
+
+### Le principe
+
+Cinq étapes.
+
+### Étape 1 — Comprendre le projet (\`init\`)
+
+**Temps 1 — dire ce qui devra être vrai.**
+
+1. Claude pose ses questions.
+2. Il écrit des phrases. Par exemple :
+   - « Un patient voit les créneaux. »
+   - « On ne réserve pas dans le passé. »
+
+   Au moins un tiers sont des refus.
+
+### Étape 5 — Décider et apprendre (merge, puis \`sync\`)
+
+Je relis.
+`;
+
+describe("« La méthode » lisible (PFO-148)", () => {
+  it("titre d'étape en trois niveaux : « Étape 1 » en petites capitales, le nom, la commande", () => {
+    render(<Fiche fiche={ficheAvec(ETAPES)} />);
+    const h3 = within(section("La méthode")).getAllByRole("heading", { level: 3 });
+    const [numero, nom, commande] = Array.from(h3[1].children) as HTMLElement[];
+    expect(numero).toHaveTextContent("Étape 1");
+    expect(numero).toHaveClass("uppercase", "text-xs", "text-muted-foreground");
+    expect(nom.textContent).toBe("Comprendre le projet");
+    expect(nom).toHaveClass("text-base");
+    expect(commande.textContent).toBe("init");
+    expect(commande).toHaveClass("text-muted-foreground");
+    expect(h3[2].children[2].textContent).toBe("merge, puis sync");
+  });
+
+  it("refus : un titre qui n'est pas une étape garde son texte entier, sans numéro ni commande", () => {
+    render(<Fiche fiche={ficheAvec(ETAPES)} />);
+    const h3 = within(section("La méthode")).getAllByRole("heading", { level: 3 })[0];
+    expect(h3.textContent).toBe("Le principe");
+    expect(h3).toHaveClass("text-base");
+  });
+
+  it("colonne du texte plus large : la section et ses lignes donnent trois quarts au contenu", () => {
+    render(<Fiche fiche={ficheAvec(ETAPES)} />);
+    expect(section("La méthode").className).toMatch(/lg:grid-cols-\[minmax\(0,1fr\)_minmax\(0,3fr\)\]/);
+    expect(section("Livrables").className).toMatch(/lg:grid-cols-\[minmax\(0,1fr\)_minmax\(0,2fr\)\]/);
+    const ligne = within(section("La méthode")).getAllByRole("listitem")[0];
+    expect(ligne.className).toMatch(/md:grid-cols-\[minmax\(0,1fr\)_minmax\(0,3fr\)\]/);
+  });
+
+  it("un paragraphe entièrement en gras devient un libellé en petites capitales, sans point final", () => {
+    render(<Fiche fiche={ficheAvec(ETAPES)} />);
+    const libelle = within(section("La méthode")).getByText("Temps 1 — dire ce qui devra être vrai");
+    expect(libelle.tagName).toBe("P");
+    expect(libelle).toHaveAttribute("data-etiquette");
+  });
+
+  it("listes : numéros gris et compacts, puces rétablies sous une liste numérotée, commandes jamais coupées", () => {
+    render(<Fiche fiche={ficheAvec(ETAPES)} />);
+    const texte = within(section("La méthode")).getByText("Claude pose ses questions.").closest("div[class*='space-y']")!;
+    expect(texte.className).toContain("[&_ol>li::marker]:text-muted-foreground");
+    expect(texte.className).toContain("[&_ol_ul]:list-disc");
+    expect(texte.className).toContain("[&_code]:whitespace-nowrap");
+  });
+});
