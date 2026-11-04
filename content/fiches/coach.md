@@ -67,8 +67,6 @@ complément, un nouveau test. Le projet partait de zéro, et j'étais seul côt�
 - Des kits d'analyse sanguine à domicile, avec des résultats classés et interprétés.
 - Une boutique de compléments, liée au protocole proposé par le coach.
 - Un profil où l'utilisateur voit ce que l'application sait de lui, et ce qu'il contrôle.
-- Une roadmap par portes de lancement et des études d'impact réglementaires, pour les
-  dirigeants.
 
 ## Architecture
 
