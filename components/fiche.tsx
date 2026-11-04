@@ -13,7 +13,9 @@ import { GitHubLink } from "./github-link";
 
 // Mise en forme du HTML Markdown. Listes de premier niveau en lignes séparées par un trait, sans puce (PFO-130).
 const MARKDOWN =
-  "space-y-4 text-base leading-relaxed [&>ul]:list-none [&>ul]:pl-0 [&>ul>li]:my-0 [&>ul>li]:border-b [&>ul>li]:border-border [&>ul>li]:py-3 [&>ul>li:first-child]:pt-0 [&>ul>li:last-child]:border-b-0 [&_ul_ul]:list-disc [&_ul_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:text-foreground [&_a]:break-words [&_strong]:font-semibold [&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_code]:text-sm" +
+  "space-y-4 text-base leading-relaxed [&>ul]:list-none [&>ul]:pl-0 [&>ul>li]:my-0 [&>ul>li]:border-b [&>ul>li]:border-border [&>ul>li]:py-3 [&>ul>li:first-child]:pt-0 [&>ul>li:last-child]:border-b-0 [&_ul_ul]:list-disc [&_ul_ul]:pl-6 [&_ol]:list-decimal [&_ol]:pl-6 [&_a]:underline [&_a]:underline-offset-4 [&_a:hover]:text-foreground [&_a]:break-words [&_strong]:font-semibold [&_code]:rounded [&_code]:bg-muted [&_code]:px-1 [&_code]:text-sm [&_code]:whitespace-nowrap [&_td_code]:whitespace-normal" +
+  // Puces d'une liste imbriquée sous une liste numérotée (PFO-148).
+  " [&_ol_ul]:list-disc [&_ol_ul]:pl-5 [&_ol_ul]:mt-2 [&_ol_ul>li]:my-1 [&_li>ul+p]:mt-2" +
   // Sous-titres, images du corps (captures placées dans le texte) et tableaux quadrillés : le tableau défile seul sur mobile, jamais la page.
   " [&_h3]:pt-8 [&_h3]:text-xl [&_h3]:font-semibold [&_h3]:tracking-tight [&_ol>li]:my-1.5 [&_ul_ul>li]:my-1.5 [&_ol>li]:pl-1 [&_ul_ul]:mt-2 [&_img]:mt-6 [&_img]:w-full [&_img]:rounded-lg [&_img]:border [&_img]:border-border [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto [&_table]:border-collapse [&_table]:text-sm [&_th]:border [&_th]:border-border [&_th]:bg-muted/60 [&_th]:px-3 [&_th]:py-2 [&_th]:text-left [&_th]:align-bottom [&_th]:font-semibold [&_td]:border [&_td]:border-border [&_td]:px-3 [&_td]:py-2 [&_td]:align-top";
 
@@ -44,15 +46,29 @@ function splitConstruit(html: string): { produit: string; decisions: string } {
   return { produit: html.slice(0, m.index).trim(), decisions: html.slice(m.index + m[0].length).trim() };
 }
 
-function Section({ id, titre, children, large }: { id: string; titre: string; children: ReactNode; large?: ReactNode }) {
+function Section({
+  id,
+  titre,
+  children,
+  large,
+  etendue,
+}: {
+  id: string;
+  titre: string;
+  children: ReactNode;
+  large?: ReactNode;
+  /** Contenu sur trois quarts de la largeur, sans limite (PFO-148, La méthode). */
+  etendue?: boolean;
+}) {
+  const colonnes = etendue ? "lg:grid-cols-[minmax(0,1fr)_minmax(0,3fr)] lg:gap-x-12" : "lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-x-20";
   return (
     // Deux colonnes sur écran large (PFO-130) : le titre à gauche, le contenu à droite, sans filet (le quadrillage suffit) ; empilés sur téléphone.
-    <section id={id} className="mt-20 scroll-mt-8 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-x-20">
+    <section id={id} className={`mt-20 scroll-mt-8 lg:grid ${colonnes}`}>
       {/* Titres en grand, graisse normale, comme le modèle (retour du 03/11). */}
       {/* Le titre reste visible à gauche seulement si la section dépasse l'écran (TitreSection mesure). */}
       <TitreSection titre={titre} className="mb-4 text-2xl font-normal tracking-tight lg:mb-0 lg:text-3xl" />
       {/* Captures et vidéo dans la colonne de droite, sous le texte (PFO-139, retour du 04/11). */}
-      <div className="min-w-0 max-w-3xl">
+      <div className={etendue ? "min-w-0" : "min-w-0 max-w-3xl"}>
         {children}
         {large && <div className={children ? "mt-8" : undefined}>{large}</div>}
       </div>
@@ -122,29 +138,63 @@ function Stack({ fiche }: { fiche: FicheData }) {
   );
 }
 
-/** Décisions en grille (PFO-130) : titre à gauche, texte à droite, un trait entre deux ; texte libre sinon. */
-function Decisions({ html }: { html: string }) {
+// Titre d'étape de « La méthode » (PFO-148) : « Étape 1 — Nom (<code>init</code>) ».
+const ETAPE = /^(Étape \d+)\s*—\s*(.+?)(?:\s*\((.+)\))?$/;
+
+/** Le titre d'une étape en trois niveaux ; un autre titre garde son texte entier. */
+function TitreEtape({ titre }: { titre: string }) {
+  const m = titre.match(ETAPE);
+  if (!m) return <h3 className="mb-3 text-base font-medium leading-snug md:mb-0" dangerouslySetInnerHTML={{ __html: titre }} />;
+  const [, numero, nom, commande] = m;
+  return (
+    <h3 className="mb-3 md:mb-0">
+      <span className="block text-xs uppercase tracking-wider text-muted-foreground">{numero}</span>
+      <span className="mt-1 block text-base font-medium leading-snug" dangerouslySetInnerHTML={{ __html: nom }} />
+      {commande && (
+        <span
+          className="mt-1 block font-mono text-sm text-muted-foreground"
+          dangerouslySetInnerHTML={{ __html: commande.replace(/<\/?code>/g, "") }}
+        />
+      )}
+    </h3>
+  );
+}
+
+// Un paragraphe entièrement en gras (« Temps 1 — … ») devient un libellé en petites capitales (PFO-148).
+const LIBELLE = /<p><strong>([^<]+?)\.?<\/strong><\/p>/g;
+// Listes compactes, numéros gris, libellés en petites capitales : dans « La méthode » seulement.
+const ETAPES_TEXTE =
+  " [&_ol>li]:my-1 [&_li>p]:my-0 [&_ol>li::marker]:text-muted-foreground [&_p[data-etiquette]]:pt-2 [&_p[data-etiquette]]:text-xs [&_p[data-etiquette]]:uppercase [&_p[data-etiquette]]:tracking-wider [&_p[data-etiquette]]:text-muted-foreground";
+
+/** Décisions en grille (PFO-130) : titre à gauche, texte à droite, un trait entre deux ; texte libre sinon. Variante « étapes » pour La méthode (PFO-148). */
+function Decisions({ html, etapes }: { html: string; etapes?: boolean }) {
   const decisions = decisionsDe(html);
   if (!decisions) return <Markdown html={html} />;
+  const grille = etapes ? "md:grid-cols-[minmax(0,1fr)_minmax(0,3fr)]" : "md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]";
   return (
     <ol className="space-y-0">
       {decisions.map(({ titre, html: texte }, i) => (
-        <li
-          key={titre}
-          className={`gap-x-10 py-6 first:pt-0 md:grid md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)] ${i > 0 ? "border-t border-border" : ""}`}
-        >
+        <li key={titre} className={`gap-x-10 py-6 first:pt-0 md:grid ${grille} ${i > 0 ? "border-t border-border" : ""}`}>
           {/* Le titre vient du HTML de `marked` (entités, gras) : même source maîtrisée que le corps. */}
-          <h3 className="mb-3 text-xl font-normal leading-snug tracking-tight md:mb-0" dangerouslySetInnerHTML={{ __html: titre }} />
-          <Markdown html={texte} />
+          {etapes ? (
+            <TitreEtape titre={titre} />
+          ) : (
+            <h3 className="mb-3 text-xl font-normal leading-snug tracking-tight md:mb-0" dangerouslySetInnerHTML={{ __html: titre }} />
+          )}
+          {etapes ? (
+            <Markdown html={texte.replace(LIBELLE, "<p data-etiquette>$1</p>")} extra={ETAPES_TEXTE} />
+          ) : (
+            <Markdown html={texte} />
+          )}
         </li>
       ))}
     </ol>
   );
 }
 
-function Markdown({ html }: { html: string }) {
+function Markdown({ html, extra = "" }: { html: string; extra?: string }) {
   // HTML produit par `marked` depuis les fiches du dépôt : contenu maîtrisé, contrôlé au build.
-  return <div className={MARKDOWN} dangerouslySetInnerHTML={{ __html: html }} />;
+  return <div className={MARKDOWN + extra} dangerouslySetInnerHTML={{ __html: html }} />;
 }
 
 export function Fiche({ fiche }: { fiche: FicheData }) {
@@ -170,7 +220,7 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
       large: medias && !mediasDansLivrables && <Medias fiche={fiche} />,
     },
     // La méthode (PFO-147) : une ligne par étape (###), même grille en trois colonnes que les décisions.
-    { id: "methode", contenu: facultative("methode") && <Decisions html={facultative("methode")} /> },
+    { id: "methode", contenu: facultative("methode") && <Decisions html={facultative("methode")} etapes /> },
     { id: "architecture", contenu: facultative("architecture") && <Markdown html={facultative("architecture")} /> },
     { id: "stack", contenu: <Stack fiche={fiche} /> },
     { id: "decisions", contenu: decisions && <Decisions html={decisions} /> },
@@ -254,7 +304,7 @@ export function Fiche({ fiche }: { fiche: FicheData }) {
           </ul>
         </nav>
         {blocs.map(({ id, contenu, large }) => (
-          <Section key={id} id={id} titre={AFFICHAGE[id]} large={large}>
+          <Section key={id} id={id} titre={AFFICHAGE[id]} large={large} etendue={id === "methode"}>
             {contenu}
           </Section>
         ))}

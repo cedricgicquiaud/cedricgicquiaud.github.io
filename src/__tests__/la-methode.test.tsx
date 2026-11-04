@@ -54,7 +54,8 @@ describe("Section « La méthode » (PFO-147)", () => {
     render(<Fiche fiche={ficheAvec(METHODE)} />);
     const lignes = within(section("La méthode")).getAllByRole("listitem");
     expect(lignes).toHaveLength(2);
-    expect(within(lignes[1]).getByRole("heading", { level: 3 })).toHaveTextContent("Étape 1 — Comprendre");
+    // PFO-148 : le titre d'étape est découpé en numéro et nom.
+    expect(within(lignes[1]).getByRole("heading", { level: 3 })).toHaveTextContent(/Étape 1.*Comprendre/);
     expect(lignes[1]).toHaveTextContent("Une recherche.");
     expect(lignes[1].className).toMatch(/\bmd:grid-cols-/);
   });
