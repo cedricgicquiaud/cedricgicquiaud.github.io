@@ -13,7 +13,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/projets/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const fiche = loadFiche(slug);
-  const title = `${fiche.frontmatter.nom} — ${site.name}`;
+  const title = `${fiche.frontmatter.nom} | ${site.name}`;
   // openGraph explicite : sinon la page hérite la carte générique du layout
   // (og:title = nom du site) et un lien partagé sur LinkedIn ne nomme pas le projet.
   // Next remplace l'objet openGraph du layout sans le fusionner : sans `images` ici, la fiche
