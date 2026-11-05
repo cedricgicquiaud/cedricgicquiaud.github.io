@@ -9,12 +9,15 @@ vi.mock("next/font/google", () => ({ Inter: () => ({ variable: "font-inter" }) }
 const ICONE = path.join(__dirname, "../../app/icon.svg");
 
 describe("Icône d'onglet (PFO-151)", () => {
-  it("un SVG carré : fond noir arrondi, lettres CG en blanc et en gras", () => {
+  it("un SVG carré aux couleurs du site (PFO-154) : fond bleu nuit arrondi, lettres CG turquoise en gras", () => {
     expect(existsSync(ICONE)).toBe(true);
     const svg = readFileSync(ICONE, "utf8");
+    const css = readFileSync(path.join(__dirname, "../../app/globals.css"), "utf8");
+    const fond = css.match(/--background:\s*(#[0-9a-f]{6})/i)![1];
+    const accent = css.match(/--cyber:\s*(#[0-9a-f]{6})/i)![1];
     expect(svg).toMatch(/viewBox="0 0 64 64"/);
-    expect(svg).toMatch(/<rect[^>]*rx="\d+"[^>]*fill="#0a0a0a"/);
-    expect(svg).toMatch(/<text[^>]*fill="#ffffff"[^>]*font-weight="700"[^>]*>CG<\/text>/);
+    expect(svg).toMatch(new RegExp(`<rect[^>]*rx="\\d+"[^>]*fill="${fond}"`));
+    expect(svg).toMatch(new RegExp(`<text[^>]*fill="${accent}"[^>]*font-weight="700"[^>]*>CG</text>`));
   });
 });
 
