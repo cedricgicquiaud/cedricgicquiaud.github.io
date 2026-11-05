@@ -68,7 +68,7 @@ commande.
 | Commandes | 9 | Aucune n'a de fichier à elle. Chacune est une entrée du sommaire de `SKILL.md`, et son pas-à-pas est dans une fiche de référence. On les tape sous la forme `/pilot <commande>`. | Me donner un mot à taper pour chaque situation |
 | Skills | 6 | Un dossier par skill, avec un fichier `SKILL.md`. En tête, une description dit à Claude quand l'utiliser ; dessous vient la marche à suivre. | Donner à Claude un savoir-faire qu'il charge quand la situation le demande |
 | Fiches de référence | 19 | Des fichiers `.md` rangés dans `skills/pilot/reference/`. Chacun commence par dire qui le lit et quand. | Garder la skill courte : le détail ne se lit qu'au moment du geste |
-| Outils | 3 | De vrais programmes, en Python ou en JavaScript, dans `.claude/tools/`. Deux sont branchés sur Claude Code par des « hooks » (des déclencheurs automatiques). | Faire ce qu'une machine fait mieux qu'un texte : mesurer, photographier, bloquer |
+| Outils | 3 | De vrais programmes, en Python ou en JavaScript, dans `.claude/tools/`. Un seul, `verrou-git`, est branché sur Claude Code par un « hook » (un déclencheur automatique). | Faire ce qu'une machine fait mieux qu'un texte : mesurer, photographier, bloquer |
 | Scripts Linear | 4 | Des programmes Python qui parlent directement à Linear. | Faire ce que la connexion habituelle à Linear ne sait pas faire : créer la structure d'un tableau, dater, mesurer |
 
 ### Les six skills
@@ -113,7 +113,7 @@ commande.
 
 | Outil | Ce que c'est |
 |---|---|
-| `cout-agents` | Un programme Python qui lit les journaux des agents. Il donne, pour chaque livrable, le temps passé et les jetons consommés. Un petit script ouvre un panneau de suivi en direct dès qu'un agent démarre. |
+| `cout-agents` | Un programme Python qui lit les journaux des agents. Il donne, pour chaque livrable, le temps passé et les jetons consommés. Je le lance à la main : pendant un run pour suivre les agents en direct, ou après pour le bilan. |
 | `passe-visuelle` | Un programme JavaScript qui ouvre l'application dans un navigateur invisible, prend les captures d'écran et mesure les défauts. Le testeur s'en sert. |
 | `verrou-git` | Un programme Python appelé avant chaque commande. Il refuse tout merge, tout envoi direct sur la branche principale et tout envoi forcé. Il a ses propres tests. |
 
