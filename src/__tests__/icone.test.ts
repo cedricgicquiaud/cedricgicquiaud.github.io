@@ -1,6 +1,9 @@
 import { existsSync, readFileSync } from "node:fs";
 import path from "node:path";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+
+// next/font ne tourne pas sous Vitest : la police est simulée pour lire les métadonnées du layout.
+vi.mock("next/font/google", () => ({ Inter: () => ({ variable: "font-inter" }) }));
 
 // PFO-151 (05/11) : icône d'onglet en monogramme « CG », comme le portfolio de référence, à la place du globe.
 const ICONE = path.join(__dirname, "../../app/icon.svg");

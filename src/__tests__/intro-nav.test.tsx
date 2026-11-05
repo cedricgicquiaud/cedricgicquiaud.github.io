@@ -170,9 +170,10 @@ describe("Nav", () => {
 describe("Métadonnées (app/layout.tsx)", () => {
   const layout = readFileSync(path.resolve(__dirname, "../../app/layout.tsx"), "utf8");
 
-  it("prend title et description dans site.json (nom et titre)", () => {
+  it("prend title et description dans site.json (nom et titre) ; titre d'onglet « nom, titre court » (PFO-151)", () => {
     expect(layout).toMatch(/import site from "[./@]+\/content\/site\.json"/);
-    expect(layout).toMatch(/title:\s*site\.name/);
+    expect(layout).toMatch(/const TITRE = `\$\{site\.name\}, \$\{SHORT_TITLE\}`/);
+    expect(layout).toMatch(/title:\s*TITRE/);
     expect(layout).toMatch(/description:\s*site\.title/);
   });
 

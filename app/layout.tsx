@@ -4,15 +4,19 @@ import { Inter } from "next/font/google";
 import { Spotlight } from "@/components/spotlight";
 import { cn } from "@/lib/utils";
 import site from "../content/site.json";
+import { SHORT_TITLE } from "@/components/intro";
+
+// Titre d'onglet de l'accueil (PFO-151) ; une page projet a le sien, « Coach | Cédric Gicquiaud ».
+const TITRE = `${site.name}, ${SHORT_TITLE}`;
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-sans", display: "swap" });
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://cedricgicquiaud.github.io"),
-  title: site.name,
+  title: TITRE,
   description: site.title,
   openGraph: {
-    title: site.name,
+    title: TITRE,
     description: site.title,
     // PNG généré par `node scripts/og-image.mjs` (pas de route next/og : l'export
     // statique la sort sans extension, donc sans type MIME image sur GitHub Pages).
