@@ -13,3 +13,14 @@ describe("Fiche PILOT — ordre des Livrables (PFO-152)", () => {
     expect(html.trim().startsWith("<h3")).toBe(true);
   });
 });
+
+// PFO-155 (05/11) : depuis le 16/10, un seul hook (verrou-git) et plus de panneau de suivi automatique.
+describe("Fiche PILOT — outils à jour (PFO-155)", () => {
+  it("un seul outil branché par un hook, cout-agents lancé à la main", () => {
+    const html = loadFiche("pilot").facultatives!.find((s) => s.id === "livrables")!.html;
+    expect(html).toContain("Un seul, <code>verrou-git</code>, est branché");
+    expect(html).not.toMatch(/Deux sont branchés/);
+    expect(html).not.toMatch(/panneau de suivi/);
+    expect(html).toContain("Je le lance à la main");
+  });
+});
