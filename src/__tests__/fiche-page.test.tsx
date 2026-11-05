@@ -140,10 +140,10 @@ describe("Route statique /projets/[slug]/ (PFO-26)", () => {
     expect(screen.getByRole("link", { name: "← Projets" })).toBeInTheDocument();
   });
 
-  it("titre « <nom> — Cédric Gicquiaud » et description = première phrase d'En bref", async () => {
+  it("titre « <nom> | Cédric Gicquiaud » (PFO-151) et description = première phrase d'En bref", async () => {
     const slice = loadFiches().find((f) => f.slug === "slice")!;
     const metadata = await fichePage.generateMetadata({ params: Promise.resolve({ slug: "slice" }), searchParams: Promise.resolve({}) });
-    expect(metadata.title).toBe(`${slice.frontmatter.nom} — Cédric Gicquiaud`);
+    expect(metadata.title).toBe(`${slice.frontmatter.nom} | Cédric Gicquiaud`);
     expect(metadata.description).toBe(slice.enBref.quoi);
     expect(slice.enBref.quoi.trim().length).toBeGreaterThan(0);
   });
@@ -152,7 +152,7 @@ describe("Route statique /projets/[slug]/ (PFO-26)", () => {
     const slice = loadFiches().find((f) => f.slug === "slice")!;
     const metadata = await fichePage.generateMetadata({ params: Promise.resolve({ slug: "slice" }), searchParams: Promise.resolve({}) });
     expect(metadata.openGraph).toMatchObject({
-      title: `${slice.frontmatter.nom} — Cédric Gicquiaud`,
+      title: `${slice.frontmatter.nom} | Cédric Gicquiaud`,
       description: slice.enBref.quoi,
       type: "article",
       url: "/projets/slice/",
@@ -230,7 +230,7 @@ describe("Sortie du build : une page par fiche (PFO-26)", () => {
     const upToDate = (f: FicheData) => {
       if (!existsSync(pageOf(f.slug))) return false;
       const html = readFileSync(pageOf(f.slug), "utf8");
-      return html.includes(`content="${f.frontmatter.nom} — Cédric Gicquiaud"`) && !html.includes("<footer");
+      return html.includes(`content="${f.frontmatter.nom} | Cédric Gicquiaud"`) && !html.includes("<footer");
     };
     if (!loadFiches().every(upToDate)) {
       execFileSync("npx", ["next", "build"], { cwd: root, stdio: "pipe" });
@@ -246,8 +246,8 @@ describe("Sortie du build : une page par fiche (PFO-26)", () => {
       const html = readFileSync(file, "utf8");
       // React encode aussi l'apostrophe d'un nom (« Posts LinkedIn d'agence web ») en &#x27;.
       const nom = fiche.frontmatter.nom.replace(/'/g, "&#x27;");
-      expect(html).toContain(`<title>${nom} — Cédric Gicquiaud</title>`);
-      expect(html).toContain(`<meta property="og:title" content="${nom} — Cédric Gicquiaud"/>`);
+      expect(html).toContain(`<title>${nom} | Cédric Gicquiaud</title>`);
+      expect(html).toContain(`<meta property="og:title" content="${nom} | Cédric Gicquiaud"/>`);
       // React encode l'apostrophe en &#x27; dans les attributs : on compare la valeur décodée.
       const ogDescription = html.match(/<meta property="og:description" content="([^"]*)"/)?.[1].replace(/&#x27;/g, "'");
       expect(ogDescription).toBe(fiche.enBref.quoi);

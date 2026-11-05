@@ -22,11 +22,11 @@ const root = path.resolve(__dirname, "../..");
 const classesOf = (el: Element | null | undefined) => (el?.className ?? "").split(/\s+/).filter(Boolean);
 
 describe("Tailles du modèle : intro (PFO-47)", () => {
-  it("h1 en 48 px gras serré, titre court en 20 px medium, phrase en 16 px atténuée plafonnée", () => {
+  it("h1 en 36 px gras serré (PFO-151, remplace 48 px), titre court en 20 px medium, phrase en 16 px atténuée plafonnée", () => {
     render(<Intro />);
     const h1 = screen.getByRole("heading", { level: 1 });
-    expect(classesOf(h1)).toEqual(expect.arrayContaining(["text-5xl", "font-bold", "tracking-tight", "leading-tight"]));
-    expect(classesOf(h1)).not.toContain("text-4xl");
+    expect(classesOf(h1)).toEqual(expect.arrayContaining(["text-4xl", "font-bold", "tracking-tight", "leading-tight"]));
+    expect(classesOf(h1)).not.toContain("text-5xl");
     expect(classesOf(h1)).not.toContain("sm:text-5xl");
     expect(classesOf(h1)).not.toContain("font-semibold");
 
@@ -86,7 +86,7 @@ describe("Tailles du modèle : corps des sections (PFO-47)", () => {
 });
 
 describe("Grille du modèle : proportions et espace entre colonnes (PFO-47)", () => {
-  it("conteneur max-w-screen-xl, colonnes 48/52 avec lg:gap-24, colonne droite plafonnée à max-w-2xl", () => {
+  it("conteneur max-w-screen-xl, colonnes 1/3 – 2/3 avec lg:gap-16, colonne droite sans plafond (PFO-151)", () => {
     const { container } = render(<Home />);
     const main = container.querySelector("main")!;
     expect(classesOf(main)).toContain("max-w-screen-xl");
@@ -95,12 +95,11 @@ describe("Grille du modèle : proportions et espace entre colonnes (PFO-47)", ()
     const sticky = container.querySelector(".lg\\:sticky")!;
     const grid = sticky.parentElement!;
     expect(classesOf(grid)).toEqual(
-      expect.arrayContaining(["lg:grid", "lg:grid-cols-[minmax(0,48fr)_minmax(0,52fr)]", "lg:gap-24"]),
+      expect.arrayContaining(["lg:grid", "lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]", "lg:gap-16"]),
     );
-    expect(classesOf(grid)).not.toContain("lg:gap-16");
 
     const right = sticky.nextElementSibling!;
-    expect(classesOf(right)).toContain("max-w-2xl");
+    expect(classesOf(right).some((c) => c.startsWith("max-w-"))).toBe(false);
   });
 });
 
