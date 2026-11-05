@@ -43,6 +43,20 @@ PILOT répond à ces trois défauts : je garde les décisions, le test vient tou
 
 ## Livrables
 
+### Les six agents
+
+La limite est le nombre maximal d'échanges d'un agent ; au-delà, il est
+arrêté. Fable sert à juger, Opus à fabriquer, Sonnet à exécuter.
+
+| Agent | Quand | Ce qu'il fait | Ce qu'il ne fait jamais | Modèle | Limite |
+|---|---|---|---|---|---|
+| contradicteur | Liste des fonctionnalités, préparation d'une fonctionnalité | Cherche ce qui manque ou se contredit | Répondre à ma place | Fable | 50 |
+| découpeur | Préparation d'une fonctionnalité | Partage le travail en livrables qui ne se gênent pas | Décider seul | Fable | 70 |
+| tdd-writer | Fabrication | Écrit le test, puis le code, puis ouvre la PR | Sortir de son livrable | Opus | 150 |
+| verifier | Après la fabrication | Relit le code et vérifie les preuves | Corriger | Fable | 50 |
+| testeur | Après la fabrication | Utilise l'application et prend des captures | Corriger | Sonnet | 60 |
+| correcteur | Après les relectures | Répare la liste des défauts, une seule fois | Toucher à autre chose | Opus | 80 |
+
 ### Ce qui compose la méthode
 
 Le tout tient dans des fichiers texte et quelques programmes, installés dans chaque projet en une
@@ -102,20 +116,6 @@ commande.
 | `cout-agents` | Un programme Python qui lit les journaux des agents. Il donne, pour chaque livrable, le temps passé et les jetons consommés. Un petit script ouvre un panneau de suivi en direct dès qu'un agent démarre. |
 | `passe-visuelle` | Un programme JavaScript qui ouvre l'application dans un navigateur invisible, prend les captures d'écran et mesure les défauts. Le testeur s'en sert. |
 | `verrou-git` | Un programme Python appelé avant chaque commande. Il refuse tout merge, tout envoi direct sur la branche principale et tout envoi forcé. Il a ses propres tests. |
-
-### Les six agents
-
-La limite est le nombre maximal d'échanges d'un agent ; au-delà, il est
-arrêté. Fable sert à juger, Opus à fabriquer, Sonnet à exécuter.
-
-| Agent | Quand | Ce qu'il fait | Ce qu'il ne fait jamais | Modèle | Limite |
-|---|---|---|---|---|---|
-| contradicteur | Liste des fonctionnalités, préparation d'une fonctionnalité | Cherche ce qui manque ou se contredit | Répondre à ma place | Fable | 50 |
-| découpeur | Préparation d'une fonctionnalité | Partage le travail en livrables qui ne se gênent pas | Décider seul | Fable | 70 |
-| tdd-writer | Fabrication | Écrit le test, puis le code, puis ouvre la PR | Sortir de son livrable | Opus | 150 |
-| verifier | Après la fabrication | Relit le code et vérifie les preuves | Corriger | Fable | 50 |
-| testeur | Après la fabrication | Utilise l'application et prend des captures | Corriger | Sonnet | 60 |
-| correcteur | Après les relectures | Répare la liste des défauts, une seule fois | Toucher à autre chose | Opus | 80 |
 
 ## La méthode
 
