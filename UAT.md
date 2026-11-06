@@ -576,7 +576,7 @@ Toutes les commandes se lancent à la racine du site, après `npm run build`. Le
 
 ### PFO-116 — llms.txt assemblé au format llmstxt.org
 
-- [ ] `head -3 out/llms.txt` affiche `# Cédric Gicquiaud`, une ligne vide, puis `> Je transforme un besoin métier en application opérationnelle, en faisant coder des agents IA sous contrôle.`
+- [ ] `head -3 out/llms.txt` affiche `# Cédric Gicquiaud`, une ligne vide, puis `> Je transforme un besoin métier en application opérationnelle.`
 - [ ] Sous `## Projets`, une ligne par projet, dans l'ordre exact des cartes de l'accueil (`http://localhost:3118/#projets`), chacune de la forme `- [Nom](https://cedricgicquiaud.github.io/projets/<slug>/) : …`. Sur `http://localhost:3118/projets/slice/`, la phrase sous le titre est identique, mot pour mot, au texte après « : » de la ligne SLICE.
 - [ ] Sous `## Parcours`, les mêmes postes, dans le même ordre, que la section Expérience de l'accueil, chacun en `- période — rôle, secteur` ; le premier nomme Maison Epigenetic, comme sur le site. Sous `## Données`, la ligne `- [proofs.json](https://cedricgicquiaud.github.io/proofs.json) : …`.
 - [ ] Refus : copier `content/fiches/tablo.md` en `content/fiches/archives/essai.md` et y mettre `nom: Essai`, puis `npm run build` : `grep -c Essai out/llms.txt` affiche `0`. Supprimer le dossier `archives/`.
