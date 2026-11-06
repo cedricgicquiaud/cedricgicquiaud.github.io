@@ -48,7 +48,7 @@ describe("buildLlms — l'en-tête (PFO-116)", () => {
   it("commence par le nom en titre, puis le titre du site en citation", () => {
     expect(blocs(buildLlms()).slice(0, 2)).toEqual([
       "# Cédric Gicquiaud",
-      "> Je transforme un besoin métier en application opérationnelle, en faisant coder des agents IA sous contrôle.",
+      "> Je transforme un besoin métier en application opérationnelle.",
     ]);
   });
 

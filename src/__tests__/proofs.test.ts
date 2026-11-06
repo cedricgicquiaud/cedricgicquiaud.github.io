@@ -151,7 +151,7 @@ describe("buildProofs — l'en-tête (PFO-112)", () => {
     expect(buildProofs()).toMatchObject({
       version: "1.0",
       nom: "Cédric Gicquiaud",
-      titre: "Je transforme un besoin métier en application opérationnelle, en faisant coder des agents IA sous contrôle.",
+      titre: "Je transforme un besoin métier en application opérationnelle.",
       email: "cedric.gicquiaud@gmail.com",
       github: "https://github.com/cedricgicquiaud",
       linkedin: "https://www.linkedin.com/in/cedric-gicquiaud/",
