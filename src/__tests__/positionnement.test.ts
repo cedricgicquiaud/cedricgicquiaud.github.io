@@ -9,9 +9,9 @@ const contentDir = path.join(root, "content", "fiches");
 const read = (rel: string) => readFileSync(path.join(root, rel), "utf8");
 
 describe("Positionnement « product builder IA » (PFO-69)", () => {
-  it("la phrase du site parle d'une application produite par des agents IA, plus de « Je branche »", () => {
+  // PFO-156 (06/11) : l'accroche ne nomme plus les agents IA ; « À propos » le dit.
+  it("la phrase du site parle d'une application, plus de « Je branche »", () => {
     expect(site.title).toMatch(/application/);
-    expect(site.title).toMatch(/agents IA/);
     expect(site.title).not.toMatch(/Je branche/);
   });
 
