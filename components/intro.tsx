@@ -3,8 +3,8 @@ import { BookingLink } from "./booking-link";
 import { Nav } from "./nav";
 import { SocialIcons } from "./social-icons";
 
-// Titre court sous le nom (décision produit du 15/09, PFO-69).
-export const SHORT_TITLE = "Product builder IA";
+// Titre court sous le nom (PFO-69 ; product owner d'abord depuis PFO-157, 06/11).
+export const SHORT_TITLE = "Product Owner IA · Product builder IA";
 
 export function Intro() {
   return (

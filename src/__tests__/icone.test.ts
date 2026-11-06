@@ -23,9 +23,9 @@ describe("Icône d'onglet (PFO-151)", () => {
 
 // PFO-151 : le titre d'onglet change selon la page, comme le portfolio de référence.
 describe("Titre d'onglet de l'accueil (PFO-151)", () => {
-  it("« Cédric Gicquiaud, Product builder IA », repris par l'aperçu de partage", async () => {
+  it("« Cédric Gicquiaud, Product Owner IA · Product builder IA », repris par l'aperçu de partage", async () => {
     const { metadata } = await import("../../app/layout");
-    expect(metadata.title).toBe("Cédric Gicquiaud, Product builder IA");
-    expect(metadata.openGraph?.title).toBe("Cédric Gicquiaud, Product builder IA");
+    expect(metadata.title).toBe("Cédric Gicquiaud, Product Owner IA · Product builder IA");
+    expect(metadata.openGraph?.title).toBe("Cédric Gicquiaud, Product Owner IA · Product builder IA");
   });
 });
