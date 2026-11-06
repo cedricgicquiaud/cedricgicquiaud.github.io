@@ -61,7 +61,7 @@ describe("buildLlms — l'en-tête (PFO-116)", () => {
 
   it("refuse dans le paragraphe À propos du site tout gras, tout lien Markdown et toute balise", () => {
     const paragraphe = blocs(buildLlms())[2];
-    expect(paragraphe).toMatch(/^Je suis product builder IA/);
+    expect(paragraphe).toMatch(/^Je suis product owner IA et product builder IA/);
     for (const marque of ["**", "](/projets/", "<"]) expect(paragraphe).not.toContain(marque);
   });
 });

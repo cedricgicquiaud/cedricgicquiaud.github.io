@@ -29,7 +29,7 @@ describe("« À propos » dense, à la manière du modèle (PFO-71)", () => {
 
   it("garde le métier, l'app santé, la méthode, la banque, le chef de projets, l'indépendant et le principe des preuves", () => {
     const text = body();
-    for (const key of [/product builder IA/i, /application mobile de santé/, /je développe et implémente seul/, /agentic engineering/, /informatique bancaire/, /chef de projets/, /indépendant/, /ce qui fonctionne et ce qui reste à faire/]) {
+    for (const key of [/product owner IA/i, /product builder IA/i, /application mobile de santé/, /je développe et implémente seul/, /agentic engineering/, /informatique bancaire/, /chef de projets/, /indépendant/, /ce qui fonctionne et ce qui reste à faire/]) {
       expect(text).toMatch(key);
     }
   });

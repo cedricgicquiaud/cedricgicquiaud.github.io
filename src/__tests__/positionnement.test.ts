@@ -22,9 +22,12 @@ describe("Positionnement « product builder IA » (PFO-69)", () => {
     for (const f of ["content/site.json", "content/about.md", "content/experience.md"]) expect(read(f), f).not.toMatch(/qui tourne/);
   });
 
-  it("« À propos » nomme le métier, et le bloc 2026 d'« Expérience » porte le rôle « Product builder IA »", () => {
-    expect(read("content/about.md")).toMatch(/product builder IA/i);
-    expect(read("content/experience.md")).toMatch(/role: Product builder IA/);
+  // PFO-157 (06/11) : product owner IA d'abord, product builder ensuite.
+  it("« À propos » nomme les deux métiers, et le bloc 2026 d'« Expérience » porte le rôle « Product Owner IA (Product builder) »", () => {
+    expect(read("content/about.md")).toMatch(/product owner IA et product builder IA/i);
+    expect(read("content/experience.md")).toMatch(/role: Product Owner IA \(Product builder\)/);
+    expect(read("content/experience.md")).toMatch(/role: Fondateur · Product builder IA/);
+    expect(read("content/fiches/coach.md")).toMatch(/J'y suis product owner IA \(product builder\) depuis janvier 2026/);
   });
 
   // PFO-118 (19/10) : le parcours ouvre « À propos », en termes métier.
