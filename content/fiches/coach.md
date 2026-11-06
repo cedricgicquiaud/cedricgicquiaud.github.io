@@ -47,7 +47,7 @@ ordre: 1
 longévité haut de gamme, avec des centres à Paris et à Cannes. Ses clients y suivent un protocole
 selon leur objectif : performance, récupération, beauté régénérative, longévité. La méthode :
 mesurer par un bilan complet, personnaliser par un plan sur mesure, puis ajuster en continu
-selon les résultats. J'y suis product builder IA depuis janvier 2026.
+selon les résultats. J'y suis product owner IA (product builder) depuis janvier 2026.
 
 Entre deux séances, ce suivi n'avait pas de support. Les mesures du quotidien (montre, sommeil,
 entraînement) et les résultats d'analyse restaient séparés, sans interprétation et sans lien

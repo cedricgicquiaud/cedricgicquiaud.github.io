@@ -24,7 +24,7 @@ describe("Positionnement « product builder IA » (PFO-69)", () => {
 
   // PFO-157 (06/11) : product owner IA d'abord, product builder ensuite.
   it("« À propos » nomme les deux métiers, et le bloc 2026 d'« Expérience » porte le rôle « Product Owner IA (Product builder) »", () => {
-    expect(read("content/about.md")).toMatch(/product owner IA et product builder IA/i);
+    expect(read("content/about.md").replaceAll("**", "")).toMatch(/product owner IA et product builder IA/i);
     expect(read("content/experience.md")).toMatch(/role: Product Owner IA \(Product builder\)/);
     expect(read("content/experience.md")).toMatch(/role: Fondateur · Product builder IA/);
     expect(read("content/fiches/coach.md")).toMatch(/J'y suis product owner IA \(product builder\) depuis janvier 2026/);

@@ -2,7 +2,7 @@
 titre: Expérience
 blocs:
   - periode: "janv. 2026 → janv. 2027"
-    role: Product builder IA
+    role: Product Owner IA (Product builder)
     secteur: Maison Epigenetic · CDD · Paris
     description: >-
       Je développe et implémente seul une application mobile de santé et de
