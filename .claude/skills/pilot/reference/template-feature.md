@@ -39,6 +39,28 @@ _avec une page vide._
 3. _Refus : une facture sans aucune ligne ne peut pas être créée._
 4. _Refus : une facture envoyée ne peut plus être modifiée._
 
+## Diagramme de séquence
+
+_Le parcours principal, écrit au cadrage : qui parle à qui, dans quel ordre. Un refus du_
+_contrat en branche `alt`._
+
+```mermaid
+sequenceDiagram
+  actor U as Artisan
+  participant E as Écran Devis
+  participant S as Serveur
+  participant B as Base
+  U->>E: « Créer la facture »
+  E->>S: POST /factures {devis}
+  S->>B: numéro suivant + lignes du devis (transaction)
+  alt devis sans ligne
+    S-->>E: 422 « Une facture a au moins une ligne »
+  else
+    B-->>S: facture n° 2026-014
+    S-->>E: 201 facture
+  end
+```
+
 ## Terminé quand
 
 _Le résumé, pour toi. Deux ou trois constats qui disent que **la feature entière** est finie —_
@@ -58,3 +80,12 @@ _« Module `billing`, table `invoices`, service de PDF externe. »_
 
 _Lien vers le cahier de recette (`UAT.md` ou base Notion), posé quand la feature passe_
 _« Planifiée »._
+
+## Prévu et réel
+
+_`Prévu` est écrit au passage « Planifiée » et ne change plus. `Réel` et la cause sont écrits_
+_par `sync` quand la feature passe « Terminée »._
+
+- _Prévu : 2026-03-12_
+- _Réel : 2026-03-17 — 5 jours de retard — cause : l'attente de merge a doublé (relecture_
+  _repoussée deux fois)._

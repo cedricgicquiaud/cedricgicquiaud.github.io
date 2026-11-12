@@ -25,7 +25,7 @@ ses messages). `--notifier` envoie les alertes en notification macOS par `cmux n
 commande cmux existe.
 
 Lit les transcripts de sous-agents dans ~/.claude/projects/*/*/subagents/*.jsonl et garde ceux
-dont le `cwd` est le projet ou l'un de ses worktrees (`<projet>-<n>`). La session principale
+dont le `cwd` est le projet ou l'un de ses worktrees (`<projet>.copies/<n>`). La session principale
 peut donc avoir été lancée depuis n'importe quel dossier.
 L'agent est déduit du nom du fichier : agent-a<agent>-<suite>.jsonl (aprod, atest, averif…).
 
@@ -142,8 +142,10 @@ def cwd_de(chemin):
     return ""
 
 def du_projet(cwd, projet):
-    """Le projet lui-même, un sous-dossier, ou un worktree frère `<projet>-<n>` / `<projet>-a`."""
-    return cwd == projet or cwd.startswith(projet + "/") or re.match(re.escape(projet) + r"-[A-Za-z0-9]+(/|$)", cwd) is not None
+    """Le projet lui-même, un sous-dossier, ou un worktree : rangé dans `<projet>.copies/<n>`,
+    ou frère `<projet>-<n>` / `<projet>-a` (emplacement d'avant le 2026-11-12)."""
+    return cwd == projet or cwd.startswith(projet + "/") or re.match(
+        re.escape(projet) + r"(-[A-Za-z0-9]+|\.copies/[^/]+)(/|$)", cwd) is not None
 
 def transcripts(projet):
     base = os.path.expanduser("~/.claude/projects")
