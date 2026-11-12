@@ -60,6 +60,12 @@ moment, et deux serveurs sur un port se tuent l'un l'autre (15/09 : deux suites 
 audit de 38 min pour six minutes de correction). La CI de la branche la joue ; tu lis son
 verdict (`gh pr checks`) et tu le cites dans « Prouvé », sans le refaire.
 
+**Pas de CI, tu l'écris.** Si `gh pr checks` ne rend aucun contrôle (pas de dossier
+`.github/workflows/`, ou aucun qui se déclenche sur la PR), ton rapport le dit en tête de
+« Prouvé » : « Aucune CI sur ce dépôt : seule la suite courte a tourné, ici. » Un silence
+laisserait croire que tout a été rejoué. Ce n'est pas bloquant pour la livraison ; c'est
+une information pour l'humain qui fusionne.
+
 **Vérifie que chaque test précède son code.** L'historique doit le montrer : un commit
 `test:`, puis un commit `feat:`. Deux cas détruisent cette preuve, et les deux sont
 bloquants : un `feat:` sans `test:` avant lui (le code est arrivé le premier) ; un `test:`

@@ -76,6 +76,14 @@ lire et passer à l'étape 4.
     visible depuis GitHub, la PR n'en écrit pas.
 12. Poser les gabarits GitHub du dépôt, s'ils manquent : le gabarit de PR et le renvoi des
     issues vers Linear (`git.md` § Les gabarits du dépôt).
+12 bis. **Vérifier qu'une CI joue la suite complète sur chaque PR** : un fichier dans
+    `.github/workflows/`, et un passage réussi sur `main` (`gh run list -b main -L 1`).
+    Sans elle, rien ne rejoue ce que le producteur n'a pas lancé, et le `verifier` n'a aucun
+    verdict à lire pour la suite d'écran. Le 12/11, trois projets pilotés sur cinq n'en avaient
+    pas, et personne ne l'avait vu. S'il en manque une : le dire, et proposer une tâche isolée
+    (`fix`) qui la pose — les tests existants, la vérification des types et le lint, sur la
+    machine vierge de GitHub, donc sans `.env`. Le projet peut refuser ; la section Pilot le
+    note alors (`CI : aucune — <raison>`), pour que la question ne revienne pas.
 13. **Poser la base de la boucle.**
     - Les lignes `Lancer l'app :` et `Testeur :` de la section Pilot, déduites de la stack
       (annexe A), confirmées d'un mot.

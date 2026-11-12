@@ -89,6 +89,13 @@ class Lecture(unittest.TestCase):
             self.assertFalse(du_projet(os.path.join(projet, "site"), projet))
             self.assertFalse(du_projet(os.path.join(projet, "site", "content"), projet))
 
+    def test_une_copie_rangee_dans_le_dossier_des_copies_compte_pour_le_projet(self):
+        self.assertTrue(du_projet("/d/VOLT_APP.copies/58-1", "/d/VOLT_APP"))
+        self.assertTrue(du_projet("/d/VOLT_APP.copies/58-1/volt-api", "/d/VOLT_APP"))
+        self.assertTrue(du_projet("/d/VOLT_APP-3", "/d/VOLT_APP"))  # anciennes copies
+        self.assertFalse(du_projet("/d/VOLT_APP.copies", "/d/VOLT_APP"))
+        self.assertFalse(du_projet("/d/VOLT_APPLI.copies/1", "/d/VOLT_APP"))
+
     def test_les_modeles_non_claude_sont_ignores(self):
         self.assertEqual(lire_requetes(ligne(model="<synthetic>"), "/p/ABC", None, set()), [])
 

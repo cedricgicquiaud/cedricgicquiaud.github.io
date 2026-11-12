@@ -150,10 +150,16 @@ Tous les critères de ta part couverts :
 2. Relis ton diff (`git diff <commit de départ>..HEAD`, ou `main...HEAD` pour une livraison
    entière) contre les idiomes du projet, ligne par ligne : la moitié des remarques du `verifier` s'évitent là.
 3. Passe chaque tâche de ta part en « Terminée » dans Linear (`save_issue`).
-4. Complète la section de la livraison dans `UAT.md` : une case par « Terminé quand » de ta
-   part, avec la donnée à saisir et le refus attendu (« un e-mail mal formé affiche “E-mail
-   invalide” »), pour un lecteur qui ne connaît pas le code. **Aucune case cochée** : l'humain
-   joue ce cahier en recette. Commite.
+4. Complète la section de la livraison dans `UAT.md` : un tableau, une ligne par « Terminé
+   quand » de ta part, pour un lecteur qui ne connaît pas le code.
+
+   | # | Critère | Donnée saisie | Attendu | Obtenu | Écart |
+   |---|---|---|---|---|---|
+   | 1 | Refus d'un e-mail mal formé | `jean@` | « E-mail invalide » sous le champ | | |
+
+   Remplis les quatre premières colonnes, refus compris. **« Obtenu » et « Écart » restent
+   vides** : l'humain les remplit en jouant ce cahier en recette. Rempli, le tableau sert de jeu
+   d'essai : entrée, attendu, obtenu, écart. Commite.
 5. **Livraison entière, ou dernière tâche** : pousse ta branche et ouvre la PR au gabarit de
    `.claude/skills/pilot/reference/git.md` (titre `<CODE>-<n> <titre de la livraison>`,
    dernière ligne `Closes <CODE>-a, <CODE>-b, …` avec toutes les tâches de la livraison). Si la

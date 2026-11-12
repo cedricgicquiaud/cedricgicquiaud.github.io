@@ -29,7 +29,12 @@ aux deux temps, cadrage et découpage (`git.md` § Branches).
    - les **décisions produit** (choix tranchés, avec l'option retenue) ;
    - le **contrat de validation** : 10 à 30 phrases « ce qui devra être vrai », observables
      par l'utilisateur, dont au moins un tiers de refus (ce qui doit être impossible ou
-     rejeté). Chaque phrase nomme un écran, une donnée ou une valeur de cette feature.
+     rejeté). Chaque phrase nomme un écran, une donnée ou une valeur de cette feature ;
+   - le **diagramme de séquence** du parcours principal, en Mermaid (`sequenceDiagram`) :
+     l'utilisateur, l'écran, le serveur, la base et chaque service externe, avec les messages
+     tirés du code concerné ; un refus du contrat y figure en branche `alt`. Fini quand chaque
+     échange entre deux composants du parcours est une flèche. Le `contradicteur` le lit avec
+     le reste : un échange absent du schéma est souvent un cas que le contrat a oublié.
 4. **Lancer l'agent `contradicteur`** sur la proposition : il rend les cas non
    prévus, les phrases invérifiables, les règles qui se contredisent et le supposé connu.
    Présenter ses questions à l'humain **avec** la proposition, sans y répondre à sa place :
@@ -37,9 +42,9 @@ aux deux temps, cadrage et découpage (`git.md` § Branches).
    _Pourquoi : c'est le seul moment où un oubli coûte encore une phrase et pas une journée. Un
    cadrage validé sans ce passage est validé à l'aveugle._
 5. **ARRÊT — l'humain valide le cadrage.**
-6. Écrire les deux sections dans la fiche feature (`save_project` → `content`, sections
-   « Décisions produit » et « Contrat de validation » du template Feature). La feature reste
-   « À cadrer ».
+6. Écrire les trois sections dans la fiche feature (`save_project` → `content`, sections
+   « Décisions produit », « Contrat de validation » et « Diagramme de séquence » du template
+   Feature). La feature reste « À cadrer ».
 
 ## Temps 2 — découper
 
@@ -74,7 +79,10 @@ aux deux temps, cadrage et découpage (`git.md` § Branches).
     Dans la description de chaque jalon : ses fichiers et ses numéros de contrat (c'est ce que
     `run` recopie dans les `MISSION.md`).
 12. Passer la feature « Planifiée ». Mettre le lien recette (`UAT.md#<slug>` ou Notion)
-    dans la fiche feature, section « Recette » du template Feature.
+    dans la fiche feature, section « Recette » du template Feature. Écrire dans la section
+    « Prévu et réel » la ligne `Prévu : <date de fin>` : la date cible de la feature à cet
+    instant. `sync` recale ensuite la date cible de Linear ; cette ligne-là ne bouge plus, c'est
+    elle qui mesure l'écart à la fin.
 13. **Compter** : annoncé / créé. Sonder une fiche au hasard contre le moule (`fiches.md`).
 14. **Noter la durée du cadrage** dans `.pilot/calibration.md`, sous le nom de la feature :
     heure du lancement de `feature`, heure de la validation du découpage, nombre de questions

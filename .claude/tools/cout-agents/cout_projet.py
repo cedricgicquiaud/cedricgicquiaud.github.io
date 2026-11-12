@@ -59,12 +59,14 @@ def cout(u, prix):
 
 
 def du_projet(cwd, projet):
-    """Le projet lui-même, un sous-dossier, ou un worktree frère `<projet>-<n>`.
+    """Le projet lui-même, un sous-dossier, ou un worktree : rangé dans `<projet>.copies/<n>`,
+    ou frère `<projet>-<n>` (emplacement d'avant le 2026-11-12).
     Un sous-dossier qui est son propre dépôt git (le site dans WATIDO) compte à part."""
     if not cwd: return False
     if cwd.startswith(projet + "/"):
         return not imbrique(cwd, projet)
-    return cwd == projet or re.match(re.escape(projet) + r"-[A-Za-z0-9]+(/|$)", cwd) is not None
+    return cwd == projet or re.match(
+        re.escape(projet) + r"(-[A-Za-z0-9]+|\.copies/[^/]+)(/|$)", cwd) is not None
 
 
 @functools.lru_cache(maxsize=None)

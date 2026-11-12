@@ -65,7 +65,9 @@ les suivantes. Moins de 200 caractères, ce qu'il doit faire en premier.
    lancement, le testeur n'a pas d'application à ouvrir — le dire avant de lancer, pas après.
    Feature → « En développement ».
 2. **Un worktree par livraison, toujours créé depuis `main` à jour** : `git fetch && git
-   worktree add ../<repo>-<n> -b feature/<CODE>-<n° première tâche>-<slug> origin/main`. Même
+   worktree add ../<repo>.copies/<n> -b feature/<CODE>-<n° première tâche>-<slug> origin/main`.
+   Toutes les copies d'un projet vont dans ce seul dossier voisin, `<repo>.copies/` : posées une
+   à une à côté du dépôt, elles encombraient le bureau (dix-huit pour VOLT le 2026-11-11). Même
    en série (n = 1), jamais depuis la branche de la livraison précédente : les livraisons sont
    disjointes, leurs PR doivent être indépendantes et mergeables dans n'importe quel ordre, sans
    rebase. Des PR empilées obligent à merger dans l'ordre et à retarger les bases.
@@ -162,8 +164,8 @@ les suivantes. Moins de 200 caractères, ce qu'il doit faire en premier.
    lance par `claude --agent tdd-writer` dans le worktree, sinon la session est un Claude
    ordinaire et n'a aucune des règles de la boucle.
    Chaque producteur : cycles test rouge → code → vert, un commit par transition, ses tâches
-   → « Terminée », `UAT.md` (une case par « Terminé quand », avec sa donnée et son refus,
-   **non cochée**), stop. Celui qui finit la livraison pousse et ouvre la PR au gabarit de
+   → « Terminée », `UAT.md` (une ligne par « Terminé quand », avec sa donnée et son attendu,
+   **« Obtenu » et « Écart » vides**), stop. Celui qui finit la livraison pousse et ouvre la PR au gabarit de
    `git.md`.
 4. **Audit et recette**, en parallèle sur chaque PR, par deux agents qui n'ont pas écrit le
    code :

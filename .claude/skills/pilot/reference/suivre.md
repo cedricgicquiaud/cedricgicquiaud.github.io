@@ -117,6 +117,27 @@ disproportionnément (à raccourcir) ; une **information** a-t-elle manqué à l
 du serveur, accès en lecture à un service) ; une décision a-t-elle été **réinventée** faute
 d'ADR. Feature → « Rétro faite ». Supprimer les worktrees de la feature
 (`git worktree remove`).
+**Tenir le journal de sécurité** : quand une feature passe « Terminée », chaque point de ses
+rapports d'audit qui relève de la liste « À signaler » de la section sécurité du `verifier`,
+classé Bloquant ou Important, devient une ligne de `.pilot/securite.md`. Puis lancer l'audit
+des dépendances du projet, celui de son gestionnaire de paquets (`npm audit`, `pnpm audit`,
+`pip-audit`) : chaque vulnérabilité haute ou critique absente du journal y entre aussi.
+Créer le fichier s'il n'existe pas, avec cet en-tête :
+
+| Date | Source | Faille | Gravité | Action |
+|---|---|---|---|---|
+
+Source : la PR et son audit (`#42, verifier`) ou le paquet et son avis (`axios 1.6.0,
+GHSA-…`). Action : la correction faite, avec son commit, ou la tâche isolée créée pour la
+faire. Fini quand chaque point de sécurité des audits de la feature a sa ligne, et chaque
+ligne une action. Le journal part avec `.pilot/calibration.md`, dans la PR suivante.
+**Mesurer le prévu et le réel** : quand une feature passe « Terminée », compléter la section
+« Prévu et réel » de sa fiche (`template-feature.md`) : `Réel : <date du dernier merge> — <n>
+jours d'écart — cause : <…>`. La cause se lit dans la ligne de temps ci-dessous : la colonne
+qui a grossi par rapport à la feature précédente. La proposer à l'humain dans le compte rendu,
+qui la corrige s'il connaît mieux la raison (un client absent, une décision attendue). Sans
+ligne `Prévu` (feature planifiée avant cette règle) : `Prévu : non noté`, et seulement la
+date réelle.
 **Le temps de la feature, pas seulement celui des runs.** Quand la feature passe « Terminée »,
 écrire sous le tableau des livraisons de `.pilot/calibration.md` une ligne par feature, en
 heures d'horloge :
